@@ -1,0 +1,48 @@
+name: PR Push check
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
+
+      - name: Build
+        run: pnpm run build
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
+
+      - name: Lint
+        run: pnpm run lint
+
+  type:
+    name: Type check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
+
+      - name: Type check
+        run: pnpm run type-check
