@@ -1,0 +1,43 @@
+{
+  "name": "@configs/node",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tsconfig/tsconfig.json": "./src/tsconfig/tsconfig.json",
+    "./vite": {
+      "types": "./src/vite/vite.config.ts",
+      "import": "./dist/vite/vite.config.mjs"
+    },
+    "./eslint": {
+      "types": "./src/eslint/eslint.config.ts",
+      "import": "./dist/eslint/eslint.config.mjs"
+    },
+    "./vitest": {
+      "types": "./src/vitest/vitest.config.ts",
+      "import": "./dist/vitest/vitest.config.mjs"
+    }
+  },
+  "files": [
+    "dist",
+    "src/tsconfig/tsconfig.json"
+  ],
+  "scripts": {
+    "build": "pkgroll",
+    "lint": "eslint --max-warnings 0 .",
+    "type-check": "tsc --noEmit",
+    "test": "echo 'No test needed'"
+  },
+  "dependencies": {
+    "@configs/common": "workspace:*",
+    "@praha/eslint-config-definer": "2.0.1",
+    "@praha/vite-plugin-external": "1.0.0",
+    "@tsconfig/node-lts": "22.0.1",
+    "vite": "6.3.5",
+    "vitest": "3.2.3"
+  },
+  "devDependencies": {
+    "eslint": "9.29.0",
+    "pkgroll": "2.12.2",
+    "typescript": "5.8.3"
+  }
+}

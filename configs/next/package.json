@@ -1,0 +1,40 @@
+{
+    "name": "@configs/next",
+    "private": true,
+    "type": "module",
+    "exports": {
+        "./tsconfig/tsconfig.json": "./src/tsconfig/tsconfig.json",
+        "./eslint": {
+            "types": "./src/eslint/eslint.config.ts",
+            "import": "./dist/eslint/eslint.config.mjs"
+        },
+        "./vitest": {
+            "types": "./src/vitest/vitest.config.ts",
+            "import": "./dist/vitest/vitest.config.mjs"
+        }
+    },
+    "files": [
+        "dist",
+        "src/tsconfig/tsconfig.json"
+    ],
+    "scripts": {
+        "build": "pkgroll",
+        "lint": "eslint --max-warnings 0 .",
+        "type-check": "tsc --noEmit",
+        "test": "echo 'No test needed'"
+    },
+    "dependencies": {
+        "@configs/node": "workspace:*",
+        "@configs/react": "workspace:*",
+        "@praha/eslint-config-definer": "2.0.1",
+        "@praha/eslint-config-next": "4.0.6",
+        "@tsconfig/next": "2.0.3",
+        "vitest": "3.2.3"
+    },
+    "devDependencies": {
+        "@configs/common": "workspace:*",
+        "eslint": "9.29.0",
+        "pkgroll": "2.12.2",
+        "typescript": "5.8.3"
+    }
+}
