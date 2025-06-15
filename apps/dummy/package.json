@@ -1,0 +1,11 @@
+{
+  "name": "dummy-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "echo 'No build needed'",
+    "lint": "echo 'No lint needed'",
+    "type-check": "echo 'No type check needed'",
+    "test": "echo 'No test needed'"
+  }
+}
