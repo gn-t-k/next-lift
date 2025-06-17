@@ -17,17 +17,9 @@ git commit -m "{理由}のため、{変更内容}を実装"
 # リモートにプッシュ
 git push -u origin {branch-name}
 
-# プルリクエスト作成
-gh pr create --title "{タイトル}" --body "$(cat <<'EOF'
-## Summary
-- {変更内容の要約}
-
-## Test plan
-- [ ] {テスト項目}
-
-🤖 Generated with [Claude Code](https://claude.ai/code)
-EOF
-)"
+# プルリクエスト作成（テンプレートを使用）
+gh pr create --title "{タイトル}"
+# 注意：--fillや--bodyオプションは使わない（テンプレートが適用されないため）
 ```
 
 #### mainブランチで間違ってコミットした場合の修正
@@ -135,6 +127,13 @@ CI Lintエラーが発生するため、turbo.jsonの依存関係を修正
 
 `.github/pull_request_template.md`を参照する。
 
+### 重要な注意事項
+
+- **必須**: `gh pr create`では`--body`や`--fill`オプションを使わない
+- テンプレートが自動適用されるため、独自のbody内容で上書きしない
+- CLAUDE.mdの指示に従い、テンプレートをベースにして作成する
+- **失敗例**: `--fill`はコミットメッセージをそのまま使うためテンプレートが適用されない
+
 ## Markdownリント一括修正パターン
 
 ### 効率的な一括修正コマンド
@@ -157,9 +156,11 @@ pnpm lint
 ```markdown
 <!-- 修正前 -->
 説明文
+
 ```code
 内容
 ```
+
 次の文
 
 <!-- 修正後 -->
@@ -170,21 +171,25 @@ pnpm lint
 ```
 
 次の文
-```
+
+```text
 
 #### MD040 (fenced code language)
 
 ```markdown
 <!-- 修正前 -->
-```
+
+```text
 コード内容
 ```
 
 <!-- 修正後 -->
+
 ```text
 コード内容
 ```
-```
+
+```text
 
 #### MD022 (blanks around headings)
 
@@ -242,11 +247,13 @@ echo "" >> ファイル名.md
 ### 一括修正の手順
 
 1. **自動修正可能なエラーを処理**:
+
    ```bash
    markdownlint --fix **/*.md
    ```
 
 2. **残りのエラーを確認**:
+
    ```bash
    pnpm lint
    ```
@@ -258,9 +265,16 @@ echo "" >> ファイル名.md
    - jtf-style/3.3: 日本語表記の修正
 
 4. **修正結果を確認**:
+
    ```bash
    pnpm lint
    ```
+
+5. **VS Codeの警告も確認**:
+   - ファイルを開いてVS Codeの画面に赤い波線や警告が表示されていないか確認
+   - markdownlintの警告は必ず修正する
+   - **重要**: CLIでのlintが通ってもVS Codeで警告が残る場合がある
+   - **必須**: VS Codeで警告が0になるまで対応する
 
 ## ファイル作成テンプレート
 
