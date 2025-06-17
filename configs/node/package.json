@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "eslint": "9.29.0",
-    "pkgroll": "2.12.2",
+    "pkgroll": "2.13.1",
     "typescript": "5.8.3"
   }
 }
