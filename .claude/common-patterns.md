@@ -133,45 +133,7 @@ CI Lintエラーが発生するため、turbo.jsonの依存関係を修正
 
 ## プルリクエストテンプレート
 
-### 基本構造
-
-```markdown
-## Summary
-- {変更内容の要約をBullet pointで}
-- {影響範囲の説明}
-
-## Test plan
-- [ ] {テスト項目1}
-- [ ] {テスト項目2}
-- [ ] {テスト項目3}
-
-🤖 Generated with [Claude Code](https://claude.ai/code)
-```
-
-### 新機能追加例
-
-```markdown
-## Summary
-- ユーザー認証機能の基盤を追加
-- Better AuthとTursoの連携設定を実装
-
-## Test plan
-- [ ] ローカル環境で認証フローが正常に動作することを確認
-- [ ] セッション管理が正しく機能することを確認
-- [ ] データベース接続が正常に動作することを確認
-```
-
-### インフラ改善例
-
-```markdown
-## Summary
-- モノレポ環境でのCIとツール設定統一のため、共通設定パッケージを追加
-- VSCode設定を改善してESLintとフォーマッター設定を統一
-
-## Test plan
-- [ ] 各設定パッケージのビルドが正常に完了することを確認
-- [ ] ESLintとフォーマッター設定が正しく動作することを確認
-```
+`.github/pull_request_template.md`を参照する。
 
 ## Markdownリント一括修正パターン
 
