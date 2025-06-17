@@ -12,8 +12,8 @@
     "clean": "turbo clean"
   },
   "devDependencies": {
-    "@turbo/gen": "2.3.4",
-    "turbo": "2.3.4"
+    "@turbo/gen": "2.5.4",
+    "turbo": "2.5.4"
   },
   "packageManager": "pnpm@9.15.9",
   "engines": {
