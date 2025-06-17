@@ -32,7 +32,7 @@
         "@praha/eslint-config-definer": "2.0.1",
         "@praha/eslint-config-react": "4.0.6",
         "@praha/vite-plugin-external": "1.0.0",
-        "@tsconfig/create-react-app": "2.0.5",
+        "@tsconfig/create-react-app": "2.0.6",
         "@vitejs/plugin-react": "4.5.2",
         "eslint-plugin-storybook": "9.0.10",
         "jsdom": "26.1.0",
