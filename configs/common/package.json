@@ -30,7 +30,7 @@
         "@praha/eslint-config-style": "3.0.6",
         "@praha/eslint-config-typescript": "3.0.6",
         "@tsconfig/strictest": "2.0.5",
-        "vitest": "3.2.3"
+        "vitest": "3.2.4"
     },
     "devDependencies": {
         "eslint": "9.29.0",

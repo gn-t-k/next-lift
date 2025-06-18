@@ -29,7 +29,7 @@
         "@praha/eslint-config-definer": "2.0.1",
         "@praha/eslint-config-next": "4.0.6",
         "@tsconfig/next": "2.0.3",
-        "vitest": "3.2.3"
+        "vitest": "3.2.4"
     },
     "devDependencies": {
         "@configs/common": "workspace:*",
