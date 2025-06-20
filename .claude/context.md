@@ -13,37 +13,37 @@ Next Liftは、ウェイトトレーニングの計画と記録を行うアプ�
 
 ### システム構成
 
-```text
-┌─────────────────┐    ┌──────────────────┐
-│   Next.js Web   │────│   Hono Backend   │
-│   (Frontend)    │    │ (Auth + DB管理)  │
-└─────────────────┘    └──────────────────┘
-         │                       │
-┌─────────────────┐              │
-│ React Native    │──────────────┘
-│ (iOS Mobile)    │
-└─────────────────┘
-```
+**コンポーネント間の接続関係**:
+
+- **Webアプリ** → 認証APIサーバー（認証・セッション管理）
+- **Webアプリ** → Per-User DB（リモート）（アプリデータの読み書き）
+- **iOSアプリ** → 認証APIサーバー（認証・セッション管理）
+- **iOSアプリ** → Per-User DB（ローカル）（オフライン対応）
+- **認証APIサーバー** → ユーザー管理用DB（ユーザー情報・セッション管理）
+- **認証APIサーバー** → Turso管理API（Per-User DB新規作成）
+- **Per-User DB（ローカル）** ↔ **Per-User DB（リモート）**（自動同期）
 
 ### プロジェクト構成
 
 - **モノレポ**: pnpm workspaces + turborepo
 - **設計原則**: 技術要素の疎結合化（フレームワーク置き換えを容易にする）
 
-### バックエンド（Hono Server）
+### 認証APIサーバー（Hono）
 
 - **フレームワーク**: Hono
-- **認証**: Better Auth（Apple ID、Google認証）
-- **データベース**: Turso（Better Auth用 + Per-User Database管理）
-- **ORM**: Drizzle ORM
+- **役割**: 認証専用APIサーバー（Better Auth統合）
+- **認証方式**: Apple ID、Google認証
+- **データベース**: Turso（Better Auth用共通DB）
+- **API**: REST API（Web・iOS向け認証エンドポイント）
+- **Per-User DB管理**: ユーザー登録時にPer-User Turso Database作成・接続情報提供
 - **デプロイ**: Cloudflare Workers/Node.js対応
 
 ### Webアプリ
 
 - **フレームワーク**: Next.js (App Router)
 - **対象デバイス**: PC（統計データ表示のため広画面想定）
-- **データアクセス**: Drizzle ORM + Turso Embedded Replicas
-- **認証**: Hono Backendと連携
+- **データアクセス**: Drizzle ORM + Per-User Turso（APIサーバー非経由）
+- **認証**: 認証APIサーバーと連携
 
 ### iOSアプリ
 
