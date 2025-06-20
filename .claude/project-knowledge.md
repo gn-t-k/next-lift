@@ -2,14 +2,15 @@
 
 ## アーキテクチャ決定事項
 
-### 1. Hono Backend採用
+### 1. 認証APIサーバー採用
 
-**決定理由**: Next.js Route Handlersでは認証・Turso Per-User Database管理が複雑
+**決定理由**: Next.js Route Handlersでは認証管理が複雑
 
 **メリット**:
 
-- 統合型認証システム（別途認証サーバー不要）
-- HonoがBetter Auth + Turso管理を担当
+- 認証専用APIサーバーで責務を分離
+- Better Auth統合による多様な認証方式対応
+- Web・iOS両方に統一的な認証APIを提供
 - Cloudflare Workers/Node.js対応でデプロイの柔軟性
 
 ### 2. Turso統一DB採用
@@ -59,7 +60,7 @@
 ### Phase 1: インフラ構築
 
 - モノレポ環境構築（pnpm workspaces + turborepo）
-- Hono Backend基盤構築
+- 認証APIサーバー構築（Hono + Better Auth）
 - Better Auth設定
 - Turso Database設定
 - Web/iOS/Turso連携の基盤整備
