@@ -98,6 +98,34 @@
 - **CI優先**: 手動確認を最小化し、なるべくすべてをCIで自動チェック
 - **日本語ファースト**: コミットメッセージ、コメント、ドキュメントは日本語で記述
 
+### Reactコーディングスタイル
+
+- **関数宣言**: 可能な限りfunctionは使わず、アロー関数で書く
+- **エクスポート**: 可能な限りnamed exportする
+- **コンポーネント定義**:
+  ```typescript
+  type Props = {…}; // ファイル内に複数のコンポーネントがある場合を除き、命名は「Props」
+  
+  export const Component: FC<Props> = ({ … }) => {…};
+  ```
+- **children利用時**: PropsWithChildrenを使用
+  ```typescript
+  export const Component: FC<PropsWithChildren> = ({ children, … }) => {…};
+  ```
+- **ページコンポーネント**: 
+  ```typescript
+  type Props = {…};
+  
+  const Page: FC<Props> = ({ … }) => {…}; // 誰からもimportされず、命名規則を考えるのも面倒なので、名前は全部Page、レイアウトコンポーネントはLayout
+  
+  export default Page;
+  ```
+
+### スタイリング方針
+
+- **TailwindCSS**: `packages/tailwind`で共通テーマを管理
+- **クロスプラットフォーム対応**: WebアプリとiOSアプリで共通テーマを参照可能
+
 ## 学習・知見
 
 ### 避けるべきパターン
