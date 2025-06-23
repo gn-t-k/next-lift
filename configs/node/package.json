@@ -31,7 +31,7 @@
     "@configs/common": "workspace:*",
     "@praha/eslint-config-definer": "2.0.1",
     "@praha/vite-plugin-external": "1.0.0",
-    "@tsconfig/node-lts": "22.0.1",
+    "@tsconfig/node-lts": "22.0.2",
     "vite": "6.3.5",
     "vitest": "3.2.4"
   },
