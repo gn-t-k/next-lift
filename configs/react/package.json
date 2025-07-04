@@ -8,10 +8,6 @@
             "types": "./src/vite/vite.config.ts",
             "import": "./dist/vite/vite.config.mjs"
         },
-        "./eslint": {
-            "types": "./src/eslint/eslint.config.ts",
-            "import": "./dist/eslint/eslint.config.mjs"
-        },
         "./vitest": {
             "types": "./src/vitest/vitest.config.ts",
             "import": "./dist/vitest/vitest.config.mjs"

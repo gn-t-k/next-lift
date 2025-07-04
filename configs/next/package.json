@@ -4,10 +4,6 @@
     "type": "module",
     "exports": {
         "./tsconfig/tsconfig.json": "./src/tsconfig/tsconfig.json",
-        "./eslint": {
-            "types": "./src/eslint/eslint.config.ts",
-            "import": "./dist/eslint/eslint.config.mjs"
-        },
         "./vitest": {
             "types": "./src/vitest/vitest.config.ts",
             "import": "./dist/vitest/vitest.config.mjs"
