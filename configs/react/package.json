@@ -1,39 +1,39 @@
 {
-    "name": "@configs/react",
-    "private": true,
-    "type": "module",
-    "exports": {
-        "./tsconfig/tsconfig.json": "./src/tsconfig/tsconfig.json",
-        "./vite": {
-            "types": "./src/vite/vite.config.ts",
-            "import": "./dist/vite/vite.config.mjs"
-        },
-        "./vitest": {
-            "types": "./src/vitest/vitest.config.ts",
-            "import": "./dist/vitest/vitest.config.mjs"
-        }
-    },
-    "files": [
-        "dist",
-        "src/tsconfig/tsconfig.json"
-    ],
-    "scripts": {
-        "build": "pkgroll",
-        "lint": "biome check .",
-        "type-check": "tsc --noEmit",
-        "test": "echo 'No test needed'"
-    },
-    "dependencies": {
-        "@configs/common": "workspace:*",
-        "@praha/vite-plugin-external": "1.0.0",
-        "@tsconfig/create-react-app": "2.0.6",
-        "@vitejs/plugin-react": "4.6.0",
-        "jsdom": "26.1.0",
-        "vite": "6.3.5",
-        "vitest": "3.2.4"
-    },
-    "devDependencies": {
-        "pkgroll": "2.13.1",
-        "typescript": "5.8.3"
-    }
+	"name": "@configs/react",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./tsconfig/tsconfig.json": "./src/tsconfig/tsconfig.json",
+		"./vite": {
+			"types": "./src/vite/vite.config.ts",
+			"import": "./dist/vite/vite.config.mjs"
+		},
+		"./vitest": {
+			"types": "./src/vitest/vitest.config.ts",
+			"import": "./dist/vitest/vitest.config.mjs"
+		}
+	},
+	"files": [
+		"dist",
+		"src/tsconfig/tsconfig.json"
+	],
+	"scripts": {
+		"build": "pkgroll",
+		"lint": "biome check .",
+		"type-check": "tsc --noEmit",
+		"test": "echo 'No test needed'"
+	},
+	"dependencies": {
+		"@configs/common": "workspace:*",
+		"@praha/vite-plugin-external": "1.0.0",
+		"@tsconfig/create-react-app": "2.0.6",
+		"@vitejs/plugin-react": "4.6.0",
+		"jsdom": "26.1.0",
+		"vite": "6.3.5",
+		"vitest": "3.2.4"
+	},
+	"devDependencies": {
+		"pkgroll": "2.13.1",
+		"typescript": "5.8.3"
+	}
 }

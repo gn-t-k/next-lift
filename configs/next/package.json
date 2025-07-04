@@ -1,33 +1,33 @@
 {
-    "name": "@configs/next",
-    "private": true,
-    "type": "module",
-    "exports": {
-        "./tsconfig/tsconfig.json": "./src/tsconfig/tsconfig.json",
-        "./vitest": {
-            "types": "./src/vitest/vitest.config.ts",
-            "import": "./dist/vitest/vitest.config.mjs"
-        }
-    },
-    "files": [
-        "dist",
-        "src/tsconfig/tsconfig.json"
-    ],
-    "scripts": {
-        "build": "pkgroll",
-        "lint": "biome check .",
-        "type-check": "tsc --noEmit",
-        "test": "echo 'No test needed'"
-    },
-    "dependencies": {
-        "@configs/node": "workspace:*",
-        "@configs/react": "workspace:*",
-        "@tsconfig/next": "2.0.3",
-        "vitest": "3.2.4"
-    },
-    "devDependencies": {
-        "@configs/common": "workspace:*",
-        "pkgroll": "2.13.1",
-        "typescript": "5.8.3"
-    }
+	"name": "@configs/next",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./tsconfig/tsconfig.json": "./src/tsconfig/tsconfig.json",
+		"./vitest": {
+			"types": "./src/vitest/vitest.config.ts",
+			"import": "./dist/vitest/vitest.config.mjs"
+		}
+	},
+	"files": [
+		"dist",
+		"src/tsconfig/tsconfig.json"
+	],
+	"scripts": {
+		"build": "pkgroll",
+		"lint": "biome check .",
+		"type-check": "tsc --noEmit",
+		"test": "echo 'No test needed'"
+	},
+	"dependencies": {
+		"@configs/node": "workspace:*",
+		"@configs/react": "workspace:*",
+		"@tsconfig/next": "2.0.3",
+		"vitest": "3.2.4"
+	},
+	"devDependencies": {
+		"@configs/common": "workspace:*",
+		"pkgroll": "2.13.1",
+		"typescript": "5.8.3"
+	}
 }
