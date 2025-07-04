@@ -1,1 +1,1 @@
-export { next as default } from '@configs/next/vitest';
+export { next as default } from "@configs/next/vitest";

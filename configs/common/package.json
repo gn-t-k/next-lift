@@ -1,40 +1,30 @@
 {
-    "name": "@configs/common",
-    "private": true,
-    "type": "module",
-    "exports": {
-        "./tsconfig/tsconfig.json": "./src/tsconfig/tsconfig.json",
-        "./eslint": {
-            "types": "./src/eslint/eslint.config.ts",
-            "import": "./dist/eslint/eslint.config.mjs"
-        },
-        "./vitest": {
-            "types": "./src/vitest/vitest.config.ts",
-            "import": "./dist/vitest/vitest.config.mjs"
-        }
-    },
-    "files": [
-        "dist",
-        "src/tsconfig/tsconfig.json"
-    ],
-    "scripts": {
-        "build": "pkgroll",
-        "lint": "eslint --max-warnings 0 .",
-        "type-check": "tsc --noEmit",
-        "test": "echo 'No test needed'"
-    },
-    "dependencies": {
-        "@praha/eslint-config-common": "4.0.1",
-        "@praha/eslint-config-definer": "2.0.1",
-        "@praha/eslint-config-javascript": "3.0.5",
-        "@praha/eslint-config-style": "3.0.6",
-        "@praha/eslint-config-typescript": "3.0.6",
-        "@tsconfig/strictest": "2.0.5",
-        "vitest": "3.2.4"
-    },
-    "devDependencies": {
-        "eslint": "9.30.1",
-        "pkgroll": "2.13.1",
-        "typescript": "5.8.3"
-    }
+	"name": "@configs/common",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./tsconfig/tsconfig.json": "./src/tsconfig/tsconfig.json",
+		"./vitest": {
+			"types": "./src/vitest/vitest.config.ts",
+			"import": "./dist/vitest/vitest.config.mjs"
+		}
+	},
+	"files": [
+		"dist",
+		"src/tsconfig/tsconfig.json"
+	],
+	"scripts": {
+		"build": "pkgroll",
+		"lint": "biome check .",
+		"type-check": "tsc --noEmit",
+		"test": "echo 'No test needed'"
+	},
+	"dependencies": {
+		"@tsconfig/strictest": "2.0.5",
+		"vitest": "3.2.4"
+	},
+	"devDependencies": {
+		"pkgroll": "2.13.1",
+		"typescript": "5.8.3"
+	}
 }

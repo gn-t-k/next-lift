@@ -1,28 +1,27 @@
 {
-  "name": "@apps/web",
-  "version": "0.1.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "next build",
-    "dev": "next dev",
-    "start": "next start",
-    "lint": "eslint --max-warnings 0 .",
-    "type-check": "tsc --noEmit",
-    "test": "vitest"
-  },
-  "dependencies": {
-    "next": "15.3.5",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
-  },
-  "devDependencies": {
-    "@configs/next": "workspace:*",
-    "@types/node": "22.10.6",
-    "@types/react": "19.1.8",
-    "@types/react-dom": "19.1.6",
-    "eslint": "9.30.1",
-    "typescript": "5.8.3",
-    "vitest": "3.2.4"
-  }
+	"name": "@apps/web",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "next build",
+		"dev": "next dev",
+		"start": "next start",
+		"lint": "biome check .",
+		"type-check": "tsc --noEmit",
+		"test": "vitest"
+	},
+	"dependencies": {
+		"next": "15.3.5",
+		"react": "19.1.0",
+		"react-dom": "19.1.0"
+	},
+	"devDependencies": {
+		"@configs/next": "workspace:*",
+		"@types/node": "22.10.6",
+		"@types/react": "19.1.8",
+		"@types/react-dom": "19.1.6",
+		"typescript": "5.8.3",
+		"vitest": "3.2.4"
+	}
 }

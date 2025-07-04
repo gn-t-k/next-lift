@@ -1,18 +1,10 @@
 {
-    "cSpell.words": [
-        "praha",
-        "turborepo",
-        "Turso"
-    ],
-    "eslint.workingDirectories": [
-        {
-            "mode": "auto"
-        }
-    ],
-    "[json][javascript][javascriptreact][typescript][typescriptreact]": {
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-        "editor.codeActionsOnSave": {
-            "source.fixAll.eslint": "explicit",
-        }
-    }
+	"cSpell.words": ["praha", "turborepo", "Turso"],
+	"[json][javascript][javascriptreact][typescript][typescriptreact]": {
+		"editor.defaultFormatter": "biomejs.biome",
+		"editor.codeActionsOnSave": {
+			"source.organizeImports.biome": "explicit",
+			"source.fixAll.biome": "explicit"
+		}
+	}
 }
