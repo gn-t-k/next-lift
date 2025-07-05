@@ -1,9 +1,5 @@
 {
-	"cSpell.words": [
-		"praha",
-		"turborepo",
-		"Turso"
-	],
+	"cSpell.words": ["praha", "turborepo", "Turso"],
 	"[json]": {
 		"editor.defaultFormatter": "biomejs.biome",
 		"editor.insertSpaces": false,
