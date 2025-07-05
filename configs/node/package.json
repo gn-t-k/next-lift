@@ -27,7 +27,7 @@
 		"@configs/common": "workspace:*",
 		"@praha/vite-plugin-external": "1.0.0",
 		"@tsconfig/node-lts": "22.0.2",
-		"vite": "6.3.5",
+		"vite": "7.0.0",
 		"vitest": "3.2.4"
 	},
 	"devDependencies": {
