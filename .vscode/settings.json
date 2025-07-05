@@ -1,6 +1,15 @@
 {
-	"cSpell.words": ["praha", "turborepo", "Turso"],
-	"[json][javascript][javascriptreact][typescript][typescriptreact]": {
+	"cSpell.words": [
+		"praha",
+		"turborepo",
+		"Turso"
+	],
+	"[json][jsonc]": {
+		"editor.defaultFormatter": "biomejs.biome",
+		"editor.insertSpaces": false,
+		"editor.detectIndentation": false
+	},
+	"[javascript][javascriptreact][typescript][typescriptreact]": {
 		"editor.defaultFormatter": "biomejs.biome",
 		"editor.codeActionsOnSave": {
 			"source.organizeImports.biome": "explicit",
