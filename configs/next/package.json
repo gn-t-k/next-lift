@@ -27,7 +27,7 @@
 	},
 	"devDependencies": {
 		"@configs/common": "workspace:*",
-		"pkgroll": "2.13.1",
+		"pkgroll": "2.14.0",
 		"typescript": "5.8.3"
 	}
 }
