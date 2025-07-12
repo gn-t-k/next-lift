@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
+import type { Meta, StoryObj } from "@storybook/react";
 import type { VariantProps } from "class-variance-authority";
 import { Button, type buttonVariants } from "./button";
 

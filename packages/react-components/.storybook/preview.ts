@@ -1,7 +1,6 @@
-import type { Preview } from "@storybook/react-vite";
+import type { Preview } from "@storybook/react";
 import "../src/globals.css";
 
-/** @private */
 export default {
 	parameters: {
 		darkMode: {
