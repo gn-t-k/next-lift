@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.0.6/schema.json",
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
 	"vcs": {
 		"enabled": false,
 		"clientKind": "git",
@@ -7,12 +7,7 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": [
-			"**",
-			"!**/.next/**",
-			"!**/dist/**",
-			"!**/node_modules/**"
-		]
+		"includes": ["**", "!**/.next/**", "!**/dist/**", "!**/node_modules/**"]
 	},
 	"formatter": {
 		"enabled": true,
@@ -21,7 +16,55 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"recommended": true,
+			"complexity": {
+				"noExcessiveCognitiveComplexity": "warn",
+				"noUselessStringConcat": "warn",
+				"noVoid": "warn",
+				"useSimplifiedLogicExpression": "warn",
+				"useWhile": "warn"
+			},
+			"correctness": {
+				"noPrivateImports": {
+					"level": "warn",
+					"options": {
+						"defaultVisibility": "package"
+					}
+				},
+				"noRenderReturnValue": "warn",
+				"noUndeclaredDependencies": "warn",
+				"useHookAtTopLevel": "warn",
+				"useJsxKeyInIterable": "warn"
+			},
+			"nursery": {
+				"noAwaitInLoop": "warn",
+				"noBitwiseOperators": "warn",
+				"noConstantBinaryExpression": "warn",
+				"noFloatingPromises": "warn",
+				"noImportCycles": "warn",
+				"noNestedComponentDefinitions": "warn",
+				"noNoninteractiveElementInteractions": "warn",
+				"noProcessGlobal": "warn",
+				"noReactPropAssign": "warn",
+				"noSecrets": "warn",
+				"noUnassignedVariables": "warn",
+				"noUselessBackrefInRegex": "warn",
+				"noUselessEscapeInString": "warn",
+				"useConsistentObjectDefinition": {
+					"level": "warn",
+					"options": {
+						"syntax": "shorthand"
+					}
+				},
+				"useConsistentResponse": "warn",
+				"useExhaustiveSwitchCases": "warn",
+				"useGoogleFontPreconnect": "warn",
+				"useIndexOf": "warn",
+				"useIterableCallbackReturn": "warn",
+				"useObjectSpread": "warn",
+				"useSortedClasses": "warn",
+				"useUniqueElementIds": "warn"
+			}
 		}
 	},
 	"assist": {

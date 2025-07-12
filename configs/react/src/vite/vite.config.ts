@@ -1,6 +1,7 @@
 import { externalPlugin } from "@praha/vite-plugin-external";
 import { defineConfig } from "vite";
 
+/** @public */
 export const react = defineConfig({
 	esbuild: {
 		minifyIdentifiers: false,
