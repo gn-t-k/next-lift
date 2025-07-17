@@ -31,7 +31,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.0.6",
-		"@chromatic-com/storybook": "3.2.7",
+		"@chromatic-com/storybook": "4.0.1",
 		"@configs/common": "workspace:*",
 		"@configs/react": "workspace:*",
 		"@storybook/addon-essentials": "8.6.14",
