@@ -1,90 +1,90 @@
-# Next Liftのシステムアーキテクチャについて
+# Next Lift System Architecture
 
-このドキュメントでは、システムアーキテクチャの概要と主要なコンポーネントについて説明します。
+This document describes the system architecture overview and major components.
 
-## 概要
+## Overview
 
-Next Liftはウェイトトレーニングの計画と記録を管理できるシステムです。iOSアプリとWebアプリの2つのアプリケーションで構成されています。それぞれのアプリケーションは、次の機能を提供します。
+Next Lift is a system for managing weight training plans and records. It consists of two applications: iOS app and Web app. Each application provides the following features:
 
-- iOSアプリ
-  - Googleアカウント・Apple IDを使用した認証
-  - トレーニング記録のCRUD機能
-  - ローカルファースト設計よるオフライン対応・データ同期
-  - トレーニング中の疲労状態でも操作しやすいUX
-  - フリーテキストや音声による入力など、AIを活用した機能（有料機能）
-- Webアプリ
-  - Googleアカウント・Apple IDを使用した認証
-  - トレーニング記録のCRUD機能
-  - トレーニング計画のCRUD機能
-  - ローカルファースト設計よるデータ同期
-  - 統計データ表示やフィルタリングなど、広い画面での操作を想定した機能
-  - フリーテキストや音声による入力など、AIを活用した機能（有料機能）
+- iOS App
+  - Authentication using Google account and Apple ID
+  - CRUD functionality for training records
+  - Offline support and data synchronization with local-first design
+  - UX optimized for ease of use even during fatigue from training
+  - AI-powered features such as free text and voice input (premium features)
+- Web App
+  - Authentication using Google account and Apple ID
+  - CRUD functionality for training records
+  - CRUD functionality for training plans
+  - Data synchronization with local-first design
+  - Features designed for large screens such as statistical data display and filtering
+  - AI-powered features such as free text and voice input (premium features)
 
-Next Liftは認証用データベースとPer-Userデータベースを使用します。
+Next Lift uses an authentication database and Per-User databases.
 
-- 認証用データベース
-  - ユーザー情報やセッション情報を管理
-  - Googleアカウント・Apple IDを使用した認証に対応
-- Per-Userデータベース
-  - トレーニング記録や計画などのユーザーごとのデータを保存
-  - 各ユーザーごとに独立したデータベースインスタンスを使用
-  - iOSアプリはローカルのインスタンスからデータを読み書きし、変更は自動的にリモートのインスタンスに同期される
-  - Webアプリはリモートのインスタンスからデータを読み書きする
+- Authentication Database
+  - Manages user information and session information
+  - Supports authentication using Google account and Apple ID
+- Per-User Database
+  - Stores user-specific data such as training records and plans
+  - Uses independent database instances for each user
+  - iOS app reads and writes data from local instances, with changes automatically synced to remote instances
+  - Web app reads and writes data from remote instances
 
-アプリケーションとデータベースを連携させるために、認証APIサーバーを使用します。認証APIサーバーは次の機能を提供します。
+An authentication API server is used to connect applications with databases. The authentication API server provides the following functions:
 
-- 各アプリケーションからの認証リクエストを処理
-- ユーザー登録時にPer-Userデータベースの作成と接続情報の提供
+- Processes authentication requests from each application
+- Creates Per-User database and provides connection information during user registration
 
-## 各コンポーネントの詳細
+## Component Details
 
-### iOSアプリ
+### iOS App
 
-- **フレームワーク**: React Native
-- **対象プラットフォーム**: iOSのみ（Android端末での検証環境なし）
-- **認証**: Better Auth（認証APIサーバーと連携）
-- **データベース**: Per-Userデータベース（Local Replica）
-- **データアクセス**: Drizzle ORM + op-sqlite
+- **Framework**: React Native
+- **Target Platform**: iOS only (no Android testing environment)
+- **Authentication**: Better Auth (integrated with authentication API server)
+- **Database**: Per-User database (Local Replica)
+- **Data Access**: Drizzle ORM + op-sqlite
 
-### Webアプリ
+### Web App
 
-- **フレームワーク**: React Router
-- **対象デバイス**: PC（統計データ表示のため広画面想定）、スマートフォン（Androidユーザーにはこちらを使ってもらう）
-- **認証**: Better Auth（認証APIサーバーと連携）
-- **データベース**: Per-Userデータベース（Remote Database）
-- **データアクセス**: Drizzle ORM
-- **デプロイ先**: Cloudflare Workers
+- **Framework**: React Router
+- **Target Devices**: PC (optimized for large screens for statistical data display), Smartphone (for Android users)
+- **Authentication**: Better Auth (integrated with authentication API server)
+- **Database**: Per-User database (Remote Database)
+- **Data Access**: Drizzle ORM
+- **Deployment**: Cloudflare Workers
 
-### 認証APIサーバー
+### Authentication API Server
 
-- **フレームワーク**: Hono
-- **ライブラリ**: Better Auth
-- **認証方式**: Apple ID、Google認証
-- **API**: REST API（Web・iOS向け認証エンドポイント）
-- **データベース**: 認証用データベース
-- **データアクセス**: Drizzle ORM
-- **デプロイ先**: Cloudflare Workers
+- **Framework**: Hono
+- **Library**: Better Auth
+- **Authentication Methods**: Apple ID, Google authentication
+- **API**: REST API (authentication endpoints for Web and iOS)
+- **Database**: Authentication database
+- **Data Access**: Drizzle ORM
+- **Deployment**: Cloudflare Workers
 
-### 認証用データベース
+### Authentication Database
 
-- **データベース**: Turso
+- **Database**: Turso
 
-### Per-Userデータベース
+### Per-User Database
 
-- **データベース**: Turso Embedded Replicas
+- **Database**: Turso Embedded Replicas
 
-## パッケージ管理
+## Package Management
 
-Next Liftは、pnpmを使用してパッケージ管理を行います。モノレポ構成で、各アプリケーションやライブラリは以下のように配置されます。
+Next Lift uses pnpm for package management. In the monorepo structure, each application and library is organized as follows:
 
 ```text
 /apps
-  ├── ios … iOSアプリ
-  ├── web … Webアプリ
-  └── auth-api … 認証APIサーバー
+  ├── ios … iOS app
+  ├── web … Web app
+  └── auth-api … Authentication API server
 /packages
-  ├── react-components … 共通Reactコンポーネント
-  ├── react-native-components … 共通React Nativeコンポーネント
-  ├── per-user-database … Per-Userのデータベースのスキーマとクライアント
-  └── auth-database … 認証用データベースのスキーマとクライアント
+  ├── react-components … Shared React components
+  ├── react-native-components … Shared React Native components
+  ├── per-user-database … Per-User database schema and client
+  └── auth-database … Authentication database schema and client
 ```
