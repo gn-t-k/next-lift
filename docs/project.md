@@ -1,55 +1,55 @@
-# Next Liftの開発プロジェクトについて
+# Next Lift Development Project
 
-このドキュメントでは、Next Liftシステムの開発プロジェクトの概要について説明します。
+This document describes the overview of the Next Lift system development project.
 
-## プロジェクト概要
+## Project Overview
 
-Next Liftは、ウェイトトレーニングの計画と記録を行うシステムで、アプリケーションとしてiOSとWebの2つのプラットフォームを持ちます。次のような強みを持ったシステムを目指します。
+Next Lift is a system for planning and recording weight training, with two platforms: iOS and Web applications. We aim to build a system with the following strengths:
 
-- トレーニング中の疲労状態でも操作しやすい極限のUX
-- 計画的なトレーニングを支援するための統計データ分析機能
-- 音声・画像によるデータ入力機能
+- Extreme UX that is easy to operate even in a fatigued state during training
+- Statistical data analysis features to support planned training
+- Data input features using voice and images
 
-## 開発計画
+## Development Plan
 
-### Phase 1: インフラ構築
+### Phase 1: Infrastructure Setup
 
-- モノレポ環境構築（pnpm workspaces + turborepo）
-- 認証APIサーバー構築（Hono + Better Auth）
-- Better Auth設定
-- Turso Database設定
-- Web/iOS/Turso連携の基盤整備
+- Monorepo environment setup (pnpm workspaces + turborepo)
+- Authentication API server construction (Hono + Better Auth)
+- Better Auth configuration
+- Turso Database configuration
+- Foundation for Web/iOS/Turso integration
 
-### Phase 2: 基本機能実装
+### Phase 2: Basic Feature Implementation
 
-- 認証システム（Apple ID、Google認証）
-- 基本的なデータ記録・表示機能
-- データ同期機能
+- Authentication system (Apple ID, Google authentication)
+- Basic data recording and display features
+- Data synchronization features
 
-### Phase 3: 機能拡張
+### Phase 3: Feature Expansion
 
-- 統計データ分析機能
-- トレーニング計画作成機能
-- 音声・画像入力機能
+- Statistical data analysis features
+- Training plan creation features
+- Voice and image input features
 
-## 開発方針
+## Development Principles
 
-### 基本原則
+### Basic Principles
 
-- **協働開発**: ユーザーとClaudeによる設計・実装の協働
-- **最新情報の活用**: 常に最新のドキュメントと技術情報をもとに計画・開発を進める
-- **疎結合設計**: フレームワーク置き換えを容易にする技術選択
-- **継続的改善**: 仕様と実装の反復的改善
+- **Collaborative Development**: Collaborative design and implementation between users and Claude
+- **Utilize Latest Information**: Always plan and develop based on the latest documentation and technical information
+- **Loosely Coupled Design**: Technology choices that make framework replacement easy
+- **Continuous Improvement**: Iterative improvement of specifications and implementation
 
-### ドキュメント管理方針
+### Documentation Management Policy
 
-- **技術詳細・開発ガイドライン**: CLAUDE.md → .claudeディレクトリに分散
-- **プロジェクト概要・機能・ステータス**: README.md
-- **定期的セルフレビュー**: 重要な決定後はドキュメントを自動的にレビュー・更新
-- **継続性の確認**: 今回だけでなく今後も同様の指示があった場合、ドキュメント化を確認
+- **Technical Details and Development Guidelines**: CLAUDE.md → distributed to .claude directory
+- **Project Overview, Features, and Status**: README.md
+- **Regular Self-Review**: Automatically review and update documentation after important decisions
+- **Continuity Confirmation**: Ensure documentation not only for this time but also when similar instructions are given in the future
 
-### 品質管理方針
+### Quality Management Policy
 
-- **CI優先**: 手動確認を最小化し、なるべくすべてをCIで自動チェック
-- **日本語ファースト**: コミットメッセージ、コメント、ドキュメントは日本語で記述
-- **プルリク小分け**: レビューしやすいようにプルリクは可能な限り小分けにする
+- **CI Priority**: Minimize manual checks and automate everything possible with CI
+- **Japanese First**: Commit messages, comments, and documentation written in Japanese
+- **Small Pull Requests**: Keep pull requests as small as possible for easy review

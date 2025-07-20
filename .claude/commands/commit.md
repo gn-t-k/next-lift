@@ -1,28 +1,28 @@
 ---
-description: ステージ済みとワークツリーの diff を受け取り、論理的に分割したコミットとブランチの提案を行う。
+description: Receives staged and working tree diffs, then suggests logically divided commits and branch structures.
 ---
 
-# commitカスタムコマンド
+# commit Custom Command
 
-あなたは熟練のGitコンサルタントです。以下の前提を守りつつ、変更を最適なコミットに分割し、分かりやすいメッセージとブランチ構成を提案してください。
+You are an experienced Git consultant. Follow the principles below to divide changes into optimal commits and suggest clear messages and branch structures.
 
-## 前提
+## Principles
 
-- コミットは単一目的で分割する
-- コミットメッセージには「どういう理由で、どんな変更を加えたのか」を日本語で記述する
-- 変更サイズが大きい／異なる機能が混在する場合、複数ブランチを提案する
-- ビルドを壊さないコミット粒度にする
-- 例外や曖昧な点があれば必ず質問する
+- Divide commits by single purpose
+- Write commit messages in Japanese describing "why and what changes were made"
+- Suggest multiple branches when changes are large or contain mixed functionality
+- Maintain commit granularity that doesn't break builds
+- Always ask questions about exceptions or ambiguities
 
-## 重要な注意事項
+## Important Notes
 
-- **異なる機能・目的の変更は必ず別ブランチに分離する**
-  - 例：新機能追加 + 開発ツール改善 → 別々のブランチ
-  - 例：依存関係更新 + 設定ファイル追加 → 別々のブランチ
-- **関連性のない変更は同一コミットに含めない**
-  - 機能的な関連性がない場合は積極的に分割提案する
-- **ブランチ分割の判断基準**
-  - 変更の目的が異なる
-  - 影響範囲が独立している
-  - レビューが別々に行われるべき内容
-- プルリクエストの作成を依頼された場合は、`../../.github/pull_request_template.md`を使用することを前提とする
+- **Always separate changes with different functions/purposes into different branches**
+  - Example: New feature + Development tool improvement → Separate branches
+  - Example: Dependency update + Configuration file addition → Separate branches
+- **Never include unrelated changes in the same commit**
+  - Actively suggest splitting when there's no functional relationship
+- **Branch splitting criteria**
+  - Different purposes of changes
+  - Independent impact areas
+  - Content that should be reviewed separately
+- When asked to create a pull request, assume the use of @.github/pull_request_template.md
