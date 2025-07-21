@@ -1,4 +1,16 @@
 {
 	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-	"extends": ["../../biome.jsonc"]
+	"extends": ["../../biome.jsonc"],
+	"files": {
+		"includes": [
+			"**",
+			"!**/dist/**",
+			"!**/build/**",
+			"!**/node_modules/**",
+			"!**/.react-router/**",
+			"!**/.wrangler/**",
+			"!app/app.css",
+			"!worker-configuration.d.ts"
+		]
+	}
 }
