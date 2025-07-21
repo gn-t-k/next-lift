@@ -2,7 +2,7 @@
 
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import type { ComponentProps, FC } from "react";
+import type { ComponentProps } from "react";
 import {
 	Button as AriaButton,
 	type ButtonProps as AriaButtonProps,
@@ -16,7 +16,8 @@ type Props = VariantProps<typeof buttonVariants> &
 		| ({ asChild?: false } & AriaButtonProps)
 	);
 /** @public */
-export const Button: FC<Props> = (props) => {
+export const Button = (props: Props) => {
+	// FIXME: `Button: FC<Props>`にしたいが、するとstorybookが壊れる
 	if (props.asChild === true) {
 		const { variant, size, className, asChild: _, ...rest } = props;
 		return (
