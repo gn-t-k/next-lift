@@ -7294,7 +7294,7 @@ declare module "cloudflare:email" {
 		prototype: EmailMessage;
 		new (from: string, to: string, raw: ReadableStream | string): EmailMessage;
 	};
-	export { _EmailMessage as EmailMessage };
+	export type { _EmailMessage as EmailMessage };
 }
 /**
  * Hello World binding to serve as an explanatory example. DO NOT USE
@@ -7930,7 +7930,7 @@ declare module "cloudflare:sockets" {
 		address: string | SocketAddress,
 		options?: SocketOptions,
 	): Socket;
-	export { _connect as connect };
+	export type { _connect as connect };
 }
 declare namespace TailStream {
 	interface Header {
