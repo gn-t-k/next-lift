@@ -22,7 +22,7 @@
 		"clsx": "2.1.1",
 		"lucide-react": "0.525.0",
 		"react": "19.1.0",
-		"react-aria-components": "1.10.1",
+		"react-aria-components": "1.11.0",
 		"react-dom": "19.1.0",
 		"storybook-dark-mode": "4.0.2",
 		"tailwind-merge": "3.3.1",
