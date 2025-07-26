@@ -8,8 +8,6 @@
 		"./globals.css": "./src/globals.css"
 	},
 	"scripts": {
-		"dev": "vite",
-		"build": "tsc -b && vite build",
 		"lint": "biome check .",
 		"preview": "vite preview",
 		"storybook": "storybook dev -p 6006",

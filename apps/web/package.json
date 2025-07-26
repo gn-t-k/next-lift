@@ -19,11 +19,12 @@
 		"react-router": "7.5.3"
 	},
 	"devDependencies": {
-		"@configs/common": "workspace:*",
-		"@configs/react": "workspace:*",
-		"@configs/node": "workspace:*",
 		"@biomejs/biome": "2.0.6",
 		"@cloudflare/vite-plugin": "1.0.12",
+		"@configs/common": "workspace:*",
+		"@configs/node": "workspace:*",
+		"@configs/react": "workspace:*",
+		"@packages/react-components": "workspace:*",
 		"@react-router/dev": "7.5.3",
 		"@tailwindcss/vite": "4.1.4",
 		"@types/node": "20",

@@ -1,3 +1,4 @@
+import { Button } from "@packages/react-components";
 import logoDark from "./logo-dark.svg";
 import logoLight from "./logo-light.svg";
 
@@ -39,6 +40,9 @@ export function Welcome({ message }: { message: string }) {
 								</li>
 							))}
 							<li className="self-stretch p-3 leading-normal">{message}</li>
+							<li>
+								<Button>Get Started</Button>
+							</li>
 						</ul>
 					</nav>
 				</div>
