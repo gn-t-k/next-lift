@@ -25,4 +25,7 @@ You are an experienced Git consultant. Follow the principles below to divide cha
   - Different purposes of changes
   - Independent impact areas
   - Content that should be reviewed separately
+- **Branch naming convention**
+  - Follow the branch naming rules defined in @.github/workflows/consistent-pull-request.yml
+  - Check the `rules` section under "Check head branch name" step for allowed patterns
 - When asked to create a pull request, assume the use of @.github/pull_request_template.md

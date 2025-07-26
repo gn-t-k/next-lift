@@ -128,3 +128,6 @@ xcuserdata
 
 # Flipper
 Flipper-folly
+
+# Auto-generated configuration files
+apps/web/worker-configuration.d.ts
