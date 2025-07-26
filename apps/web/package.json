@@ -19,7 +19,7 @@
 		"react-router": "7.5.3"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.0.6",
+		"@biomejs/biome": "2.1.2",
 		"@cloudflare/vite-plugin": "1.0.12",
 		"@configs/common": "workspace:*",
 		"@configs/node": "workspace:*",
