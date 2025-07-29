@@ -20,7 +20,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.1.2",
-		"@cloudflare/vite-plugin": "1.0.12",
+		"@cloudflare/vite-plugin": "1.10.1",
 		"@configs/common": "workspace:*",
 		"@configs/node": "workspace:*",
 		"@configs/react": "workspace:*",
