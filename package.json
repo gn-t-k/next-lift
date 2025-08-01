@@ -16,7 +16,7 @@
 		"@turbo/gen": "2.5.5",
 		"turbo": "2.5.5"
 	},
-	"packageManager": "pnpm@10.13.1",
+	"packageManager": "pnpm@10.14.0",
 	"engines": {
 		"node": ">=18.0.0"
 	}
