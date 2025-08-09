@@ -18,7 +18,7 @@
 		"@tailwindcss/vite": "4.1.11",
 		"class-variance-authority": "0.7.1",
 		"clsx": "2.1.1",
-		"lucide-react": "0.536.0",
+		"lucide-react": "0.538.0",
 		"react": "19.1.1",
 		"react-aria-components": "1.11.0",
 		"react-dom": "19.1.1",
@@ -28,7 +28,7 @@
 		"tw-animate-css": "1.3.6"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.1.3",
+		"@biomejs/biome": "2.1.4",
 		"@chromatic-com/storybook": "3.2.7",
 		"@configs/common": "workspace:*",
 		"@configs/react": "workspace:*",
