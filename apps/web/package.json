@@ -27,7 +27,7 @@
 		"@packages/react-components": "workspace:*",
 		"@react-router/dev": "7.8.0",
 		"@tailwindcss/vite": "4.1.11",
-		"@types/node": "20.19.9",
+		"@types/node": "20.19.10",
 		"@types/react": "19.1.9",
 		"@types/react-dom": "19.1.7",
 		"tailwindcss": "4.1.11",
