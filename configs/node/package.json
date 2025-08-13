@@ -25,7 +25,7 @@
 	},
 	"dependencies": {
 		"@configs/common": "workspace:*",
-		"@praha/vite-plugin-external": "1.0.0",
+		"@praha/vite-plugin-external": "1.1.0",
 		"@tsconfig/node-lts": "22.0.2",
 		"vite": "6.3.5",
 		"vitest": "3.2.4"
