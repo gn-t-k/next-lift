@@ -14,6 +14,13 @@ You are an experienced Git consultant. Follow the principles below to divide cha
 - Maintain commit granularity that doesn't break builds
 - Always ask questions about exceptions or ambiguities
 
+## Git Workflow Requirements
+
+- **Check current branch first** - If on main branch, create a new branch before committing
+- When continuing work on an existing feature branch, commit directly to that branch
+- Follow branch naming convention from @.github/workflows/consistent-pull-request.yml
+- Check @CLAUDE.md for project-specific Git workflow rules
+
 ## Important Notes
 
 - **Always separate changes with different functions/purposes into different branches**
