@@ -16,7 +16,7 @@
 		"isbot": "5.1.30",
 		"react": "19.1.1",
 		"react-dom": "19.1.1",
-		"react-router": "7.8.1"
+		"react-router": "7.8.2"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.1.4",
@@ -25,15 +25,15 @@
 		"@configs/node": "workspace:*",
 		"@configs/react": "workspace:*",
 		"@packages/react-components": "workspace:*",
-		"@react-router/dev": "7.8.1",
+		"@react-router/dev": "7.8.2",
 		"@tailwindcss/vite": "4.1.12",
-		"@types/node": "20.19.11",
-		"@types/react": "19.1.10",
-		"@types/react-dom": "19.1.7",
+		"@types/node": "22.18.0",
+		"@types/react": "19.1.12",
+		"@types/react-dom": "19.1.8",
 		"tailwindcss": "4.1.12",
 		"typescript": "5.9.2",
 		"vite": "6.3.5",
 		"vite-tsconfig-paths": "5.1.4",
-		"wrangler": "4.29.1"
+		"wrangler": "4.33.0"
 	}
 }
