@@ -1,5 +1,5 @@
 ---
-description: コンテンツ構造を対話で抽出し、docs/model-based-ui-design/specs/content-structure.md を作成/更新します
+description: コンテンツ構造を対話で抽出し、docs/model-based-ui-design/specs/03-content-structure を作成/更新します
 argument-hint: init | add
 ---
 
@@ -13,7 +13,7 @@ argument-hint: init | add
 - @docs/model-based-ui-design/steering/03-conceptual-design.md
 - @docs/model-based-ui-design/specs/01-use-case-definition.md
 - @docs/model-based-ui-design/specs/02-task-analysis.md
-- @docs/model-based-ui-design/specs/03-content-structure-design.md
+- @docs/model-based-ui-design/specs/03-content-structure.md
 
 ## モード選択
 
@@ -36,7 +36,7 @@ argument-hint: init | add
 
 ## 出力ファイルの書式
 
-@docs/model-based-ui-design/specs/03-content-structure-design.mdに以下の書式で出力する
+@docs/model-based-ui-design/specs/03-content-structure.mdに以下の書式で出力する
 
 ```markdown
 # コンテンツ構造
