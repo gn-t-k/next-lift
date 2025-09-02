@@ -1,5 +1,5 @@
 ---
-description: コンテンツ構造を対話で抽出し、docs/model-based-ui-design/specs/content-structure.md を作成/更新します
+description: コンテンツ構造を対話で抽出し、docs/model-based-ui-design/specs/03-content-structure を作成/更新します
 argument-hint: init | add
 ---
 
@@ -13,7 +13,7 @@ argument-hint: init | add
 - @docs/model-based-ui-design/steering/03-conceptual-design.md
 - @docs/model-based-ui-design/specs/01-use-case-definition.md
 - @docs/model-based-ui-design/specs/02-task-analysis.md
-- @docs/model-based-ui-design/specs/03-content-structure-design.md
+- @docs/model-based-ui-design/specs/03-content-structure.md
 
 ## モード選択
 
@@ -36,7 +36,7 @@ argument-hint: init | add
 
 ## 出力ファイルの書式
 
-@docs/model-based-ui-design/specs/03-content-structure-design.mdに以下の書式で出力する
+@docs/model-based-ui-design/specs/03-content-structure.mdに以下の書式で出力する
 
 ```markdown
 # コンテンツ構造
@@ -88,6 +88,7 @@ argument-hint: init | add
 ## 概念オブジェクト
 
 ### ユーザー
+
 定義: サービスを利用し、コンテンツを収集・再生する主体
 関係:
   - プレイリスト 0..n 包含
@@ -97,6 +98,7 @@ argument-hint: init | add
   詳細: あり
 
 ### トラック
+
 定義: 単一の楽曲を表す再生可能な単位
 関係:
   - アルバム 0..1 参照
@@ -107,6 +109,7 @@ argument-hint: init | add
   詳細: あり
 
 ### アルバム
+
 定義: 複数のトラックをまとめた音源の集合
 関係:
   - トラック 1..n 包含
@@ -116,6 +119,7 @@ argument-hint: init | add
   詳細: あり
 
 ### アーティスト
+
 定義: トラックやアルバムの制作主体（個人またはグループ）
 関係:
   - トラック 0..n 参照
@@ -126,6 +130,7 @@ argument-hint: init | add
   詳細: あり
 
 ### プレイリスト
+
 定義: ユーザーが任意に並べたトラックの集合
 関係:
   - ユーザー 1 参照
@@ -135,6 +140,7 @@ argument-hint: init | add
   詳細: あり
 
 ### 再生セッション
+
 定義: 現在の再生状態と進行を保持する単位
 関係:
   - ユーザー 1 参照
@@ -145,6 +151,7 @@ argument-hint: init | add
   詳細: あり
 
 ### 再生キュー
+
 定義: これから再生されるトラックの並び
 関係:
   - 再生セッション 1 参照
@@ -154,6 +161,7 @@ argument-hint: init | add
   詳細: なし
 
 ### ジャンル
+
 定義: 音楽的な分類を表す概念
 関係:
   - トラック 0..n 参照
