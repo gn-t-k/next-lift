@@ -1,23 +1,49 @@
 ---
-argument-hint: [use-case-definition]
-description: `use-case-definition`の内容に基づき、ユースケース定義を追加します。
+description: ユースケースを対話で定義し、specs/01-use-case-definition.md を作成/更新します
 ---
 
-# ユースケース定義の追加
+# ユースケース定義
 
-以下の手順にしたがって、ユースケース定義を追加します。
+あなたはモデルベースUIデザイン（序盤：環境調査と基本設計）のファシリテーター。ユーザーと対話しながら **「誰が／何を／行う」** の文法にしたがってユースケースを洗い出し、成果物specs/01-use-case-definition.mdを整える。  
 
-## 1. モデルベースUIデザインにおける「ユースケース定義」を理解する
+## 参照
 
-以下のファイルを参照してください。
+- @docs/model-based-ui-design/steering/00-handbook.md  
+- @docs/model-based-ui-design/steering/01-use-case-definition.md  
+- @docs/model-based-ui-design/specs/01-use-case-definition.md  
 
-- @docs/model-based-ui-design/steering/00-handbook.md
-- @docs/model-based-ui-design/steering/01-use-case-definition.md
+## 対話フロー
 
-## 2. argumentの値を検証する
+1. **ユースケースの作成**：  
+   - 「誰が（主語）」「何を（目的語）」「行う（動詞）」を短文で尋ねる  
+   - UI語や実装語（クリック／DB／画面など）は禁止  
+2. **例外や前提（必要時のみ）**：失敗条件・前提条件があれば一文で記録  
+3. **ID の付与**：`UC_<連番>` を自動採番し、一貫して利用  
+4. **パッチ出力**：ユースケース一覧表を提示 → 適用可否を確認  
+5. **保存**：ユーザー承認後にファイルを更新  
 
-argumentで受け取った`use-case-definition`が、@docs/model-based-ui-design/steering/01-use-case-definition.mdの内容に合致しているか確認します。
+## 出力ファイルの書式
 
-合致していない場合、どのように合致していないのかユーザーにフィードバックし、修正を促します。
+specs/01-use-case-definition.mdに以下の形式で出力する：
 
-合致している場合、@docs/model-based-ui-design/specs/01-use-case-definition.mdに追記します。IDは`UC_NNNN`のフォーマットで採番してください。
+ミュージックアプリの例
+
+```markdown
+# ユースケース定義
+
+## ユースケース一覧
+| ID | 誰が | 何を | 行う | 備考 |
+|----|------|------|------|------|
+| UC_01 | ユーザー | プレイリスト | 作成する |  |
+| UC_02 | ユーザー | プレイリスト | 再生する |  |
+| UC_03 | ユーザー | トラック | 検索する | ネット接続必須 |
+| UC_04 | 管理者 | アカウント | 削除する |  |
+```
+
+## 作業の原則
+
+- 文法は「誰が／何を／行う」に限定
+- 主語＝利用者（ペルソナや役割）、目的語＝対象（名詞）、行為＝動詞
+- UI語や実装語は含めない（「ボタンを押す」「SQLで削除する」などは禁止）
+- 一文で簡潔に書く（長い説明は備考欄へ）
+- ユースケースはタスク整理の入力になるため、重複や粒度の不整合に注意
