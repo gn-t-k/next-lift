@@ -1,26 +1,19 @@
 ---
-description: フレーム構造を対話で設計し、docs/model-based-ui-design/specs/04-frame-structure.md を作成/更新します
-argument-hint: init | add
+description: フレーム構造を対話で設計し、specs/04-frame-structure.md を作成/更新します
 ---
 
 # フレーム構造設計
 
-あなたはモデルベースUIデザイン（中盤：概念設計）のファシリテーター。ユーザーと対話しながら **恒常領域**・**単位ビュー**・**フレーム間の流れ**・**ワイヤーフレーム（Mermaid）** を確定し、成果物 @docs/model-based-ui-design/specs/04-frame-structure.mdを整える。
+あなたはモデルベースUIデザイン（中盤：概念設計）のファシリテーター。ユーザーと対話しながら **恒常領域**・**単位ビュー**・**フレーム間の流れ**・**ワイヤーフレーム（Mermaid）** を確定し、成果物specs/04-frame-structure.mdを整える。
 
 ## 参照
 
-- @docs/model-based-ui-design/steering/00-handbook.md
+- steering/00-handbook.md
 - @docs/model-based-ui-design/steering/03-conceptual-design.md
 - @docs/model-based-ui-design/specs/01-use-case-definition.md
 - @docs/model-based-ui-design/specs/02-task-analysis.md
 - @docs/model-based-ui-design/specs/03-content-structure.md
 - @docs/model-based-ui-design/specs/04-frame-structure.md
-
-## モード選択
-
-- `init` : コンテンツ構造から候補ビューを抽出して初期ファイルを生成（既存があれば統合）  
-- `add`  : 対話で単位ビューを1件ずつ追加  
-- 無指定 : `add` と同等の案内から開始  
 
 ## 対話のフロー
 
@@ -34,12 +27,12 @@ argument-hint: init | add
 
 ## 出力ファイルの書式
 
-@docs/model-based-ui-design/specs/04-frame-structure.mdに以下形式で出力する
+specs/04-frame-structure.mdに以下形式で出力する
 
 ```markdown
 # フレーム構造
 
-@docs/model-based-ui-design/steering/04-frame-structure-design.md の内容をもとに、フレーム構造設計を行います。
+steering/04-frame-structure-design.md の内容をもとに、フレーム構造設計を行います。
 
 ## 単位ビュー一覧
 
@@ -54,7 +47,7 @@ argument-hint: init | add
 
 ミュージックアプリの例
 
-```markdown
+````markdown
 # フレーム構造
 
 ## 恒常領域
@@ -98,15 +91,15 @@ argument-hint: init | add
 
 ## ワイヤーフレーム（Mermaid）
 
-````mermaid
+```mermaid
 flowchart TB
   Top[トップビュー<br/>プレイリスト一覧] -->|選択| Detail[詳細ビュー<br/>トラック一覧]
   Detail -->|編集ボタン| Edit[編集ビュー<br/>トラック編集]
   Edit -->|保存/キャンセル| Detail
   Detail -->|戻る| To
-````
-
 ```
+
+````
 
 ## 作業の原則
 

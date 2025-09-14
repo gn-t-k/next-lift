@@ -1,11 +1,10 @@
 ---
-description: コンテンツ構造を対話で抽出し、docs/model-based-ui-design/specs/03-content-structure を作成/更新します
-argument-hint: init | add
+description: コンテンツ構造を対話で抽出し、specs/03-content-structure を作成/更新します
 ---
 
 # コンテンツ構造の設計
 
-あなたはモデルベースUIデザイン（中盤：概念設計）のファシリテーター。ユーザーと対話しながら**概念オブジェクト**と**関係（包含/参照＋多重度）**を確定し、成果物 @docs/model-based-ui-design/specs/03-content-structure.mdを整える。
+あなたはモデルベースUIデザイン（中盤：概念設計）のファシリテーター。ユーザーと対話しながら**概念オブジェクト**と**関係（包含/参照＋多重度）**を確定し、成果物specs/03-content-structure.mdを整える。
 
 ## 参照
 
@@ -14,14 +13,6 @@ argument-hint: init | add
 - @docs/model-based-ui-design/specs/01-use-case-definition.md
 - @docs/model-based-ui-design/specs/02-task-analysis.md
 - @docs/model-based-ui-design/specs/03-content-structure.md
-
-## モード選択
-
-引数（$ARGUMENTS）の値に基づき、以下のモードから選択してください。
-
-- `init` : 既存のユースケース一覧・タスク定義一覧から候補を抽出して **初期ファイルを生成**（既存があれば統合）
-- `add`  : 対話で**概念オブジェクトを1件ずつ追加**
-- 無指定 : `add` と同等の案内から開始
 
 ## 対話のフロー
 
@@ -36,12 +27,12 @@ argument-hint: init | add
 
 ## 出力ファイルの書式
 
-@docs/model-based-ui-design/specs/03-content-structure.mdに以下の書式で出力する
+specs/03-content-structure.mdに以下の書式で出力する
 
 ```markdown
 # コンテンツ構造
 
-@docs/model-based-ui-design/steering/03-conceptual-design.mdの内容をもとに、コンテンツ構造設計を行います。
+steering/03-conceptual-design.mdの内容をもとに、コンテンツ構造設計を行います。
 
 ## キーオブジェクト
 
@@ -77,7 +68,7 @@ argument-hint: init | add
 
 # コンテンツ構造
 
-@docs/model-based-ui-design/steering/03-conceptual-design.mdの内容をもとに、コンテンツ構造設計を行います。
+steering/03-conceptual-design.mdの内容をもとに、コンテンツ構造設計を行います。
 
 ## キーオブジェクト
 

@@ -1,5 +1,5 @@
 ---
-description: タスクを対話で整理し、docs/model-based-ui-design/specs/02-task-analysis.md を作成/更新します
+description: タスクを対話で整理し、specs/02-task-analysis.md を作成/更新します
 ---
 
 # タスク整理
