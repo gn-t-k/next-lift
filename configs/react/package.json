@@ -27,7 +27,7 @@
 		"@configs/common": "workspace:*",
 		"@praha/vite-plugin-external": "1.1.0",
 		"@tsconfig/create-react-app": "2.0.7",
-		"jsdom": "26.1.0",
+		"jsdom": "27.0.0",
 		"vite": "6.3.6",
 		"vitest": "3.2.4"
 	},
