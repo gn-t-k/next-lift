@@ -51,19 +51,22 @@ description: ナビゲーション構造を対話で整理し、docs/model-based
 ### YAML例
 
 ```yaml
-nodes:
+views:
   - id: home
     label: ホーム
-  - id: playlist.detail
+    entry: true
+    returns: null
+  - id: playlist-detail
     label: プレイリスト詳細
-    states: [empty?, loading?, error?]   # 候補のみ
-edges:
+    returns: playlist-list
+
+transitions:
   - from: home
-    to: playlist.detail
+    to: playlist-list
     trigger: プレイリスト選択
-    return: home
-    guard: プレイリストが存在する?   # 候補
-    mode: push?                         # 候補
+  - from: playlist-list
+    to: playlist-detail
+    trigger: 項目タップ
 ```
 
 ### Mermaid例
