@@ -1,462 +1,397 @@
 # ナビゲーション構造
 
-steering/04-navigation-structure-design.mdの内容をもとに、ナビゲーション構造設計を行います。
-
-## メタ情報
-
-- **バージョン**: 1.0
-- **最終更新**: 2025-10-05
-- **対象アプリ**: iOS, Web
-
-## 入口と目標地点
-
-- **入口**: Login
-- **メインランディング**: V1（記録一覧）
-- **目標地点**:
-  - V4（記録作成）
-  - V9（計画作成）
-
-## ノード定義
-
-### 認証
-
-#### Login: ログイン
-
-- **タイプ**: screen
-- **状態候補**: なし
-
-### 記録タブ
-
-#### V1: 記録一覧
-
-- **タイプ**: screen
-- **状態候補**: empty?, loading?
-
-#### V2: 記録詳細
-
-- **タイプ**: screen
-- **状態候補**: loading?, error?
-
-#### V4: 記録作成
-
-- **タイプ**: screen
-- **状態候補**: なし
-
-#### V5: 記録編集
-
-- **タイプ**: screen
-- **状態候補**: なし
-
-### 計画タブ
-
-#### V7: 計画一覧
-
-- **タイプ**: screen
-- **状態候補**: empty?, loading?
-
-#### V8: 計画詳細
-
-- **タイプ**: screen
-- **状態候補**: loading?, error?
-
-#### V9: 計画作成
-
-- **タイプ**: screen
-- **状態候補**: なし
-
-#### V10: 計画編集
-
-- **タイプ**: screen
-- **状態候補**: なし
-
-### プロフィール
-
-#### V12: プロフィール
-
-- **タイプ**: screen
-- **状態候補**: なし
-
-#### V13: 種目管理
-
-- **タイプ**: screen
-- **状態候補**: empty?, loading?
-
-#### V14: データ管理
-
-- **タイプ**: screen
-- **状態候補**: なし
-
-### モーダル
-
-#### V3: 種目統計
-
-- **タイプ**: modal
-- **状態候補**: empty?, loading?, error?
-
-#### V15: 種目選択
-
-- **タイプ**: modal
-- **状態候補**: loading?
-
-#### V16: 計画選択
-
-- **タイプ**: modal
-- **状態候補**: empty?, loading?
-
-## エッジ定義（遷移）
-
-### 認証フロー
-
-#### E1: Login → V1（認証成功）
-
-- **トリガー**: 認証成功
-- **戻り先**: なし
-- **条件候補**: 認証済み
-- **モード候補**: replace?
-- **副作用候補**: なし
-
-### 記録タブ内
-
-#### E2: V1 → V2（記録選択）
-
-- **トリガー**: 記録選択
-- **戻り先**: V1
-- **条件候補**: 記録が存在する？
-- **モード候補**: push?
-- **副作用候補**: なし
-
-#### E3: V1 → V4（＋ボタン）
-
-- **トリガー**: ＋ボタン
-- **戻り先**: V1
-- **条件候補**: なし
-- **モード候補**: push?
-- **副作用候補**: なし
-
-#### E4: V1 → V16（計画から作成）
-
-- **トリガー**: 計画から作成
-- **戻り先**: V1
-- **条件候補**: 計画が存在する？
-- **モード候補**: modal?
-- **副作用候補**: なし
-
-#### E5: V16 → V4（計画選択）
-
-- **トリガー**: 計画選択
-- **戻り先**: V1
-- **条件候補**: なし
-- **モード候補**: なし
-- **副作用候補**: 計画データを初期値として設定？
-
-#### E6: V2 → V5（編集）
-
-- **トリガー**: 編集
-- **戻り先**: V2
-- **条件候補**: なし
-- **モード候補**: push?
-- **副作用候補**: なし
-
-#### E7: V4 → V15（種目追加）
-
-- **トリガー**: 種目追加
-- **戻り先**: V4
-- **条件候補**: なし
-- **モード候補**: modal?
-- **副作用候補**: なし
-
-#### E8: V5 → V15（種目追加）
-
-- **トリガー**: 種目追加
-- **戻り先**: V5
-- **条件候補**: なし
-- **モード候補**: modal?
-- **副作用候補**: なし
-
-#### E9: V4 → V1（保存/キャンセル）
-
-- **トリガー**: 保存/キャンセル
-- **戻り先**: なし
-- **条件候補**: なし
-- **モード候補**: pop?
-- **副作用候補**: 保存時はデータ永続化？
-
-#### E10: V5 → V2（保存/キャンセル）
-
-- **トリガー**: 保存/キャンセル
-- **戻り先**: なし
-- **条件候補**: なし
-- **モード候補**: pop?
-- **副作用候補**: 保存時はデータ永続化？
-
-### 計画タブ内
-
-#### E11: V7 → V8（計画選択）
-
-- **トリガー**: 計画選択
-- **戻り先**: V7
-- **条件候補**: 計画が存在する？
-- **モード候補**: push?
-- **副作用候補**: なし
-
-#### E12: V7 → V9（＋ボタン）
-
-- **トリガー**: ＋ボタン
-- **戻り先**: V7
-- **条件候補**: なし
-- **モード候補**: push?
-- **副作用候補**: なし
-
-#### E13: V8 → V10（編集）
-
-- **トリガー**: 編集
-- **戻り先**: V8
-- **条件候補**: なし
-- **モード候補**: push?
-- **副作用候補**: なし
-
-#### E14: V8 → V4（実行）
-
-- **トリガー**: 実行
-- **戻り先**: V1
-- **条件候補**: なし
-- **モード候補**: push?
-- **副作用候補**: 計画データを初期値として設定？
-
-#### E15: V8 → V1（記録一覧へ）
-
-- **トリガー**: 記録一覧へ
-- **戻り先**: なし
-- **条件候補**: なし
-- **モード候補**: なし
-- **副作用候補**: この計画に基づく記録でフィルター？
-
-#### E16: V9 → V3（統計参照）
-
-- **トリガー**: 統計参照
-- **戻り先**: V9
-- **条件候補**: 種目が選択済み？
-- **モード候補**: modal?
-- **副作用候補**: なし
-
-#### E17: V10 → V3（統計参照）
-
-- **トリガー**: 統計参照
-- **戻り先**: V10
-- **条件候補**: 種目が選択済み？
-- **モード候補**: modal?
-- **副作用候補**: なし
-
-#### E18: V9 → V7（保存/キャンセル）
-
-- **トリガー**: 保存/キャンセル
-- **戻り先**: なし
-- **条件候補**: なし
-- **モード候補**: pop?
-- **副作用候補**: 保存時はデータ永続化？
-
-#### E19: V10 → V8（保存/キャンセル）
-
-- **トリガー**: 保存/キャンセル
-- **戻り先**: なし
-- **条件候補**: なし
-- **モード候補**: pop?
-- **副作用候補**: 保存時はデータ永続化？
-
-### タブ切替
-
-#### E20: V1 → V7（タブ切替）
-
-- **トリガー**: タブ切替
-- **戻り先**: なし
-- **条件候補**: なし
-- **モード候補**: なし
-- **副作用候補**: なし
-
-#### E21: V7 → V1（タブ切替）
-
-- **トリガー**: タブ切替
-- **戻り先**: なし
-- **条件候補**: なし
-- **モード候補**: なし
-- **副作用候補**: なし
-
-### 種目統計モーダル
-
-#### E22: V2 → V3（種目タップ）
-
-- **トリガー**: 種目タップ
-- **戻り先**: V2
-- **条件候補**: なし
-- **モード候補**: modal?
-- **副作用候補**: なし
-
-#### E23: V3 → V7（計画一覧へ）
-
-- **トリガー**: 計画一覧へ
-- **戻り先**: なし
-- **条件候補**: なし
-- **モード候補**: なし
-- **副作用候補**: この種目を含む計画でフィルター？
-
-### プロフィール
-
-#### E24: 任意のビュー → V12（プロフィールアイコン）
-
-- **from**: V1, V2, V4, V5, V7, V8, V9, V10
-- **トリガー**: プロフィールアイコン
-- **戻り先**: 元のビュー
-- **条件候補**: なし
-- **モード候補**: modal?/overlay?
-- **副作用候補**: なし
-
-#### E25: V12 → V13（種目管理）
-
-- **トリガー**: 種目管理
-- **戻り先**: V12
-- **条件候補**: なし
-- **モード候補**: push?
-- **副作用候補**: なし
-
-#### E26: V12 → V14（データ管理）
-
-- **トリガー**: データ管理
-- **戻り先**: V12
-- **条件候補**: なし
-- **モード候補**: push?
-- **副作用候補**: なし
-
-## 例外経路（候補）
-
-### セッション切れ
-
-- **from**: 任意のビュー
-- **to**: Login
-- **条件**: セッション切れ
-- **モード候補**: replace?
-
-### 空状態の誘導
-
-#### V1（記録一覧）が空の場合
-
-- **アクション候補**: オンボーディング表示？
-
-#### V7（計画一覧）が空の場合
-
-- **アクション候補**: 計画作成を促す？
-
-#### V16（計画選択）が空の場合
-
-- **アクション候補**: 計画作成への誘導？
+## 概要
+
+フレーム構造で定義された単位ビュー間の遷移関係を定義します。入口・目標地点・戻り動作・例外経路を整理し、アプリ全体のナビゲーションフローを明確化します。
+
+## 設計方針
+
+- **入口**: V1記録一覧（初期表示）
+- **目標地点**: V4記録作成の保存完了、V9計画作成の保存完了
+- **コンセプト適合**:「疲労した状態でも迷わず・間違いなく記録できる体験」「計画を立てるべきかに没頭できる体験」を実現する遷移設計
+
+## ビュー定義
+
+```yaml
+views:
+  # 記録タブ
+  - id: v1-workout-record-list
+    label: 記録一覧
+    entry: true
+    returns: null
+    states:
+      - empty?  # 記録が0件
+      - filtered?  # 計画詳細からのフィルター付き遷移
+
+  - id: v2-workout-record-detail
+    label: 記録詳細
+    returns: v1-workout-record-list
+
+  - id: v4-workout-record-create
+    label: 記録作成
+    returns: v1-workout-record-list
+    states:
+      - with-plan?  # 計画選択または計画詳細から遷移
+      - blank?  # 新規作成
+
+  - id: v5-workout-record-edit
+    label: 記録編集
+    returns: v2-workout-record-detail
+
+  # 計画タブ
+  - id: v7-workout-plan-list
+    label: 計画一覧
+    returns: null
+    states:
+      - empty?  # 計画が0件
+      - filtered?  # 種目統計からのフィルター付き遷移
+
+  - id: v8-workout-plan-detail
+    label: 計画詳細
+    returns: v7-workout-plan-list
+
+  - id: v9-workout-plan-create
+    label: 計画作成
+    returns: v7-workout-plan-list
+
+  - id: v10-workout-plan-edit
+    label: 計画編集
+    returns: v8-workout-plan-detail
+
+  # プロフィール
+  - id: v12-profile
+    label: プロフィール
+    returns: previous  # 呼び出し元に戻る
+
+  - id: v13-exercise-management
+    label: 種目管理
+    returns: v12-profile
+
+  - id: v14-data-management
+    label: データ管理
+    returns: v12-profile
+
+  # 共通モーダル
+  - id: v3-exercise-statistics
+    label: 種目統計
+    returns: previous  # 呼び出し元に戻る
+    mode?: modal
+
+  - id: v15-exercise-selection
+    label: 種目選択
+    returns: previous  # 呼び出し元に戻る
+    mode?: modal
+
+  - id: v16-plan-selection
+    label: 計画選択
+    returns: v1-workout-record-list
+    mode?: modal
+```
+
+## 遷移定義
+
+```yaml
+transitions:
+  # 記録タブ内
+  - from: v1-workout-record-list
+    to: v2-workout-record-detail
+    trigger: 記録選択
+    mode?: push
+
+  - from: v1-workout-record-list
+    to: v4-workout-record-create
+    trigger: ＋ボタン
+    mode?: push
+    effect?: blank状態で初期化
+
+  - from: v1-workout-record-list
+    to: v16-plan-selection
+    trigger: 計画から作成ボタン
+    mode?: modal
+
+  - from: v16-plan-selection
+    to: v4-workout-record-create
+    trigger: 計画選択
+    mode?: push
+    effect?: 選択した計画データで初期化
+
+  - from: v16-plan-selection
+    to: v1-workout-record-list
+    trigger: 閉じる
+    mode?: dismiss
+
+  - from: v2-workout-record-detail
+    to: v5-workout-record-edit
+    trigger: 編集ボタン
+    mode?: push
+
+  - from: v2-workout-record-detail
+    to: v3-exercise-statistics
+    trigger: 種目名タップ
+    mode?: modal
+
+  - from: v4-workout-record-create
+    to: v15-exercise-selection
+    trigger: 種目追加
+    mode?: modal
+
+  - from: v4-workout-record-create
+    to: v1-workout-record-list
+    trigger: 保存
+    mode?: pop
+    effect?: データ保存
+
+  - from: v4-workout-record-create
+    to: v1-workout-record-list
+    trigger: キャンセル
+    mode?: pop
+    guard?: 未保存データ確認ダイアログ
+
+  - from: v5-workout-record-edit
+    to: v15-exercise-selection
+    trigger: 種目追加
+    mode?: modal
+
+  - from: v5-workout-record-edit
+    to: v2-workout-record-detail
+    trigger: 保存
+    mode?: pop
+    effect?: データ更新
+
+  - from: v5-workout-record-edit
+    to: v2-workout-record-detail
+    trigger: キャンセル
+    mode?: pop
+    guard?: 未保存データ確認ダイアログ
+
+  - from: v15-exercise-selection
+    to: previous
+    trigger: 種目選択
+    mode?: dismiss
+    effect?: 選択種目を呼び出し元に渡す
+
+  # 計画タブ内
+  - from: v7-workout-plan-list
+    to: v8-workout-plan-detail
+    trigger: 計画選択
+    mode?: push
+
+  - from: v7-workout-plan-list
+    to: v9-workout-plan-create
+    trigger: ＋ボタン
+    mode?: push
+
+  - from: v8-workout-plan-detail
+    to: v10-workout-plan-edit
+    trigger: 編集ボタン
+    mode?: push
+
+  - from: v8-workout-plan-detail
+    to: v4-workout-record-create
+    trigger: 実行ボタン
+    mode?: push
+    effect?: 計画データで初期化、タブを記録に切替
+
+  - from: v8-workout-plan-detail
+    to: v1-workout-record-list
+    trigger: 記録一覧リンク
+    mode?: push
+    effect?: この計画に基づく記録でフィルター、タブを記録に切替
+
+  - from: v9-workout-plan-create
+    to: v3-exercise-statistics
+    trigger: 種目の統計参照
+    mode?: modal
+
+  - from: v9-workout-plan-create
+    to: v7-workout-plan-list
+    trigger: 保存
+    mode?: pop
+    effect?: データ保存
+
+  - from: v9-workout-plan-create
+    to: v7-workout-plan-list
+    trigger: キャンセル
+    mode?: pop
+    guard?: 未保存データ確認ダイアログ
+
+  - from: v10-workout-plan-edit
+    to: v3-exercise-statistics
+    trigger: 種目の統計参照
+    mode?: modal
+
+  - from: v10-workout-plan-edit
+    to: v8-workout-plan-detail
+    trigger: 保存
+    mode?: pop
+    effect?: データ更新
+
+  - from: v10-workout-plan-edit
+    to: v8-workout-plan-detail
+    trigger: キャンセル
+    mode?: pop
+    guard?: 未保存データ確認ダイアログ
+
+  - from: v3-exercise-statistics
+    to: v7-workout-plan-list
+    trigger: 計画一覧リンク
+    mode?: push
+    effect?: この種目を含む計画でフィルター
+
+  - from: v3-exercise-statistics
+    to: previous
+    trigger: 閉じる
+    mode?: dismiss
+
+  # タブ間
+  - from: v1-workout-record-list
+    to: v7-workout-plan-list
+    trigger: タブ切替（計画）
+    mode?: tab-switch
+
+  - from: v7-workout-plan-list
+    to: v1-workout-record-list
+    trigger: タブ切替（記録）
+    mode?: tab-switch
+
+  # プロフィール
+  - from: v1-workout-record-list
+    to: v12-profile
+    trigger: プロフィールアイコン
+    mode?: modal
+
+  - from: v7-workout-plan-list
+    to: v12-profile
+    trigger: プロフィールアイコン
+    mode?: modal
+
+  - from: v12-profile
+    to: v13-exercise-management
+    trigger: 種目管理選択
+    mode?: push
+
+  - from: v12-profile
+    to: v14-data-management
+    trigger: データ管理選択
+    mode?: push
+
+  - from: v12-profile
+    to: previous
+    trigger: 閉じる
+    mode?: dismiss
+
+  - from: v13-exercise-management
+    to: v12-profile
+    trigger: 戻る
+    mode?: pop
+
+  - from: v14-data-management
+    to: v12-profile
+    trigger: 戻る
+    mode?: pop
+```
+
+## 例外経路
+
+認証については既存のBetter Authが処理するため、ナビゲーション構造では考慮しません。
+
+### データが空の場合
+
+- **v1-workout-record-list (empty)**: 空状態メッセージ表示 + ＋ボタンへの誘導
+- **v7-workout-plan-list (empty)**: 空状態メッセージ表示 + ＋ボタンへの誘導
+
+### データ読込エラー
+
+各ビューで個別にエラーハンドリング（詳細はインタラクション設計フェーズで決定）
 
 ## ナビゲーション図（Mermaid）
 
 ```mermaid
 graph TB
-    %% 認証
-    Login[ログイン]
-
-    %% 記録タブ
-    V1[V1: 記録一覧]
+  subgraph "記録タブ"
+    V1[V1: 記録一覧<br/>entry]
     V2[V2: 記録詳細]
     V4[V4: 記録作成]
     V5[V5: 記録編集]
 
-    %% 計画タブ
+    V1 -->|記録選択| V2
+    V1 -->|＋ボタン| V4
+    V2 -->|編集| V5
+    V4 -->|保存/キャンセル| V1
+    V5 -->|保存/キャンセル| V2
+  end
+
+  subgraph "計画タブ"
     V7[V7: 計画一覧]
     V8[V8: 計画詳細]
     V9[V9: 計画作成]
     V10[V10: 計画編集]
 
-    %% プロフィール
+    V7 -->|計画選択| V8
+    V7 -->|＋ボタン| V9
+    V8 -->|編集| V10
+    V9 -->|保存/キャンセル| V7
+    V10 -->|保存/キャンセル| V8
+  end
+
+  subgraph "プロフィール"
     V12[V12: プロフィール]
     V13[V13: 種目管理]
     V14[V14: データ管理]
 
-    %% モーダル
+    V12 -->|種目管理| V13
+    V12 -->|データ管理| V14
+    V13 -->|戻る| V12
+    V14 -->|戻る| V12
+  end
+
+  subgraph "共通モーダル"
     V3[V3: 種目統計]
     V15[V15: 種目選択]
     V16[V16: 計画選択]
+  end
 
-    %% 認証フロー
-    Login -->|認証成功| V1
-
-    %% 記録タブフロー
-    V1 -->|記録選択| V2
-    V2 -->|戻る| V1
-    V1 -->|＋ボタン| V4
-    V4 -->|保存/キャンセル| V1
-    V2 -->|編集| V5
-    V5 -->|保存/キャンセル| V2
-
-    %% 計画からの記録作成
-    V1 -.->|計画から作成| V16
-    V16 -.->|選択| V4
-    V16 -.->|閉じる| V1
-    V8 -->|実行| V4
-
-    %% 計画タブフロー
-    V7 -->|計画選択| V8
-    V8 -->|戻る| V7
-    V7 -->|＋ボタン| V9
-    V9 -->|保存/キャンセル| V7
-    V8 -->|編集| V10
-    V10 -->|保存/キャンセル| V8
-    V8 -.->|記録一覧へ| V1
-
-    %% タブ切替
-    V1 <-->|タブ切替| V7
-
-    %% 種目統計モーダル
-    V2 -.->|種目タップ| V3
-    V3 -.->|閉じる| V2
-    V9 -.->|統計参照| V3
-    V3 -.->|閉じる| V9
-    V10 -.->|統計参照| V3
-    V3 -.->|閉じる| V10
-    V3 -.->|計画一覧へ| V7
-
-    %% 種目選択モーダル
-    V4 -.->|種目追加| V15
-    V15 -.->|選択/閉じる| V4
-    V5 -.->|種目追加| V15
-    V15 -.->|選択/閉じる| V5
-
-    %% プロフィール（フローティング）
-    V1 & V2 & V4 & V5 & V7 & V8 & V9 & V10 -.->|プロフィールアイコン| V12
-    V12 -.->|閉じる| V1
-    V12 -.->|閉じる| V2
-    V12 -.->|閉じる| V4
-    V12 -.->|閉じる| V5
-    V12 -.->|閉じる| V7
-    V12 -.->|閉じる| V8
-    V12 -.->|閉じる| V9
-    V12 -.->|閉じる| V10
-    V12 -->|種目管理| V13
-    V13 -->|戻る| V12
-    V12 -->|データ管理| V14
-    V14 -->|戻る| V12
-
-    style V4 fill:#ffeb3b
-    style V9 fill:#ffeb3b
-    style Login fill:#f44336,color:#fff
-    style V16 fill:#e1bee7
+  V1 <-->|タブ切替| V7
+  V1 -->|計画から作成| V16
+  V1 -->|プロフィールアイコン| V12
+  V2 -->|種目タップ| V3
+  V4 -->|種目追加| V15
+  V5 -->|種目追加| V15
+  V7 -->|プロフィールアイコン| V12
+  V8 -->|実行| V4
+  V8 -->|記録一覧リンク| V1
+  V9 -->|統計参照| V3
+  V10 -->|統計参照| V3
+  V16 -->|選択| V4
+  V16 -->|閉じる| V1
+  V3 -->|計画一覧リンク| V7
+  V3 -->|閉じる| Previous
+  V15 -->|選択| Previous
+  V12 -->|閉じる| Previous
 ```
+
+## 検証結果
+
+### 入口・目標地点の到達性
+
+- ✅ V1（入口）→ V4（記録作成保存）: 最短2ステップ
+- ✅ V1（入口）→ タブ切替 → V7 → V9（計画作成保存）: 最短3ステップ
+
+### 未接続ノード
+
+なし（全ビューが接続されています）
+
+### 循環遷移
+
+以下の循環は想定内:
+
+- V1 ⇄ V7（タブ切替）
+- V8 → V4 → V1（計画実行 → 記録作成 → 記録一覧）
+- V8 → V1（計画詳細 → 記録一覧フィルター）
+- V3 → V7（種目統計 → 計画一覧フィルター）
 
 ## 備考
 
-### V6/V11（計画から記録作成）について
-
-- V6/V11は**独立したビューではなく、V4（記録作成）の初期値設定パターン**として扱う
-- フレーム構造の修正が必要:
-  - V6/V11の削除
-  - V16（計画選択モーダル）の追加
-
-### 候補属性について
-
-- 状態候補（states）、条件候補（guard）、モード候補（mode）、副作用候補（effect）は**候補レベル**で付記
-- 確定は終盤フェーズ（プラットフォーム適合／インタラクション設計）で行う
-
-### 未接続ノードチェック
-
-- 全ノードがLoginからV1経由で到達可能であることを確認済み
+- **mode?**, **guard?**, **effect?** の "?" は候補レベルの属性を示します
+- 確定は終盤フェーズ（プラットフォーム適合／インタラクション設計）で行います
+- **previous** は呼び出し元ビューへの動的な戻り先を示します
