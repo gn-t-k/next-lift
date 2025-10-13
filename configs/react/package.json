@@ -33,7 +33,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.1.4",
-		"pkgroll": "2.18.0",
+		"pkgroll": "2.18.1",
 		"typescript": "5.9.3"
 	}
 }
