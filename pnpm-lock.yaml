@@ -31,8 +31,8 @@ importers:
         specifier: 2.1.4
         version: 2.1.4
       pkgroll:
-        specifier: 2.18.0
-        version: 2.18.0(typescript@5.9.3)
+        specifier: 2.18.1
+        version: 2.18.1(typescript@5.9.3)
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -59,8 +59,8 @@ importers:
         specifier: workspace:*
         version: link:../common
       pkgroll:
-        specifier: 2.18.0
-        version: 2.18.0(typescript@5.9.3)
+        specifier: 2.18.1
+        version: 2.18.1(typescript@5.9.3)
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -87,8 +87,8 @@ importers:
         specifier: 2.1.4
         version: 2.1.4
       pkgroll:
-        specifier: 2.18.0
-        version: 2.18.0(typescript@5.9.3)
+        specifier: 2.18.1
+        version: 2.18.1(typescript@5.9.3)
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -102,8 +102,8 @@ importers:
         specifier: 1.1.1
         version: 1.1.1(vite@6.3.6(@types/node@24.0.13)(jiti@2.6.1)(lightningcss@1.30.1))
       '@tsconfig/create-react-app':
-        specifier: 2.0.7
-        version: 2.0.7
+        specifier: 2.0.8
+        version: 2.0.8
       jsdom:
         specifier: 26.1.0
         version: 26.1.0
@@ -118,8 +118,8 @@ importers:
         specifier: 2.1.4
         version: 2.1.4
       pkgroll:
-        specifier: 2.18.0
-        version: 2.18.0(typescript@5.9.3)
+        specifier: 2.18.1
+        version: 2.18.1(typescript@5.9.3)
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -595,8 +595,8 @@ packages:
   '@tootallnate/quickjs-emscripten@0.23.0':
     resolution: {integrity: sha512-C5Mc6rdnsaJDjO3UpGW/CQTHtCKaYlScZTly4JIu97Jxo/odCiH0ITnDXSJPTOrEKk/ycSZ0AOgTmkDtkOsvIA==}
 
-  '@tsconfig/create-react-app@2.0.7':
-    resolution: {integrity: sha512-gSui0f0bjRi824CzbUWdTaTrmQCCu23X/duAZLcYiJWmSok3aKAfBwg5lq1x/aBj3AuL9XQwE7RmvYxW5GG/Mg==}
+  '@tsconfig/create-react-app@2.0.8':
+    resolution: {integrity: sha512-ErLvUPDisg5cdi9IjoC2lGN86iySg6+BPHiwds7pNMPvyI4abn5pobTBpq1gEzDTrt8axW5iWTE1doD+cMwBwA==}
 
   '@tsconfig/next@2.0.3':
     resolution: {integrity: sha512-b4aKvmdWnv9aUy+NStUFlefirk3SItW20OJtbi5/ue9oMRaQtUYbN5zsr7OmV3rlx6Gp6h7A82gPoCXhrNGVPQ==}
@@ -1507,8 +1507,8 @@ packages:
     resolution: {integrity: sha512-M7BAV6Rlcy5u+m6oPhAPFgJTzAioX/6B0DxyvDlo9l8+T3nLKbrczg2WLUyzd45L8RqfUMyGPzekbMvX2Ldkwg==}
     engines: {node: '>=12'}
 
-  pkgroll@2.18.0:
-    resolution: {integrity: sha512-e0kKoLRqb0gfq50axg5TSACRLfirE1I9KRaC7MEbzCWtSbIemaJ7eigtBiYkmbxcAEd25tF+MkYznqatuZZikw==}
+  pkgroll@2.18.1:
+    resolution: {integrity: sha512-5fXXV3Bvc0zvD3kwmPrqwJJ84kIB3RUV3VC9RHkQa2bcRLj4s2W/J0PkVL57VzlLlG+BeE09lFp0wr1ULBGQuQ==}
     engines: {node: '>=18'}
     hasBin: true
     peerDependencies:
@@ -2350,7 +2350,7 @@ snapshots:
 
   '@tootallnate/quickjs-emscripten@0.23.0': {}
 
-  '@tsconfig/create-react-app@2.0.7': {}
+  '@tsconfig/create-react-app@2.0.8': {}
 
   '@tsconfig/next@2.0.3': {}
 
@@ -3342,7 +3342,7 @@ snapshots:
 
   picomatch@4.0.2: {}
 
-  pkgroll@2.18.0(typescript@5.9.3):
+  pkgroll@2.18.1(typescript@5.9.3):
     dependencies:
       '@rollup/plugin-alias': 5.1.1(rollup@4.48.1)
       '@rollup/plugin-commonjs': 28.0.6(rollup@4.48.1)
