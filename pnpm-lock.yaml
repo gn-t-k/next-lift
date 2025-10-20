@@ -31,8 +31,8 @@ importers:
         specifier: 2.1.4
         version: 2.1.4
       pkgroll:
-        specifier: 2.19.0
-        version: 2.19.0(typescript@5.9.3)
+        specifier: 2.20.0
+        version: 2.20.0(typescript@5.9.3)
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -59,8 +59,8 @@ importers:
         specifier: workspace:*
         version: link:../common
       pkgroll:
-        specifier: 2.19.0
-        version: 2.19.0(typescript@5.9.3)
+        specifier: 2.20.0
+        version: 2.20.0(typescript@5.9.3)
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -87,8 +87,8 @@ importers:
         specifier: 2.1.4
         version: 2.1.4
       pkgroll:
-        specifier: 2.19.0
-        version: 2.19.0(typescript@5.9.3)
+        specifier: 2.20.0
+        version: 2.20.0(typescript@5.9.3)
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -118,8 +118,8 @@ importers:
         specifier: 2.1.4
         version: 2.1.4
       pkgroll:
-        specifier: 2.19.0
-        version: 2.19.0(typescript@5.9.3)
+        specifier: 2.20.0
+        version: 2.20.0(typescript@5.9.3)
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -1507,8 +1507,8 @@ packages:
     resolution: {integrity: sha512-M7BAV6Rlcy5u+m6oPhAPFgJTzAioX/6B0DxyvDlo9l8+T3nLKbrczg2WLUyzd45L8RqfUMyGPzekbMvX2Ldkwg==}
     engines: {node: '>=12'}
 
-  pkgroll@2.19.0:
-    resolution: {integrity: sha512-MDVRR0s/epE/zsj6TGty86z43Ll9BEzvgGZfrPXQQBM7ZRqydeG7E5uar4Q6flc0ywxsYrwE7kK5OSvBwAHuqA==}
+  pkgroll@2.20.0:
+    resolution: {integrity: sha512-yutAAHA95Y2Ma/hM5sOGUsNXq/ARuohh6gD+2GocvjcAHM+abZvZ1VZe3PUx12YNXzltnS7C9nnKJF+omsDu8g==}
     engines: {node: '>=18'}
     hasBin: true
     peerDependencies:
@@ -3387,7 +3387,7 @@ snapshots:
 
   picomatch@4.0.2: {}
 
-  pkgroll@2.19.0(typescript@5.9.3):
+  pkgroll@2.20.0(typescript@5.9.3):
     dependencies:
       '@rollup/plugin-alias': 5.1.1(rollup@4.48.1)
       '@rollup/plugin-commonjs': 28.0.6(rollup@4.48.1)
