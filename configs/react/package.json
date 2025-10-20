@@ -28,7 +28,7 @@
 		"@praha/vite-plugin-external": "1.1.1",
 		"@tsconfig/create-react-app": "2.0.7",
 		"jsdom": "26.1.0",
-		"vite": "6.4.0",
+		"vite": "6.4.1",
 		"vitest": "3.2.4"
 	},
 	"devDependencies": {
