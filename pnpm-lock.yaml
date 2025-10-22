@@ -31,8 +31,8 @@ importers:
         specifier: 2.1.4
         version: 2.1.4
       pkgroll:
-        specifier: 2.19.0
-        version: 2.19.0(typescript@5.9.3)
+        specifier: 2.20.1
+        version: 2.20.1(typescript@5.9.3)
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -59,8 +59,8 @@ importers:
         specifier: workspace:*
         version: link:../common
       pkgroll:
-        specifier: 2.19.0
-        version: 2.19.0(typescript@5.9.3)
+        specifier: 2.20.1
+        version: 2.20.1(typescript@5.9.3)
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -72,13 +72,13 @@ importers:
         version: link:../common
       '@praha/vite-plugin-external':
         specifier: 1.1.1
-        version: 1.1.1(vite@6.4.0(@types/node@24.0.13)(jiti@2.6.1)(lightningcss@1.30.1)(yaml@2.8.1))
+        version: 1.1.1(vite@6.4.1(@types/node@24.0.13)(jiti@2.6.1)(lightningcss@1.30.1)(yaml@2.8.1))
       '@tsconfig/node-lts':
         specifier: 22.0.2
         version: 22.0.2
       vite:
-        specifier: 6.4.0
-        version: 6.4.0(@types/node@24.0.13)(jiti@2.6.1)(lightningcss@1.30.1)(yaml@2.8.1)
+        specifier: 6.4.1
+        version: 6.4.1(@types/node@24.0.13)(jiti@2.6.1)(lightningcss@1.30.1)(yaml@2.8.1)
       vitest:
         specifier: 3.2.4
         version: 3.2.4(@types/node@24.0.13)(@vitest/browser@3.2.4)(jiti@2.6.1)(jsdom@26.1.0)(lightningcss@1.30.1)(yaml@2.8.1)
@@ -87,8 +87,8 @@ importers:
         specifier: 2.1.4
         version: 2.1.4
       pkgroll:
-        specifier: 2.19.0
-        version: 2.19.0(typescript@5.9.3)
+        specifier: 2.20.1
+        version: 2.20.1(typescript@5.9.3)
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -100,7 +100,7 @@ importers:
         version: link:../common
       '@praha/vite-plugin-external':
         specifier: 1.1.1
-        version: 1.1.1(vite@6.4.0(@types/node@24.0.13)(jiti@2.6.1)(lightningcss@1.30.1)(yaml@2.8.1))
+        version: 1.1.1(vite@6.4.1(@types/node@24.0.13)(jiti@2.6.1)(lightningcss@1.30.1)(yaml@2.8.1))
       '@tsconfig/create-react-app':
         specifier: 2.0.7
         version: 2.0.7
@@ -108,8 +108,8 @@ importers:
         specifier: 26.1.0
         version: 26.1.0
       vite:
-        specifier: 6.4.0
-        version: 6.4.0(@types/node@24.0.13)(jiti@2.6.1)(lightningcss@1.30.1)(yaml@2.8.1)
+        specifier: 6.4.1
+        version: 6.4.1(@types/node@24.0.13)(jiti@2.6.1)(lightningcss@1.30.1)(yaml@2.8.1)
       vitest:
         specifier: 3.2.4
         version: 3.2.4(@types/node@24.0.13)(@vitest/browser@3.2.4)(jiti@2.6.1)(jsdom@26.1.0)(lightningcss@1.30.1)(yaml@2.8.1)
@@ -118,8 +118,8 @@ importers:
         specifier: 2.1.4
         version: 2.1.4
       pkgroll:
-        specifier: 2.19.0
-        version: 2.19.0(typescript@5.9.3)
+        specifier: 2.20.1
+        version: 2.20.1(typescript@5.9.3)
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -1507,8 +1507,8 @@ packages:
     resolution: {integrity: sha512-M7BAV6Rlcy5u+m6oPhAPFgJTzAioX/6B0DxyvDlo9l8+T3nLKbrczg2WLUyzd45L8RqfUMyGPzekbMvX2Ldkwg==}
     engines: {node: '>=12'}
 
-  pkgroll@2.19.0:
-    resolution: {integrity: sha512-MDVRR0s/epE/zsj6TGty86z43Ll9BEzvgGZfrPXQQBM7ZRqydeG7E5uar4Q6flc0ywxsYrwE7kK5OSvBwAHuqA==}
+  pkgroll@2.20.1:
+    resolution: {integrity: sha512-+ljnIUQDxOgceLmtM7P3jj88GGk6P8YMqT/EkwKQXIgnsAX7W4LhcMQXQlWYfDE9Rg08k+57FG1omqaeT8+gew==}
     engines: {node: '>=18'}
     hasBin: true
     peerDependencies:
@@ -1925,8 +1925,8 @@ packages:
       yaml:
         optional: true
 
-  vite@6.4.0:
-    resolution: {integrity: sha512-oLnWs9Hak/LOlKjeSpOwD6JMks8BeICEdYMJBf6P4Lac/pO9tKiv/XhXnAM7nNfSkZahjlCZu9sS50zL8fSnsw==}
+  vite@6.4.1:
+    resolution: {integrity: sha512-+Oxm7q9hDoLMyJOYfUYBuHQo+dkAloi33apOPP56pzj+vsdJDzr+j1NISE5pyaAuKL4A3UD34qd0lx5+kfKp2g==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
     peerDependencies:
@@ -2254,9 +2254,9 @@ snapshots:
   '@polka/url@1.0.0-next.29':
     optional: true
 
-  '@praha/vite-plugin-external@1.1.1(vite@6.4.0(@types/node@24.0.13)(jiti@2.6.1)(lightningcss@1.30.1)(yaml@2.8.1))':
+  '@praha/vite-plugin-external@1.1.1(vite@6.4.1(@types/node@24.0.13)(jiti@2.6.1)(lightningcss@1.30.1)(yaml@2.8.1))':
     dependencies:
-      vite: 6.4.0(@types/node@24.0.13)(jiti@2.6.1)(lightningcss@1.30.1)(yaml@2.8.1)
+      vite: 6.4.1(@types/node@24.0.13)(jiti@2.6.1)(lightningcss@1.30.1)(yaml@2.8.1)
 
   '@rollup/plugin-alias@5.1.1(rollup@4.48.1)':
     optionalDependencies:
@@ -3387,7 +3387,7 @@ snapshots:
 
   picomatch@4.0.2: {}
 
-  pkgroll@2.19.0(typescript@5.9.3):
+  pkgroll@2.20.1(typescript@5.9.3):
     dependencies:
       '@rollup/plugin-alias': 5.1.1(rollup@4.48.1)
       '@rollup/plugin-commonjs': 28.0.6(rollup@4.48.1)
@@ -3776,7 +3776,7 @@ snapshots:
       debug: 4.4.1
       es-module-lexer: 1.7.0
       pathe: 2.0.3
-      vite: 6.4.0(@types/node@24.0.13)(jiti@2.6.1)(lightningcss@1.30.1)(yaml@2.8.1)
+      vite: 6.4.1(@types/node@24.0.13)(jiti@2.6.1)(lightningcss@1.30.1)(yaml@2.8.1)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -3806,7 +3806,7 @@ snapshots:
       lightningcss: 1.30.1
       yaml: 2.8.1
 
-  vite@6.4.0(@types/node@24.0.13)(jiti@2.6.1)(lightningcss@1.30.1)(yaml@2.8.1):
+  vite@6.4.1(@types/node@24.0.13)(jiti@2.6.1)(lightningcss@1.30.1)(yaml@2.8.1):
     dependencies:
       esbuild: 0.25.9
       fdir: 6.4.6(picomatch@4.0.2)
