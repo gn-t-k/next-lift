@@ -23,7 +23,7 @@
 		"@configs/node": "workspace:*",
 		"@configs/react": "workspace:*",
 		"@tsconfig/next": "2.0.3",
-		"vitest": "3.2.4"
+		"vitest": "4.0.1"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.1.4",
