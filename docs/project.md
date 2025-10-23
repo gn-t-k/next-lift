@@ -1,55 +1,107 @@
 # Next Lift Development Project
 
-This document describes the overview of the Next Lift system development project.
+このドキュメントは、Next Liftシステム開発プロジェクトの概要を記載します。
 
-## Project Overview
+## プロジェクト概要
 
-Next Lift is a system for planning and recording weight training, with two platforms: iOS and Web applications. We aim to build a system with the following strengths:
+Next Liftは、筋トレの計画と記録を行うシステムです。iOS AppとWeb Appの2つのプラットフォームで、以下の強みを持つシステムを構築します:
 
-- Extreme UX that is easy to operate even in a fatigued state during training
-- Statistical data analysis features to support planned training
-- Data input features using voice and images
+- トレーニング中の疲労状態でも操作しやすい極限のUX
+- 計画的なトレーニングを支援する統計的データ分析機能
+- 音声・画像を使ったデータ入力機能
 
-## Development Plan
+## 開発計画
 
-### Phase 1: Infrastructure Setup
+### フェーズ1: インフラ基盤の整備
 
-- Monorepo environment setup (pnpm workspaces + turborepo)
-- Authentication API server construction (Hono + Better Auth)
-- Better Auth configuration
-- Turso Database configuration
-- Foundation for Web/iOS/Turso integration
+- Monorepo環境の構築（pnpm workspaces）
+- Next.js + Better Authによる認証基盤の構築
+- Turso Databaseの設定
+- Web/iOS/Tursoの連携基盤
 
-### Phase 2: Basic Feature Implementation
+### フェーズ2: 技術的不確実性の解消
 
-- Authentication system (Apple ID, Google authentication)
-- Basic data recording and display features
-- Data synchronization features
+- Web: 認証フローの動作確認
+- Web: Tursoとの接続・データ操作の動作確認
+- iOS: Expo + React Nativeのセットアップ
+- iOS: Better Auth(`@better-auth/expo`)の動作確認
+- iOS: Turso Embedded Replicasの動作確認
+- Web/iOS: 共通パッケージの動作確認
 
-### Phase 3: Feature Expansion
+### フェーズ3: 機能実装
 
-- Statistical data analysis features
-- Training plan creation features
-- Voice and image input features
+- 認証機能
+- トレーニング記録・計画機能
+- 統計的データ分析機能
+- 音声・画像入力機能
 
-## Development Principles
+## 開発の進め方
 
-### Basic Principles
+### 1. インフラ基盤の整備（フェーズ1）
 
-- **Collaborative Development**: Collaborative design and implementation between users and Claude
-- **Utilize Latest Information**: Always plan and develop based on the latest documentation and technical information
-- **Loosely Coupled Design**: Technology choices that make framework replacement easy
-- **Continuous Improvement**: Iterative improvement of specifications and implementation
+- Next.js（App Router + RSC）のセットアップ
+- Better Authによる認証基盤の構築
+- Tursoデータベースの設定
+  - Authentication Database
+  - Per-User Database構成
+- Drizzle ORMの設定
+- Vercelへのデプロイ設定
 
-### Documentation Management Policy
+### 2. 技術的不確実性の解消（フェーズ2）
 
-- **Technical Details and Development Guidelines**: CLAUDE.md → distributed to .claude directory
-- **Project Overview, Features, and Status**: README.md
-- **Regular Self-Review**: Automatically review and update documentation after important decisions
-- **Continuity Confirmation**: Ensure documentation not only for this time but also when similar instructions are given in the future
+- Web: 認証フローの動作確認
+- Web: Tursoとの接続・データ操作の動作確認
+- iOS: Expo + React Nativeのセットアップ
+- iOS: Better Auth(`@better-auth/expo`)の動作確認
+- iOS: Turso Embedded Replicasの動作確認
+- Web/iOS: 共通パッケージ（react-components, react-native-components）の動作確認
 
-### Quality Management Policy
+### 3. Webアプリケーションの実装
 
-- **CI Priority**: Minimize manual checks and automate everything possible with CI
-- **Japanese First**: Commit messages, comments, and documentation written in Japanese
-- **Small Pull Requests**: Keep pull requests as small as possible for easy review
+優先度順に以下の機能を実装:
+
+1. 認証機能（UC_0014, UC_0015）
+2. 種目管理機能（UC_0010, UC_0011）
+3. トレーニング記録機能（UC_0001, UC_0002, UC_0003）
+4. トレーニング計画機能（UC_0005, UC_0006）
+5. 統計・分析機能（UC_0016, UC_0019）
+
+### 4. モバイルアプリケーションの実装
+
+Webの実装をベースに、モバイル特化機能を追加:
+
+1. Webで実装した機能のモバイル対応
+2. Local-first機能（Turso Embedded Replicas）
+3. オフライン対応
+4. レストタイマー機能（UC_0018）
+5. 疲労時でも操作しやすいUI/UX
+
+## 開発の基本方針
+
+### 基本原則
+
+- **協働開発**: ユーザーとClaudeの協働設計・実装
+- **最新情報の活用**: 常に最新のドキュメントと技術情報をもとに計画・開発
+- **疎結合設計**: フレームワーク交換を容易にする技術選定
+- **継続的改善**: 仕様と実装の反復的改善
+
+### ドキュメント管理方針
+
+- **技術詳細・開発ガイドライン**: CLAUDE.md → .claudeディレクトリに分散配置
+- **プロジェクト概要・機能・ステータス**: README.md
+- **定期的な自己レビュー**: 重要な決定後にドキュメントを自動レビュー・更新
+- **継続性の確保**: 今回だけでなく、将来同様の指示を受けたときのためのドキュメント整備
+
+### 品質管理方針
+
+- **CI優先**: 手動チェックを最小化し、可能な限りCIで自動化
+- **日本語ファースト**: コミットメッセージ、コメント、ドキュメントは日本語で記載
+- **小さなPull Request**: レビューしやすいよう、Pull Requestは可能な限り小さく保つ
+
+## 関連ドキュメント
+
+- [システムアーキテクチャ](./system-architecture.md) - Next Liftの全体アーキテクチャ
+- [ADR](./architecture-decision-record/README.md) - 技術的決定の詳細
+- [ユースケース定義](./model-based-ui-design/specs/01-use-case-definition.md) - 機能要件の詳細
+- [タスク整理](./model-based-ui-design/specs/02-task-analysis.md) - タスクの優先度と関連
+- [コンセプト定義](./model-based-ui-design/specs/05-concept-definition.md) - 提供体験と設計思想
