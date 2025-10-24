@@ -94,19 +94,19 @@ YYYY-MM-DD
 廃止日: YYYY-MM-DD
 ```
 
-### 6. system-architecture.mdの更新
+### 6. overview.mdの更新
 
-`docs/system-architecture.md`を読み込み、新しいADRの内容を反映して更新してください。
+`docs/architecture-decision-record/overview.md`を読み込み、新しいADRの内容を反映して更新してください。
 
 技術スタックの変更、アーキテクチャの変更があれば、該当箇所を更新してください。
 
 ## 重要な注意事項
 
 - すべてのADRは**日本語**で記述してください
-- 標準的なADRフォーマットに従ってください
+- 標準的なADRフォーマットにしたがってください
 - ヒアリング内容を正確に反映してください
 - 既存のADRとの整合性を保ってください
-- system-architecture.mdとの整合性を保ってください
+- overview.mdとの整合性を保ってください
 
 ## 実行開始
 
