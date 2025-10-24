@@ -1,11 +1,11 @@
 # フェーズ1: インフラ基盤の整備 - タスクツリー
 
 - [ ] Turso Databaseの設定
-  - [ ] 環境ごとのデータベース戦略の決定
-    - [ ] 必要な環境の洗い出し（本番/開発/テスト/プレビュー）
-    - [ ] 各環境のデータベース構成の決定
-    - [ ] Per-User Database構成と環境戦略の整合性確認
-    - [ ] 環境変数の管理方法の決定
+  - [x] 環境ごとのデータベース戦略の決定
+    - [x] 必要な環境の洗い出し（本番/開発/テスト/プレビュー）
+    - [x] 各環境のデータベース構成の決定
+    - [x] Per-User Database構成と環境戦略の整合性確認
+    - [x] 環境変数の管理方法の決定
   - [ ] Authentication Databaseの作成
     - [ ] Tursoアカウントの作成/確認
     - [ ] Turso CLIのインストール
@@ -51,6 +51,16 @@
 - [ ] Vercelへのデプロイ設定
   - [ ] Vercelプロジェクトの作成
   - [ ] 基本的なデプロイの動作確認
+  - [ ] プレビュー環境のデータベース管理
+    - [ ] PR作成時のデータベース作成（GitHub Actions）
+      - [ ] workflow作成（preview-db-create.yml）
+      - [ ] Turso Platform APIでpreview-pr{number}-authを作成
+      - [ ] GitHub Secretsの設定（TURSO_PLATFORM_API_TOKEN等）
+      - [ ] 動作確認
+    - [ ] PRクローズ時のデータベース削除（GitHub Actions）
+      - [ ] workflow作成（preview-db-delete.yml）
+      - [ ] preview-pr{number}-*を検索して削除
+      - [ ] 動作確認
 
 - [ ] エラー監視の設定
   - [ ] Sentryのセットアップ
