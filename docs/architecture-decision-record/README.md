@@ -38,6 +38,7 @@ ADRは、プロジェクトで行われた重要なアーキテクチャ上の�
 ### 開発環境・ツール
 
 - [009: pnpm + Monorepo](./009-pnpm-monorepo.md)
+- [011: Monorepo環境変数管理](./011-monorepo-environment-variables.md)
 
 ### アーキテクチャパターン
 
