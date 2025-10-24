@@ -30,6 +30,7 @@ ADRは、プロジェクトで行われた重要なアーキテクチャ上の�
 - [005: Per-User Database Architecture](./005-per-user-database-architecture.md)
 - [006: Drizzle ORM](./006-drizzle-orm.md)
 - [007: op-sqlite （iOS SQLiteドライバー）](./007-op-sqlite-for-ios.md)
+- [012: データベース環境戦略](./012-database-environment-strategy.md)
 
 ### デプロイメント
 
