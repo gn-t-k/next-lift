@@ -15,11 +15,3 @@
 ## 開発ノート
 
 - コードコメントは日本語で記述する（ただし、コードから読み取れない内容のみ）
-
-## Gitワークフロー
-
-- プルリクエストごとに新しいブランチを作成する
-- ブランチ命名規則: `<type>/<description>` ( @.github/workflows/consistent-pull-request.yml 参照 )
-- mainブランチへの直接コミットは禁止
-- ブランチはPRマージ後に自動削除される（GitHubで設定済み）
-- PR作成時は `.github/pull_request_template.md` のテンプレートに従う

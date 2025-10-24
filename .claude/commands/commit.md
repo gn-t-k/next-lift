@@ -1,38 +1,43 @@
 ---
-description: Receives staged and working tree diffs, then suggests logically divided commits and branch structures.
+description: ステージング済みおよび作業ツリーの差分を受け取り、論理的に分割されたコミットとブランチ構造を提案します。
 ---
 
-# commit Custom Command
+# commit カスタムコマンド
 
-You are an experienced Git consultant. Follow the principles below to divide changes into optimal commits and suggest clear messages and branch structures.
+あなたは経験豊富なGitコンサルタントです。以下の原則にしたがって、変更を最適なコミットに分割し、明確なメッセージとブランチ構造を提案してください。
+また、プルリクエストの作成かどうか判断して、ユーザーに確認してください。
 
-## Principles
+## 参照するファイル
 
-- Divide commits by single purpose
-- Write commit messages in Japanese describing "why and what changes were made"
-- Suggest multiple branches when changes are large or contain mixed functionality
-- Maintain commit granularity that doesn't break builds
-- Always ask questions about exceptions or ambiguities
+- @.github/workflows/consistent-pull-request.yml
+- @.github/pull_request_template.md
 
-## Git Workflow Requirements
+## 基本原則
 
-- **Check current branch first** - If on main branch, create a new branch before committing
-- When continuing work on an existing feature branch, commit directly to that branch
-- Follow branch naming convention from @.github/workflows/consistent-pull-request.yml
-- Check @CLAUDE.md for project-specific Git workflow rules
+- コミットは単一の目的で分割する
+- コミットメッセージは日本語で「なぜ、何を変更したか」を記述する
+- 変更が大規模または複数の機能が混在する場合は、複数のブランチを提案する
+- ビルドが壊れない粒度でコミットを維持する
+- 例外や曖昧な点については常に質問する
 
-## Important Notes
+## Gitワークフローの要件
 
-- **Always separate changes with different functions/purposes into different branches**
-  - Example: New feature + Development tool improvement → Separate branches
-  - Example: Dependency update + Configuration file addition → Separate branches
-- **Never include unrelated changes in the same commit**
-  - Actively suggest splitting when there's no functional relationship
-- **Branch splitting criteria**
-  - Different purposes of changes
-  - Independent impact areas
-  - Content that should be reviewed separately
-- **Branch naming convention**
-  - Follow the branch naming rules defined in @.github/workflows/consistent-pull-request.yml
-  - Check the `rules` section under "Check head branch name" step for allowed patterns
-- When asked to create a pull request, assume the use of @.github/pull_request_template.md
+- **最初に現在のブランチを確認** - mainブランチの場合は、コミット前に新しいブランチを作成する
+  - mainブランチへの直接コミットは禁止
+- `.github/workflows/consistent-pull-request.yml`のブランチ命名規則に従う
+  - "Check head branch name"ステップの`rules`セクションで許可されているパターンを確認する
+- 既存のフィーチャーブランチで作業を継続する場合は、そのブランチに直接コミットする
+- ブランチはPRマージ後に自動削除される（GitHubで設定済み）
+
+## 重要な注意事項
+
+- **異なる機能・目的を持つ変更は必ず別々のブランチに分離する**
+  - 例: 新機能 + 開発ツールの改善 → 別々のブランチ
+  - 例: 依存関係の更新 + 設定ファイルの追加 → 別々のブランチ
+- **無関係な変更を同じコミットに含めない**
+  - 機能的な関連性がない場合は、積極的に分割を提案する
+- **ブランチ分割の基準**
+  - 変更の目的が異なる
+  - 影響範囲が独立している
+  - 個別にレビューすべき内容
+- プルリクエスト作成を求められた場合は、`@.github/pull_request_template.md`を使用する
