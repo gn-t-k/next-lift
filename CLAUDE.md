@@ -1,24 +1,25 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+このファイルは、このリポジトリで作業する際にClaude Code (claude.ai/code) に対して提供するガイダンスです。
 
-## Language Settings
+## 言語設定
 
-- Respond to users in Japanese
+- ユーザーへの応答は日本語で行う
 
-## Related Documents
+## 関連ドキュメント
 
-- @docs/project.md : Project overview, features, development status
-- @docs/system-architecture.md : System architecture and design principles
+- @docs/project/overview.md : プロジェクト概要、機能、開発状況
+- @docs/architecture-decision-record/overview.md : システムアーキテクチャと設計原則
+- @docs/model-based-ui-design/ : UI設計仕様（ユースケース、タスク分析、コンセプト定義）
 
-## Development Notes
+## 開発ノート
 
-- Write code comments in Japanese, only for content that cannot be read from the code itself
+- コードコメントは日本語で記述する（ただし、コードから読み取れない内容のみ）
 
-## Git Workflow
+## Gitワークフロー
 
-- Create a new branch for each pull request
-- Branch naming convention: `<type>/<description>` (e.g., `feat/add-login`, `fix/auth-error`, `docs/update-readme`)
-- Never commit directly to the main branch
-- Branches will be automatically deleted after PR merge (configured in GitHub)
-- Follow the pull request template at `.github/pull_request_template.md` when creating PRs
+- プルリクエストごとに新しいブランチを作成する
+- ブランチ命名規則: `<type>/<description>` ( @.github/workflows/consistent-pull-request.yml 参照 )
+- mainブランチへの直接コミットは禁止
+- ブランチはPRマージ後に自動削除される（GitHubで設定済み）
+- PR作成時は `.github/pull_request_template.md` のテンプレートに従う
