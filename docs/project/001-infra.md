@@ -1,0 +1,142 @@
+# フェーズ1: インフラ基盤の整備 - タスクツリー
+
+- [ ] Turso Databaseの設定
+  - [ ] 環境ごとのデータベース戦略の決定
+    - [ ] 必要な環境の洗い出し（本番/開発/テスト/プレビュー）
+    - [ ] 各環境のデータベース構成の決定
+    - [ ] Per-User Database構成と環境戦略の整合性確認
+    - [ ] 環境変数の管理方法の決定
+  - [ ] Authentication Databaseの作成
+    - [ ] Tursoアカウントの作成/確認
+    - [ ] Turso CLIのインストール
+    - [ ] 各環境用のAuthentication Databaseインスタンスの作成
+    - [ ] 各環境のデータベース接続情報（URL、トークン）の取得
+  - [ ] Drizzle ORMのセットアップ
+    - [ ] auth-databaseパッケージの作成
+      - [ ] パッケージの初期化
+      - [ ] ルート `.env` へのシンボリックリンク作成
+    - [ ] Drizzle ORMとTurso用のドライバーのインストール
+    - [ ] Drizzle設定ファイルの作成
+    - [ ] TursoへのDrizzle接続設定
+    - [ ] 環境ごとの接続設定
+    - [ ] テスト用データベースのセットアップ
+      - [ ] ローカルテスト用DB環境の構築
+      - [ ] CI環境でのテストDB設定
+      - [ ] テスト用のDBリセット/シード機能
+  - [ ] Better Auth用スキーマの定義（Authentication DB）
+    - [ ] Better Authが必要とするテーブル構造の確認
+    - [ ] Drizzleスキーマファイルの作成（user, session, account, verification）
+    - [ ] マイグレーションファイルの生成
+    - [ ] マイグレーションの実行
+    - [ ] Better Auth設定の作成（packages/auth-database内）
+      - [ ] Better Authインスタンス設定ファイルの作成
+      - [ ] Drizzleアダプターの設定
+
+- [ ] Next.jsプロジェクトのセットアップ
+  - [ ] Next.jsのインストール（v16以上）
+  - [ ] App Routerの設定
+  - [ ] TypeScript設定
+  - [ ] リンター・フォーマッター設定
+    - [ ] Biome設定の継承/カスタマイズ
+    - [ ] Next.js向けルールの設定
+  - [ ] react-componentsパッケージの作成
+    - [ ] パッケージの初期化
+    - [ ] ルート `.env` へのシンボリックリンク作成
+    - [ ] 共通コンポーネントの基本構造
+  - [ ] 必要な依存パッケージのインストール
+  - [ ] Next.js MCP設定
+    - [ ] .mcp.jsonファイルの作成
+    - [ ] next-devtools-mcpの設定
+
+- [ ] Vercelへのデプロイ設定
+  - [ ] Vercelプロジェクトの作成
+  - [ ] 基本的なデプロイの動作確認
+
+- [ ] エラー監視の設定
+  - [ ] Sentryのセットアップ
+  - [ ] Vercel IntegrationでSentryを連携
+  - [ ] エラー通知の設定
+  - [ ] エラー送信のテスト
+
+- [ ] Apple Developer Programのセットアップ（OAuth認証用）
+  - [ ] Apple Developer Programへの登録
+  - [ ] OAuth認証用のServices IDとクレデンシャル作成
+  - [ ] リダイレクトURLの設定（ローカル/本番/プレビュー）
+
+- [ ] Google Cloud Consoleのセットアップ（OAuth認証用）
+  - [ ] Google Cloud Projectの作成
+  - [ ] OAuth 2.0クライアントIDの作成
+  - [ ] リダイレクトURLの設定（ローカル/本番/プレビュー）
+
+- [ ] Better Authによる認証基盤の構築
+  - [ ] Better AuthのNext.js統合（apps/web）
+    - [ ] Better AuthのRoute Handlerの作成
+    - [ ] apps/web内でのBetter Auth設定
+      - [ ] packages/auth-databaseのBetter Authインスタンスを利用
+      - [ ] プロバイダー設定の追加（Apple ID、Google）
+    - [ ] 環境変数の設定
+      - [ ] ローカル開発環境（.env.local）
+      - [ ] Vercel環境変数（本番/プレビュー）
+    - [ ] 基本動作確認（ローカル/デプロイ後）
+  - [ ] OAuth認証フローの動作確認とエラーハンドリング
+    - [ ] Google OAuth認証のログインフロー確認
+    - [ ] Apple OAuth認証のログインフロー確認
+    - [ ] 初回ログイン時のユーザー作成確認
+    - [ ] 2回目以降のログイン確認
+    - [ ] セッション管理の確認
+    - [ ] エラーハンドリングの実装
+      - [ ] 発生しうるエラーの洗い出しと分類
+      - [ ] ユーザー操作系エラーのUIフィードバック実装
+      - [ ] サーバ/設定系エラーのログ記録とSentry送信実装
+      - [ ] 各エラーケースの動作確認
+
+- [ ] iOSアプリの基本セットアップ
+  - [ ] Expo + React Nativeプロジェクトの作成
+  - [ ] TypeScript設定
+  - [ ] リンター・フォーマッター設定
+  - [ ] react-native-componentsパッケージの作成
+    - [ ] パッケージの初期化
+    - [ ] ルート `.env` へのシンボリックリンク作成
+    - [ ] React Native Storybookのセットアップ
+    - [ ] 共通コンポーネントの基本構造
+  - [ ] op-sqliteのインストール
+  - [ ] Drizzle ORM（op-sqlite）の設定
+    - [ ] Drizzleとop-sqliteドライバーのインストール
+    - [ ] Drizzle設定ファイルの作成
+    - [ ] op-sqliteへのDrizzle接続設定
+    - [ ] ローカルSQLiteでの動作確認
+  - [ ] EAS CLIのセットアップ
+  - [ ] Development Buildの設定
+  - [ ] iOS Simulatorでの動作確認
+
+- [ ] Web/iOS/Tursoの連携基盤
+  - [ ] Per-User Database管理機能
+    - [ ] per-user-databaseパッケージの作成
+      - [ ] パッケージの初期化
+      - [ ] ルート `.env` へのシンボリックリンク作成
+    - [ ] Per-User DB用Drizzleスキーマの定義
+    - [ ] Turso Platform API統合（作成・削除）
+    - [ ] 初回ログイン時のPer-User DB作成フロー
+    - [ ] Per-User DB作成ロジックのテスト（モック使用）
+  - [ ] iOS: Better Auth統合
+    - [ ] @better-auth/expoのセットアップ
+    - [ ] iOS側での認証フロー実装
+    - [ ] セッション管理（expo-secure-store）
+    - [ ] ログイン・ログアウト機能の動作確認
+  - [ ] iOS: Turso Embedded Replicas
+    - [ ] op-sqliteでのEmbedded Replicas接続設定
+      - [ ] Per-User DBのURLとauthTokenを取得
+      - [ ] op-sqliteのopen()でローカルDB作成とリモート接続
+      - [ ] syncIntervalの設定
+    - [ ] Drizzle ORM（op-sqlite）との統合
+      - [ ] op-sqliteドライバーでDrizzleクライアント作成
+      - [ ] packages/per-user-databaseのスキーマを利用
+    - [ ] ローカル・リモート同期の動作確認
+      - [ ] 自動同期の確認（syncInterval）
+      - [ ] 手動同期（sync()）の確認
+      - [ ] オフライン時の動作確認
+  - [ ] Web/iOS間のデータ同期確認
+    - [ ] Webでデータ作成→iOSで参照の確認（手動）
+    - [ ] iOSでデータ作成→Webで参照の確認（手動）
+    - [ ] 同期タイミングの確認
+    - [ ] データ整合性の確認（欠損・重複がないか）
