@@ -4,13 +4,40 @@ Next Liftの認証用データベースパッケージ。Better AuthとDrizzle O
 
 ## 概要
 
-このパッケージは、Better Authインスタンス（`auth`）を提供します。認証エンドポイントの作成やユーザー管理に使用します。
+このパッケージは、以下を提供します：
+
+### `auth`
+
+Better Authインスタンス。認証エンドポイントの作成やユーザー管理に使用します。
 
 ```typescript
 import { auth } from "@next-lift/auth-database";
 ```
 
-内部的には、Drizzle ORMによるデータベーススキーマ管理と、環境に応じたデータベース接続（リモート/ローカルファイル/インメモリ）を行っています。
+環境変数の設定に応じて、リモートデータベース（本番環境）またはローカルファイル（開発環境）に接続します。
+
+### `createDatabase`
+
+データベースクライアントを作成する関数。以下の3種類の接続タイプに対応しています：
+
+```typescript
+import { createDatabase } from "@next-lift/auth-database";
+
+// リモート接続（Turso）
+const remoteDb = createDatabase({
+  type: "remote",
+  url: "libsql://...",
+  authToken: "...",
+});
+
+// ローカルファイル
+const fileDb = createDatabase({ type: "file" });
+
+// インメモリ（テスト用途など）
+const memoryDb = createDatabase({ type: "memory" });
+```
+
+主にテスト環境で使用することを想定しています。詳細は [TESTING.md](./TESTING.md) を参照してください。
 
 ## データベース構成
 
