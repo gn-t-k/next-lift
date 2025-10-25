@@ -1,6 +1,6 @@
 # フェーズ1: インフラ基盤の整備 - タスクツリー
 
-- [ ] Turso Databaseの設定
+- [x] Turso Databaseの設定
   - [x] 環境ごとのデータベース戦略の決定
     - [x] 必要な環境の洗い出し（本番/開発/テスト/プレビュー）
     - [x] 各環境のデータベース構成の決定
@@ -11,18 +11,18 @@
     - [x] Turso CLIのインストール
     - [x] 各環境用のAuthentication Databaseインスタンスの作成
     - [x] 各環境のデータベース接続情報（URL、トークン）の取得
-  - [ ] Drizzle ORMのセットアップ
+  - [x] Drizzle ORMのセットアップ
     - [x] auth-databaseパッケージの作成
       - [x] パッケージの初期化
       - [x] ルート `.env` へのシンボリックリンク作成
-    - [ ] Drizzle ORMとTurso用のドライバーのインストール
-    - [ ] Drizzle設定ファイルの作成
-    - [ ] TursoへのDrizzle接続設定
-    - [ ] 環境ごとの接続設定
-    - [ ] テスト用データベースのセットアップ
-      - [ ] ローカルテスト用DB環境の構築
-      - [ ] CI環境でのテストDB設定
-      - [ ] テスト用のDBリセット/シード機能
+    - [x] Drizzle ORMとTurso用のドライバーのインストール
+    - [x] Drizzle設定ファイルの作成
+    - [x] TursoへのDrizzle接続設定
+    - [x] 環境ごとの接続設定
+    - [x] テスト用データベースのセットアップ
+      - [x] ローカルテスト用DB環境の構築
+      - [x] CI環境でのテストDB設定
+      - [x] テスト用のDBリセット/シード機能
   - [x] Better Auth用スキーマの定義（Authentication DB）
     - [x] Better Authが必要とするテーブル構造の確認
     - [x] Drizzleスキーマファイルの作成（user, session, account, verification）
