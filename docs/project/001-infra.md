@@ -6,15 +6,15 @@
     - [x] 各環境のデータベース構成の決定
     - [x] Per-User Database構成と環境戦略の整合性確認
     - [x] 環境変数の管理方法の決定
-  - [ ] Authentication Databaseの作成
-    - [ ] Tursoアカウントの作成/確認
-    - [ ] Turso CLIのインストール
-    - [ ] 各環境用のAuthentication Databaseインスタンスの作成
-    - [ ] 各環境のデータベース接続情報（URL、トークン）の取得
+  - [x] Authentication Databaseの作成
+    - [x] Tursoアカウントの作成/確認
+    - [x] Turso CLIのインストール
+    - [x] 各環境用のAuthentication Databaseインスタンスの作成
+    - [x] 各環境のデータベース接続情報（URL、トークン）の取得
   - [ ] Drizzle ORMのセットアップ
-    - [ ] auth-databaseパッケージの作成
-      - [ ] パッケージの初期化
-      - [ ] ルート `.env` へのシンボリックリンク作成
+    - [x] auth-databaseパッケージの作成
+      - [x] パッケージの初期化
+      - [x] ルート `.env` へのシンボリックリンク作成
     - [ ] Drizzle ORMとTurso用のドライバーのインストール
     - [ ] Drizzle設定ファイルの作成
     - [ ] TursoへのDrizzle接続設定
@@ -23,14 +23,14 @@
       - [ ] ローカルテスト用DB環境の構築
       - [ ] CI環境でのテストDB設定
       - [ ] テスト用のDBリセット/シード機能
-  - [ ] Better Auth用スキーマの定義（Authentication DB）
-    - [ ] Better Authが必要とするテーブル構造の確認
-    - [ ] Drizzleスキーマファイルの作成（user, session, account, verification）
-    - [ ] マイグレーションファイルの生成
-    - [ ] マイグレーションの実行
-    - [ ] Better Auth設定の作成（packages/auth-database内）
-      - [ ] Better Authインスタンス設定ファイルの作成
-      - [ ] Drizzleアダプターの設定
+  - [x] Better Auth用スキーマの定義（Authentication DB）
+    - [x] Better Authが必要とするテーブル構造の確認
+    - [x] Drizzleスキーマファイルの作成（user, session, account, verification）
+    - [x] マイグレーションファイルの生成
+    - [x] マイグレーションの実行
+    - [x] Better Auth設定の作成（packages/auth-database内）
+      - [x] Better Authインスタンス設定ファイルの作成
+      - [x] Drizzleアダプターの設定
 
 - [ ] Next.jsプロジェクトのセットアップ
   - [ ] Next.jsのインストール（v16以上）
