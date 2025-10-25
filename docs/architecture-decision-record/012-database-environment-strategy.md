@@ -132,33 +132,33 @@ const client = createClient({
 
 Tursoのグループ機能は使用せず、命名規則のみで環境を管理する。
 
-### 命名規則: `{環境}-{用途}-{識別子}`
+### 命名規則: `next-lift-{環境}-{用途}-{識別子}`
 
 | 環境 | Authentication DB | Per-User DB |
 |------|------------------|-------------|
-| **本番** | `production-auth` | `production-user-{userId}` |
-| **プレビュー** | `preview-pr{number}-auth` | `preview-pr{number}-user-{userId}` |
+| **本番** | `next-lift-production-auth` | `next-lift-production-user-{userId}` |
+| **プレビュー** | `next-lift-preview-pr{number}-auth` | `next-lift-preview-pr{number}-user-{userId}` |
 | **開発** | ローカルファイル（Turso Hostedに作らない） | ローカルファイル（Turso Hostedに作らない） |
 | **テスト** | インメモリ（Turso Hostedに作らない） | モック（Turso Hostedに作らない） |
 
 **例:**
 ```text
-production-auth
-production-user-abc123
-preview-pr123-auth
-preview-pr123-user-def456
-preview-pr124-auth
-preview-pr124-user-ghi789
+next-lift-production-auth
+next-lift-production-user-abc123
+next-lift-preview-pr123-auth
+next-lift-preview-pr123-user-def456
+next-lift-preview-pr124-auth
+next-lift-preview-pr124-user-ghi789
 ```
 
 **アルファベット順での並び:**
 ```text
-preview-pr123-auth
-preview-pr123-user-def456
-preview-pr124-auth
-preview-pr124-user-ghi789
-production-auth
-production-user-abc123
+next-lift-preview-pr123-auth
+next-lift-preview-pr123-user-def456
+next-lift-preview-pr124-auth
+next-lift-preview-pr124-user-ghi789
+next-lift-production-auth
+next-lift-production-user-abc123
 ```
 環境ごとにまとまるため、管理しやすい。
 
@@ -167,12 +167,12 @@ production-user-abc123
 ```text
 Turso Organization: next-lift
 └── default（グループ）
-    ├── production-auth
-    ├── production-user-{userId}（複数）
-    ├── preview-pr123-auth
-    ├── preview-pr123-user-{userId}（複数）
-    ├── preview-pr124-auth
-    └── preview-pr124-user-{userId}（複数）
+    ├── next-lift-production-auth
+    ├── next-lift-production-user-{userId}（複数）
+    ├── next-lift-preview-pr123-auth
+    ├── next-lift-preview-pr123-user-{userId}（複数）
+    ├── next-lift-preview-pr124-auth
+    └── next-lift-preview-pr124-user-{userId}（複数）
 
 合計: N（本番） + M（プレビュー） ≤ 100個（Freeプラン制約）
 ```
@@ -202,7 +202,7 @@ Vercelの環境変数設定機能を使用
 **Production環境:**
 ```bash
 NODE_ENV=production
-TURSO_AUTH_DATABASE_URL=libsql://production-auth.turso.io
+TURSO_AUTH_DATABASE_URL=libsql://next-lift-production-auth.turso.io
 TURSO_AUTH_DATABASE_AUTH_TOKEN=xxx
 TURSO_PLATFORM_API_TOKEN=yyy
 TURSO_ORGANIZATION=next-lift
@@ -211,7 +211,7 @@ TURSO_ORGANIZATION=next-lift
 **Preview環境:**
 ```bash
 NODE_ENV=preview
-TURSO_AUTH_DATABASE_URL=libsql://preview-pr${PR_NUMBER}-auth.turso.io
+TURSO_AUTH_DATABASE_URL=libsql://next-lift-preview-pr${PR_NUMBER}-auth.turso.io
 TURSO_AUTH_DATABASE_AUTH_TOKEN=xxx
 TURSO_PLATFORM_API_TOKEN=yyy
 TURSO_ORGANIZATION=next-lift
@@ -279,7 +279,7 @@ jobs:
     steps:
       - name: Create Turso Database
         run: |
-          DB_NAME="preview-pr${{ github.event.pull_request.number }}-auth"
+          DB_NAME="next-lift-preview-pr${{ github.event.pull_request.number }}-auth"
           curl -X POST "https://api.turso.tech/v1/organizations/${{ secrets.TURSO_ORGANIZATION }}/databases" \
             -H "Authorization: Bearer ${{ secrets.TURSO_PLATFORM_API_TOKEN }}" \
             -H "Content-Type: application/json" \
@@ -302,8 +302,8 @@ jobs:
     steps:
       - name: Delete Turso Databases
         run: |
-          PREFIX="preview-pr${{ github.event.pull_request.number }}-"
-          # preview-pr{number}-* のDBをすべて削除
+          PREFIX="next-lift-preview-pr${{ github.event.pull_request.number }}-"
+          # next-lift-preview-pr{number}-* のDBをすべて削除
           turso db list --json | jq -r ".[] | select(.Name | startswith(\"$PREFIX\")) | .Name" | \
             xargs -I {} turso db destroy {} --yes
 ```
