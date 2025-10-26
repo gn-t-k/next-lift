@@ -23,6 +23,7 @@ ADRは、プロジェクトで行われた重要なアーキテクチャ上の�
 ### 認証
 
 - [003: Better Auth](./003-better-auth.md)
+- [013: 認証モジュールのテスト戦略](./013-authentication-testing-strategy.md)
 
 ### データベース・データアクセス
 

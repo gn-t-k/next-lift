@@ -1,17 +1,19 @@
 {
-	"name": "@next-lift/auth-database",
+	"name": "@next-lift/authentication",
 	"version": "0.1.0",
 	"private": true,
 	"type": "module",
 	"exports": {
-		".": "./src/index.ts"
+		"./instance": "./src/instance.ts",
+		"./test-helpers": "./src/test-helpers.ts",
+		"./better-auth": "./src/better-auth.ts"
 	},
 	"scripts": {
 		"lint": "biome check .",
 		"type-check": "tsc --noEmit",
 		"migration:apply": "drizzle-kit migrate",
 		"db:studio": "drizzle-kit studio",
-		"generate:schema": "better-auth generate --config src/auth.ts --output src/generated/schema.ts --yes"
+		"generate:schema": "better-auth generate --config src/instance.ts --output src/generated/schema.ts --yes"
 	},
 	"dependencies": {
 		"@libsql/client": "0.15.15",

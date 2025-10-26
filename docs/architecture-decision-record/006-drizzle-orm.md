@@ -21,7 +21,7 @@ ORMとして**Drizzle ORM**を採用する。
 
 - Next.js (Web App): Turso接続
 - React Native (iOS App): op-sqlite接続
-- 共通スキーマ定義: `packages/per-user-database`、`packages/auth-database`
+- 共通スキーマ定義: `packages/per-user-database`、`packages/authentication`
 
 ## 結果・影響
 
