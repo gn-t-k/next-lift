@@ -33,12 +33,12 @@
       - [x] Drizzleアダプターの設定
 
 - [ ] Next.jsプロジェクトのセットアップ
-  - [ ] Next.jsのインストール（v16以上）
-  - [ ] App Routerの設定
-  - [ ] TypeScript設定
-  - [ ] リンター・フォーマッター設定
-    - [ ] Biome設定の継承/カスタマイズ
-    - [ ] Next.js向けルールの設定
+  - [x] Next.jsのインストール（v16以上）
+  - [x] App Routerの設定
+  - [x] TypeScript設定
+  - [x] リンター・フォーマッター設定
+    - [x] Biome設定の継承/カスタマイズ
+    - [x] Next.js向けルールの設定
   - [ ] react-componentsパッケージの作成
     - [ ] パッケージの初期化
     - [ ] ルート `.env` へのシンボリックリンク作成
