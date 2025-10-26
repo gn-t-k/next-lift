@@ -1,9 +1,9 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { database } from "./client";
+import { getDatabase } from "./get-database";
 
 export const auth = betterAuth({
-	database: drizzleAdapter(database, {
+	database: drizzleAdapter(getDatabase(), {
 		provider: "sqlite",
 	}),
 });

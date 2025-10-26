@@ -1,43 +1,72 @@
-# @next-lift/auth-database
+# @next-lift/authentication
 
-Next Liftの認証用データベースパッケージ。Better AuthとDrizzle ORMを使用して、Authentication Databaseの管理を行います。
+Next Liftの認証パッケージ。Better AuthとDrizzle ORMを使用して、Authentication Databaseの管理を行います。
 
-## 概要
+## Exports
 
-このパッケージは、以下を提供します：
+このパッケージは3つのモジュールを提供します：
 
-### `auth`
+### `@next-lift/authentication/instance`
 
-Better Authインスタンス。認証エンドポイントの作成やユーザー管理に使用します。
+本番用Better Authインスタンス:
 
 ```typescript
-import { auth } from "@next-lift/auth-database";
+import { auth } from "@next-lift/authentication/instance";
+
+// 認証エンドポイントの作成（Next.js Route Handlers）
+export const { GET, POST } = auth.handler;
+
+// サーバー側でのユーザー情報取得
+const user = await auth.api.getUser({ userId: "..." });
 ```
 
 環境変数の設定に応じて、リモートデータベース（本番環境）またはローカルファイル（開発環境）に接続します。
 
-### `createDatabase`
+### `@next-lift/authentication/better-auth`
 
-データベースクライアントを作成する関数。以下の3種類の接続タイプに対応しています：
+Better Authのすべての機能をre-export:
 
 ```typescript
-import { createDatabase } from "@next-lift/auth-database";
+// クライアント作成
+import { createAuthClient } from "@next-lift/authentication/better-auth";
 
-// リモート接続（Turso）
-const remoteDb = createDatabase({
-  type: "remote",
-  url: "libsql://...",
-  authToken: "...",
-});
+const authClient = createAuthClient();
 
-// ローカルファイル
-const fileDb = createDatabase({ type: "file" });
+// Google認証
+await authClient.signIn.social({ provider: "google" });
 
-// インメモリ（テスト用途など）
-const memoryDb = createDatabase({ type: "memory" });
+// 型定義
+import type { User, Session } from "@next-lift/authentication/better-auth";
 ```
 
-主にテスト環境で使用することを想定しています。詳細は [TESTING.md](./TESTING.md) を参照してください。
+### `@next-lift/authentication/test-helpers`
+
+テスト用ヘルパー:
+
+```typescript
+import { createTestAuth } from "@next-lift/authentication/test-helpers";
+
+describe("認証テスト", () => {
+  let testAuth;
+
+  beforeEach(async () => {
+    testAuth = await createTestAuth();
+  });
+
+  it("ユーザー登録できる", async () => {
+    const result = await testAuth.api.signUp.email({
+      email: "test@example.com",
+      password: "password",
+      name: "Test User",
+    });
+    expect(result?.user).toBeDefined();
+  });
+});
+```
+
+## テスト戦略
+
+認証モジュールのテスト戦略については、[ADR-013: 認証モジュールのテスト戦略](../../docs/architecture-decision-record/013-authentication-testing-strategy.md)を参照してください。
 
 ## データベース構成
 
@@ -106,15 +135,16 @@ pnpm generate:schema
 ## ディレクトリ構成
 
 ```plaintext
-packages/auth-database/
+packages/authentication/
 ├── src/
-│   ├── auth.ts               # Better Auth 設定
-│   ├── client.ts             # データベースクライアント
-│   ├── index.ts              # エクスポート
+│   ├── instance.ts           # Better Authインスタンス
+│   ├── better-auth.ts        # Better Authの再export
+│   ├── test-helpers.ts       # テストヘルパー
+│   ├── get-database.ts       # データベースクライアント（内部用）
 │   └── generated/            # 自動生成ファイル
-│       └── schema.ts         # Drizzle スキーマ（Better Auth CLI で生成）
-├── drizzle/                  # マイグレーションファイル（Drizzle Kit で生成）
-├── drizzle.config.ts         # Drizzle Kit 設定
+│       └── schema.ts         # Drizzleスキーマ（Better Auth CLIで生成）
+├── drizzle/                  # マイグレーションファイル（Drizzle Kitで生成）
+├── drizzle.config.ts         # Drizzle Kit設定
 ├── tsconfig.json
 ├── package.json
 └── README.md
