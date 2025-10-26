@@ -124,7 +124,7 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
 
-  packages/auth-database:
+  packages/authentication:
     dependencies:
       '@libsql/client':
         specifier: 0.15.15
