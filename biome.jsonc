@@ -26,12 +26,6 @@
 				"useWhile": "warn"
 			},
 			"correctness": {
-				"noPrivateImports": {
-					"level": "warn",
-					"options": {
-						"defaultVisibility": "package"
-					}
-				},
 				"noRenderReturnValue": "warn",
 				"noUndeclaredDependencies": "warn",
 				"useHookAtTopLevel": "warn",
