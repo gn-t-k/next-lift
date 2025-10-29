@@ -60,9 +60,15 @@ importers:
       '@tailwindcss/postcss':
         specifier: 4.1.16
         version: 4.1.16
+      '@tsconfig/create-react-app':
+        specifier: 2.0.8
+        version: 2.0.8
       '@tsconfig/next':
         specifier: 2.0.3
         version: 2.0.3
+      '@tsconfig/strictest':
+        specifier: 2.0.6
+        version: 2.0.6
       '@types/node':
         specifier: 24.9.1
         version: 24.9.1
