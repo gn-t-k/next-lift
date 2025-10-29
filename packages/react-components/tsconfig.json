@@ -1,0 +1,16 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"extends": [
+		"@tsconfig/strictest/tsconfig.json",
+		"@tsconfig/create-react-app/tsconfig.json"
+	],
+	"compilerOptions": {
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"noEmit": true,
+		"target": "ESNext",
+		"paths": {
+			"@next-lift/react-components/*": ["./src/*"]
+		}
+	}
+}

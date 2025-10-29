@@ -1,0 +1,22 @@
+{
+	"$schema": "https://ui.shadcn.com/schema.json",
+	"style": "default",
+	"rsc": false,
+	"tsx": true,
+	"tailwind": {
+		"config": "",
+		"css": "src/globals.css",
+		"baseColor": "zinc",
+		"cssVariables": true
+	},
+	"aliases": {
+		"components": "@next-lift/react-components/components",
+		"ui": "@next-lift/react-components/ui",
+		"utils": "@next-lift/react-components/lib/utils",
+		"lib": "@next-lift/react-components/lib",
+		"hooks": "@next-lift/react-components/hooks"
+	},
+	"registries": {
+		"@intentui": "https://intentui.com/r/{name}"
+	}
+}
