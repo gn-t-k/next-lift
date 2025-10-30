@@ -82,8 +82,8 @@ importers:
   configs/common:
     dependencies:
       '@tsconfig/strictest':
-        specifier: 2.0.6
-        version: 2.0.6
+        specifier: 2.0.7
+        version: 2.0.7
       vitest:
         specifier: 3.2.4
         version: 3.2.4(@types/node@24.9.1)(@vitest/browser@3.2.4)(jiti@2.6.1)(jsdom@26.1.0)(lightningcss@1.30.2)(yaml@2.8.1)
@@ -201,8 +201,8 @@ importers:
         specifier: 2.1.4
         version: 2.1.4
       '@tsconfig/strictest':
-        specifier: 2.0.6
-        version: 2.0.6
+        specifier: 2.0.7
+        version: 2.0.7
       '@types/node':
         specifier: 24.9.1
         version: 24.9.1
@@ -1898,8 +1898,8 @@ packages:
   '@tsconfig/node16@1.0.4':
     resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
 
-  '@tsconfig/strictest@2.0.6':
-    resolution: {integrity: sha512-tPOhmDhIUcDjvpDDYyiUdssP84Eqm7n5KxJe5J3/g+s6xoDIPAf+SIn06dhw7VkhxIvLOnhDDrX7tsqMHNEhDg==}
+  '@tsconfig/strictest@2.0.7':
+    resolution: {integrity: sha512-lG1bXQloBVvQXasPBZSBaWbs7GNW4txZMYs7XMUVzM0s4seCbJACYBPFIRpGNVD3gC8gndK00AZON1uBrJt4Fw==}
 
   '@turbo/gen@2.5.8':
     resolution: {integrity: sha512-PknlZnl4NzARv9p2KnRIA2q9cGWzrvv2G5moWLoZRTLspoE7jL2XtejzwbclS2iXGbXQWk27BfIugv98tS2s7w==}
@@ -5666,7 +5666,7 @@ snapshots:
 
   '@tsconfig/node16@1.0.4': {}
 
-  '@tsconfig/strictest@2.0.6': {}
+  '@tsconfig/strictest@2.0.7': {}
 
   '@turbo/gen@2.5.8(@types/node@24.9.1)(typescript@5.9.3)':
     dependencies:
