@@ -11,20 +11,18 @@ const meta = {
 	argTypes: {
 		intent: {
 			control: "select",
-			options: ["primary", "secondary", "warning", "danger", "outline", "plain"],
+			options: [
+				"primary",
+				"secondary",
+				"warning",
+				"danger",
+				"outline",
+				"plain",
+			],
 		},
 		size: {
 			control: "select",
-			options: [
-				"xs",
-				"sm",
-				"md",
-				"lg",
-				"sq-xs",
-				"sq-sm",
-				"sq-md",
-				"sq-lg",
-			],
+			options: ["xs", "sm", "md", "lg", "sq-xs", "sq-sm", "sq-md", "sq-lg"],
 		},
 		isCircle: {
 			control: "boolean",
