@@ -23,6 +23,9 @@ importers:
       '@heroicons/react':
         specifier: 2.2.0
         version: 2.2.0(react@19.2.0)
+      '@next-lift/react-components':
+        specifier: workspace:*
+        version: link:../../packages/react-components
       next:
         specifier: 16.0.1
         version: 16.0.1(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
