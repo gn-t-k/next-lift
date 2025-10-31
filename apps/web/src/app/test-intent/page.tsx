@@ -1,9 +1,9 @@
 "use client";
 
+import { Button } from "@next-lift/react-components/ui";
 import { useTheme } from "next-themes";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
-import { Button } from "../../ui/ui/button";
 
 const TestIntentUI: FC = () => {
 	const { theme, setTheme } = useTheme();
