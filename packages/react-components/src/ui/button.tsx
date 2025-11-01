@@ -1,5 +1,6 @@
 "use client";
 
+import type { FC } from "react";
 import {
 	Button as ButtonPrimitive,
 	type ButtonProps as ButtonPrimitiveProps,
@@ -88,23 +89,17 @@ export const buttonStyles = tv({
 	},
 });
 
-export interface ButtonProps
-	extends ButtonPrimitiveProps,
-		VariantProps<typeof buttonStyles> {
-	ref?: React.Ref<HTMLButtonElement>;
-}
+type Props = ButtonPrimitiveProps & VariantProps<typeof buttonStyles>;
 
-export function Button({
+export const Button: FC<Props> = ({
 	className,
 	intent,
 	size,
 	isCircle,
-	ref,
 	...props
-}: ButtonProps) {
+}) => {
 	return (
 		<ButtonPrimitive
-			ref={ref}
 			{...props}
 			className={cx(
 				buttonStyles({
@@ -116,4 +111,4 @@ export function Button({
 			)}
 		/>
 	);
-}
+};
