@@ -172,8 +172,8 @@ importers:
         specifier: 1.1.1
         version: 1.1.1(vite@6.4.1(@types/node@24.9.1)(jiti@2.6.1)(lightningcss@1.30.2)(yaml@2.8.1))
       '@tsconfig/create-react-app':
-        specifier: 2.0.7
-        version: 2.0.7
+        specifier: 2.0.8
+        version: 2.0.8
       jsdom:
         specifier: 26.1.0
         version: 26.1.0
@@ -2159,8 +2159,8 @@ packages:
   '@tootallnate/quickjs-emscripten@0.23.0':
     resolution: {integrity: sha512-C5Mc6rdnsaJDjO3UpGW/CQTHtCKaYlScZTly4JIu97Jxo/odCiH0ITnDXSJPTOrEKk/ycSZ0AOgTmkDtkOsvIA==}
 
-  '@tsconfig/create-react-app@2.0.7':
-    resolution: {integrity: sha512-gSui0f0bjRi824CzbUWdTaTrmQCCu23X/duAZLcYiJWmSok3aKAfBwg5lq1x/aBj3AuL9XQwE7RmvYxW5GG/Mg==}
+  '@tsconfig/create-react-app@2.0.8':
+    resolution: {integrity: sha512-ErLvUPDisg5cdi9IjoC2lGN86iySg6+BPHiwds7pNMPvyI4abn5pobTBpq1gEzDTrt8axW5iWTE1doD+cMwBwA==}
 
   '@tsconfig/create-react-app@2.0.8':
     resolution: {integrity: sha512-ErLvUPDisg5cdi9IjoC2lGN86iySg6+BPHiwds7pNMPvyI4abn5pobTBpq1gEzDTrt8axW5iWTE1doD+cMwBwA==}
@@ -6633,7 +6633,7 @@ snapshots:
 
   '@tootallnate/quickjs-emscripten@0.23.0': {}
 
-  '@tsconfig/create-react-app@2.0.7': {}
+  '@tsconfig/create-react-app@2.0.8': {}
 
   '@tsconfig/create-react-app@2.0.8': {}
 
