@@ -46,6 +46,12 @@ ADRは、プロジェクトで行われた重要なアーキテクチャ上の�
 
 - [010: Local-first Architecture](./010-local-first-architecture.md)
 
+### UI/スタイリング
+
+- [014: Intent UIの採用](./014-intent-ui.md)
+- [015: Tailwind CSS v4の採用](./015-tailwind-css-v4.md)
+- [016: Tailwind設定の共通化（tailwind-configパッケージ）](./016-tailwind-config-package.md)
+
 ## 新しいADRの追加
 
 新しいADRを追加する場合は、`/adr` slash commandを使用してください。
