@@ -8,6 +8,7 @@
 		"./lib": "./src/lib/index.ts"
 	},
 	"dependencies": {
+		"@next-lift/tailwind-config": "workspace:*",
 		"clsx": "2.1.1",
 		"react": "19.2.0",
 		"react-aria-components": "1.13.0",
