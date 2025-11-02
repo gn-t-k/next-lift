@@ -107,7 +107,8 @@ Next Liftは**pnpm**を使用したMonorepo構成です。([ADR-009](./architect
   ├── react-components             # Web用共通コンポーネント
   ├── react-native-components      # iOS用共通コンポーネント
   ├── per-user-database            # Per-User DBスキーマ + クライアント
-  └── authentication               # 認証機能
+  ├── authentication               # 認証機能
+  └── tailwind-config              # Tailwind設定（Web用）
 ```
 
 ## Local-first アーキテクチャ
