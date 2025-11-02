@@ -32,21 +32,21 @@
       - [x] Better Authインスタンス設定ファイルの作成
       - [x] Drizzleアダプターの設定
 
-- [ ] Next.jsプロジェクトのセットアップ
+- [x] Next.jsプロジェクトのセットアップ
   - [x] Next.jsのインストール（v16以上）
   - [x] App Routerの設定
   - [x] TypeScript設定
   - [x] リンター・フォーマッター設定
     - [x] Biome設定の継承/カスタマイズ
     - [x] Next.js向けルールの設定
-  - [ ] react-componentsパッケージの作成
-    - [ ] パッケージの初期化
-    - [ ] ルート `.env` へのシンボリックリンク作成
-    - [ ] 共通コンポーネントの基本構造
-  - [ ] 必要な依存パッケージのインストール
-  - [ ] Next.js MCP設定
-    - [ ] .mcp.jsonファイルの作成
-    - [ ] next-devtools-mcpの設定
+  - [x] react-componentsパッケージの作成
+    - [x] パッケージの初期化
+    - [x] ルート `.env` へのシンボリックリンク作成
+    - [x] 共通コンポーネントの基本構造
+  - [x] 必要な依存パッケージのインストール
+  - [x] Next.js MCP設定
+    - [x] .mcp.jsonファイルの作成
+    - [x] next-devtools-mcpの設定
 
 - [ ] Vercelへのデプロイ設定
   - [ ] Vercelプロジェクトの作成
