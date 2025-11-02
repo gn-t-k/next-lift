@@ -1,4 +1,3 @@
 @import "@next-lift/tailwind-config/tailwind.css";
 
-@source "../../**/*.{js,ts,jsx,tsx}";
 @source "../../../../packages/react-components/src/**/*.{js,ts,jsx,tsx}";
