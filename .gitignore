@@ -134,3 +134,6 @@ apps/web/worker-configuration.d.ts
 
 *storybook.log
 storybook-static
+
+# Vercel
+.vercel
