@@ -8,7 +8,12 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["**", "!**/dist/**", "!**/build/**", "!**/node_modules/**"]
+		"includes": ["**", "!**/dist", "!**/build", "!**/node_modules"]
+	},
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
+		}
 	},
 	"formatter": {
 		"enabled": true,
@@ -18,46 +23,45 @@
 		"enabled": true,
 		"rules": {
 			"recommended": true,
+			"a11y": {
+				"noNoninteractiveElementInteractions": "warn"
+			},
 			"complexity": {
 				"noExcessiveCognitiveComplexity": "warn",
 				"noUselessStringConcat": "warn",
 				"noVoid": "warn",
+				"useIndexOf": "warn",
 				"useSimplifiedLogicExpression": "warn",
 				"useWhile": "warn"
 			},
 			"correctness": {
+				"noNestedComponentDefinitions": "warn",
+				"noProcessGlobal": "warn",
 				"noRenderReturnValue": "warn",
 				"noUndeclaredDependencies": "warn",
 				"useHookAtTopLevel": "warn",
-				"useJsxKeyInIterable": "warn"
+				"useJsxKeyInIterable": "warn",
+				"useUniqueElementIds": "warn"
 			},
 			"nursery": {
-				"noAwaitInLoop": "warn",
-				"noBitwiseOperators": "warn",
-				"noConstantBinaryExpression": "warn",
 				"noFloatingPromises": "warn",
 				"noImportCycles": "warn",
-				"noNestedComponentDefinitions": "warn",
-				"noNoninteractiveElementInteractions": "warn",
-				"noProcessGlobal": "warn",
-				"noReactPropAssign": "warn",
-				"noSecrets": "warn",
+				"useExhaustiveSwitchCases": "warn"
+			},
+			"performance": {
+				"useGoogleFontPreconnect": "warn"
+			},
+			"security": {
+				"noSecrets": "warn"
+			},
+			"style": {
+				"useObjectSpread": "warn"
+			},
+			"suspicious": {
+				"noBitwiseOperators": "warn",
 				"noUnassignedVariables": "warn",
-				"noUselessBackrefInRegex": "warn",
 				"noUselessEscapeInString": "warn",
-				"useConsistentObjectDefinition": {
-					"level": "warn",
-					"options": {
-						"syntax": "shorthand"
-					}
-				},
-				"useConsistentResponse": "warn",
-				"useExhaustiveSwitchCases": "warn",
-				"useGoogleFontPreconnect": "warn",
-				"useIndexOf": "warn",
-				"useIterableCallbackReturn": "warn",
-				"useObjectSpread": "warn",
-				"useUniqueElementIds": "warn"
+				"useIterableCallbackReturn": "warn"
 			}
 		}
 	},
