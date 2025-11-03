@@ -1,4 +1,0 @@
-{
-	"buildCommand": "cd ../.. && pnpm run build --filter=@next-lift/web",
-	"installCommand": "cd ../.. && pnpm install"
-}
