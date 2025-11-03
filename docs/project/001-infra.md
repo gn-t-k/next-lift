@@ -51,16 +51,16 @@
 - [x] Vercelへのデプロイ設定
   - [x] Vercelプロジェクトの作成
   - [x] 基本的なデプロイの動作確認
-  - [ ] プレビュー環境のデータベース管理
-    - [ ] PR作成時のデータベース作成（GitHub Actions）
-      - [ ] workflow作成（preview-db-create.yml）
-      - [ ] Turso Platform APIでpreview-pr{number}-authを作成
-      - [ ] GitHub Secretsの設定（TURSO_PLATFORM_API_TOKEN等）
-      - [ ] 動作確認
-    - [ ] PRクローズ時のデータベース削除（GitHub Actions）
-      - [ ] workflow作成（preview-db-delete.yml）
-      - [ ] preview-pr{number}-*を検索して削除
-      - [ ] 動作確認
+  - [x] プレビュー環境のデータベース管理
+    - [x] PR作成時のデータベース作成（GitHub Actions）
+      - [x] workflow作成（preview-db-create.yml）
+      - [x] Turso Platform APIでpreview-pr{number}-authを作成
+      - [x] GitHub Secretsの設定（TURSO_PLATFORM_API_TOKEN等）
+      - [x] 動作確認
+    - [x] PRクローズ時のデータベース削除（GitHub Actions）
+      - [x] workflow作成（preview-db-delete.yml）
+      - [x] preview-pr{number}-*を検索して削除
+      - [x] 動作確認
 
 - [ ] エラー監視の設定
   - [ ] Sentryのセットアップ

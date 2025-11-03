@@ -42,6 +42,12 @@ description: Execute project tasks in depth-first order from docs/project/
 - 各タスクの状態（pending/in_progress/completed）を更新
 - 常に1つのタスクのみを`in_progress`に保つ
 
+## タスクドキュメントの自動更新
+
+- **大項目または中項目が完了したら**、タスクドキュメントを自動的に更新する
+- 完了したタスクのチェックボックスを `[ ]` から `[x]` に変更
+- ユーザーから「ドキュメントを更新して」と言われる前に、proactiveに更新する
+
 ## 重要な注意事項
 
 - タスクドキュメントに記載されている文言をそのまま使用する
