@@ -1,0 +1,84 @@
+name: Preview Database Delete
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  delete-preview-db:
+    name: Delete Preview Database
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Delete Preview Database
+        env:
+          TURSO_API_TOKEN: ${{ secrets.TURSO_PLATFORM_API_TOKEN }}
+          TURSO_ORG_SLUG: ${{ secrets.TURSO_ORG_SLUG }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          DB_NAME="preview-pr${PR_NUMBER}-auth"
+
+          # データベースを削除
+          DELETE_RESPONSE=$(curl -X DELETE \
+            -H "Authorization: Bearer ${TURSO_API_TOKEN}" \
+            "https://api.turso.tech/v1/organizations/${TURSO_ORG_SLUG}/databases/${DB_NAME}")
+
+          echo "Database deletion response: ${DELETE_RESPONSE}"
+
+          # エラーチェック（404は既に削除済みと判断）
+          if echo "${DELETE_RESPONSE}" | jq -e '.error' > /dev/null; then
+            ERROR_MSG=$(echo "${DELETE_RESPONSE}" | jq -r '.error')
+            if [[ "${ERROR_MSG}" == *"not found"* ]]; then
+              echo "Database ${DB_NAME} was already deleted or does not exist."
+              exit 0
+            else
+              echo "Error deleting database: ${ERROR_MSG}"
+              exit 1
+            fi
+          fi
+
+          echo "Successfully deleted database: ${DB_NAME}"
+
+      - name: Delete Vercel Environment Variables
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          # プレビュー環境の環境変数を取得
+          ENV_VARS=$(curl -X GET \
+            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+            "https://api.vercel.com/v10/projects/${VERCEL_PROJECT_ID}/env?gitBranch=${{ github.head_ref }}")
+
+          # TURSO_AUTH_DATABASE_URLのIDを取得して削除
+          URL_ENV_ID=$(echo "${ENV_VARS}" | jq -r '.envs[] | select(.key=="TURSO_AUTH_DATABASE_URL" and .gitBranch=="${{ github.head_ref }}") | .id' | head -n 1)
+          if [ -n "${URL_ENV_ID}" ] && [ "${URL_ENV_ID}" != "null" ]; then
+            curl -X DELETE \
+              -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+              "https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}/env/${URL_ENV_ID}"
+            echo "Deleted TURSO_AUTH_DATABASE_URL environment variable"
+          fi
+
+          # TURSO_AUTH_DATABASE_AUTH_TOKENのIDを取得して削除
+          TOKEN_ENV_ID=$(echo "${ENV_VARS}" | jq -r '.envs[] | select(.key=="TURSO_AUTH_DATABASE_AUTH_TOKEN" and .gitBranch=="${{ github.head_ref }}") | .id' | head -n 1)
+          if [ -n "${TOKEN_ENV_ID}" ] && [ "${TOKEN_ENV_ID}" != "null" ]; then
+            curl -X DELETE \
+              -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+              "https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}/env/${TOKEN_ENV_ID}"
+            echo "Deleted TURSO_AUTH_DATABASE_AUTH_TOKEN environment variable"
+          fi
+
+      - name: Comment PR with Deletion Info
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🗑️ Preview Database Deleted\n\n✅ プレビュー環境用のデータベースを削除しました！\n\n**Database Name**: preview-pr${process.env.PR_NUMBER}-auth\n\n> PRがクローズされたため、関連するデータベースとVercel環境変数を自動的にクリーンアップしました。`
+            })
