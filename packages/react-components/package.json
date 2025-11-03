@@ -18,7 +18,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.1.4",
-		"@chromatic-com/storybook": "4.1.1",
+		"@chromatic-com/storybook": "4.1.2",
 		"@storybook/addon-a11y": "9.1.15",
 		"@storybook/addon-docs": "9.1.15",
 		"@storybook/addon-vitest": "9.1.15",
