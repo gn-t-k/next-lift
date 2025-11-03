@@ -48,9 +48,9 @@
     - [x] .mcp.jsonファイルの作成
     - [x] next-devtools-mcpの設定
 
-- [ ] Vercelへのデプロイ設定
-  - [ ] Vercelプロジェクトの作成
-  - [ ] 基本的なデプロイの動作確認
+- [x] Vercelへのデプロイ設定
+  - [x] Vercelプロジェクトの作成
+  - [x] 基本的なデプロイの動作確認
   - [ ] プレビュー環境のデータベース管理
     - [ ] PR作成時のデータベース作成（GitHub Actions）
       - [ ] workflow作成（preview-db-create.yml）
