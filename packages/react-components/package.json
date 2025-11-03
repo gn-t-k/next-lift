@@ -27,7 +27,7 @@
 		"@tailwindcss/postcss": "4.1.16",
 		"@tailwindcss/vite": "4.1.16",
 		"@tsconfig/create-react-app": "2.0.8",
-		"@tsconfig/strictest": "2.0.6",
+		"@tsconfig/strictest": "2.0.7",
 		"@types/react": "19.2.2",
 		"@types/react-dom": "19.2.2",
 		"@vitest/browser-playwright": "4.0.6",
