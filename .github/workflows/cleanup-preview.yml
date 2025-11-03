@@ -1,12 +1,12 @@
-name: Preview Database Delete
+name: Cleanup Preview
 
 on:
   pull_request:
     types: [closed]
 
 jobs:
-  delete-preview-db:
-    name: Delete Preview Database
+  cleanup:
+    name: Cleanup Preview Environment
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -70,7 +70,7 @@ jobs:
             echo "Deleted TURSO_AUTH_DATABASE_AUTH_TOKEN environment variable"
           fi
 
-      - name: Comment PR with Deletion Info
+      - name: Comment PR with Cleanup Info
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -80,5 +80,11 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## 🗑️ Preview Database Deleted\n\n✅ プレビュー環境用のデータベースを削除しました！\n\n**Database Name**: preview-pr${process.env.PR_NUMBER}-auth\n\n> PRがクローズされたため、関連するデータベースとVercel環境変数を自動的にクリーンアップしました。`
+              body: `## 🗑️ Preview Environment Cleaned Up
+
+✅ プレビュー環境をクリーンアップしました！
+
+**Database Name**: preview-pr${process.env.PR_NUMBER}-auth
+
+> PRがクローズされたため、関連するデータベースとVercel環境変数を自動的に削除しました。`
             })
