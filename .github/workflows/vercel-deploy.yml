@@ -19,11 +19,6 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-workspace
 
-      - name: Build Next.js app
-        if: github.event_name == 'pull_request'
-        working-directory: apps/web
-        run: pnpm run build
-
       - name: Deploy to Vercel (Preview)
         if: github.event_name == 'pull_request'
         working-directory: apps/web
@@ -32,14 +27,8 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
-          npx vercel deploy --prebuilt --token=$VERCEL_TOKEN > deployment-url.txt
+          npx vercel deploy --token=$VERCEL_TOKEN > deployment-url.txt
           echo "DEPLOYMENT_URL=$(cat deployment-url.txt)" >> $GITHUB_ENV
-
-      - name: Build Next.js app
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        working-directory: apps/web
-        run: pnpm run build
 
       - name: Deploy to Vercel (Production)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -49,8 +38,7 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-          npx vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN > deployment-url.txt
+          npx vercel deploy --prod --token=$VERCEL_TOKEN > deployment-url.txt
           echo "DEPLOYMENT_URL=$(cat deployment-url.txt)" >> $GITHUB_ENV
 
       - name: Comment deployment URL on PR
