@@ -1,10 +1,13 @@
-import process from "node:process";
 export async function register() {
-	if (process.env.NEXT_RUNTIME === "nodejs") {
+	// biome-ignore lint/complexity/useLiteralKeys: TypeScript strict mode requires bracket notation
+	// biome-ignore lint/correctness/noProcessGlobal: Instrumentation uses global process
+	if (process.env["NEXT_RUNTIME"] === "nodejs") {
 		await import("../sentry.server.config");
 	}
 
-	if (process.env.NEXT_RUNTIME === "edge") {
+	// biome-ignore lint/complexity/useLiteralKeys: TypeScript strict mode requires bracket notation
+	// biome-ignore lint/correctness/noProcessGlobal: Instrumentation uses global process
+	if (process.env["NEXT_RUNTIME"] === "edge") {
 		await import("../sentry.edge.config");
 	}
 }

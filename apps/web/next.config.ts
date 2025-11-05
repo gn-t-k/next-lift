@@ -11,11 +11,14 @@ export default withSentryConfig(nextConfig, {
 	// For all available options, see:
 	// https://github.com/getsentry/sentry-webpack-plugin#options
 
-	org: process.env.SENTRY_ORG || "",
-	project: process.env.SENTRY_PROJECT || "",
+	// biome-ignore lint/complexity/useLiteralKeys: TypeScript strict mode requires bracket notation
+	org: process.env["SENTRY_ORG"] || "",
+	// biome-ignore lint/complexity/useLiteralKeys: TypeScript strict mode requires bracket notation
+	project: process.env["SENTRY_PROJECT"] || "",
 
 	// Only print logs for uploading source maps in CI
-	silent: !process.env.CI,
+	// biome-ignore lint/complexity/useLiteralKeys: TypeScript strict mode requires bracket notation
+	silent: !process.env["CI"],
 
 	// For all available options, see:
 	// https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
