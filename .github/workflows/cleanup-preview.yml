@@ -76,15 +76,21 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         with:
           script: |
+            const prNumber = process.env.PR_NUMBER;
+
+            const body = [
+              '## 🗑️ Preview Environment Cleaned Up',
+              '',
+              '✅ プレビュー環境をクリーンアップしました！',
+              '',
+              `**Database Name**: preview-pr${prNumber}-auth`,
+              '',
+              '> PRがクローズされたため、関連するデータベースとVercel環境変数を自動的に削除しました。'
+            ].join('\n');
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## 🗑️ Preview Environment Cleaned Up
-
-✅ プレビュー環境をクリーンアップしました！
-
-**Database Name**: preview-pr${process.env.PR_NUMBER}-auth
-
-> PRがクローズされたため、関連するデータベースとVercel環境変数を自動的に削除しました。`
-            })
+              body: body
+            });

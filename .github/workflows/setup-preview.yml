@@ -111,20 +111,28 @@ jobs:
           DB_URL: ${{ needs.setup-database.outputs.db_url }}
         with:
           script: |
+            const dbName = process.env.DB_NAME;
+            const dbUrl = process.env.DB_URL;
+            const deploymentUrl = process.env.DEPLOYMENT_URL;
+
+            const body = [
+              '## 🚀 Preview Environment Ready',
+              '',
+              '✅ プレビュー環境のセットアップが完了しました！',
+              '',
+              '### 🗄️ Database',
+              `**Name**: ${dbName}`,
+              `**URL**: ${dbUrl}`,
+              '',
+              '### 🌐 Deployment',
+              `**Preview URL**: ${deploymentUrl}`,
+              '',
+              '> ⚠️ このデータベースとデプロイメントはPRがクローズされると自動的に削除されます。'
+            ].join('\n');
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## 🚀 Preview Environment Ready
-
-✅ プレビュー環境のセットアップが完了しました！
-
-### 🗄️ Database
-**Name**: ${process.env.DB_NAME}
-**URL**: ${process.env.DB_URL}
-
-### 🌐 Deployment
-**Preview URL**: ${process.env.DEPLOYMENT_URL}
-
-> ⚠️ このデータベースとデプロイメントはPRがクローズされると自動的に削除されます。`
-            })
+              body: body
+            });
