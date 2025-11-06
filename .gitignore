@@ -137,3 +137,7 @@ storybook-static
 
 # Vercel
 .vercel
+
+# Sentry
+.sentryclirc
+sentry.properties
