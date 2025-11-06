@@ -1,13 +1,9 @@
 import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
-	// biome-ignore lint/complexity/useLiteralKeys: TypeScript strict mode requires bracket notation
-	// biome-ignore lint/correctness/noProcessGlobal: Server Runtime uses global process
+	// biome-ignore lint/complexity/useLiteralKeys: TypeScript strict modeの要件でブラケット記法が必須のため、ドット記法は使用できない
+	// biome-ignore lint/correctness/noProcessGlobal: Edge Runtimeでも実行される可能性があるため、グローバルprocessの使用が必要
 	dsn: process.env["NEXT_PUBLIC_SENTRY_DSN"] || "",
-
-	// Adjust this value in production, or use tracesSampler for greater control
 	tracesSampleRate: 1.0,
-
-	// Setting this option to true will print useful information to the console while you're setting up Sentry.
 	debug: false,
 });
