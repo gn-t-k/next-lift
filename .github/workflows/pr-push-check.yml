@@ -5,8 +5,8 @@ on:
     types: [opened, reopened, synchronize]
 
 jobs:
-  build:
-    name: Build
+  build-and-type-check:
+    name: Build and Type check
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -18,6 +18,9 @@ jobs:
 
       - name: Build
         run: pnpm run build
+
+      - name: Type check
+        run: pnpm run type-check
 
   lint:
     name: Lint
@@ -32,17 +35,3 @@ jobs:
 
       - name: Lint
         run: pnpm run lint
-
-  type:
-    name: Type check
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-
-      - name: Setup workspace
-        uses: ./.github/actions/setup-workspace
-
-      - name: Type check
-        run: pnpm run type-check
