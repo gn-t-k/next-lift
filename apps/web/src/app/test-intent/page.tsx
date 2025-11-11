@@ -5,7 +5,7 @@ import { useTheme } from "next-themes";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 
-const TestIntentUI: FC = () => {
+const Page: FC = () => {
 	const { theme, setTheme } = useTheme();
 	const [mounted, setMounted] = useState(false);
 
@@ -59,4 +59,4 @@ const TestIntentUI: FC = () => {
 	);
 };
 
-export default TestIntentUI;
+export default Page;
