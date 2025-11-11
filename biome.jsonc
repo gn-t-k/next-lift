@@ -52,7 +52,7 @@
 				"useGoogleFontPreconnect": "warn"
 			},
 			"security": {
-				"noSecrets": "warn"
+				"noSecrets": "off"
 			},
 			"style": {
 				"useObjectSpread": "warn"

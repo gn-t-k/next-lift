@@ -1,15 +1,14 @@
 "use client";
 
 import * as Sentry from "@sentry/nextjs";
+import type { FC } from "react";
 
-export default function SentryTestPage() {
+const Page: FC = () => {
 	const handleClientError = () => {
 		try {
-			// biome-ignore lint/security/noSecrets: テスト用のエラーメッセージ
 			throw new Error("Sentryテスト: クライアント側エラー");
 		} catch (error) {
 			Sentry.captureException(error);
-			// biome-ignore lint/security/noSecrets: テスト用のメッセージ
 			alert("クライアント側エラーをSentryに送信しました");
 		}
 	};
@@ -20,7 +19,6 @@ export default function SentryTestPage() {
 			const data = await response.json();
 			alert(data.message);
 		} catch (_error) {
-			// biome-ignore lint/security/noSecrets: テスト用のメッセージ
 			alert("サーバー側エラーを送信しました");
 		}
 	};
@@ -60,4 +58,6 @@ export default function SentryTestPage() {
 			</div>
 		</div>
 	);
-}
+};
+
+export default Page;
