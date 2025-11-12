@@ -62,11 +62,11 @@
       - [x] preview-pr{number}-*を検索して削除
       - [x] 動作確認
 
-- [ ] エラー監視の設定
-  - [ ] Sentryのセットアップ
-  - [ ] Vercel IntegrationでSentryを連携
-  - [ ] エラー通知の設定
-  - [ ] エラー送信のテスト
+- [x] エラー監視の設定
+  - [x] Sentryのセットアップ
+  - [x] Vercel IntegrationでSentryを連携
+  - [x] エラー通知の設定
+  - [x] エラー送信のテスト
 
 - [ ] Apple Developer Programのセットアップ（OAuth認証用）
   - [ ] Apple Developer Programへの登録
