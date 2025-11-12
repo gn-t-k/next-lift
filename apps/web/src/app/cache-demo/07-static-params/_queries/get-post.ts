@@ -1,5 +1,3 @@
-import { cacheLife } from "next/cache";
-
 type Post = {
 	id: string;
 	title: string;
@@ -7,8 +5,7 @@ type Post = {
 	author: string;
 };
 
-// 純粋関数（テスト容易）
-export const getPostCore = async (
+export const getPost = async (
 	id: string,
 ): Promise<Post & { timestamp: string }> => {
 	// 外部APIまたはDBからデータを取得するシミュレーション
@@ -49,14 +46,4 @@ export const getPostCore = async (
 		...post,
 		timestamp: new Date().toISOString(),
 	};
-};
-
-// キャッシュ付き（本番用）
-export const getPost = async (
-	id: string,
-): Promise<Post & { timestamp: string }> => {
-	"use cache";
-	cacheLife("hours"); // 5分stale, 1時間revalidate, 1日expire
-
-	return getPostCore(id);
 };

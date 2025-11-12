@@ -1,13 +1,25 @@
+import {
+	DemoCard,
+	DemoCardContent,
+	DemoCardDescription,
+	DemoCardHeader,
+	DemoCardTitle,
+} from "@next-lift/react-components/demo";
 import Link from "next/link";
 import { type FC, Suspense } from "react";
-import { PostDetail, PostDetailSkeleton } from "../../_components/post-detail";
+import {
+	PostContent,
+	PostContentSkeleton,
+} from "../../_components/post-content";
 
 // ビルド時に生成するIDを指定
 export const generateStaticParams = () => {
 	return [{ id: "1" }, { id: "2" }, { id: "3" }];
 };
 
-const Page: FC<PageProps<"/cache-demo/07-static-params/post/[id]">> = async (props) => {
+const Page: FC<
+	PageProps<"/cache-demo/07-static-params/post/[id]">
+> = async (props) => {
 	const params = await props.params;
 	const { id } = params;
 
@@ -25,10 +37,57 @@ const Page: FC<PageProps<"/cache-demo/07-static-params/post/[id]">> = async (pro
 				<p className="mt-2 text-muted-fg">投稿ID: {id}</p>
 			</div>
 
-			{/* データ必要部分：Suspense境界で分離 */}
-			<Suspense fallback={<PostDetailSkeleton />}>
-				<PostDetail id={id} />
-			</Suspense>
+			{/* 投稿内容カード（Suspense境界を絞る） */}
+			<DemoCard>
+				<DemoCardHeader priority="C">
+					<DemoCardTitle>投稿内容</DemoCardTitle>
+					<DemoCardDescription>
+						この投稿は
+						{id === "1" || id === "2" || id === "3"
+							? "generateStaticParamsで事前生成"
+							: "オンデマンド生成"}
+						されました
+					</DemoCardDescription>
+				</DemoCardHeader>
+				<DemoCardContent>
+					<Suspense fallback={<PostContentSkeleton />}>
+						<PostContent id={id} />
+					</Suspense>
+				</DemoCardContent>
+			</DemoCard>
+
+			{/* このページの情報カード（静的） */}
+			<DemoCard>
+				<DemoCardHeader priority="C">
+					<DemoCardTitle>このページの情報</DemoCardTitle>
+					<DemoCardDescription>ビルドとキャッシュの詳細</DemoCardDescription>
+				</DemoCardHeader>
+				<DemoCardContent>
+					<div className="space-y-3 text-sm text-muted-fg">
+						<div className="rounded bg-accent p-3">
+							<strong className="text-fg">生成タイミング</strong>
+							<p className="mt-2">
+								{id === "1" || id === "2" || id === "3"
+									? "ビルド時に事前生成されました（generateStaticParams）"
+									: "リクエスト時にオンデマンドで生成されました"}
+							</p>
+						</div>
+						<div className="rounded bg-accent p-3">
+							<strong className="text-fg">キャッシュ戦略</strong>
+							<p className="mt-2">
+								cacheLife(&quot;hours&quot;) -
+								5分間stale、1時間revalidate、1日expire
+							</p>
+						</div>
+						<div className="rounded bg-accent p-3">
+							<strong className="text-fg">パフォーマンス</strong>
+							<p className="mt-2">
+								事前生成されたページは即座に配信され、非常に高速です
+							</p>
+						</div>
+					</div>
+				</DemoCardContent>
+			</DemoCard>
 
 			{/* データ不要部分：即座に表示 */}
 			<div className="rounded-lg border border-border bg-muted p-6">
