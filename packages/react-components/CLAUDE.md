@@ -45,3 +45,42 @@ export const ComponentName: FC<Props> = ({ ...props }) => {
 ### 参考実装
 
 - [src/ui/button.tsx](src/ui/button.tsx): React 19のref仕様に準拠した実装例
+
+## クラス名ユーティリティの使い分け
+
+### `cn` - 通常のHTML要素用
+
+- **用途**: 通常のHTML要素の`className`属性
+- **対象**: `<div>`, `<pre>`, `<span>`等
+- **実装**: `clsx` + `tailwind-merge`
+- **戻り値**: `string`
+
+```typescript
+import { cn } from "../lib";
+
+<div className={cn("bg-primary", "text-white", className)} />
+```
+
+### `cx` - React Aria Components用
+
+- **用途**: React Aria Componentsの`className`レンダープロップ
+- **対象**: `<Button>`, `<Link>`, `<Dialog>`等のReact Ariaコンポーネント
+- **実装**: `composeRenderProps` + `tailwind-merge`
+- **戻り値**: `string | ((v: T) => string)`
+
+```typescript
+import { cx } from "../lib";
+
+<Button className={cx("bg-primary", "text-white")} />
+```
+
+### 使い分けの判断基準
+
+1. React Ariaコンポーネント（`react-aria-components`からimport）→ `cx`
+2. 通常のHTML要素 → `cn`
+
+### 理由
+
+React Aria Componentsの`className`プロパティは、レンダープロップ（関数）を受け付けます。これにより、コンポーネントの状態（hover、pressed等）に応じて動的にクラス名を変更できます。
+
+`cx`は`composeRenderProps`を使用してこの機能をサポートしていますが、通常のHTML要素の`className`属性は`string`のみを受け付けるため、`cn`を使用する必要があります。

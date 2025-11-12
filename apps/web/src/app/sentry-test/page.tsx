@@ -3,7 +3,7 @@
 import * as Sentry from "@sentry/nextjs";
 import type { FC } from "react";
 
-const Page: FC = () => {
+const Page: FC<PageProps<"/sentry-test">> = (_props) => {
 	const handleClientError = () => {
 		try {
 			throw new Error("Sentryテスト: クライアント側エラー");
