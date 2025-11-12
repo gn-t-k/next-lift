@@ -1,9 +1,9 @@
 import { Link } from "@next-lift/react-components/ui";
-import type { FC, PropsWithChildren } from "react";
+import type { FC } from "react";
 import { GlobalNavigation } from "./_components/global-navigation";
 import { ToggleThemeButton } from "./_components/toggle-theme-button";
 
-const Layout: FC<PropsWithChildren> = ({ children }) => {
+const Layout: FC<LayoutProps<"/cache-demo">> = async (props) => {
 	return (
 		<div className="flex min-h-screen">
 			{/* サイドバー */}
@@ -31,7 +31,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
 			{/* メインコンテンツ */}
 			<main className="flex-1 overflow-y-auto">
-				<div className="mx-auto max-w-5xl p-8">{children}</div>
+				<div className="mx-auto max-w-5xl p-8">{props.children}</div>
 			</main>
 		</div>
 	);

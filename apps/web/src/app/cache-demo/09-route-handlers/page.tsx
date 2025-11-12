@@ -21,7 +21,7 @@ import {
 	UncachedDataDisplaySkeleton,
 } from "./_components/uncached-data-display";
 
-const Page: FC = () => {
+const Page: FC<PageProps<"/cache-demo/09-route-handlers">> = (_props) => {
 	return (
 		<main className="space-y-8">
 			<header className="space-y-2">

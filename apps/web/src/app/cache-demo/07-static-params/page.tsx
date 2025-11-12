@@ -11,7 +11,7 @@ import {
 import Link from "next/link";
 import type { FC } from "react";
 
-const Page: FC = () => {
+const Page: FC<PageProps<"/cache-demo/07-static-params">> = (_props) => {
 	return (
 		<main className="space-y-8">
 			<header className="space-y-2">

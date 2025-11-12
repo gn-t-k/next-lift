@@ -2,17 +2,14 @@ import Link from "next/link";
 import { type FC, Suspense } from "react";
 import { PostDetail, PostDetailSkeleton } from "../../_components/post-detail";
 
-type Props = {
-	params: Promise<{ id: string }>;
-};
-
 // ビルド時に生成するIDを指定
 export const generateStaticParams = () => {
 	return [{ id: "1" }, { id: "2" }, { id: "3" }];
 };
 
-const Page: FC<Props> = async ({ params }) => {
-	const { id } = await params;
+const Page: FC<PageProps<"/cache-demo/07-static-params/post/[id]">> = async (props) => {
+	const params = await props.params;
+	const { id } = params;
 
 	return (
 		<div className="space-y-8">

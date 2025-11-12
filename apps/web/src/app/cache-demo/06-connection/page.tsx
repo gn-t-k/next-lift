@@ -13,7 +13,7 @@ import { DateComparisonDisplay } from "./_components/date-comparison-display";
 import { WithConnectionDisplay } from "./_components/with-connection-display";
 import { WithoutConnectionDisplay } from "./_components/without-connection-display";
 
-const Page: FC = async () => {
+const Page: FC<PageProps<"/cache-demo/06-connection">> = async (_props) => {
 	return (
 		<main className="space-y-8">
 			<header className="space-y-2">

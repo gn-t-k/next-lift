@@ -18,7 +18,7 @@ import {
 	staticShellCode,
 } from "./_constants/code-examples";
 
-const Page: FC = async () => {
+const Page: FC<PageProps<"/cache-demo/03-suspense-boundaries">> = async (_props) => {
 	return (
 		<main className="space-y-8">
 			<header className="space-y-2">

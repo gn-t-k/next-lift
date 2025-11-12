@@ -20,7 +20,7 @@ import {
 } from "./_components/user-greeting-display";
 import { UsernameForm } from "./_components/username-form";
 
-const Page: FC = async () => {
+const Page: FC<PageProps<"/cache-demo/05-private-cache">> = async (_props) => {
 	return (
 		<main className="space-y-8">
 			<header className="space-y-2">

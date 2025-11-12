@@ -11,7 +11,7 @@ import {
 	SubPageContentSkeleton,
 } from "./_components/sub-page-content";
 
-const Page: FC = () => {
+const Page: FC<PageProps<"/cache-demo/10-interleaving/sub">> = (_props) => {
 	return (
 		<main className="space-y-8">
 			<header className="space-y-2">

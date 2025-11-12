@@ -14,7 +14,7 @@ import { Suspense } from "react";
 import { PageContent, PageContentSkeleton } from "./_components/page-content";
 import { SlotContent, SlotContentSkeleton } from "./_components/slot-content";
 
-const Page: FC = () => {
+const Page: FC<PageProps<"/cache-demo/10-interleaving">> = (_props) => {
 	return (
 		<main className="space-y-8">
 			<header className="space-y-2">

@@ -1,15 +1,11 @@
-import type { FC, ReactNode } from "react";
+import type { FC } from "react";
 import { LayoutContent } from "./_components/layout-content";
 
-type Props = {
-	children: ReactNode;
-};
-
-const Layout: FC<Props> = ({ children }) => {
+const Layout: FC<LayoutProps<"/cache-demo/10-interleaving">> = async (props) => {
 	return (
 		<div className="space-y-8">
 			<LayoutContent />
-			{children}
+			{props.children}
 		</div>
 	);
 };

@@ -103,7 +103,7 @@ const demos: DemoItem[] = [
 	},
 ];
 
-const Page: FC = () => {
+const Page: FC<PageProps<"/cache-demo">> = (_props) => {
 	return (
 		<div className="space-y-8">
 			<header>

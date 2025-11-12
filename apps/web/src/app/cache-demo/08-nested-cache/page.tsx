@@ -13,7 +13,7 @@ import { LongCacheDisplay } from "./_components/long-cache-display";
 import { MediumCacheDisplay } from "./_components/medium-cache-display";
 import { ShortCacheDisplay } from "./_components/short-cache-display";
 
-const Page: FC = async () => {
+const Page: FC<PageProps<"/cache-demo/08-nested-cache">> = async (_props) => {
 	return (
 		<main className="space-y-8">
 			<header className="space-y-2">

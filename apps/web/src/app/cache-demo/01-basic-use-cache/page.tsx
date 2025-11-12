@@ -26,7 +26,7 @@ import { getFileLevelData } from "./_queries/get-file-level-data";
 // ファイルレベルキャッシュのデモ
 // このファイル全体が "use cache" ディレクティブでキャッシュされます
 
-const Page: FC = async () => {
+const Page: FC<PageProps<"/cache-demo/01-basic-use-cache">> = async (_props) => {
 	const data = await getFileLevelData();
 
 	return (

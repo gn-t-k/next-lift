@@ -17,7 +17,7 @@ import { MinutesDemo } from "./_components/minutes-demo";
 import { SecondsDemo } from "./_components/seconds-demo";
 import { configCode, customCode, presetCode } from "./_constants/code-examples";
 
-const Page: FC = () => {
+const Page: FC<PageProps<"/cache-demo/02-cache-life">> = (_props) => {
 	return (
 		<main className="space-y-8">
 			<header className="space-y-2">

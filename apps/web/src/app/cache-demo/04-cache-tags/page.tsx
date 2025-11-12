@@ -23,7 +23,7 @@ import { RevalidatePostsButton } from "./_components/revalidate-posts-button";
 import { RevalidateUserButton } from "./_components/revalidate-user-button";
 import { UserDisplay, UserDisplayFallback } from "./_components/user-display";
 
-const Page: FC = async () => {
+const Page: FC<PageProps<"/cache-demo/04-cache-tags">> = async (_props) => {
 	return (
 		<main className="space-y-8">
 			<header className="space-y-2">
