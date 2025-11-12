@@ -17,9 +17,9 @@ export const generateStaticParams = () => {
 	return [{ id: "1" }, { id: "2" }, { id: "3" }];
 };
 
-const Page: FC<
-	PageProps<"/cache-demo/07-static-params/post/[id]">
-> = async (props) => {
+const Page: FC<PageProps<"/cache-demo/07-static-params/post/[id]">> = async (
+	props,
+) => {
 	const params = await props.params;
 	const { id } = params;
 
