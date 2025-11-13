@@ -6,7 +6,8 @@
 	"exports": {
 		"./instance": "./src/instance.ts",
 		"./test-helpers": "./src/test-helpers.ts",
-		"./better-auth": "./src/better-auth.ts"
+		"./better-auth-nextjs": "./src/better-auth-nextjs.ts",
+		"./better-auth-react": "./src/better-auth-react.ts"
 	},
 	"scripts": {
 		"lint": "biome check .",

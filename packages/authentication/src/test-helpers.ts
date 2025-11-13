@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { getDatabase } from "./get-database";
+import { getDatabase } from "./libs/get-database";
 
 export const createTestAuth = async () => {
 	const db = getDatabase("memory");

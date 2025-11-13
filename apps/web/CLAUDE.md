@@ -86,3 +86,143 @@ export const UserProfile: FC<Props> = async ({ id }) => {
 - コンポーネント名はパスカルケース（PascalCase）を使用
 - exportしない関数やexport defaultする関数など、外部から参照されないものは極力シンプルな命名にする
   - 例: `export default Page`, `export default Layout`
+
+## Client Componentの設計
+
+### 設計原則
+
+- **ページ全体を`"use client"`にしない**
+  - インタラクティブな部分（イベントハンドラー、状態管理）のみをClient Componentに分離
+  - 静的コンテンツはServer Componentのまま保つ
+
+- **Client Componentは可能な限り「葉」の位置に配置**
+  - コンポーネントツリーの下層にClient Componentを配置することで、クライアントバンドルサイズを最小化
+
+- **Composition Patternの活用**
+  - Server ComponentをClient Componentの`children`として渡すことで、静的コンテンツをサーバーでレンダリング
+  - Client Componentはインタラクティブな機能のみを担当
+  - 詳細: [Composition Pattern](https://zenn.dev/akfm/books/nextjs-basic-principle/viewer/part_2_composition_pattern)
+
+### 実装例
+
+```tsx
+// ❌ 悪い例: ページ全体がClient Component
+"use client";
+
+export default function Page() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <main>
+      <h1>タイトル</h1>  {/* 静的だがクライアントバンドルに含まれる */}
+      <button onClick={() => setIsOpen(!isOpen)}>開く</button>
+      {isOpen && <Modal />}
+    </main>
+  );
+}
+
+// ✅ 良い例: インタラクティブな部分のみClient Component
+export default function Page() {
+  return (
+    <main>
+      <h1>タイトル</h1>  {/* Server Componentとしてレンダリング */}
+      <ModalButton />     {/* Client Component */}
+    </main>
+  );
+}
+
+// _components/modal-button.tsx
+"use client";
+
+export const ModalButton = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <button onClick={() => setIsOpen(!isOpen)}>開く</button>
+      {isOpen && <Modal />}
+    </>
+  );
+};
+```
+
+### 非同期処理のpending状態管理
+
+#### Server Actionの場合: `useActionState`
+
+フォーム送信でServer Actionを使う場合は`useActionState`を使用する。
+
+```tsx
+"use client";
+
+import { useActionState } from "react";
+import { submitForm } from "../_actions/submit-form";
+
+export const SubmitButton = () => {
+  const [state, formAction, isPending] = useActionState(submitForm, undefined);
+
+  return (
+    <form action={formAction}>
+      <Button type="submit" isDisabled={isPending}>
+        {isPending ? "送信中..." : "送信"}
+      </Button>
+    </form>
+  );
+};
+```
+
+#### クライアント側の非同期処理の場合: `useTransition`
+
+OAuth認証やAPIコールなど、ボタンクリックで非同期処理を行う場合は`useTransition`を使用する。
+
+**理由:**
+
+- React 19の公式推奨パターン
+- pending状態が自動管理される（`finally`句不要）
+- エラー発生時も自動的にpending状態が解除される
+
+```tsx
+"use client";
+
+import { useTransition } from "react";
+import { authClient } from "../../../../lib/auth-client";
+
+export const GoogleSignInButton = () => {
+  const [isPending, startTransition] = useTransition();
+
+  const handleGoogleSignIn = () => {
+    startTransition(async () => {
+      try {
+        await authClient.signIn.social({ provider: "google" });
+      } catch (error) {
+        console.error("Google sign in failed:", error);
+        // エラー表示処理
+      }
+    });
+  };
+
+  return (
+    <Button onClick={handleGoogleSignIn} isDisabled={isPending}>
+      {isPending ? "ログイン中..." : "Googleでログイン"}
+    </Button>
+  );
+};
+```
+
+**❌ 避けるべきパターン: `useState`での手動管理**
+
+```tsx
+// useState + try/catchは手動管理が必要でエラーが起きやすい
+const [isPending, setIsPending] = useState(false);
+
+const handleClick = async () => {
+  setIsPending(true);
+  try {
+    await someAsyncFunction();
+  } catch (error) {
+    // エラー処理
+  } finally {
+    setIsPending(false); // 忘れるとUIがフリーズ
+  }
+};
+```
