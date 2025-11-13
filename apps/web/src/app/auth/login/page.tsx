@@ -1,34 +1,15 @@
-"use client";
-
-import { authClient } from "../../../lib/auth-client";
+import { GoogleSignInButton } from "./_components/google-sign-in-button";
 
 const LoginPage = () => {
-	const handleGoogleSignIn = async () => {
-		await authClient.signIn.social({
-			provider: "google",
-		});
-	};
-
 	return (
-		<div style={{ padding: "2rem", maxWidth: "400px", margin: "0 auto" }}>
-			<h1 style={{ marginBottom: "2rem" }}>ログイン</h1>
-			<button
-				type="button"
-				onClick={handleGoogleSignIn}
-				style={{
-					padding: "1rem 2rem",
-					backgroundColor: "#4285f4",
-					color: "white",
-					border: "none",
-					borderRadius: "4px",
-					cursor: "pointer",
-					fontSize: "1rem",
-					width: "100%",
-				}}
-			>
-				Googleでログイン
-			</button>
-		</div>
+		<main className="flex min-h-screen items-center justify-center p-8">
+			<section className="w-full max-w-sm space-y-8">
+				<header>
+					<h1 className="text-3xl font-bold text-fg">ログイン</h1>
+				</header>
+				<GoogleSignInButton />
+			</section>
+		</main>
 	);
 };
 
