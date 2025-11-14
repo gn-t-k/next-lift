@@ -5,6 +5,9 @@ const Page: FC<PageProps<"/">> = (_props) => {
 	return (
 		<ul>
 			<li>
+				<Link href="/auth/login">ログインページ（動作確認用）</Link>
+			</li>
+			<li>
 				<Link href="/test-intent">test-intent</Link>
 			</li>
 			<li>

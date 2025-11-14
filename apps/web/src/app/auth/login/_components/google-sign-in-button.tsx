@@ -1,22 +1,25 @@
 "use client";
 
 import { Button } from "@next-lift/react-components/ui";
-import { useTransition } from "react";
+import { useState } from "react";
 import { authClient } from "../../../../lib/auth-client";
 
 export const GoogleSignInButton = () => {
-	const [isPending, startTransition] = useTransition();
+	const [isPending, setIsPending] = useState(false);
 
-	const handleGoogleSignIn = () => {
-		startTransition(async () => {
-			try {
-				await authClient.signIn.social({
-					provider: "google",
-				});
-			} catch (error) {
-				console.error("Google sign in failed:", error);
-			}
-		});
+	const handleGoogleSignIn = async () => {
+		setIsPending(true);
+		// リダイレクトされるまでpending状態を維持
+		// ページ遷移後はこのコンポーネントごと消えるので、setIsPending(false)は不要
+		try {
+			await authClient.signIn.social({
+				provider: "google",
+				callbackURL: "/dashboard",
+			});
+		} catch (error) {
+			console.error("Google sign in failed:", error);
+			setIsPending(false); // エラー時のみpending状態を解除
+		}
 	};
 
 	return (
