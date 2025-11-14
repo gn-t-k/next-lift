@@ -69,31 +69,41 @@
   - [x] エラー送信のテスト
 
 - [ ] Apple Developer Programのセットアップ（OAuth認証用）
-  - [ ] Apple Developer Programへの登録
+  - [x] Apple Developer Programへの登録
   - [ ] OAuth認証用のServices IDとクレデンシャル作成
   - [ ] リダイレクトURLの設定（ローカル/本番/プレビュー）
 
-- [ ] Google Cloud Consoleのセットアップ（OAuth認証用）
-  - [ ] Google Cloud Projectの作成
-  - [ ] OAuth 2.0クライアントIDの作成
-  - [ ] リダイレクトURLの設定（ローカル/本番/プレビュー）
+- [x] Google Cloud Consoleのセットアップ（OAuth認証用）
+  - [x] Google Cloud Projectの作成
+  - [x] OAuth 2.0クライアントIDの作成
+  - [x] リダイレクトURLの設定（ローカル/本番/プレビュー）
 
 - [ ] Better Authによる認証基盤の構築
-  - [ ] Better AuthのNext.js統合（apps/web）
-    - [ ] Better AuthのRoute Handlerの作成
-    - [ ] apps/web内でのBetter Auth設定
-      - [ ] packages/auth-databaseのBetter Authインスタンスを利用
-      - [ ] プロバイダー設定の追加（Apple ID、Google）
-    - [ ] 環境変数の設定
-      - [ ] ローカル開発環境（.env.local）
+  - [x] Better AuthのNext.js統合（apps/web）
+    - [x] Better AuthのRoute Handlerの作成
+    - [x] apps/web内でのBetter Auth設定
+      - [x] packages/authenticationのBetter Authインスタンスを利用
+      - [x] プロバイダー設定の追加（Google）
+    - [x] 環境変数の設定
+      - [x] ローカル開発環境（.env）
       - [ ] Vercel環境変数（本番/プレビュー）
-    - [ ] 基本動作確認（ローカル/デプロイ後）
-  - [ ] OAuth認証フローの動作確認とエラーハンドリング
-    - [ ] Google OAuth認証のログインフロー確認
-    - [ ] Apple OAuth認証のログインフロー確認
-    - [ ] 初回ログイン時のユーザー作成確認
-    - [ ] 2回目以降のログイン確認
-    - [ ] セッション管理の確認
+    - [x] 基本動作確認（ローカル）
+    - [x] データベーステーブルの作成
+      - [x] マイグレーションファイルの適用
+      - [x] development-auth.dbのシンボリックリンク設定
+  - [x] OAuth認証フローの動作確認とエラーハンドリング
+    - [x] Google OAuth認証のログインフロー確認
+      - [x] ログインページの作成
+      - [x] Google OAuth認証の実装
+      - [x] 認証コールバックの動作確認
+    - [ ] Apple OAuth認証のログインフロー確認（Apple Developer Program承認待ち）
+    - [x] 初回ログイン時のユーザー作成確認
+    - [x] 2回目以降のログイン確認
+    - [x] セッション管理の確認
+      - [x] ダッシュボードページの作成
+      - [x] セッション取得の実装
+      - [x] ログアウト機能の実装
+      - [x] 認証ガードの動作確認
     - [ ] エラーハンドリングの実装
       - [ ] 発生しうるエラーの洗い出しと分類
       - [ ] ユーザー操作系エラーのUIフィードバック実装
@@ -101,7 +111,7 @@
       - [ ] 各エラーケースの動作確認
   - [ ] 本番環境へのマイグレーション実行
     - [ ] .envの環境変数コメントアウトを解除
-    - [ ] packages/auth-databaseでpnpm migration:applyを実行
+    - [ ] packages/authenticationでpnpm migration:applyを実行
     - [ ] マイグレーション成功の確認
 
 - [ ] iOSアプリの基本セットアップ
