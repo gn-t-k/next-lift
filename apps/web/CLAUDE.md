@@ -173,7 +173,7 @@ export const SubmitButton = () => {
 
 #### クライアント側の非同期処理の場合: `useTransition`
 
-OAuth認証やAPIコールなど、ボタンクリックで非同期処理を行う場合は`useTransition`を使用する。
+APIコールなど、ボタンクリックで非同期処理を行う場合は`useTransition`を使用する。
 
 **理由:**
 
@@ -185,44 +185,25 @@ OAuth認証やAPIコールなど、ボタンクリックで非同期処理を行
 "use client";
 
 import { useTransition } from "react";
-import { authClient } from "../../../../lib/auth-client";
 
-export const GoogleSignInButton = () => {
+export const DataFetchButton = () => {
   const [isPending, startTransition] = useTransition();
 
-  const handleGoogleSignIn = () => {
+  const handleFetch = () => {
     startTransition(async () => {
       try {
-        await authClient.signIn.social({ provider: "google" });
+        await fetchData();
       } catch (error) {
-        console.error("Google sign in failed:", error);
+        console.error("Fetch failed:", error);
         // エラー表示処理
       }
     });
   };
 
   return (
-    <Button onClick={handleGoogleSignIn} isDisabled={isPending}>
-      {isPending ? "ログイン中..." : "Googleでログイン"}
+    <Button onClick={handleFetch} isDisabled={isPending}>
+      {isPending ? "読み込み中..." : "データ取得"}
     </Button>
   );
-};
-```
-
-**❌ 避けるべきパターン: `useState`での手動管理**
-
-```tsx
-// useState + try/catchは手動管理が必要でエラーが起きやすい
-const [isPending, setIsPending] = useState(false);
-
-const handleClick = async () => {
-  setIsPending(true);
-  try {
-    await someAsyncFunction();
-  } catch (error) {
-    // エラー処理
-  } finally {
-    setIsPending(false); // 忘れるとUIがフリーズ
-  }
 };
 ```
