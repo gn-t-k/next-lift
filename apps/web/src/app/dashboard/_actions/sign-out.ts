@@ -13,5 +13,5 @@ export const signOut = async (
 		headers: await headers(),
 	});
 	updateTag("user-session");
-	redirect("/auth/login" as never);
+	redirect("/auth/login");
 };

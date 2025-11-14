@@ -21,7 +21,7 @@ const getUserSession = async (): Promise<User> => {
 	});
 
 	if (!session?.user) {
-		redirect("/auth/login" as never);
+		redirect("/auth/login");
 	}
 
 	return {
