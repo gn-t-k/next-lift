@@ -64,13 +64,19 @@ packages/authentication → packages/envから必要な環境変数をimport
 - CI環境とlint時にバリデーションをスキップ
 - 理由: `extends`を使用する場合、拡張元の各関数が個別にskipValidationを評価するため、create-t3-turboの公式パターンに従いCI環境を明示的に考慮する必要がある（Issue #323対策）
 
-#### 3. DATABASE_PROVIDERによる明示的なDB選択
+#### 3. Turborepoのグローバル環境変数設定
+
+- `turbo.json`の`globalPassThroughEnv`にすべての環境変数を設定
+- 理由: Turborepoはデフォルトで環境変数をタスク実行時に渡さない（キャッシュ最適化のため）。明示的に`passThroughEnv`で指定することで、ビルドタスク実行時に環境変数が利用可能になる
+- 設定が漏れると、CI環境で「環境変数が設定されているのにundefinedになる」という問題が発生する
+
+#### 4. DATABASE_PROVIDERによる明示的なDB選択
 
 - `turso.ts`に`DATABASE_PROVIDER: z.enum(["local", "turso"])`を必須化
 - Turso認証情報も必須化（開発環境ではダミー値を使用）
 - 理由: 本番環境での設定忘れによる誤ったローカルDB使用を防止
 
-#### 4. apps/web/src/env.ts
+#### 5. apps/web/src/env.ts
 
 ```typescript
 import { createEnv } from "@t3-oss/env-nextjs";
@@ -94,13 +100,13 @@ export const env = createEnv({
 });
 ```
 
-#### 5. next.config.ts
+#### 6. next.config.ts
 
 ```typescript
 import "./src/env"; // ビルド時に環境変数を検証
 ```
 
-#### 6. 環境変数の使用
+#### 7. 環境変数の使用
 
 ```typescript
 import { authenticationEnv } from "@next-lift/env/authentication";
