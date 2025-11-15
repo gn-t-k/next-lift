@@ -69,6 +69,13 @@ jobs:
           DB_AUTH_TOKEN: ${{ steps.create-token.outputs.db_auth_token }}
         run: |
           # Vercelのプレビュー環境に環境変数を設定
+          # DATABASE_PROVIDER
+          curl -X POST \
+            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "{\"key\":\"DATABASE_PROVIDER\",\"value\":\"turso\",\"type\":\"encrypted\",\"target\":[\"preview\"],\"gitBranch\":\"${{ github.head_ref }}\"}" \
+            "https://api.vercel.com/v10/projects/${VERCEL_PROJECT_ID}/env"
+
           # TURSO_AUTH_DATABASE_URL
           curl -X POST \
             -H "Authorization: Bearer ${VERCEL_TOKEN}" \
