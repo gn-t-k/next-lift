@@ -148,6 +148,19 @@ importers:
       zod:
         specifier: 4.1.12
         version: 4.1.12
+    devDependencies:
+      '@biomejs/biome':
+        specifier: 2.3.5
+        version: 2.3.5
+      '@tsconfig/strictest':
+        specifier: 2.0.8
+        version: 2.0.8
+      '@types/node':
+        specifier: 24.10.1
+        version: 24.10.1
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
 
   packages/react-components:
     dependencies:
