@@ -103,19 +103,25 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-workspace
 
+      - name: Create build environment file
+        env:
+          DB_URL: ${{ needs.setup-database.outputs.db_url }}
+          DB_AUTH_TOKEN: ${{ needs.setup-database.outputs.db_auth_token }}
+        run: |
+          cat > .env.build << EOF
+          DATABASE_PROVIDER=turso
+          TURSO_AUTH_DATABASE_URL=${DB_URL}
+          TURSO_AUTH_DATABASE_AUTH_TOKEN=${DB_AUTH_TOKEN}
+          EOF
+
       - name: Deploy to Vercel
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          DB_URL: ${{ needs.setup-database.outputs.db_url }}
-          DB_AUTH_TOKEN: ${{ needs.setup-database.outputs.db_auth_token }}
         run: |
           npx vercel deploy \
             --token=$VERCEL_TOKEN \
-            --build-env DATABASE_PROVIDER=turso \
-            --build-env TURSO_AUTH_DATABASE_URL="${DB_URL}" \
-            --build-env TURSO_AUTH_DATABASE_AUTH_TOKEN="${DB_AUTH_TOKEN}" \
             > deployment-url.txt
           echo "DEPLOYMENT_URL=$(cat deployment-url.txt)" >> $GITHUB_ENV
 
