@@ -16,6 +16,13 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-workspace
 
+      - name: Debug environment variables
+        run: |
+          echo "CI=$CI"
+          echo "CI (printenv)=$(printenv CI)"
+          echo "All env vars:"
+          printenv | grep -E "(CI|DATABASE|TURSO|BETTER_AUTH|GOOGLE|SENTRY|NEXT_PUBLIC)" || echo "No matching env vars found"
+
       - name: Build
         run: pnpm run build
 
