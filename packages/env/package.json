@@ -1,0 +1,17 @@
+{
+  "name": "@next-lift/env",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./shared": "./src/shared.ts",
+    "./turso": "./src/turso.ts",
+    "./authentication": "./src/authentication.ts",
+    "./sentry": "./src/sentry.ts"
+  },
+  "dependencies": {
+    "@t3-oss/env-core": "0.13.8",
+    "zod": "4.1.12"
+  }
+}

@@ -1,9 +1,10 @@
+import { createClient } from "@libsql/client";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { getDatabase } from "./libs/get-database";
+import { drizzle } from "drizzle-orm/libsql";
 
 export const createTestAuth = async () => {
-	const db = getDatabase("memory");
+	const db = drizzle({ client: createClient({ url: ":memory:" }) });
 
 	return betterAuth({
 		database: drizzleAdapter(db, {
