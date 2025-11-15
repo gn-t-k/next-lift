@@ -1,6 +1,5 @@
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
-import { createSharedEnvConfig } from "./libs/shared-config";
 
 export const authenticationEnv = () =>
 	createEnv({
@@ -10,5 +9,11 @@ export const authenticationEnv = () =>
 			GOOGLE_CLIENT_ID: z.string().min(1),
 			GOOGLE_CLIENT_SECRET: z.string().min(1),
 		},
-		...createSharedEnvConfig(),
+		// biome-ignore lint/correctness/noProcessGlobal: Edge Runtimeとの互換性のためグローバルprocessを使用
+		runtimeEnv: process.env,
+		skipValidation:
+			// biome-ignore lint/correctness/noProcessGlobal: Edge Runtimeとの互換性のためグローバルprocessを使用
+			// biome-ignore lint/complexity/useLiteralKeys: TypeScriptの厳格な型チェックのためブラケット記法を使用
+			process.env["npm_lifecycle_event"] === "lint",
+		emptyStringAsUndefined: true,
 	});
