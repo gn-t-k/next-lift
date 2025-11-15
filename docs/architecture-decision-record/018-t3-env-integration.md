@@ -36,7 +36,7 @@ Next Liftプロジェクトでは、環境変数の管理に以下の課題が�
 
 ### アーキテクチャ: `packages/env`で一元管理
 
-```
+```text
 packages/
   └── env/
       ├── src/
@@ -63,7 +63,8 @@ packages/authentication → packages/envから必要な環境変数をimport
 #### 2. 共通設定の抽出
 
 - `libs/shared-config.ts`に`runtimeEnv`, `skipValidation`, `emptyStringAsUndefined`を集約
-- 理由: DRY原則、保守性向上（変更が1箇所で完結）
+- `skipValidation`はlint時のみスキップ（CI環境でも環境変数バリデーションを実施）
+- 理由: DRY原則、保守性向上（変更が1箇所で完結）、CI環境での設定漏れ検出
 
 #### 3. DATABASE_PROVIDERによる明示的なDB選択
 
@@ -186,16 +187,19 @@ export const auth = betterAuth({
 create-t3-turboで採用されているパターン。
 
 **構成:**
-```
+
+```text
 packages/authentication/src/env.ts → @t3-oss/env-core
 apps/web/src/env.ts → authenticationパッケージを継承
 ```
 
 **メリット:**
+
 - シンプルな構成
 - パッケージの責任範囲が明確
 
 **却下理由:**
+
 - Web App、iOS App、authenticationで同じ環境変数（Turso、Better Auth）を使用
 - 環境変数の重複定義が発生する
 - `packages/env`で一元管理する方がDRY原則に適合
@@ -206,10 +210,12 @@ apps/web/src/env.ts → authenticationパッケージを継承
 現状維持。`process.env`を直接使用。
 
 **メリット:**
+
 - 依存関係なし
 - 学習コスト不要
 
 **却下理由:**
+
 - 型安全性の課題が解決されない
 - ビルド時検証ができない
 - コードの冗長性が残る
