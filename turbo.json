@@ -1,6 +1,6 @@
 {
 	"$schema": "https://turbo.build/schema.json",
-	"globalPassThroughEnv": [
+	"globalEnv": [
 		"DATABASE_PROVIDER",
 		"TURSO_AUTH_DATABASE_URL",
 		"TURSO_AUTH_DATABASE_AUTH_TOKEN",
