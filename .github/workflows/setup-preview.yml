@@ -50,11 +50,6 @@ jobs:
           echo "db_name=${DB_NAME}" >> $GITHUB_OUTPUT
           echo "db_url=${DB_URL}" >> $GITHUB_OUTPUT
 
-          echo "Debug: DB_NAME=${DB_NAME}"
-          echo "Debug: DB_URL=${DB_URL}"
-          echo "Debug: GITHUB_OUTPUT content:"
-          cat "$GITHUB_OUTPUT" || echo "GITHUB_OUTPUT file not found"
-
       - name: Create Database Token
         id: create-token
         env:
@@ -73,10 +68,6 @@ jobs:
           DB_AUTH_TOKEN=$(echo "${TOKEN_RESPONSE}" | jq -r '.jwt')
 
           echo "db_auth_token=${DB_AUTH_TOKEN}" >> $GITHUB_OUTPUT
-
-          echo "Debug: DB_AUTH_TOKEN=${DB_AUTH_TOKEN}"
-          echo "Debug: GITHUB_OUTPUT content after token:"
-          cat "$GITHUB_OUTPUT" || echo "GITHUB_OUTPUT file not found"
 
       - name: Set Vercel Environment Variables
         env:
@@ -119,29 +110,13 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-workspace
 
-      - name: Create build environment file
-        env:
-          DB_URL: ${{ needs.setup-database.outputs.db_url }}
-          DB_AUTH_TOKEN: ${{ needs.setup-database.outputs.db_auth_token }}
-        run: |
-          echo "Debug: DB_URL from outputs=${DB_URL}"
-          echo "Debug: DB_AUTH_TOKEN from outputs=${DB_AUTH_TOKEN}"
-
-          cat > .env.build << EOF
-          DATABASE_PROVIDER=turso
-          TURSO_AUTH_DATABASE_URL=${DB_URL}
-          TURSO_AUTH_DATABASE_AUTH_TOKEN=${DB_AUTH_TOKEN}
-          EOF
-
       - name: Deploy to Vercel
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          npx vercel deploy \
-            --token=$VERCEL_TOKEN \
-            > deployment-url.txt
+          npx vercel deploy --token=$VERCEL_TOKEN > deployment-url.txt
           echo "DEPLOYMENT_URL=$(cat deployment-url.txt)" >> $GITHUB_ENV
 
       - name: Comment PR with Preview Info
