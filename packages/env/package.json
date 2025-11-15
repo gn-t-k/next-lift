@@ -5,7 +5,6 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./shared": "./src/shared.ts",
     "./turso": "./src/turso.ts",
     "./authentication": "./src/authentication.ts",
     "./sentry": "./src/sentry.ts"
