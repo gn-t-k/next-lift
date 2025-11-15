@@ -1,4 +1,4 @@
-# ADR-018: t3-envを使用した環境変数管理
+# ADR-018: 環境変数管理（t3-env導入と管理場所の明確化）
 
 ## ステータス
 
@@ -224,6 +224,50 @@ apps/web/src/env.ts → authenticationパッケージを継承
 - ビルド時検証ができない
 - コードの冗長性が残る
 - 長期的な保守性が低い
+
+## 環境変数の管理場所ルール
+
+環境変数は用途に応じて以下の場所で管理する：
+
+### 1. GitHub Secrets
+
+- **用途**: GitHub Actionsワークフローでのみ使用する認証情報
+- **例**: Turso Platform API Token、Vercel API Token
+- **設定場所**: GitHub Repository > Settings > Secrets and variables > Actions
+
+### 2. Vercel Environment Variables
+
+- **用途**: アプリケーションのビルド・実行時に必要な環境変数
+
+**動的設定（ワークフローから）**:
+
+- Preview環境でPR毎に変わる値（例: PR専用Database URL）
+- `.github/workflows/setup-preview.yml`で自動設定
+
+**手動設定（Vercelダッシュボード）**:
+
+- Production/Preview環境で共通の固定値（例: OAuth Client ID）
+- デプロイURLが必要な場合は`$VERCEL_URL`を使用（Vercelの環境変数補完機能）
+
+### 3. ローカル開発環境
+
+- **ファイル**: `apps/web/.env`（`.gitignore`で除外）
+- **用途**: ローカル開発サーバー実行時
+
+### 4. CI環境
+
+- **ファイル**: `.github/workflows/pr-push-check.yml`の`env`
+- **用途**: ビルド・Lint確認用（ダミー値）
+
+## 環境変数追加時のチェックリスト
+
+新しい環境変数を追加する場合、以下をすべて実施する：
+
+1. `packages/env/src/`の適切なファイルにZodスキーマを追加
+2. Vercel Dashboardで環境変数を追加、またはワークフローで動的設定を実装
+3. `apps/web/.env`に追加（ローカル開発用）
+4. `.github/workflows/pr-push-check.yml`にダミー値を追加（CI用）
+5. `turbo.json`の`globalPassThroughEnv`に追加
 
 ## 決定日
 
