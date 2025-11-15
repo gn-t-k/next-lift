@@ -12,6 +12,7 @@ jobs:
     outputs:
       db_name: ${{ steps.create-db.outputs.db_name }}
       db_url: ${{ steps.create-db.outputs.db_url }}
+      db_auth_token: ${{ steps.create-token.outputs.db_auth_token }}
     steps:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
@@ -26,17 +27,24 @@ jobs:
         run: |
           DB_NAME="preview-pr${PR_NUMBER}-auth"
 
-          # データベースを作成
-          RESPONSE=$(curl -X POST \
+          # データベースを作成（既に存在する場合はエラーを無視）
+          CREATE_RESPONSE=$(curl -X POST \
             -H "Authorization: Bearer ${TURSO_API_TOKEN}" \
             -H "Content-Type: application/json" \
             -d "{\"name\":\"${DB_NAME}\",\"group\":\"${TURSO_GROUP}\"}" \
             "https://api.turso.tech/v1/organizations/${TURSO_ORG_SLUG}/databases")
 
-          echo "Database creation response: ${RESPONSE}"
+          echo "Database creation response: ${CREATE_RESPONSE}"
+
+          # データベース情報を取得（既存の場合も含む）
+          GET_RESPONSE=$(curl -X GET \
+            -H "Authorization: Bearer ${TURSO_API_TOKEN}" \
+            "https://api.turso.tech/v1/organizations/${TURSO_ORG_SLUG}/databases/${DB_NAME}")
+
+          echo "Database get response: ${GET_RESPONSE}"
 
           # データベースのURLを取得
-          DB_HOSTNAME=$(echo "${RESPONSE}" | jq -r '.database.Hostname')
+          DB_HOSTNAME=$(echo "${GET_RESPONSE}" | jq -r '.database.Hostname')
           DB_URL="libsql://${DB_HOSTNAME}"
 
           echo "db_name=${DB_NAME}" >> $GITHUB_OUTPUT
@@ -69,6 +77,13 @@ jobs:
           DB_AUTH_TOKEN: ${{ steps.create-token.outputs.db_auth_token }}
         run: |
           # Vercelのプレビュー環境に環境変数を設定
+          # DATABASE_PROVIDER
+          curl -X POST \
+            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "{\"key\":\"DATABASE_PROVIDER\",\"value\":\"turso\",\"type\":\"encrypted\",\"target\":[\"preview\"],\"gitBranch\":\"${{ github.head_ref }}\"}" \
+            "https://api.vercel.com/v10/projects/${VERCEL_PROJECT_ID}/env"
+
           # TURSO_AUTH_DATABASE_URL
           curl -X POST \
             -H "Authorization: Bearer ${VERCEL_TOKEN}" \

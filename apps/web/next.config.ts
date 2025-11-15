@@ -1,6 +1,9 @@
-import process from "node:process";
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
+// ビルド時に環境変数のバリデーションを実行（副作用）
+import "./src/env";
+// 型安全な環境変数オブジェクトをimport
+import { env } from "./src/env";
 
 const nextConfig: NextConfig = {
 	reactCompiler: true,
@@ -17,13 +20,11 @@ const nextConfig: NextConfig = {
 };
 
 export default withSentryConfig(nextConfig, {
-	// biome-ignore lint/complexity/useLiteralKeys: TypeScript strict modeの要件でブラケット記法が必須のため、ドット記法は使用できない
-	org: process.env["SENTRY_ORG"] || "",
-	// biome-ignore lint/complexity/useLiteralKeys: TypeScript strict modeの要件でブラケット記法が必須のため、ドット記法は使用できない
-	project: process.env["SENTRY_PROJECT"] || "",
-	// biome-ignore lint/complexity/useLiteralKeys: TypeScript strict modeの要件でブラケット記法が必須のため、ドット記法は使用できない
-	authToken: process.env["SENTRY_AUTH_TOKEN"] || "",
-	// biome-ignore lint/complexity/useLiteralKeys: TypeScript strict modeの要件でブラケット記法が必須のため、ドット記法は使用できない
+	org: env.SENTRY_ORG,
+	project: env.SENTRY_PROJECT,
+	authToken: env.SENTRY_AUTH_TOKEN,
+	// biome-ignore lint/correctness/noProcessGlobal: ビルド時の設定値として使用
+	// biome-ignore lint/complexity/useLiteralKeys: TypeScriptの厳格な型チェックのためブラケット記法を使用
 	silent: !process.env["CI"],
 	widenClientFileUpload: true,
 	disableLogger: true,

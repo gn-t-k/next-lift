@@ -1,8 +1,10 @@
-import process from "node:process";
+import { authenticationEnv } from "@next-lift/env/authentication";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import * as schema from "./generated/schema";
 import { getDatabase } from "./libs/get-database";
+
+const env = authenticationEnv();
 
 export const auth = betterAuth({
 	database: drizzleAdapter(getDatabase(), {
@@ -11,10 +13,10 @@ export const auth = betterAuth({
 	}),
 	socialProviders: {
 		google: {
-			clientId: process.env["GOOGLE_CLIENT_ID"] as string,
-			clientSecret: process.env["GOOGLE_CLIENT_SECRET"] as string,
+			clientId: env.GOOGLE_CLIENT_ID,
+			clientSecret: env.GOOGLE_CLIENT_SECRET,
 		},
 	},
-	baseURL: process.env["BETTER_AUTH_URL"] as string,
-	secret: process.env["BETTER_AUTH_SECRET"] as string,
+	baseURL: env.BETTER_AUTH_URL,
+	secret: env.BETTER_AUTH_SECRET,
 });
