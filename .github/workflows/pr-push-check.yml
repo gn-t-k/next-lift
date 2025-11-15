@@ -10,7 +10,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      SKIP_ENV_VALIDATION: "1"
+      DATABASE_PROVIDER: "local"
+      TURSO_AUTH_DATABASE_URL: "http://127.0.0.1:8080"
+      TURSO_AUTH_DATABASE_AUTH_TOKEN: "dummy-token-for-ci"
+      BETTER_AUTH_SECRET: "dummy-secret-for-ci-build-only"
+      BETTER_AUTH_URL: "http://localhost:3000"
+      GOOGLE_CLIENT_ID: "dummy-google-client-id"
+      GOOGLE_CLIENT_SECRET: "dummy-google-client-secret"
+      SENTRY_ORG: "dummy-org"
+      SENTRY_PROJECT: "dummy-project"
+      SENTRY_AUTH_TOKEN: "dummy-token"
+      NEXT_PUBLIC_BETTER_AUTH_URL: "http://localhost:3000"
+      NEXT_PUBLIC_SENTRY_DSN: "https://dummy@dummy.ingest.sentry.io/dummy"
     steps:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
