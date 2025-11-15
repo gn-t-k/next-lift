@@ -12,6 +12,7 @@ jobs:
     outputs:
       db_name: ${{ steps.create-db.outputs.db_name }}
       db_url: ${{ steps.create-db.outputs.db_url }}
+      db_auth_token: ${{ steps.create-token.outputs.db_auth_token }}
     steps:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
@@ -107,8 +108,15 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          DB_URL: ${{ needs.setup-database.outputs.db_url }}
+          DB_AUTH_TOKEN: ${{ needs.setup-database.outputs.db_auth_token }}
         run: |
-          npx vercel deploy --token=$VERCEL_TOKEN > deployment-url.txt
+          npx vercel deploy \
+            --token=$VERCEL_TOKEN \
+            --build-env DATABASE_PROVIDER=turso \
+            --build-env TURSO_AUTH_DATABASE_URL="${DB_URL}" \
+            --build-env TURSO_AUTH_DATABASE_AUTH_TOKEN="${DB_AUTH_TOKEN}" \
+            > deployment-url.txt
           echo "DEPLOYMENT_URL=$(cat deployment-url.txt)" >> $GITHUB_ENV
 
       - name: Comment PR with Preview Info
