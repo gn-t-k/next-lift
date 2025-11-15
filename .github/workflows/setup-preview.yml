@@ -50,6 +50,9 @@ jobs:
           echo "db_name=${DB_NAME}" >> $GITHUB_OUTPUT
           echo "db_url=${DB_URL}" >> $GITHUB_OUTPUT
 
+          echo "Debug: DB_NAME=${DB_NAME}"
+          echo "Debug: DB_URL=${DB_URL}"
+
       - name: Create Database Token
         id: create-token
         env:
@@ -68,6 +71,8 @@ jobs:
           DB_AUTH_TOKEN=$(echo "${TOKEN_RESPONSE}" | jq -r '.jwt')
 
           echo "db_auth_token=${DB_AUTH_TOKEN}" >> $GITHUB_OUTPUT
+
+          echo "Debug: DB_AUTH_TOKEN=${DB_AUTH_TOKEN}"
 
       - name: Set Vercel Environment Variables
         env:
@@ -115,6 +120,9 @@ jobs:
           DB_URL: ${{ needs.setup-database.outputs.db_url }}
           DB_AUTH_TOKEN: ${{ needs.setup-database.outputs.db_auth_token }}
         run: |
+          echo "Debug: DB_URL from outputs=${DB_URL}"
+          echo "Debug: DB_AUTH_TOKEN from outputs=${DB_AUTH_TOKEN}"
+
           cat > .env.build << EOF
           DATABASE_PROVIDER=turso
           TURSO_AUTH_DATABASE_URL=${DB_URL}
