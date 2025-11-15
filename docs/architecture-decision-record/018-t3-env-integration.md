@@ -58,11 +58,11 @@ packages/authentication → packages/envから必要な環境変数をimport
 - クライアント環境変数（`NEXT_PUBLIC_*`）は各アプリで定義
 - 理由: フレームワーク交換容易性（ADR-009の疎結合設計）
 
-#### 2. 各env設定ファイルで直接process.envを参照
+#### 2. skipValidationのCI環境対応
 
-- 各ファイル（turso.ts, authentication.ts, sentry.ts）で`runtimeEnv: process.env`を直接指定
-- `skipValidation`はlint時のみスキップ（CI環境でも環境変数バリデーションを実施）
-- 理由: `@t3-oss/env-core`の仕様上、関数経由でのprocess.env参照では環境変数が正しく読み込まれないため
+- 各ファイル（turso.ts, authentication.ts, sentry.ts）で`skipValidation: !!process.env.CI || process.env["npm_lifecycle_event"] === "lint"`を設定
+- CI環境とlint時にバリデーションをスキップ
+- 理由: `extends`を使用する場合、拡張元の各関数が個別にskipValidationを評価するため、create-t3-turboの公式パターンに従いCI環境を明示的に考慮する必要がある（Issue #323対策）
 
 #### 3. DATABASE_PROVIDERによる明示的なDB選択
 
