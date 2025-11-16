@@ -1,5 +1,23 @@
 {
 	"$schema": "https://turbo.build/schema.json",
+	"globalEnv": [
+		"DATABASE_PROVIDER",
+		"NODE_ENV",
+		"TURSO_AUTH_DATABASE_URL",
+		"TURSO_AUTH_DATABASE_AUTH_TOKEN",
+		"TURSO_PLATFORM_API_TOKEN",
+		"TURSO_ORGANIZATION",
+		"BETTER_AUTH_SECRET",
+		"BETTER_AUTH_URL",
+		"NEXT_PUBLIC_BETTER_AUTH_URL",
+		"GOOGLE_CLIENT_ID",
+		"GOOGLE_CLIENT_SECRET",
+		"NEXT_PUBLIC_SENTRY_DSN",
+		"SENTRY_AUTH_TOKEN",
+		"SENTRY_ORG",
+		"SENTRY_PROJECT",
+		"CI"
+	],
 	"tasks": {
 		"build": {
 			"dependsOn": ["^build"],

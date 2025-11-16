@@ -9,6 +9,19 @@ jobs:
     name: Build and Type check
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      DATABASE_PROVIDER: local
+      TURSO_AUTH_DATABASE_URL: http://127.0.0.1:8080
+      TURSO_AUTH_DATABASE_AUTH_TOKEN: dummy
+      BETTER_AUTH_SECRET: dummy-secret-for-ci
+      BETTER_AUTH_URL: http://localhost:3000
+      NEXT_PUBLIC_BETTER_AUTH_URL: http://localhost:3000
+      GOOGLE_CLIENT_ID: dummy
+      GOOGLE_CLIENT_SECRET: dummy
+      NEXT_PUBLIC_SENTRY_DSN: ""
+      SENTRY_AUTH_TOKEN: dummy
+      SENTRY_ORG: dummy
+      SENTRY_PROJECT: dummy
     steps:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0

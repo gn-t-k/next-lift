@@ -69,6 +69,13 @@ jobs:
           DB_AUTH_TOKEN: ${{ steps.create-token.outputs.db_auth_token }}
         run: |
           # Vercelのプレビュー環境に環境変数を設定
+          # DATABASE_PROVIDER
+          curl -X POST \
+            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "{\"key\":\"DATABASE_PROVIDER\",\"value\":\"turso\",\"type\":\"encrypted\",\"target\":[\"preview\"],\"gitBranch\":\"${{ github.head_ref }}\"}" \
+            "https://api.vercel.com/v10/projects/${VERCEL_PROJECT_ID}/env"
+
           # TURSO_AUTH_DATABASE_URL
           curl -X POST \
             -H "Authorization: Bearer ${VERCEL_TOKEN}" \
@@ -100,8 +107,15 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          DB_URL: ${{ needs.setup-database.outputs.db_url }}
+          DB_AUTH_TOKEN: ${{ needs.setup-database.outputs.db_auth_token }}
         run: |
-          npx vercel deploy --token=$VERCEL_TOKEN > deployment-url.txt
+          npx vercel deploy \
+            --token=$VERCEL_TOKEN \
+            --env DATABASE_PROVIDER=turso \
+            --env TURSO_AUTH_DATABASE_URL="${DB_URL}" \
+            --env TURSO_AUTH_DATABASE_AUTH_TOKEN="${DB_AUTH_TOKEN}" \
+            > deployment-url.txt
           echo "DEPLOYMENT_URL=$(cat deployment-url.txt)" >> $GITHUB_ENV
 
       - name: Comment PR with Preview Info
