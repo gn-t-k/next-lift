@@ -1,0 +1,23 @@
+{
+	"name": "@next-lift/env",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./private": "./src/private.ts",
+		"./public": "./src/public.ts"
+	},
+	"scripts": {
+		"lint": "biome check .",
+		"type-check": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.3.5",
+		"@tsconfig/strictest": "2.0.8",
+		"@types/node": "24.10.1",
+		"typescript": "5.9.3"
+	},
+	"dependencies": {
+		"zod": "4.1.12"
+	}
+}

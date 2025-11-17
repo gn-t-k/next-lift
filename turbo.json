@@ -3,7 +3,19 @@
 	"tasks": {
 		"build": {
 			"dependsOn": ["^build"],
-			"outputs": [".next/**", "!.next/cache/**", "dist/**"]
+			"outputs": [".next/**", "!.next/cache/**", "dist/**"],
+			"passThroughEnv": [
+				"BETTER_AUTH_URL",
+				"BETTER_AUTH_SECRET",
+				"GOOGLE_CLIENT_ID",
+				"GOOGLE_CLIENT_SECRET",
+				"SENTRY_ORG",
+				"SENTRY_PROJECT",
+				"SENTRY_AUTH_TOKEN",
+				"NEXT_PUBLIC_SENTRY_DSN",
+				"NEXT_PUBLIC_BETTER_AUTH_URL",
+				"CI"
+			]
 		},
 		"dev": {
 			"cache": false,
