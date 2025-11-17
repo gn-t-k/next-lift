@@ -26,6 +26,9 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-workspace
 
+      - name: Test environment variables
+        run: node test-env.js
+
       - name: Build
         run: pnpm run build
 

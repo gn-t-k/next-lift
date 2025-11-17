@@ -1,0 +1,10 @@
+console.log('=== Environment Variables Test ===');
+console.log('BETTER_AUTH_URL:', process.env.BETTER_AUTH_URL);
+console.log('BETTER_AUTH_SECRET:', process.env.BETTER_AUTH_SECRET ? '***' : undefined);
+console.log('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? '***' : undefined);
+console.log('GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET ? '***' : undefined);
+console.log('SENTRY_ORG:', process.env.SENTRY_ORG ? '***' : undefined);
+console.log('SENTRY_PROJECT:', process.env.SENTRY_PROJECT ? '***' : undefined);
+console.log('SENTRY_AUTH_TOKEN:', process.env.SENTRY_AUTH_TOKEN ? '***' : undefined);
+console.log('NEXT_PUBLIC_SENTRY_DSN:', process.env.NEXT_PUBLIC_SENTRY_DSN);
+console.log('NEXT_PUBLIC_BETTER_AUTH_URL:', process.env.NEXT_PUBLIC_BETTER_AUTH_URL);
