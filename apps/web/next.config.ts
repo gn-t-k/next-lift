@@ -16,13 +16,11 @@ const nextConfig: NextConfig = {
 	},
 };
 
-const envVars = env();
-
 export default withSentryConfig(nextConfig, {
-	org: envVars.SENTRY_ORG,
-	project: envVars.SENTRY_PROJECT,
-	authToken: envVars.SENTRY_AUTH_TOKEN,
-	silent: !envVars.CI,
+	org: env.SENTRY_ORG,
+	project: env.SENTRY_PROJECT,
+	authToken: env.SENTRY_AUTH_TOKEN,
+	silent: !env.CI,
 	widenClientFileUpload: true,
 	disableLogger: true,
 	automaticVercelMonitors: true,

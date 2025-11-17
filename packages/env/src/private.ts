@@ -1,3 +1,4 @@
+import { createLazyProxy } from "./libs/create-lazy-proxy";
 import {
 	type PrivateBuildEnv,
 	type PrivateRuntimeEnv,
@@ -7,7 +8,6 @@ import {
 
 type PrivateEnv = PrivateBuildEnv & PrivateRuntimeEnv;
 
-let cachedEnvObject: PrivateEnv | null = null;
 const runtimeCache: Partial<PrivateRuntimeEnv> = {};
 const runtimeInitialized: Partial<Record<keyof PrivateRuntimeEnv, boolean>> =
 	{};
@@ -17,10 +17,9 @@ const runtimeShape = privateRuntimeEnvSchema.shape;
 // biome-ignore lint/correctness/noProcessGlobal: Edge Runtimeでは`node:process`のimportが不可のため、グローバルprocessを使用する
 const processEnv = process.env;
 
-// モジュールロード時にビルド時に取得可能な環境変数だけ検証
-const buildEnv = privateBuildEnvSchema.parse(processEnv);
-
 const createEnvObject = () => {
+	// 初回プロパティアクセス時にビルド時環境変数を検証
+	const buildEnv = privateBuildEnvSchema.parse(processEnv);
 	const base = { ...buildEnv };
 
 	Object.keys(runtimeShape).forEach((key_) => {
@@ -47,10 +46,4 @@ const createEnvObject = () => {
 	return base as PrivateEnv;
 };
 
-export const env = () => {
-	if (cachedEnvObject !== null) {
-		return cachedEnvObject;
-	}
-	cachedEnvObject = createEnvObject();
-	return cachedEnvObject;
-};
+export const env = createLazyProxy(() => createEnvObject());
