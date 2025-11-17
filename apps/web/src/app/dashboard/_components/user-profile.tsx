@@ -1,8 +1,8 @@
 import { auth } from "@next-lift/authentication/instance";
-import { cacheLife, cacheTag } from "next/cache";
 import { headers } from "next/headers";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 
 type User = {
 	id: string;
@@ -12,9 +12,7 @@ type User = {
 };
 
 const getUserSession = async (): Promise<User> => {
-	"use cache: private";
-	cacheLife({ stale: 60 * 15 }); // 15分キャッシュ
-	cacheTag("user-session");
+	await connection();
 
 	const session = await auth.api.getSession({
 		headers: await headers(),

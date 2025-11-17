@@ -1,4 +1,4 @@
-import process from "node:process";
+import { env } from "@next-lift/env/private";
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
@@ -16,15 +16,13 @@ const nextConfig: NextConfig = {
 	},
 };
 
+const envVars = env();
+
 export default withSentryConfig(nextConfig, {
-	// biome-ignore lint/complexity/useLiteralKeys: TypeScript strict modeの要件でブラケット記法が必須のため、ドット記法は使用できない
-	org: process.env["SENTRY_ORG"] || "",
-	// biome-ignore lint/complexity/useLiteralKeys: TypeScript strict modeの要件でブラケット記法が必須のため、ドット記法は使用できない
-	project: process.env["SENTRY_PROJECT"] || "",
-	// biome-ignore lint/complexity/useLiteralKeys: TypeScript strict modeの要件でブラケット記法が必須のため、ドット記法は使用できない
-	authToken: process.env["SENTRY_AUTH_TOKEN"] || "",
-	// biome-ignore lint/complexity/useLiteralKeys: TypeScript strict modeの要件でブラケット記法が必須のため、ドット記法は使用できない
-	silent: !process.env["CI"],
+	org: envVars.SENTRY_ORG,
+	project: envVars.SENTRY_PROJECT,
+	authToken: envVars.SENTRY_AUTH_TOKEN,
+	silent: !envVars.CI,
 	widenClientFileUpload: true,
 	disableLogger: true,
 	automaticVercelMonitors: true,
