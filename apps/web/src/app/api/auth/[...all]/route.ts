@@ -1,9 +1,10 @@
 import { toNextJsHandler } from "@next-lift/authentication/better-auth-nextjs";
 import { auth } from "@next-lift/authentication/instance";
+import { createLazyProxy } from "../../../../lib/create-lazy-proxy";
 
-// 関数化することで、auth.handlerへのアクセスをリクエスト時まで遅延
-// これにより、ビルド時にはauthインスタンスが初期化されず、環境変数が不要になる
-const handlers = () => toNextJsHandler(auth.handler);
+// モジュールロード時にauth.handlerへアクセスすると、Next.jsビルド中に環境変数が必要になる
+// リクエスト時まで初期化を遅延することで、ビルド時の環境変数を不要にする
+const handlers = createLazyProxy(() => toNextJsHandler(auth.handler));
 
-export const GET = (request: Request) => handlers().GET(request);
-export const POST = (request: Request) => handlers().POST(request);
+export const GET = (request: Request) => handlers.GET(request);
+export const POST = (request: Request) => handlers.POST(request);
