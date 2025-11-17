@@ -5,9 +5,7 @@
  * const auth = createLazyProxy(() => betterAuth({ ... }));
  * auth.api.getSession({ ... }); // 初回アクセス時に初期化
  */
-export const createLazyProxy = <T extends object>(
-	initializer: () => T,
-): T => {
+export const createLazyProxy = <T extends object>(initializer: () => T): T => {
 	let instance: T | null = null;
 
 	const getInstance = () => {
