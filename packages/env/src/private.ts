@@ -14,10 +14,10 @@ const runtimeInitialized: Partial<Record<keyof PrivateRuntimeEnv, boolean>> =
 
 const runtimeShape = privateRuntimeEnvSchema.shape;
 
-// biome-ignore lint/correctness/noProcessGlobal: Edge Runtimeでは`node:process`のimportが不可のため、グローバルprocessを使用する
-const processEnv = process.env;
-
 const createEnvObject = () => {
+	// biome-ignore lint/correctness/noProcessGlobal: Edge Runtimeでは`node:process`のimportが不可のため、グローバルprocessを使用する
+	const processEnv = process.env;
+
 	// 初回プロパティアクセス時にビルド時環境変数を検証
 	const buildEnv = privateBuildEnvSchema.parse(processEnv);
 	const base = { ...buildEnv };
