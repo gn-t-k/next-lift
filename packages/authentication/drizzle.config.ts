@@ -1,10 +1,9 @@
-import process from "node:process";
+import { env } from "@next-lift/env/private";
 import { defineConfig } from "drizzle-kit";
 
-// biome-ignore lint/complexity/useLiteralKeys: TypeScriptのstrictestルールがブラケット記法を要求するため
-const url = process.env["TURSO_AUTH_DATABASE_URL"];
-// biome-ignore lint/complexity/useLiteralKeys: TypeScriptのstrictestルールがブラケット記法を要求するため
-const authToken = process.env["TURSO_AUTH_DATABASE_AUTH_TOKEN"];
+const envVars = env();
+const url = envVars.TURSO_AUTH_DATABASE_URL;
+const authToken = envVars.TURSO_AUTH_DATABASE_AUTH_TOKEN;
 
 export default defineConfig({
 	out: "./drizzle",

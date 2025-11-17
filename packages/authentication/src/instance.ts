@@ -1,20 +1,25 @@
-import process from "node:process";
+import { env } from "@next-lift/env/private";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import * as schema from "./generated/schema";
+import { createLazyProxy } from "./libs/create-lazy-proxy";
 import { getDatabase } from "./libs/get-database";
 
-export const auth = betterAuth({
-	database: drizzleAdapter(getDatabase(), {
-		provider: "sqlite",
-		schema,
-	}),
-	socialProviders: {
-		google: {
-			clientId: process.env["GOOGLE_CLIENT_ID"] as string,
-			clientSecret: process.env["GOOGLE_CLIENT_SECRET"] as string,
+export const auth = createLazyProxy(() => {
+	const envVars = env();
+
+	return betterAuth({
+		database: drizzleAdapter(getDatabase(), {
+			provider: "sqlite",
+			schema,
+		}),
+		socialProviders: {
+			google: {
+				clientId: envVars.GOOGLE_CLIENT_ID,
+				clientSecret: envVars.GOOGLE_CLIENT_SECRET,
+			},
 		},
-	},
-	baseURL: process.env["BETTER_AUTH_URL"] as string,
-	secret: process.env["BETTER_AUTH_SECRET"] as string,
+		baseURL: envVars.BETTER_AUTH_URL,
+		secret: envVars.BETTER_AUTH_SECRET,
+	});
 });
