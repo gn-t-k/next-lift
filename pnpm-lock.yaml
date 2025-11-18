@@ -41,6 +41,9 @@ importers:
       '@next-lift/tailwind-config':
         specifier: workspace:*
         version: link:../../packages/tailwind-config
+      '@next-lift/utilities':
+        specifier: workspace:*
+        version: link:../../packages/utilities
       '@sentry/nextjs':
         specifier: 10.25.0
         version: 10.25.0(@opentelemetry/context-async-hooks@2.2.0(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.2.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.2.0(@opentelemetry/api@1.9.0))(next@16.0.3(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)(webpack@5.102.1)
@@ -111,6 +114,9 @@ importers:
       '@next-lift/env':
         specifier: workspace:*
         version: link:../env
+      '@next-lift/utilities':
+        specifier: workspace:*
+        version: link:../utilities
       better-auth:
         specifier: 1.3.34
         version: 1.3.34
@@ -136,6 +142,9 @@ importers:
 
   packages/env:
     dependencies:
+      '@next-lift/utilities':
+        specifier: workspace:*
+        version: link:../utilities
       zod:
         specifier: 4.1.12
         version: 4.1.12
@@ -261,6 +270,21 @@ importers:
       tw-animate-css:
         specifier: 1.4.0
         version: 1.4.0
+
+  packages/utilities:
+    devDependencies:
+      '@biomejs/biome':
+        specifier: 2.3.6
+        version: 2.3.6
+      '@tsconfig/strictest':
+        specifier: 2.0.8
+        version: 2.0.8
+      '@types/node':
+        specifier: 24.10.1
+        version: 24.10.1
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
 
 packages:
 
