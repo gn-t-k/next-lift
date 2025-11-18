@@ -1,20 +1,21 @@
-import { env } from "@next-lift/env/private";
 import { defineConfig } from "drizzle-kit";
+import { getDatabaseConfig } from "./src/libs/get-database-config";
 
-const url = env.TURSO_AUTH_DATABASE_URL;
-const authToken = env.TURSO_AUTH_DATABASE_AUTH_TOKEN;
+const dbConfig = getDatabaseConfig();
+
+const dbCredentials =
+	dbConfig.type === "turso"
+		? {
+				url: dbConfig.url,
+				authToken: dbConfig.authToken,
+			}
+		: {
+				url: dbConfig.path,
+			};
 
 export default defineConfig({
 	out: "./drizzle",
 	schema: "./src/generated/schema.ts",
 	dialect: "turso",
-	dbCredentials:
-		url && authToken
-			? {
-					url,
-					authToken,
-				}
-			: {
-					url: "file:development-auth.db",
-				},
+	dbCredentials,
 });

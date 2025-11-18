@@ -1,18 +1,20 @@
 import { createClient } from "@libsql/client";
-import { env } from "@next-lift/env/private";
 import { drizzle } from "drizzle-orm/libsql";
+import { getDatabaseConfig } from "./get-database-config";
 
-export const getDatabase = (type: "file" | "memory" = "file") => {
-	const url = env.TURSO_AUTH_DATABASE_URL;
-	const authToken = env.TURSO_AUTH_DATABASE_AUTH_TOKEN;
+export const getDatabase = () => {
+	const dbConfig = getDatabaseConfig();
 
 	const config =
-		type === "memory"
-			? { url: ":memory:" }
-			: url && authToken
-				? { url, authToken }
-				: { url: "file:development-auth.db" };
+		dbConfig.type === "turso"
+			? { url: dbConfig.url, authToken: dbConfig.authToken }
+			: { url: dbConfig.path };
 
 	const client = createClient(config);
+	return drizzle({ client });
+};
+
+export const getTestDatabase = () => {
+	const client = createClient({ url: ":memory:" });
 	return drizzle({ client });
 };
