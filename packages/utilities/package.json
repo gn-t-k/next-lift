@@ -1,11 +1,10 @@
 {
-	"name": "@next-lift/env",
+	"name": "@next-lift/utilities",
 	"version": "0.1.0",
 	"private": true,
 	"type": "module",
 	"exports": {
-		"./private": "./src/private.ts",
-		"./public": "./src/public.ts"
+		".": "./src/index.ts"
 	},
 	"scripts": {
 		"lint": "biome check .",
@@ -16,9 +15,5 @@
 		"@tsconfig/strictest": "2.0.8",
 		"@types/node": "24.10.1",
 		"typescript": "5.9.3"
-	},
-	"dependencies": {
-		"@next-lift/utilities": "workspace:*",
-		"zod": "4.1.12"
 	}
 }

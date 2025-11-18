@@ -1,4 +1,4 @@
-import { createLazyProxy } from "./libs/create-lazy-proxy";
+import { createLazyProxy } from "@next-lift/utilities";
 import {
 	type PrivateBuildEnv,
 	type PrivateRuntimeEnv,

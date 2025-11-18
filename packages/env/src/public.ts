@@ -1,4 +1,4 @@
-import { createLazyProxy } from "./libs/create-lazy-proxy";
+import { createLazyProxy } from "@next-lift/utilities";
 import { publicRuntimeEnvSchema } from "./schemas";
 
 const createPublicEnv = () => {
