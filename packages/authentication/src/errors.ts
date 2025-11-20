@@ -64,9 +64,6 @@ export class InvalidConfigurationError extends ErrorFactory({
 	}>(),
 }) {}
 
-/**
- * 認証処理で発生しうるエラーのユニオン型
- */
 export type AuthenticationError =
 	| OAuthProviderError
 	| OAuthCancelledError
@@ -89,9 +86,6 @@ export type ServerError =
 	| DatabaseError
 	| InvalidConfigurationError;
 
-/**
- * エラーがサーバー系エラーかどうかを判定
- */
 export const isServerError = (
 	error: AuthenticationError,
 ): error is ServerError => {

@@ -1,6 +1,7 @@
 import type { AuthenticationError } from "@next-lift/authentication/errors";
 import { isServerError } from "@next-lift/authentication/errors";
 import * as Sentry from "@sentry/nextjs";
+import { StandardTags } from "./sentry/standard-tags";
 
 /**
  * 認証エラーをSentryに報告する
@@ -8,15 +9,14 @@ import * as Sentry from "@sentry/nextjs";
  */
 export const reportAuthenticationError = (error: AuthenticationError): void => {
 	if (!isServerError(error)) {
-		// ユーザー操作系エラー（OAuthProviderError, OAuthCancelledError）は報告しない
 		return;
 	}
 
-	// サーバー系エラーをSentryに報告
 	Sentry.captureException(error, {
 		tags: {
-			error_type: "authentication",
-			error_name: error.name,
+			[StandardTags.ERROR_TYPE]: "authentication",
+			[StandardTags.COMPONENT]: "authentication",
+			[StandardTags.ERROR_NAME]: error.name,
 		},
 		contexts: {
 			authentication_error: {

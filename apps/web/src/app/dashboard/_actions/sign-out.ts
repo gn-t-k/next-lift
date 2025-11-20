@@ -1,17 +1,20 @@
 "use server";
 
+import type { AuthenticationError } from "@next-lift/authentication/errors";
 import { SessionError } from "@next-lift/authentication/errors";
 import { auth } from "@next-lift/authentication/instance";
-import { Result } from "@praha/byethrow";
+import { R } from "@praha/byethrow";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { reportAuthenticationError } from "../../../lib/report-authentication-error";
 
+type State = { error: AuthenticationError | null };
+
 export const signOut = async (
-	_prevState: unknown,
+	_prevState: State,
 	_formData: FormData,
-): Promise<void> => {
-	const signOutFn = Result.try({
+): Promise<{ error: AuthenticationError | null }> => {
+	const signOutFn = R.try({
 		try: async (): Promise<void> => {
 			await auth.api.signOut({
 				headers: await headers(),
@@ -23,12 +26,10 @@ export const signOut = async (
 
 	const result = await signOutFn();
 
-	if (Result.isFailure(result)) {
+	if (R.isFailure(result)) {
 		reportAuthenticationError(result.error);
-		// エラー時はthrowしてクライアント側でキャッチできるようにする
-		throw result.error;
+		return { error: result.error };
 	}
 
-	// 成功時はログインページにリダイレクト
 	redirect("/auth/login");
 };
