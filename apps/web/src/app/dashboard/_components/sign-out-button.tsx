@@ -5,7 +5,9 @@ import { useActionState } from "react";
 import { signOut } from "../_actions/sign-out";
 
 export const SignOutButton = () => {
-	const [, formAction, isPending] = useActionState(signOut, undefined);
+	const [_state, formAction, isPending] = useActionState(signOut, {
+		error: null,
+	});
 
 	return (
 		<form action={formAction}>
