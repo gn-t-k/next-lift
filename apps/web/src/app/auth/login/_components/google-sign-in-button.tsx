@@ -1,30 +1,28 @@
 "use client";
 
-import { Button } from "@next-lift/react-components/ui";
-import { useState } from "react";
-import { authClient } from "../../../../lib/auth-client";
+import { Button, ErrorAlert } from "@next-lift/react-components/ui";
+import { useActionState } from "react";
+import { formatAuthenticationError } from "../../../../lib/format-authentication-error";
+import { signInWithGoogle } from "../_actions/sign-in-with-google";
 
 export const GoogleSignInButton = () => {
-	const [isPending, setIsPending] = useState(false);
-
-	const handleGoogleSignIn = async () => {
-		setIsPending(true);
-		// リダイレクトされるまでpending状態を維持
-		// ページ遷移後はこのコンポーネントごと消えるので、setIsPending(false)は不要
-		try {
-			await authClient.signIn.social({
-				provider: "google",
-				callbackURL: "/dashboard",
-			});
-		} catch (error) {
-			console.error("Google sign in failed:", error);
-			setIsPending(false); // エラー時のみpending状態を解除
-		}
-	};
+	const [state, formAction, isPending] = useActionState(signInWithGoogle, {
+		error: null,
+	});
 
 	return (
-		<Button onClick={handleGoogleSignIn} isDisabled={isPending}>
-			{isPending ? "ログイン中..." : "Googleでログイン"}
-		</Button>
+		<div>
+			{state.error && (
+				<ErrorAlert
+					message={formatAuthenticationError(state.error)}
+					className="mb-4"
+				/>
+			)}
+			<form action={formAction}>
+				<Button type="submit" isDisabled={isPending}>
+					{isPending ? "ログイン中..." : "Googleでログイン"}
+				</Button>
+			</form>
+		</div>
 	);
 };
