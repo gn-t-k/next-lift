@@ -1,5 +1,5 @@
 // biome-ignore-all lint/correctness/noProcessGlobal: ブラウザ環境では`node:process`のimportが不可のため、グローバルprocessを使用する
-// biome-ignore-all lint/complexity/useLiteralKeys: Next.jsのインライン化のため、ブラケット記法が必須（ドット記法ではTypeScriptエラーが発生）
+// biome-ignore-all lint/complexity/useLiteralKeys: インデックスシグネチャの型ではドット記法が許可されていないため
 import { publicRuntimeEnvSchema } from "./schemas";
 
 export const publicEnv = publicRuntimeEnvSchema.parse({
