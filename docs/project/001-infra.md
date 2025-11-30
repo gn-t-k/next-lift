@@ -92,17 +92,17 @@
       - [x] マイグレーションファイルの適用
       - [x] development-auth.dbのシンボリックリンク設定
   - [x] OAuth認証フローの動作確認とエラーハンドリング
-    - [x] Google OAuth認証のログインフロー確認
-      - [x] ログインページの作成
+    - [x] Google OAuth認証のサインインフロー確認
+      - [x] サインインページの作成
       - [x] Google OAuth認証の実装
       - [x] 認証コールバックの動作確認
-    - [ ] Apple OAuth認証のログインフロー確認（Apple Developer Program承認待ち）
-    - [x] 初回ログイン時のユーザー作成確認
-    - [x] 2回目以降のログイン確認
+    - [ ] Apple OAuth認証のサインインフロー確認（Apple Developer Program承認待ち）
+    - [x] 初回サインイン時のユーザー作成確認
+    - [x] 2回目以降のサインイン確認
     - [x] セッション管理の確認
       - [x] ダッシュボードページの作成
       - [x] セッション取得の実装
-      - [x] ログアウト機能の実装
+      - [x] サインアウト機能の実装
       - [x] 認証ガードの動作確認
     - [ ] エラーハンドリングの実装
       - [ ] 発生しうるエラーの洗い出しと分類
@@ -140,13 +140,13 @@
       - [ ] ルート `.env` へのシンボリックリンク作成
     - [ ] Per-User DB用Drizzleスキーマの定義
     - [ ] Turso Platform API統合（作成・削除）
-    - [ ] 初回ログイン時のPer-User DB作成フロー
+    - [ ] 初回サインイン時のPer-User DB作成フロー
     - [ ] Per-User DB作成ロジックのテスト（モック使用）
   - [ ] iOS: Better Auth統合
     - [ ] @better-auth/expoのセットアップ
     - [ ] iOS側での認証フロー実装
     - [ ] セッション管理（expo-secure-store）
-    - [ ] ログイン・ログアウト機能の動作確認
+    - [ ] サインイン・サインアウト機能の動作確認
   - [ ] iOS: Turso Embedded Replicas
     - [ ] op-sqliteでのEmbedded Replicas接続設定
       - [ ] Per-User DBのURLとauthTokenを取得
