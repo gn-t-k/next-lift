@@ -1,28 +1,21 @@
 "use client";
 
 import { Button, ErrorAlert } from "@next-lift/react-components/ui";
+import { R } from "@praha/byethrow";
 import { useActionState } from "react";
-import { formatAuthenticationError } from "../../../lib/format-authentication-error";
-import { signOut } from "../_actions/sign-out";
+import { signOut } from "../_mutations/sign-out";
 
 export const SignOutButton = () => {
-	const [state, formAction, isPending] = useActionState(signOut, {
-		error: null,
-	});
+	const [state, formAction, isPending] = useActionState(signOut, undefined);
 
 	return (
-		<div>
-			{state.error && (
-				<ErrorAlert
-					message={formatAuthenticationError(state.error)}
-					className="mb-4"
-				/>
+		<form action={formAction}>
+			{state && R.isFailure(state) && (
+				<ErrorAlert>サインアウトに失敗しました</ErrorAlert>
 			)}
-			<form action={formAction}>
-				<Button type="submit" intent="outline" isDisabled={isPending}>
-					{isPending ? "ログアウト中..." : "ログアウト"}
-				</Button>
-			</form>
-		</div>
+			<Button type="submit" intent="outline" isDisabled={isPending}>
+				{isPending ? "サインアウト中..." : "サインアウト"}
+			</Button>
+		</form>
 	);
 };

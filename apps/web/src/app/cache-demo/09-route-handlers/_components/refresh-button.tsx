@@ -3,7 +3,7 @@
 import { Button } from "@next-lift/react-components/ui";
 import type { FC } from "react";
 import { useActionState } from "react";
-import { revalidateCachedData } from "../_actions/revalidate-cached-data";
+import { revalidateCachedData } from "../_mutations/revalidate-cached-data";
 
 export const RefreshButton: FC = () => {
 	const [, formAction, isPending] = useActionState(revalidateCachedData, null);
