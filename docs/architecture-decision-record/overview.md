@@ -130,12 +130,12 @@ Next LiftはLocal-first Architectureを採用しています。([ADR-010](./arch
 
 ## 認証フロー
 
-1. **ユーザー登録/ログイン**
+1. **ユーザー登録/サインイン**
    - iOS App / Web App → Next.js (Better Auth)
    - Apple ID or Google認証
    - Authentication Databaseにユーザー情報保存
 
-2. **Per-User Database作成**(初回ログイン時）
+2. **Per-User Database作成**(初回サインイン時）
    - Next.js Route Handlers → Turso Platform API
    - ユーザー専用Databaseを作成
    - Database Token発行
