@@ -2,6 +2,7 @@ import { env } from "@next-lift/env/private";
 import { createLazyProxy } from "@next-lift/utilities";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { nextCookies } from "better-auth/next-js";
 import * as schema from "./generated/schema";
 import { getDatabase } from "./libs/get-database";
 
@@ -19,5 +20,10 @@ export const auth = createLazyProxy(() => {
 		},
 		baseURL: env.BETTER_AUTH_URL,
 		secret: env.BETTER_AUTH_SECRET,
+		plugins: [nextCookies()],
+		trustedOrigins: [env.BETTER_AUTH_URL],
+		onAPIError: {
+			errorURL: "/auth/sign-in",
+		},
 	});
 });
