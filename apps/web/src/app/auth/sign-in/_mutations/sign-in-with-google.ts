@@ -1,0 +1,48 @@
+"use server";
+
+import { auth } from "@next-lift/authentication/instance";
+import { publicEnv } from "@next-lift/env/public";
+import { R } from "@praha/byethrow";
+import { ErrorFactory } from "@praha/error-factory";
+import type { Route } from "next";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+
+class SignInWithGoogleError extends ErrorFactory({
+	name: "SignInWithGoogleError",
+	message: "Sign in with Google failed",
+}) {}
+
+type State = R.Result<string, SignInWithGoogleError> | undefined;
+
+export const signInWithGoogle = async (
+	_prevState: State,
+	_formData: FormData,
+) =>
+	R.pipe(
+		R.try({
+			immediate: true,
+			try: async () => {
+				const { url } = await auth.api.signInSocial({
+					headers: await headers(),
+					body: {
+						provider: "google",
+						callbackURL: "/dashboard",
+						errorCallbackURL: `${publicEnv.NEXT_PUBLIC_BETTER_AUTH_URL}/auth/sign-in`,
+					},
+				});
+
+				if (!url) {
+					throw new Error("認証URLの取得に失敗しました");
+				}
+
+				return url;
+			},
+			catch: (error) => {
+				return new SignInWithGoogleError({ cause: error });
+			},
+		}),
+		R.inspect((url) => {
+			redirect(url as Route);
+		}),
+	);

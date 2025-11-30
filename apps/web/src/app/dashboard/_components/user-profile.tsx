@@ -19,7 +19,7 @@ const getUserSession = async (): Promise<User> => {
 	});
 
 	if (!session?.user) {
-		redirect("/auth/login");
+		redirect("/auth/sign-in");
 	}
 
 	return {
