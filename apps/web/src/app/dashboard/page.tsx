@@ -1,8 +1,8 @@
-import { Suspense } from "react";
+import { type FC, Suspense } from "react";
 import { SignOutButton } from "./_components/sign-out-button";
 import { UserProfile, UserProfileSkeleton } from "./_components/user-profile";
 
-const DashboardPage = () => {
+const Page: FC<PageProps<"/dashboard">> = () => {
 	return (
 		<main className="min-h-screen p-8">
 			<div className="mx-auto max-w-2xl space-y-8">
@@ -22,4 +22,4 @@ const DashboardPage = () => {
 	);
 };
 
-export default DashboardPage;
+export default Page;

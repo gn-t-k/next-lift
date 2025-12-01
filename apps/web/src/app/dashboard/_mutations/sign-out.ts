@@ -3,6 +3,7 @@
 import { auth } from "@next-lift/authentication/instance";
 import { R } from "@praha/byethrow";
 import { ErrorFactory } from "@praha/error-factory";
+import * as Sentry from "@sentry/nextjs";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -23,7 +24,10 @@ export const signOut = async (_prevState: State, _formData: FormData) =>
 				});
 			},
 			catch: (error) => {
-				return new SignOutError({ cause: error });
+				const signOutError = new SignOutError({ cause: error });
+				Sentry.captureException(signOutError);
+
+				return signOutError;
 			},
 		}),
 		R.inspect(() => {

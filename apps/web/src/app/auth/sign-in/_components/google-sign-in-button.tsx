@@ -20,7 +20,7 @@ export const GoogleSignInButton: FC<Props> = ({ searchParams }) => {
 	return (
 		<form action={action} className="space-y-4">
 			{state && R.isFailure(state) && (
-				<ErrorAlert>{state.error.message}</ErrorAlert>
+				<ErrorAlert>Googleでサインインに失敗しました</ErrorAlert>
 			)}
 			{searchParamsErrors.length > 0 && (
 				<ul>
