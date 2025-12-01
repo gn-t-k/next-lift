@@ -123,9 +123,6 @@ importers:
       '@next-lift/utilities':
         specifier: workspace:*
         version: link:../utilities
-      '@praha/error-factory':
-        specifier: 1.2.1
-        version: 1.2.1
       better-auth:
         specifier: 1.4.3
         version: 1.4.3
