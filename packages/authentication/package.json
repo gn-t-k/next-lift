@@ -22,7 +22,7 @@
 		"@next-lift/env": "workspace:*",
 		"@next-lift/utilities": "workspace:*",
 		"@praha/error-factory": "1.2.1",
-		"better-auth": "1.4.1",
+		"better-auth": "1.4.3",
 		"drizzle-orm": "0.44.7"
 	},
 	"devDependencies": {
