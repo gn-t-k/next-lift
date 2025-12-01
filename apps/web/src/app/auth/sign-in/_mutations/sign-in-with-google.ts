@@ -4,6 +4,7 @@ import { auth } from "@next-lift/authentication/instance";
 import { publicEnv } from "@next-lift/env/public";
 import { R } from "@praha/byethrow";
 import { ErrorFactory } from "@praha/error-factory";
+import * as Sentry from "@sentry/nextjs";
 import type { Route } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -39,7 +40,10 @@ export const signInWithGoogle = async (
 				return url;
 			},
 			catch: (error) => {
-				return new SignInWithGoogleError({ cause: error });
+				const signInError = new SignInWithGoogleError({ cause: error });
+				Sentry.captureException(signInError);
+
+				return signInError;
 			},
 		}),
 		R.inspect((url) => {
