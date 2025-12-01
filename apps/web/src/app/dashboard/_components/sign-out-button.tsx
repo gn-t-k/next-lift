@@ -2,10 +2,10 @@
 
 import { Button, ErrorAlert } from "@next-lift/react-components/ui";
 import { R } from "@praha/byethrow";
-import { useActionState } from "react";
+import { type FC, useActionState } from "react";
 import { signOut } from "../_mutations/sign-out";
 
-export const SignOutButton = () => {
+export const SignOutButton: FC = () => {
 	const [state, formAction, isPending] = useActionState(signOut, undefined);
 
 	return (
