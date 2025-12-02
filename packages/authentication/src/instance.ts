@@ -4,6 +4,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import * as schema from "./generated/schema";
+import { generateAppleClientSecret } from "./libs/generate-apple-client-secret";
 import { getDatabase } from "./libs/get-database";
 
 export const auth = createLazyProxy(() => {
@@ -13,6 +14,13 @@ export const auth = createLazyProxy(() => {
 			schema,
 		}),
 		socialProviders: {
+			apple: {
+				clientId: env.APPLE_CLIENT_ID,
+				// Better Authは内部でPromiseをawaitするため、getterでPromiseを返すことで動的生成が可能
+				get clientSecret() {
+					return generateAppleClientSecret();
+				},
+			} as unknown as { clientId: string; clientSecret: string },
 			google: {
 				clientId: env.GOOGLE_CLIENT_ID,
 				clientSecret: env.GOOGLE_CLIENT_SECRET,
@@ -21,7 +29,7 @@ export const auth = createLazyProxy(() => {
 		baseURL: env.BETTER_AUTH_URL,
 		secret: env.BETTER_AUTH_SECRET,
 		plugins: [nextCookies()],
-		trustedOrigins: [env.BETTER_AUTH_URL],
+		trustedOrigins: [env.BETTER_AUTH_URL, "https://appleid.apple.com"],
 		onAPIError: {
 			errorURL: "/auth/sign-in",
 		},

@@ -68,10 +68,10 @@
   - [x] エラー通知の設定
   - [x] エラー送信のテスト
 
-- [ ] Apple Developer Programのセットアップ（OAuth認証用）
+- [x] Apple Developer Programのセットアップ（OAuth認証用）
   - [x] Apple Developer Programへの登録
-  - [ ] OAuth認証用のServices IDとクレデンシャル作成
-  - [ ] リダイレクトURLの設定（ローカル/本番/プレビュー）
+  - [x] OAuth認証用のServices IDとクレデンシャル作成
+  - [x] リダイレクトURLの設定（本番のみ、ローカルはApple非対応）
 
 - [x] Google Cloud Consoleのセットアップ（OAuth認証用）
   - [x] Google Cloud Projectの作成
@@ -83,7 +83,7 @@
     - [x] Better AuthのRoute Handlerの作成
     - [x] apps/web内でのBetter Auth設定
       - [x] packages/authenticationのBetter Authインスタンスを利用
-      - [x] プロバイダー設定の追加（Google）
+      - [x] プロバイダー設定の追加（Google, Apple）
     - [x] 環境変数の設定
       - [x] ローカル開発環境（.env）
       - [ ] Vercel環境変数（本番/プレビュー）
@@ -96,7 +96,7 @@
       - [x] サインインページの作成
       - [x] Google OAuth認証の実装
       - [x] 認証コールバックの動作確認
-    - [ ] Apple OAuth認証のサインインフロー確認（Apple Developer Program承認待ち）
+    - [ ] Apple OAuth認証のサインインフロー確認（本番環境でテスト予定）
     - [x] 初回サインイン時のユーザー作成確認
     - [x] 2回目以降のサインイン確認
     - [x] セッション管理の確認
