@@ -1,4 +1,5 @@
 import z from "zod";
+import { appleAuthenticationEnvSchemas } from "./apple-authentication";
 import { betterAuthEnvSchemas } from "./better-auth";
 import { githubActionsEnvSchemas } from "./github-actions";
 import { googleAuthenticationEnvSchemas } from "./google-authentication";
@@ -11,6 +12,7 @@ export type PrivateRuntimeEnv = z.infer<typeof privateRuntimeEnvSchema>;
 export type PublicRuntimeEnv = z.infer<typeof publicRuntimeEnvSchema>;
 
 export const privateBuildEnvSchema = z.object({
+	...appleAuthenticationEnvSchemas.privateBuild.shape,
 	...betterAuthEnvSchemas.privateBuild.shape,
 	...githubActionsEnvSchemas.privateBuild.shape,
 	...googleAuthenticationEnvSchemas.privateBuild.shape,
@@ -20,6 +22,7 @@ export const privateBuildEnvSchema = z.object({
 });
 
 export const privateRuntimeEnvSchema = z.object({
+	...appleAuthenticationEnvSchemas.privateRuntime.shape,
 	...betterAuthEnvSchemas.privateRuntime.shape,
 	...githubActionsEnvSchemas.privateRuntime.shape,
 	...googleAuthenticationEnvSchemas.privateRuntime.shape,
@@ -29,6 +32,7 @@ export const privateRuntimeEnvSchema = z.object({
 });
 
 export const publicRuntimeEnvSchema = z.object({
+	...appleAuthenticationEnvSchemas.publicRuntime.shape,
 	...betterAuthEnvSchemas.publicRuntime.shape,
 	...githubActionsEnvSchemas.publicRuntime.shape,
 	...googleAuthenticationEnvSchemas.publicRuntime.shape,

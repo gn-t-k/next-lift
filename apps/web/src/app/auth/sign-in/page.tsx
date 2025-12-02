@@ -1,5 +1,9 @@
 import { type FC, Suspense } from "react";
 import {
+	AppleSignInButton,
+	AppleSignInButtonSkeleton,
+} from "./_components/apple-sign-in-button";
+import {
 	GoogleSignInButton,
 	GoogleSignInButtonSkeleton,
 } from "./_components/google-sign-in-button";
@@ -13,9 +17,14 @@ const Page: FC<PageProps<"/auth/sign-in">> = async ({ searchParams }) => {
 						サインイン（動作確認用）
 					</h1>
 				</header>
-				<Suspense fallback={<GoogleSignInButtonSkeleton />}>
-					<GoogleSignInButton searchParams={searchParams} />
-				</Suspense>
+				<div className="space-y-4">
+					<Suspense fallback={<GoogleSignInButtonSkeleton />}>
+						<GoogleSignInButton searchParams={searchParams} />
+					</Suspense>
+					<Suspense fallback={<AppleSignInButtonSkeleton />}>
+						<AppleSignInButton searchParams={searchParams} />
+					</Suspense>
+				</div>
 			</section>
 		</main>
 	);
