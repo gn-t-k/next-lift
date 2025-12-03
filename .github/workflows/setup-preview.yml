@@ -131,10 +131,11 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          GIT_BRANCH: ${{ github.head_ref }}
         run: |
           # 環境変数を取得してローカルでビルドし、ビルド済みのものをデプロイする
-          # これにより、ブランチ固有の環境変数がビルド時に正しく適用される
-          npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+          # --git-branchでブランチ固有の環境変数を取得
+          npx vercel pull --yes --environment=preview --git-branch="${GIT_BRANCH}" --token=$VERCEL_TOKEN
           npx vercel build --token=$VERCEL_TOKEN
           npx vercel deploy --prebuilt --token=$VERCEL_TOKEN > deployment-url.txt
           echo "DEPLOYMENT_URL=$(cat deployment-url.txt)" >> $GITHUB_ENV
