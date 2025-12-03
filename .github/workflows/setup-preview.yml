@@ -79,21 +79,40 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           DB_URL: ${{ steps.create-db.outputs.db_url }}
           DB_AUTH_TOKEN: ${{ steps.create-token.outputs.db_auth_token }}
+          GIT_BRANCH: ${{ github.head_ref }}
         run: |
           # Vercelのプレビュー環境に環境変数を設定
-          # TURSO_AUTH_DATABASE_URL
-          curl -X POST \
-            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
-            -H "Content-Type: application/json" \
-            -d "{\"key\":\"TURSO_AUTH_DATABASE_URL\",\"value\":\"${DB_URL}\",\"type\":\"encrypted\",\"target\":[\"preview\"],\"gitBranch\":\"${{ github.head_ref }}\"}" \
-            "https://api.vercel.com/v10/projects/${VERCEL_PROJECT_ID}/env"
+          # 既存の環境変数がある場合は削除してから作成する
 
-          # TURSO_AUTH_DATABASE_AUTH_TOKEN
-          curl -X POST \
-            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
-            -H "Content-Type: application/json" \
-            -d "{\"key\":\"TURSO_AUTH_DATABASE_AUTH_TOKEN\",\"value\":\"${DB_AUTH_TOKEN}\",\"type\":\"encrypted\",\"target\":[\"preview\"],\"gitBranch\":\"${{ github.head_ref }}\"}" \
-            "https://api.vercel.com/v10/projects/${VERCEL_PROJECT_ID}/env"
+          set_env_var() {
+            local key=$1
+            local value=$2
+
+            # 既存の環境変数を検索
+            EXISTING=$(curl -s \
+              -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+              "https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}/env?gitBranch=${GIT_BRANCH}" \
+              | jq -r ".envs[] | select(.key == \"${key}\" and .gitBranch == \"${GIT_BRANCH}\") | .id // empty")
+
+            if [ -n "${EXISTING}" ]; then
+              echo "Deleting existing ${key} (id: ${EXISTING})..."
+              curl -s -X DELETE \
+                -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+                "https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}/env/${EXISTING}"
+            fi
+
+            # 新しい環境変数を作成
+            echo "Creating ${key}..."
+            RESPONSE=$(curl -s -X POST \
+              -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+              -H "Content-Type: application/json" \
+              -d "{\"key\":\"${key}\",\"value\":\"${value}\",\"type\":\"encrypted\",\"target\":[\"preview\"],\"gitBranch\":\"${GIT_BRANCH}\"}" \
+              "https://api.vercel.com/v10/projects/${VERCEL_PROJECT_ID}/env")
+            echo "Response: ${RESPONSE}"
+          }
+
+          set_env_var "TURSO_AUTH_DATABASE_URL" "${DB_URL}"
+          set_env_var "TURSO_AUTH_DATABASE_AUTH_TOKEN" "${DB_AUTH_TOKEN}"
 
   deploy:
     name: Deploy to Vercel (Preview)
