@@ -10,7 +10,9 @@ import { importPKCS8, SignJWT } from "jose";
  * ユーザーのログイン状態には影響しない。
  */
 export const generateAppleClientSecret = async (): Promise<string> => {
-	const privateKey = await importPKCS8(env.APPLE_PRIVATE_KEY, "ES256");
+	// Vercelの環境変数では改行が`\n`リテラルとして保存されることがあるため、実際の改行に変換する
+	const privateKeyPem = env.APPLE_PRIVATE_KEY.replace(/\\n/g, "\n");
+	const privateKey = await importPKCS8(privateKeyPem, "ES256");
 	const now = Math.floor(Date.now() / 1000);
 
 	// 有効期限は1時間（実際の認証は数秒で完了するため十分）
