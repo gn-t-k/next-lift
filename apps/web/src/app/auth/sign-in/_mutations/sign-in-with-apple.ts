@@ -37,6 +37,9 @@ export const signInWithApple = async (_prevState: State, _formData: FormData) =>
 				return url;
 			},
 			catch: (error) => {
+				// デバッグ用：エラー内容をVercelログに出力
+				console.error("[signInWithApple Error]", error);
+
 				const signInError = new SignInWithAppleError({ cause: error });
 				Sentry.captureException(signInError);
 
