@@ -31,6 +31,10 @@ export const auth = createLazyProxy(() => {
 		plugins: [nextCookies()],
 		trustedOrigins: [env.BETTER_AUTH_URL, "https://appleid.apple.com"],
 		onAPIError: {
+			onError: (error) => {
+				// エラー内容をコンソールに出力（Vercelのログで確認可能）
+				console.error("[Better Auth Error]", error);
+			},
 			errorURL: "/auth/sign-in",
 		},
 	});
