@@ -132,8 +132,11 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          # --forceで既存のビルドキャッシュを無視し、環境変数の変更を反映させる
-          npx vercel deploy --token=$VERCEL_TOKEN --force > deployment-url.txt
+          # 環境変数を取得してローカルでビルドし、ビルド済みのものをデプロイする
+          # これにより、ブランチ固有の環境変数がビルド時に正しく適用される
+          npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+          npx vercel build --token=$VERCEL_TOKEN
+          npx vercel deploy --prebuilt --token=$VERCEL_TOKEN > deployment-url.txt
           echo "DEPLOYMENT_URL=$(cat deployment-url.txt)" >> $GITHUB_ENV
 
       - name: Comment PR with Preview Info
