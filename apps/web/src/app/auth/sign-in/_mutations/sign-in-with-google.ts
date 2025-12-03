@@ -1,7 +1,6 @@
 "use server";
 
 import { auth } from "@next-lift/authentication/instance";
-import { publicEnv } from "@next-lift/env/public";
 import { R } from "@praha/byethrow";
 import { ErrorFactory } from "@praha/error-factory";
 import * as Sentry from "@sentry/nextjs";
@@ -29,7 +28,9 @@ export const signInWithGoogle = async (
 					body: {
 						provider: "google",
 						callbackURL: "/dashboard",
-						errorCallbackURL: `${publicEnv.NEXT_PUBLIC_BETTER_AUTH_URL}/auth/sign-in`,
+						// 相対パスを使用することで、プレビュー環境でも動的なURLに対応できる
+						// Better Authがheadersからオリジンを取得して絶対URLに変換する
+						errorCallbackURL: "/auth/sign-in",
 					},
 				});
 
