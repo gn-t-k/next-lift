@@ -132,7 +132,8 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          npx vercel deploy --token=$VERCEL_TOKEN > deployment-url.txt
+          # --forceで既存のビルドキャッシュを無視し、環境変数の変更を反映させる
+          npx vercel deploy --token=$VERCEL_TOKEN --force > deployment-url.txt
           echo "DEPLOYMENT_URL=$(cat deployment-url.txt)" >> $GITHUB_ENV
 
       - name: Comment PR with Preview Info
