@@ -26,18 +26,30 @@ jobs:
         run: |
           DB_NAME="preview-pr${PR_NUMBER}-auth"
 
-          # データベースを作成
-          RESPONSE=$(curl -X POST \
+          # データベースを作成（既に存在する場合はエラーになるが続行）
+          CREATE_RESPONSE=$(curl -s -X POST \
             -H "Authorization: Bearer ${TURSO_API_TOKEN}" \
             -H "Content-Type: application/json" \
             -d "{\"name\":\"${DB_NAME}\",\"group\":\"${TURSO_GROUP}\"}" \
             "https://api.turso.tech/v1/organizations/${TURSO_ORG_SLUG}/databases")
 
-          echo "Database creation response: ${RESPONSE}"
+          echo "Database creation response: ${CREATE_RESPONSE}"
 
-          # データベースのURLを取得
-          DB_HOSTNAME=$(echo "${RESPONSE}" | jq -r '.database.Hostname')
+          # 作成成功時はレスポンスからHostnameを取得
+          DB_HOSTNAME=$(echo "${CREATE_RESPONSE}" | jq -r '.database.Hostname // empty')
+
+          # 既に存在する場合は、データベース情報を取得
+          if [ -z "${DB_HOSTNAME}" ]; then
+            echo "Database already exists or creation failed, fetching existing database info..."
+            GET_RESPONSE=$(curl -s \
+              -H "Authorization: Bearer ${TURSO_API_TOKEN}" \
+              "https://api.turso.tech/v1/organizations/${TURSO_ORG_SLUG}/databases/${DB_NAME}")
+            echo "Database get response: ${GET_RESPONSE}"
+            DB_HOSTNAME=$(echo "${GET_RESPONSE}" | jq -r '.database.Hostname')
+          fi
+
           DB_URL="libsql://${DB_HOSTNAME}"
+          echo "Database URL: ${DB_URL}"
 
           echo "db_name=${DB_NAME}" >> $GITHUB_OUTPUT
           echo "db_url=${DB_URL}" >> $GITHUB_OUTPUT
