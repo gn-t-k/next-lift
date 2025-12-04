@@ -20,7 +20,7 @@
 		"@libsql/client": "0.15.15",
 		"@next-lift/env": "workspace:*",
 		"@next-lift/utilities": "workspace:*",
-		"better-auth": "1.4.3",
+		"better-auth": "1.4.4",
 		"drizzle-orm": "0.44.7"
 	},
 	"devDependencies": {
