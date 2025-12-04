@@ -12,6 +12,7 @@ jobs:
     outputs:
       db_name: ${{ steps.create-db.outputs.db_name }}
       db_url: ${{ steps.create-db.outputs.db_url }}
+      db_auth_token: ${{ steps.create-token.outputs.db_auth_token }}
     steps:
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -132,11 +133,17 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           GIT_BRANCH: ${{ github.head_ref }}
+          TURSO_AUTH_DATABASE_URL: ${{ needs.setup-database.outputs.db_url }}
+          TURSO_AUTH_DATABASE_AUTH_TOKEN: ${{ needs.setup-database.outputs.db_auth_token }}
         run: |
           # 環境変数を取得してローカルでビルドし、ビルド済みのものをデプロイする
-          # --git-branchでブランチ固有の環境変数を取得
-          echo "Pulling environment variables for branch: ${GIT_BRANCH}"
-          npx vercel pull --yes --environment=preview --git-branch="${GIT_BRANCH}" --token=$VERCEL_TOKEN
+          npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+
+          # プレビュー用のTurso環境変数を追記
+          # vercel pullで取得した環境変数にはブランチ固有の変数が含まれないため、手動で追加
+          echo "" >> .vercel/.env.preview.local
+          echo "TURSO_AUTH_DATABASE_URL=\"${TURSO_AUTH_DATABASE_URL}\"" >> .vercel/.env.preview.local
+          echo "TURSO_AUTH_DATABASE_AUTH_TOKEN=\"${TURSO_AUTH_DATABASE_AUTH_TOKEN}\"" >> .vercel/.env.preview.local
 
           # デバッグ: 取得された環境変数のキーを表示（値は非表示）
           echo "Environment variables in .vercel/.env.preview.local:"
