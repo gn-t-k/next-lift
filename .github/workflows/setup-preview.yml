@@ -117,7 +117,12 @@ jobs:
           export TURSO_AUTH_DATABASE_AUTH_TOKEN="${db_auth_token}"
 
           npx vercel build --token=$VERCEL_TOKEN
-          npx vercel deploy --prebuilt --token=$VERCEL_TOKEN > deployment-url.txt
+
+          # --prebuiltデプロイ時に--envでランタイム環境変数を渡す
+          npx vercel deploy --prebuilt --token=$VERCEL_TOKEN \
+            --env TURSO_AUTH_DATABASE_URL="${db_url}" \
+            --env TURSO_AUTH_DATABASE_AUTH_TOKEN="${db_auth_token}" \
+            > deployment-url.txt
           echo "DEPLOYMENT_URL=$(cat deployment-url.txt)" >> $GITHUB_ENV
 
       - name: Comment PR with Preview Info
