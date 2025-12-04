@@ -91,6 +91,11 @@ jobs:
           echo "Environment variables in .vercel/.env.preview.local:"
           grep -oE '^[A-Z_]+=' .vercel/.env.preview.local | sed 's/=$//' || echo "No env file found"
 
+          # TURSO環境変数をexportしてビルドに渡す
+          # GITHUB_ENVの値はrun内で直接参照できるため、exportして子プロセスに渡す
+          export TURSO_AUTH_DATABASE_URL="${db_url}"
+          export TURSO_AUTH_DATABASE_AUTH_TOKEN="${db_auth_token}"
+
           npx vercel build --token=$VERCEL_TOKEN
           npx vercel deploy --prebuilt --token=$VERCEL_TOKEN > deployment-url.txt
           echo "DEPLOYMENT_URL=$(cat deployment-url.txt)" >> $GITHUB_ENV
