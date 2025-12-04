@@ -73,6 +73,15 @@ jobs:
 
           echo "db_auth_token=${DB_AUTH_TOKEN}" >> $GITHUB_ENV
 
+      - name: Run Database Migration
+        run: |
+          # 認証データベースのマイグレーションを実行
+          cd packages/authentication
+          TURSO_AUTH_DATABASE_URL="${db_url}" \
+          TURSO_AUTH_DATABASE_AUTH_TOKEN="${db_auth_token}" \
+          pnpm migration:apply
+          echo "Migration completed successfully"
+
       - name: Set Vercel Environment Variables
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
