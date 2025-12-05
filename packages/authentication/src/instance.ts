@@ -58,6 +58,13 @@ export const auth = createLazyProxy(() => {
 		secret: env.BETTER_AUTH_SECRET,
 		plugins: [nextCookies()],
 		trustedOrigins: [baseURL, "https://appleid.apple.com"],
+		advanced: {
+			// Apple OAuthのform_postコールバック（クロスサイトPOST）でCookieを送信するためSameSite=Noneが必要
+			defaultCookieAttributes: {
+				sameSite: "none",
+				secure: true,
+			},
+		},
 		onAPIError: {
 			onError: (error) => {
 				// エラー内容をコンソールに出力（Vercelのログで確認可能）
