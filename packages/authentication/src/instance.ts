@@ -24,10 +24,9 @@ const resolveBaseUrl = (): string => {
 		// biome-ignore lint/complexity/useLiteralKeys: VERCEL_URLは型定義にないためブラケット記法を使用
 		const vercelUrl = process.env["VERCEL_URL"];
 		if (vercelUrl) {
-			return configuredUrl.replace(
-				vercelUrlPlaceholder,
-				`https://${vercelUrl}`,
-			);
+			// VERCEL_URLはプロトコルなしのホスト名のみ（例: next-lift-xxx.vercel.app）
+			// BETTER_AUTH_URLが「https://${VERCEL_URL}」の形式で設定されている想定
+			return configuredUrl.replace(vercelUrlPlaceholder, vercelUrl);
 		}
 	}
 
