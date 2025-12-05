@@ -7,7 +7,36 @@ import * as schema from "./generated/schema";
 import { generateAppleClientSecret } from "./libs/generate-apple-client-secret";
 import { getDatabase } from "./libs/get-database";
 
+/**
+ * ベースURLを解決する
+ *
+ * Vercelのプレビュー環境では、環境変数に設定された`${VERCEL_URL}`が
+ * 文字列リテラルとして残る場合がある。
+ * この関数は`VERCEL_URL`環境変数を使って動的にURLを解決する。
+ */
+const resolveBaseUrl = (): string => {
+	const configuredUrl = env.BETTER_AUTH_URL;
+
+	// biome-ignore lint/suspicious/noTemplateCurlyInString: Vercelの環境変数プレースホルダーを文字列として検出するため意図的に使用
+	const vercelUrlPlaceholder = "${VERCEL_URL}";
+	if (configuredUrl.includes(vercelUrlPlaceholder)) {
+		// biome-ignore lint/correctness/noProcessGlobal: Edge Runtimeでは`node:process`のimportが不可
+		// biome-ignore lint/complexity/useLiteralKeys: VERCEL_URLは型定義にないためブラケット記法を使用
+		const vercelUrl = process.env["VERCEL_URL"];
+		if (vercelUrl) {
+			return configuredUrl.replace(
+				vercelUrlPlaceholder,
+				`https://${vercelUrl}`,
+			);
+		}
+	}
+
+	return configuredUrl;
+};
+
 export const auth = createLazyProxy(() => {
+	const baseURL = resolveBaseUrl();
+
 	return betterAuth({
 		database: drizzleAdapter(getDatabase(), {
 			provider: "sqlite",
@@ -26,10 +55,10 @@ export const auth = createLazyProxy(() => {
 				clientSecret: env.GOOGLE_CLIENT_SECRET,
 			},
 		},
-		baseURL: env.BETTER_AUTH_URL,
+		baseURL,
 		secret: env.BETTER_AUTH_SECRET,
 		plugins: [nextCookies()],
-		trustedOrigins: [env.BETTER_AUTH_URL, "https://appleid.apple.com"],
+		trustedOrigins: [baseURL, "https://appleid.apple.com"],
 		onAPIError: {
 			onError: (error) => {
 				// エラー内容をコンソールに出力（Vercelのログで確認可能）
