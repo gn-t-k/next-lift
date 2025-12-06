@@ -21,7 +21,8 @@
 		"@next-lift/env": "workspace:*",
 		"@next-lift/utilities": "workspace:*",
 		"better-auth": "1.4.4",
-		"drizzle-orm": "0.44.7"
+		"drizzle-orm": "0.44.7",
+		"jose": "6.1.2"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.3.6",

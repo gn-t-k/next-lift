@@ -7,7 +7,5 @@ export const betterAuthEnvSchemas = {
 		BETTER_AUTH_SECRET: z.string().min(1),
 	}),
 	privateRuntime: z.object({}),
-	publicRuntime: z.object({
-		NEXT_PUBLIC_BETTER_AUTH_URL: z.url(),
-	}),
+	publicRuntime: z.object({}),
 } as const satisfies Schemas;

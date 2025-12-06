@@ -1,6 +1,5 @@
 import { createAuthClient } from "@next-lift/authentication/better-auth-react";
-import { publicEnv } from "@next-lift/env/public";
 
-export const authClient = createAuthClient({
-	baseURL: publicEnv.NEXT_PUBLIC_BETTER_AUTH_URL,
-});
+// baseURLを省略することで、同じオリジンへのリクエストになる
+// これにより、プレビュー環境でも動的なURLに対応できる
+export const authClient = createAuthClient({});

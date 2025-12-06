@@ -36,7 +36,8 @@ const createEnvObject = () => {
 				const schema = runtimeShape[key];
 				const parsed = schema.parse(raw);
 
-				runtimeCache[key] = parsed;
+				// 動的キーアクセスのため、TypeScriptが正確な型を推論できない
+				(runtimeCache as Record<string, unknown>)[key] = parsed;
 				runtimeInitialized[key] = true;
 				return parsed;
 			},

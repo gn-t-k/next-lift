@@ -8,17 +8,14 @@ import type { Route } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-class SignInWithGoogleError extends ErrorFactory({
-	name: "SignInWithGoogleError",
-	message: "Sign in with Google failed",
+class SignInWithAppleError extends ErrorFactory({
+	name: "SignInWithAppleError",
+	message: "Sign in with Apple failed",
 }) {}
 
-type State = R.Result<string, SignInWithGoogleError> | undefined;
+type State = R.Result<string, SignInWithAppleError> | undefined;
 
-export const signInWithGoogle = async (
-	_prevState: State,
-	_formData: FormData,
-) =>
+export const signInWithApple = async (_prevState: State, _formData: FormData) =>
 	R.pipe(
 		R.try({
 			immediate: true,
@@ -26,7 +23,7 @@ export const signInWithGoogle = async (
 				const { url } = await auth.api.signInSocial({
 					headers: await headers(),
 					body: {
-						provider: "google",
+						provider: "apple",
 						callbackURL: "/dashboard",
 						// 相対パスを使用することで、プレビュー環境でも動的なURLに対応できる
 						// Better Authがheadersからオリジンを取得して絶対URLに変換する
@@ -41,7 +38,10 @@ export const signInWithGoogle = async (
 				return url;
 			},
 			catch: (error) => {
-				const signInError = new SignInWithGoogleError({ cause: error });
+				// デバッグ用：エラー内容をVercelログに出力
+				console.error("[signInWithApple Error]", error);
+
+				const signInError = new SignInWithAppleError({ cause: error });
 				Sentry.captureException(signInError);
 
 				return signInError;
