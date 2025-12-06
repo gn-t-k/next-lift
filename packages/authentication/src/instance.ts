@@ -4,7 +4,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import * as schema from "./generated/schema";
-import { generateAppleClientSecret } from "./libs/generate-apple-client-secret";
+import { appleClientSecret } from "./libs/apple-client-secret";
 import { getDatabase } from "./libs/get-database";
 
 /**
@@ -44,11 +44,9 @@ export const auth = createLazyProxy(() => {
 		socialProviders: {
 			apple: {
 				clientId: env.APPLE_CLIENT_ID,
-				// Better Authは内部でPromiseをawaitするため、getterでPromiseを返すことで動的生成が可能
-				get clientSecret() {
-					return generateAppleClientSecret();
-				},
-			} as unknown as { clientId: string; clientSecret: string },
+				// AppleがclientSecretとしてJWTを要求するため
+				clientSecret: appleClientSecret,
+			},
 			google: {
 				clientId: env.GOOGLE_CLIENT_ID,
 				clientSecret: env.GOOGLE_CLIENT_SECRET,
