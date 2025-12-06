@@ -14,7 +14,10 @@ export const generateAppleClientSecret = async (): Promise<string> => {
 	console.log("[Apple OAuth Debug]", {
 		hasPrivateKey: !!env.APPLE_PRIVATE_KEY,
 		privateKeyLength: env.APPLE_PRIVATE_KEY?.length,
-		privateKeyStart: env.APPLE_PRIVATE_KEY?.substring(0, 30),
+		privateKeyStart: env.APPLE_PRIVATE_KEY?.substring(0, 50),
+		privateKeyEnd: env.APPLE_PRIVATE_KEY?.substring(-30),
+		hasNewlines: env.APPLE_PRIVATE_KEY?.includes("\n"),
+		hasBackslashN: env.APPLE_PRIVATE_KEY?.includes("\\n"),
 		keyId: env.APPLE_KEY_ID,
 		teamId: env.APPLE_TEAM_ID,
 		clientId: env.APPLE_CLIENT_ID,
