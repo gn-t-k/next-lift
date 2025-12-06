@@ -20,6 +20,7 @@ export const generateAppleClientSecret = async (): Promise<string> => {
 
 	// デバッグ: JWT生成に使用する値をログ出力
 	console.log("[Apple JWT Debug]", {
+		betterAuthUrl: env.BETTER_AUTH_URL,
 		kid: env.APPLE_KEY_ID,
 		iss: env.APPLE_TEAM_ID,
 		sub: env.APPLE_CLIENT_ID,
