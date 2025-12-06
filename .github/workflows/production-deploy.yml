@@ -17,6 +17,33 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-workspace
 
+      - name: Run Database Migration
+        env:
+          TURSO_API_TOKEN: ${{ secrets.TURSO_PLATFORM_API_TOKEN }}
+          TURSO_ORG_SLUG: ${{ secrets.TURSO_ORG_SLUG }}
+        run: |
+          DB_NAME="next-lift-production-auth"
+
+          # データベース情報を取得してURLを構築
+          GET_RESPONSE=$(curl -s \
+            -H "Authorization: Bearer ${TURSO_API_TOKEN}" \
+            "https://api.turso.tech/v1/organizations/${TURSO_ORG_SLUG}/databases/${DB_NAME}")
+          DB_HOSTNAME=$(echo "${GET_RESPONSE}" | jq -r '.database.Hostname')
+          DB_URL="libsql://${DB_HOSTNAME}"
+
+          # 一時トークンを取得（1時間有効）
+          TOKEN_RESPONSE=$(curl -s -X POST \
+            -H "Authorization: Bearer ${TURSO_API_TOKEN}" \
+            "https://api.turso.tech/v1/organizations/${TURSO_ORG_SLUG}/databases/${DB_NAME}/auth/tokens?expiration=1h")
+          DB_AUTH_TOKEN=$(echo "${TOKEN_RESPONSE}" | jq -r '.jwt')
+
+          # マイグレーションを実行
+          cd packages/authentication
+          TURSO_AUTH_DATABASE_URL="${DB_URL}" \
+          TURSO_AUTH_DATABASE_AUTH_TOKEN="${DB_AUTH_TOKEN}" \
+          pnpm migration:apply
+          echo "Migration completed successfully"
+
       - name: Deploy to Vercel
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
