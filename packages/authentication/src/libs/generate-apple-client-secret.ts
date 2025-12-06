@@ -37,5 +37,14 @@ export const generateAppleClientSecret = async (): Promise<string> => {
 		.setSubject(env.APPLE_CLIENT_ID)
 		.sign(privateKey);
 
+	// デバッグ用：生成されたJWTのヘッダーとペイロードを確認
+	const parts = jwt.split(".");
+	const header = parts[0] ?? "";
+	const payload = parts[1] ?? "";
+	console.log("[Apple OAuth Debug] Generated JWT:", {
+		header: JSON.parse(Buffer.from(header, "base64url").toString()),
+		payload: JSON.parse(Buffer.from(payload, "base64url").toString()),
+	});
+
 	return jwt;
 };
