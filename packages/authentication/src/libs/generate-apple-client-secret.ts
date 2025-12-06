@@ -10,6 +10,16 @@ import { importPKCS8, SignJWT } from "jose";
  * ユーザーのログイン状態には影響しない。
  */
 export const generateAppleClientSecret = async (): Promise<string> => {
+	// デバッグ用：環境変数の設定状況を確認
+	console.log("[Apple OAuth Debug]", {
+		hasPrivateKey: !!env.APPLE_PRIVATE_KEY,
+		privateKeyLength: env.APPLE_PRIVATE_KEY?.length,
+		privateKeyStart: env.APPLE_PRIVATE_KEY?.substring(0, 30),
+		keyId: env.APPLE_KEY_ID,
+		teamId: env.APPLE_TEAM_ID,
+		clientId: env.APPLE_CLIENT_ID,
+	});
+
 	// Vercelの環境変数では改行が`\n`リテラルとして保存されることがあるため、実際の改行に変換する
 	const privateKeyPem = env.APPLE_PRIVATE_KEY.replace(/\\n/g, "\n");
 	const privateKey = await importPKCS8(privateKeyPem, "ES256");
