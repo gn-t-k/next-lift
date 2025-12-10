@@ -12,8 +12,8 @@ import type { z } from "zod";
  * @param lazy - falseならモジュール読込時、trueならプロパティアクセス時に検証
  */
 export const parseEnv = <
-	StaticEnvSchema extends z.ZodObject,
-	DynamicEnvSchema extends z.ZodObject,
+	StaticEnvSchema extends z.ZodType,
+	DynamicEnvSchema extends z.ZodType,
 >({
 	staticEnvSchema,
 	dynamicEnvSchema,
@@ -22,7 +22,7 @@ export const parseEnv = <
 }: {
 	staticEnvSchema: StaticEnvSchema;
 	dynamicEnvSchema: DynamicEnvSchema;
-	env: typeof process.env;
+	env: Record<string, string | undefined>;
 	lazy?: boolean;
 }): Readonly<z.infer<StaticEnvSchema> & z.infer<DynamicEnvSchema>> => {
 	const buildTimeParseResult = staticEnvSchema.safeParse(env);
@@ -31,15 +31,22 @@ export const parseEnv = <
 	}
 
 	const parseRuntimeEnv = () => {
-		const runtimeParseResult = staticEnvSchema
-			.extend(dynamicEnvSchema)
-			.safeParse(env);
-		if (!runtimeParseResult.success) {
-			throw new Error(formatZodError(runtimeParseResult.error));
+		// staticEnvSchema と dynamicEnvSchema を別々にパースして結果をマージする
+		// dynamicEnvSchema が ZodEffects（superRefine等）の場合、extend() は使えないため
+		const staticParseResult = staticEnvSchema.safeParse(env);
+		if (!staticParseResult.success) {
+			throw new Error(formatZodError(staticParseResult.error));
 		}
-		return Object.freeze(runtimeParseResult.data) as Readonly<
-			z.infer<StaticEnvSchema> & z.infer<DynamicEnvSchema>
-		>;
+
+		const dynamicParseResult = dynamicEnvSchema.safeParse(env);
+		if (!dynamicParseResult.success) {
+			throw new Error(formatZodError(dynamicParseResult.error));
+		}
+
+		return Object.freeze(
+			// biome-ignore lint/style/useObjectSpread: ZodType の infer 結果はスプレッド不可のため Object.assign を使用
+			Object.assign({}, staticParseResult.data, dynamicParseResult.data),
+		) as Readonly<z.infer<StaticEnvSchema> & z.infer<DynamicEnvSchema>>;
 	};
 
 	if (!lazy) {
