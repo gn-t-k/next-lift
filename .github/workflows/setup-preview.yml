@@ -16,6 +16,14 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-workspace
 
+      - name: Pull Vercel Environment
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+
       - name: Generate Preview URL
         id: preview-url
         env:
@@ -27,31 +35,6 @@ jobs:
           PREVIEW_URL="https://next-lift-git-${SANITIZED_BRANCH}-gntks-projects.vercel.app"
           echo "preview_url=${PREVIEW_URL}" >> $GITHUB_OUTPUT
           echo "Preview URL will be: ${PREVIEW_URL}"
-
-      - name: Check Environment Variables
-        env:
-          # ビルド時に必要な環境変数
-          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          APPLE_KEY_ID: ${{ secrets.APPLE_KEY_ID }}
-          APPLE_PRIVATE_KEY: ${{ secrets.APPLE_PRIVATE_KEY }}
-          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
-          # デプロイ時に必要な環境変数（プレビュー用）
-          BETTER_AUTH_URL: ${{ steps.preview-url.outputs.preview_url }}
-          # TURSO_AUTH_DATABASE_URL と TURSO_AUTH_DATABASE_AUTH_TOKEN は
-          # Create Preview Database ステップで設定されるためここでは検証しない
-        run: |
-          # デプロイ前に環境変数を検証（Turso以外）
-          pnpm --filter @next-lift/env check || {
-            echo "::error::環境変数の検証に失敗しました。GitHub Secretsの設定を確認してください。"
-            exit 1
-          }
 
       - name: Create Preview Database
         id: create-db
@@ -110,6 +93,26 @@ jobs:
 
           echo "db_auth_token=${DB_AUTH_TOKEN}" >> $GITHUB_ENV
 
+      - name: Check Environment Variables
+        env:
+          PREVIEW_URL: ${{ steps.preview-url.outputs.preview_url }}
+        run: |
+          # Vercel から取得した環境変数を読み込む
+          set -a
+          source .vercel/.env.preview.local
+          set +a
+
+          # 動的環境変数を設定
+          export BETTER_AUTH_URL="${PREVIEW_URL}"
+          export TURSO_AUTH_DATABASE_URL="${db_url}"
+          export TURSO_AUTH_DATABASE_AUTH_TOKEN="${db_auth_token}"
+
+          # デプロイ前に環境変数を検証
+          pnpm --filter @next-lift/env check || {
+            echo "::error::環境変数の検証に失敗しました。Vercelの環境変数設定を確認してください。"
+            exit 1
+          }
+
       - name: Run Database Migration
         run: |
           # 認証データベースのマイグレーションを実行
@@ -159,19 +162,16 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           PREVIEW_URL: ${{ steps.preview-url.outputs.preview_url }}
         run: |
-          # 環境変数を取得してローカルでビルドし、ビルド済みのものをデプロイする
-          npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
-
-          # プレビュー用の環境変数を追記（ビルド時用）
+          # プレビュー用の動的環境変数を追記（ビルド時用）
           echo "" >> .vercel/.env.preview.local
           echo "BETTER_AUTH_URL=\"${PREVIEW_URL}\"" >> .vercel/.env.preview.local
           echo "TURSO_AUTH_DATABASE_URL=\"${db_url}\"" >> .vercel/.env.preview.local
           echo "TURSO_AUTH_DATABASE_AUTH_TOKEN=\"${db_auth_token}\"" >> .vercel/.env.preview.local
 
-          # 環境変数をexportしてビルドに渡す
-          export BETTER_AUTH_URL="${PREVIEW_URL}"
-          export TURSO_AUTH_DATABASE_URL="${db_url}"
-          export TURSO_AUTH_DATABASE_AUTH_TOKEN="${db_auth_token}"
+          # 環境変数を読み込んでビルド
+          set -a
+          source .vercel/.env.preview.local
+          set +a
 
           npx vercel build --token=$VERCEL_TOKEN
 

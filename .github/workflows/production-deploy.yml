@@ -17,28 +17,24 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-workspace
 
-      - name: Check Environment Variables
+      - name: Pull Vercel Environment
         env:
-          # ビルド時に必要な環境変数
-          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          APPLE_KEY_ID: ${{ secrets.APPLE_KEY_ID }}
-          APPLE_PRIVATE_KEY: ${{ secrets.APPLE_PRIVATE_KEY }}
-          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
-          # デプロイ時に必要な環境変数（本番用）
-          BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
-          TURSO_AUTH_DATABASE_URL: ${{ secrets.TURSO_AUTH_DATABASE_URL }}
-          TURSO_AUTH_DATABASE_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_DATABASE_AUTH_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
+          npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+
+      - name: Check Environment Variables
+        run: |
+          # Vercel から取得した環境変数を読み込む
+          set -a
+          source .vercel/.env.production.local
+          set +a
+
           # デプロイ前に環境変数を検証
           pnpm --filter @next-lift/env check || {
-            echo "::error::環境変数の検証に失敗しました。GitHub Secretsの設定を確認してください。"
+            echo "::error::環境変数の検証に失敗しました。Vercelの環境変数設定を確認してください。"
             exit 1
           }
 

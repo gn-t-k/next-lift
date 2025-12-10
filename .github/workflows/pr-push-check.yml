@@ -5,32 +5,16 @@ on:
     types: [opened, reopened, synchronize]
 
 jobs:
-  build-and-type-check:
-    name: Build and Type check
+  type-check:
+    name: Type check
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    env:
-      # ビルド時に必要な環境変数（デプロイ時のみ必要なものは含めない）
-      BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
-      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-      APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
-      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-      APPLE_KEY_ID: ${{ secrets.APPLE_KEY_ID }}
-      APPLE_PRIVATE_KEY: ${{ secrets.APPLE_PRIVATE_KEY }}
-      SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-      SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
-      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-      NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
     steps:
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: Setup workspace
         uses: ./.github/actions/setup-workspace
-
-      - name: Build
-        run: pnpm run build
 
       - name: Type check
         run: pnpm run type-check
