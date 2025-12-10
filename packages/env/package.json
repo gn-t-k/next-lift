@@ -9,7 +9,7 @@
 		"./public": "./src/public.ts"
 	},
 	"scripts": {
-		"check": "node src/check.ts",
+		"check": "tsx src/check.ts",
 		"lint": "biome check .",
 		"type-check": "tsc --noEmit"
 	},
@@ -17,6 +17,7 @@
 		"@biomejs/biome": "2.3.6",
 		"@tsconfig/strictest": "2.0.8",
 		"@types/node": "24.10.1",
+		"tsx": "4.21.0",
 		"typescript": "5.9.3"
 	},
 	"dependencies": {
