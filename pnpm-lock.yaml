@@ -154,6 +154,12 @@ importers:
       '@next-lift/utilities':
         specifier: workspace:*
         version: link:../utilities
+      '@praha/byethrow':
+        specifier: 0.8.1
+        version: 0.8.1(typescript@5.9.3)
+      '@praha/error-factory':
+        specifier: 1.2.1
+        version: 1.2.1
       zod:
         specifier: 4.1.13
         version: 4.1.13

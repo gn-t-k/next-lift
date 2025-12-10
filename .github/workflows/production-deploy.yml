@@ -17,6 +17,31 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-workspace
 
+      - name: Check Environment Variables
+        env:
+          # ビルド時に必要な環境変数
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_KEY_ID: ${{ secrets.APPLE_KEY_ID }}
+          APPLE_PRIVATE_KEY: ${{ secrets.APPLE_PRIVATE_KEY }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+          # デプロイ時に必要な環境変数（本番用）
+          BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
+          TURSO_AUTH_DATABASE_URL: ${{ secrets.TURSO_AUTH_DATABASE_URL }}
+          TURSO_AUTH_DATABASE_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_DATABASE_AUTH_TOKEN }}
+        run: |
+          # デプロイ前に環境変数を検証
+          pnpm --filter @next-lift/env check || {
+            echo "::error::環境変数の検証に失敗しました。GitHub Secretsの設定を確認してください。"
+            exit 1
+          }
+
       - name: Run Database Migration
         env:
           TURSO_API_TOKEN: ${{ secrets.TURSO_PLATFORM_API_TOKEN }}

@@ -1,20 +1,25 @@
 import { createClient } from "@libsql/client";
+import { env } from "@next-lift/env/private";
 import { drizzle } from "drizzle-orm/libsql";
-import { getDatabaseConfig } from "./get-database-config";
 
 export const getDatabase = () => {
-	const dbConfig = getDatabaseConfig();
+	const url = env.TURSO_AUTH_DATABASE_URL;
+	const authToken = env.TURSO_AUTH_DATABASE_AUTH_TOKEN;
+	const nodeEnv = env.NODE_ENV;
 
-	const config =
-		dbConfig.type === "turso"
-			? { url: dbConfig.url, authToken: dbConfig.authToken }
-			: { url: dbConfig.path };
+	if (nodeEnv === "production" && !url.startsWith("libsql://")) {
+		throw new Error(
+			"本番の実行環境にローカルDBを作成してしまうことを防ぐため、ビルド環境ではTURSO_AUTH_DATABASE_URLにリモートURLを指定してください",
+		);
+	}
 
-	const client = createClient(config);
-	return drizzle({ client });
+	return drizzle({
+		client: createClient(
+			authToken === undefined ? { url } : { url, authToken },
+		),
+	});
 };
 
 export const getTestDatabase = () => {
-	const client = createClient({ url: ":memory:" });
-	return drizzle({ client });
+	return drizzle({ client: createClient({ url: ":memory:" }) });
 };
