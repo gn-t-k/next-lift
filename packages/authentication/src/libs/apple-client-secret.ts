@@ -2,7 +2,9 @@ import { env } from "@next-lift/env/private";
 import { importPKCS8, SignJWT } from "jose";
 
 const generateAppleClientSecret = async (): Promise<string> => {
-	const privateKey = await importPKCS8(env.APPLE_PRIVATE_KEY, "ES256");
+	// Vercelの環境変数では改行が`\n`リテラルとしてエスケープされているため、実際の改行に変換
+	const privateKeyPem = env.APPLE_PRIVATE_KEY.replaceAll("\\n", "\n");
+	const privateKey = await importPKCS8(privateKeyPem, "ES256");
 	const now = Math.floor(Date.now() / 1000);
 
 	// 180 日が上限なので、少しマージンを取って 170 日くらいにしておく
