@@ -19,8 +19,6 @@ export const privateStaticEnvSchema = z.object({
 		.string()
 		.transform((v) => v === "true")
 		.optional(),
-
-	NODE_ENV: z.enum(["development", "production", "test"]),
 });
 
 export const privateDynamicEnvSchema = z

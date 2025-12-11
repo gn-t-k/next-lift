@@ -52,7 +52,7 @@ R.pipe(
 	}),
 	R.inspectError((error) => {
 		console.error("❌ 環境変数の検証に失敗しました");
-		console.error(error instanceof Error ? error.message : error);
+		console.error(error);
 		process.exit(1);
 	}),
 );
