@@ -11,6 +11,8 @@
 	"scripts": {
 		"check": "tsx src/check.ts",
 		"lint": "biome check .",
+		"test": "vitest run",
+		"test:watch": "vitest",
 		"type-check": "tsc --noEmit"
 	},
 	"devDependencies": {
@@ -18,7 +20,8 @@
 		"@tsconfig/strictest": "2.0.8",
 		"@types/node": "24.10.1",
 		"tsx": "4.21.0",
-		"typescript": "5.9.3"
+		"typescript": "5.9.3",
+		"vitest": "4.0.15"
 	},
 	"dependencies": {
 		"@next-lift/utilities": "workspace:*",
