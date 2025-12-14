@@ -17,9 +17,9 @@ type CxArgs<T> =
 	| [...ClassNameValue[], Render<T>]
 	| [[...ClassNameValue[], Render<T>]];
 
-export function cx<T = unknown>(
+export const cx = <T = unknown>(
 	...args: CxArgs<T>
-): string | ((v: T) => string) {
+): string | ((v: T) => string) => {
 	let resolvedArgs = args;
 	if (args.length === 1 && Array.isArray(args[0])) {
 		resolvedArgs = args[0] as [...ClassNameValue[], Render<T>];
@@ -31,4 +31,4 @@ export function cx<T = unknown>(
 	const fixed = twMerge(...tailwinds);
 
 	return composeRenderProps(className, (cn) => twMerge(fixed, cn));
-}
+};
