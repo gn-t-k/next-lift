@@ -26,6 +26,16 @@ export const auth = createLazyProxy(() => {
 				clientSecret: env.GOOGLE_CLIENT_SECRET,
 			},
 		},
+		account: {
+			accountLinking: {
+				enabled: true,
+			},
+		},
+		user: {
+			deleteUser: {
+				enabled: true,
+			},
+		},
 		baseURL,
 		secret: env.BETTER_AUTH_SECRET,
 		plugins: [nextCookies()],
