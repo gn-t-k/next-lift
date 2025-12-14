@@ -42,6 +42,7 @@ export const signInWithGoogle = async (
 			},
 			catch: (error) => {
 				const signInError = new SignInWithGoogleError({ cause: error });
+				console.error(signInError);
 				Sentry.captureException(signInError);
 
 				return signInError;
