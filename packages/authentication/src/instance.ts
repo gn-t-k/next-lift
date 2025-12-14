@@ -29,6 +29,7 @@ export const auth = createLazyProxy(() => {
 		account: {
 			accountLinking: {
 				enabled: true,
+				trustedProviders: ["google", "apple"],
 			},
 		},
 		user: {
