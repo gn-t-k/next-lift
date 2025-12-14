@@ -1,4 +1,5 @@
 import { type FC, Suspense } from "react";
+import { DeleteAccountButton } from "./_components/delete-account-button";
 import { SignOutButton } from "./_components/sign-out-button";
 import { UserProfile, UserProfileSkeleton } from "./_components/user-profile";
 
@@ -16,7 +17,10 @@ const Page: FC<PageProps<"/dashboard">> = () => {
 						<UserProfile />
 					</Suspense>
 				</section>
-				<SignOutButton />
+				<div className="flex gap-4">
+					<SignOutButton />
+					<DeleteAccountButton />
+				</div>
 			</div>
 		</main>
 	);

@@ -135,19 +135,29 @@ Next LiftはLocal-first Architectureを採用しています。([ADR-010](./arch
    - Apple ID or Google認証
    - Authentication Databaseにユーザー情報保存
 
-2. **Per-User Database作成**(初回サインイン時）
+2. **Account Linking** ([ADR-019](./019-account-linking-and-deletion.md))
+   - 同じメールアドレスで異なるプロバイダーからログインした場合、自動的に同一アカウントとしてリンク
+   - プロバイダーがメール検証済みの場合のみ自動リンク（セキュリティ担保）
+
+3. **Per-User Database作成**(初回サインイン時）
    - Next.js Route Handlers → Turso Platform API
    - ユーザー専用Databaseを作成
    - Database Token発行
    - クライアントへToken返却
 
-3. **データアクセス**
+4. **データアクセス**
    - iOS App: Embedded Replica(ローカルSQLite + Turso同期）
    - Web App: リモートTurso Database
+
+5. **アカウント削除** ([ADR-019](./019-account-linking-and-deletion.md))
+   - 認証データのみ削除（user, account, sessionテーブル）
+   - Per-User Databaseは保持（誤削除時のデータ復旧を可能にするため）
+   - 将来的に定期バッチで未使用のPer-User DBを削除予定
 
 ## セキュリティ
 
 - **認証**: Better Auth (Apple ID, Google認証）
+- **Account Linking**: メール検証済みプロバイダーのみ自動リンク（[ADR-019](./019-account-linking-and-deletion.md)）
 - **セッション管理**: expo-secure-store (iOS）, Cookie (Web）
 - **データ分離**: Per-User Database構成（ユーザーごとに独立したDB）
 - **通信**: HTTPS (Vercel, Turso）
