@@ -12,9 +12,9 @@
 		"@heroicons/react": "2.2.0",
 		"@next-lift/tailwind-config": "workspace:*",
 		"clsx": "2.1.1",
-		"react": "19.2.1",
+		"react": "19.2.3",
 		"react-aria-components": "1.13.0",
-		"react-dom": "19.2.1",
+		"react-dom": "19.2.3",
 		"tailwind-merge": "3.4.0",
 		"tailwind-variants": "3.2.2"
 	},
@@ -45,8 +45,8 @@
 		"vitest": "4.0.9"
 	},
 	"peerDependencies": {
-		"react": "19.2.1",
-		"react-dom": "19.2.1"
+		"react": "19.2.3",
+		"react-dom": "19.2.3"
 	},
 	"scripts": {
 		"lint": "biome check .",
