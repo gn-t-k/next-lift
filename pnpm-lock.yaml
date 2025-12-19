@@ -45,8 +45,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/utilities
       '@praha/byethrow':
-        specifier: 0.8.1
-        version: 0.8.1(typescript@5.9.3)
+        specifier: 0.8.2
+        version: 0.8.2(typescript@5.9.3)
       '@praha/error-factory':
         specifier: 1.2.1
         version: 1.2.1
@@ -155,8 +155,8 @@ importers:
         specifier: workspace:*
         version: link:../utilities
       '@praha/byethrow':
-        specifier: 0.8.1
-        version: 0.8.1(typescript@5.9.3)
+        specifier: 0.8.2
+        version: 0.8.2(typescript@5.9.3)
       '@praha/error-factory':
         specifier: 1.2.1
         version: 1.2.1
@@ -1858,8 +1858,8 @@ packages:
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
 
-  '@praha/byethrow@0.8.1':
-    resolution: {integrity: sha512-THvagF+Fq43PV6NMkPjNt9aN1fP8LZdKBqNNHvdFmIv2oi2gy3ryU6HYTQqOT5LHsbD7Ih2qySvsW5gGPgGoCA==}
+  '@praha/byethrow@0.8.2':
+    resolution: {integrity: sha512-gUpjF6EVLbrSVH7XRfn3Ti655Hs87U0yZwdGJ5eIYUM27B94fqD7bkPh+ZLtEmd56LwBYWtk9uYkseenNfgxcQ==}
     peerDependencies:
       typescript: '>=5.0.0'
 
@@ -7491,7 +7491,7 @@ snapshots:
 
   '@polka/url@1.0.0-next.29': {}
 
-  '@praha/byethrow@0.8.1(typescript@5.9.3)':
+  '@praha/byethrow@0.8.2(typescript@5.9.3)':
     dependencies:
       '@standard-schema/spec': 1.0.0
       typescript: 5.9.3
