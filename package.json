@@ -3,6 +3,9 @@
 	"version": "0.1.0",
 	"private": true,
 	"description": "ウェイトトレーニングの計画と記録を行うアプリケーション",
+	"op-sqlite": {
+		"libsql": true
+	},
 	"scripts": {
 		"build": "turbo build",
 		"dev": "turbo dev",

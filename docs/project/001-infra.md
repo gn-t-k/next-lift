@@ -78,7 +78,7 @@
   - [x] OAuth 2.0クライアントIDの作成
   - [x] リダイレクトURLの設定（ローカル/本番/プレビュー）
 
-- [ ] Better Authによる認証基盤の構築
+- [x] Better Authによる認証基盤の構築
   - [x] Better AuthのNext.js統合（apps/web）
     - [x] Better AuthのRoute Handlerの作成
     - [x] apps/web内でのBetter Auth設定
@@ -86,7 +86,7 @@
       - [x] プロバイダー設定の追加（Google, Apple）
     - [x] 環境変数の設定
       - [x] ローカル開発環境（.env）
-      - [ ] Vercel環境変数（本番/プレビュー）
+      - [x] Vercel環境変数（本番/プレビュー）
     - [x] 基本動作確認（ローカル）
     - [x] データベーステーブルの作成
       - [x] マイグレーションファイルの適用
@@ -96,7 +96,7 @@
       - [x] サインインページの作成
       - [x] Google OAuth認証の実装
       - [x] 認証コールバックの動作確認
-    - [ ] Apple OAuth認証のサインインフロー確認（本番環境でテスト予定）
+    - [x] Apple OAuth認証のサインインフロー確認（本番環境でテスト予定）
     - [x] 初回サインイン時のユーザー作成確認
     - [x] 2回目以降のサインイン確認
     - [x] セッション管理の確認
@@ -109,29 +109,24 @@
       - [x] ユーザー操作系エラーのUIフィードバック実装
       - [x] サーバ/設定系エラーのログ記録とSentry送信実装
       - [x] 各エラーケースの動作確認
-  - [ ] 本番環境へのマイグレーション実行
-    - [ ] .envの環境変数コメントアウトを解除
-    - [ ] packages/authenticationでpnpm migration:applyを実行
-    - [ ] マイグレーション成功の確認
+  - [x] 本番環境へのマイグレーション実行
+    - [x] .envの環境変数コメントアウトを解除
+    - [x] packages/authenticationでpnpm migration:applyを実行
+    - [x] マイグレーション成功の確認
 
-- [ ] iOSアプリの基本セットアップ
-  - [ ] Expo + React Nativeプロジェクトの作成
-  - [ ] TypeScript設定
-  - [ ] リンター・フォーマッター設定
-  - [ ] react-native-componentsパッケージの作成
-    - [ ] パッケージの初期化
-    - [ ] ルート `.env` へのシンボリックリンク作成
-    - [ ] React Native Storybookのセットアップ
-    - [ ] 共通コンポーネントの基本構造
-  - [ ] op-sqliteのインストール
-  - [ ] Drizzle ORM（op-sqlite）の設定
-    - [ ] Drizzleとop-sqliteドライバーのインストール
-    - [ ] Drizzle設定ファイルの作成
-    - [ ] op-sqliteへのDrizzle接続設定
-    - [ ] ローカルSQLiteでの動作確認
-  - [ ] EAS CLIのセットアップ
-  - [ ] Development Buildの設定
-  - [ ] iOS Simulatorでの動作確認
+- [x] iOSアプリの基本セットアップ
+  - [x] Expo + React Nativeプロジェクトの作成
+  - [x] TypeScript設定
+  - [x] リンター・フォーマッター設定
+  - [x] op-sqliteのインストール（libsql対応）
+  - [x] Drizzle ORMのインストール
+  - [x] EAS CLIのセットアップ
+  - [x] Development Buildの設定（expo-dev-client）
+  - [x] iOS Simulatorでの動作確認
+  - [x] Drizzle ORM（op-sqlite）の詳細設定
+    - [x] Drizzle設定ファイルの作成
+    - [x] op-sqliteへのDrizzle接続設定
+    - [x] ローカルSQLiteでの動作確認
 
 - [ ] Web/iOS/Tursoの連携基盤
   - [ ] Per-User Database管理機能
