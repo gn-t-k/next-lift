@@ -13,7 +13,7 @@
 		"db:generate": "drizzle-kit generate"
 	},
 	"dependencies": {
-		"@op-engineering/op-sqlite": "15.1.13",
+		"@op-engineering/op-sqlite": "15.1.14",
 		"drizzle-orm": "0.45.0",
 		"expo": "54.0.29",
 		"expo-dev-client": "6.0.20",
