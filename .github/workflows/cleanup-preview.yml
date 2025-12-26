@@ -19,7 +19,7 @@ jobs:
           TURSO_ORG_SLUG: ${{ secrets.TURSO_ORG_SLUG }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          DB_NAME="preview-pr${PR_NUMBER}-auth"
+          DB_NAME="next-lift-preview-pr${PR_NUMBER}-auth"
 
           # データベースを削除
           DELETE_RESPONSE=$(curl -X DELETE \
@@ -83,7 +83,7 @@ jobs:
               '',
               '✅ プレビュー環境をクリーンアップしました！',
               '',
-              `**Database Name**: preview-pr${prNumber}-auth`,
+              `**Database Name**: next-lift-preview-pr${prNumber}-auth`,
               '',
               '> PRがクローズされたため、関連するデータベースとVercel環境変数を自動的に削除しました。'
             ].join('\n');

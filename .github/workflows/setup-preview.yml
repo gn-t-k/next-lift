@@ -44,7 +44,7 @@ jobs:
           TURSO_GROUP: ${{ secrets.TURSO_GROUP }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          DB_NAME="preview-pr${PR_NUMBER}-auth"
+          DB_NAME="next-lift-preview-pr${PR_NUMBER}-auth"
 
           # データベースを作成（既に存在する場合はエラーになるが続行）
           CREATE_RESPONSE=$(curl -s -X POST \
