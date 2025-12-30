@@ -42,34 +42,6 @@ jobs:
 
           echo "Successfully deleted database: ${DB_NAME}"
 
-      - name: Delete Vercel Environment Variables
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: |
-          # プレビュー環境の環境変数を取得
-          ENV_VARS=$(curl -X GET \
-            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
-            "https://api.vercel.com/v10/projects/${VERCEL_PROJECT_ID}/env?gitBranch=${{ github.head_ref }}")
-
-          # TURSO_AUTH_DATABASE_URLのIDを取得して削除
-          URL_ENV_ID=$(echo "${ENV_VARS}" | jq -r '.envs[] | select(.key=="TURSO_AUTH_DATABASE_URL" and .gitBranch=="${{ github.head_ref }}") | .id' | head -n 1)
-          if [ -n "${URL_ENV_ID}" ] && [ "${URL_ENV_ID}" != "null" ]; then
-            curl -X DELETE \
-              -H "Authorization: Bearer ${VERCEL_TOKEN}" \
-              "https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}/env/${URL_ENV_ID}"
-            echo "Deleted TURSO_AUTH_DATABASE_URL environment variable"
-          fi
-
-          # TURSO_AUTH_DATABASE_AUTH_TOKENのIDを取得して削除
-          TOKEN_ENV_ID=$(echo "${ENV_VARS}" | jq -r '.envs[] | select(.key=="TURSO_AUTH_DATABASE_AUTH_TOKEN" and .gitBranch=="${{ github.head_ref }}") | .id' | head -n 1)
-          if [ -n "${TOKEN_ENV_ID}" ] && [ "${TOKEN_ENV_ID}" != "null" ]; then
-            curl -X DELETE \
-              -H "Authorization: Bearer ${VERCEL_TOKEN}" \
-              "https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}/env/${TOKEN_ENV_ID}"
-            echo "Deleted TURSO_AUTH_DATABASE_AUTH_TOKEN environment variable"
-          fi
-
       - name: Comment PR with Cleanup Info
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         env:
