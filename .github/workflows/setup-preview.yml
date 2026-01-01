@@ -122,39 +122,6 @@ jobs:
           pnpm migration:apply
           echo "Migration completed successfully"
 
-      - name: Set Vercel Environment Variables
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          GIT_BRANCH: ${{ github.head_ref }}
-          PREVIEW_URL: ${{ steps.preview-url.outputs.preview_url }}
-        run: |
-          # Vercelのプレビュー環境にブランチ固有の環境変数を設定
-          # ランタイムで使用するため、Vercel APIで直接設定する必要がある
-
-          # BETTER_AUTH_URL を設定（プレビューURL）
-          curl -s -X POST \
-            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
-            -H "Content-Type: application/json" \
-            -d "{\"key\":\"BETTER_AUTH_URL\",\"value\":\"${PREVIEW_URL}\",\"type\":\"plain\",\"target\":[\"preview\"],\"gitBranch\":\"${GIT_BRANCH}\"}" \
-            "https://api.vercel.com/v10/projects/${VERCEL_PROJECT_ID}/env" || true
-
-          # TURSO_AUTH_DATABASE_URL を設定（既存の場合は上書き）
-          curl -s -X POST \
-            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
-            -H "Content-Type: application/json" \
-            -d "{\"key\":\"TURSO_AUTH_DATABASE_URL\",\"value\":\"${db_url}\",\"type\":\"encrypted\",\"target\":[\"preview\"],\"gitBranch\":\"${GIT_BRANCH}\"}" \
-            "https://api.vercel.com/v10/projects/${VERCEL_PROJECT_ID}/env" || true
-
-          # TURSO_AUTH_DATABASE_AUTH_TOKEN を設定
-          curl -s -X POST \
-            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
-            -H "Content-Type: application/json" \
-            -d "{\"key\":\"TURSO_AUTH_DATABASE_AUTH_TOKEN\",\"value\":\"${db_auth_token}\",\"type\":\"encrypted\",\"target\":[\"preview\"],\"gitBranch\":\"${GIT_BRANCH}\"}" \
-            "https://api.vercel.com/v10/projects/${VERCEL_PROJECT_ID}/env" || true
-
-          echo "Environment variables set for branch: ${GIT_BRANCH}"
-
       - name: Deploy to Vercel
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
