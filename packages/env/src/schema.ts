@@ -15,6 +15,11 @@ export const privateStaticEnvSchema = z.object({
 	SENTRY_PROJECT: z.string().min(1),
 	SENTRY_AUTH_TOKEN: z.string().min(1),
 
+	TURSO_PLATFORM_API_TOKEN: z.string().min(1),
+	TURSO_ORGANIZATION: z.string().min(1),
+	TURSO_PER_USER_DATABASE_PREFIX: z.string().min(1),
+	TURSO_TOKEN_ENCRYPTION_KEY: z.hex().length(64),
+
 	CI: z
 		.string()
 		.transform((v) => v === "true")

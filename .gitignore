@@ -109,6 +109,9 @@ temp/
 *.db
 *.sqlite
 
+# Per-User Database (開発環境用ローカルDB)
+data/per-user-db/
+
 # Expo
 .expo/
 dist/
