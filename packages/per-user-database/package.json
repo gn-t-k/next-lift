@@ -1,0 +1,40 @@
+{
+	"name": "@next-lift/per-user-database",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./schema": "./src/schema.ts",
+		"./client": "./src/client.ts",
+		"./create-turso-per-user-database": "./src/create-turso-per-user-database.ts",
+		"./create-local-per-user-database": "./src/create-local-per-user-database.ts",
+		"./libs/create-database.mock": "./src/libs/create-database.mock.ts",
+		"./libs/issue-token.mock": "./src/libs/issue-token.mock.ts"
+	},
+	"scripts": {
+		"lint": "biome check .",
+		"lint:fix": "biome check --fix .",
+		"type-check": "tsc --noEmit",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"migration:generate": "drizzle-kit generate",
+		"migration:apply": "drizzle-kit migrate",
+		"db:studio": "drizzle-kit studio"
+	},
+	"dependencies": {
+		"@libsql/client": "0.15.15",
+		"@next-lift/env": "workspace:*",
+		"@praha/byethrow": "0.8.2",
+		"@praha/error-factory": "1.2.1",
+		"drizzle-orm": "0.45.1",
+		"zod": "4.1.13"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.3.6",
+		"@tsconfig/strictest": "2.0.8",
+		"@types/node": "24.10.2",
+		"drizzle-kit": "0.31.8",
+		"typescript": "5.9.3",
+		"vitest": "4.0.16"
+	}
+}
