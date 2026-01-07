@@ -1,5 +1,5 @@
-import { parseEnv } from "./parse-env";
-import { privateDynamicEnvSchema, privateStaticEnvSchema } from "./schema";
+import { parseEnv } from "../libs/parse-env";
+import { privateDynamicEnvSchema, privateStaticEnvSchema } from "../schema";
 
 export const env = parseEnv({
 	staticEnvSchema: privateStaticEnvSchema,
