@@ -5,8 +5,10 @@
 	"type": "module",
 	"sideEffects": false,
 	"exports": {
-		"./private": "./src/private.ts",
-		"./public": "./src/public.ts"
+		"./private": "./src/private/index.ts",
+		"./public": "./src/public/index.ts",
+		"./private/private.mock": "./src/private/private.mock.ts",
+		"./public/public.mock": "./src/public/public.mock.ts"
 	},
 	"scripts": {
 		"check": "tsx src/check.ts",

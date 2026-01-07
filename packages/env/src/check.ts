@@ -1,47 +1,7 @@
 import process from "node:process";
 import { R } from "@praha/byethrow";
-import { ErrorFactory } from "@praha/error-factory";
-import { parseEnv } from "./parse-env";
-import {
-	privateDynamicEnvSchema,
-	privateStaticEnvSchema,
-	publicDynamicEnvSchema,
-	publicStaticEnvSchema,
-} from "./schema";
-
-class ParsePrivateEnvError extends ErrorFactory({
-	name: "ParsePrivateEnvError",
-	message: "private環境変数のパースに失敗しました",
-}) {}
-const parsePrivateEnv = R.try({
-	try: () => {
-		parseEnv({
-			staticEnvSchema: privateStaticEnvSchema,
-			dynamicEnvSchema: privateDynamicEnvSchema,
-			env: process.env,
-		});
-	},
-	catch: (error) => {
-		return new ParsePrivateEnvError({ cause: error });
-	},
-});
-
-class ParsePublicEnvError extends ErrorFactory({
-	name: "ParsePublicEnvError",
-	message: "public環境変数のパースに失敗しました",
-}) {}
-const parsePublicEnv = R.try({
-	try: () => {
-		parseEnv({
-			staticEnvSchema: publicStaticEnvSchema,
-			dynamicEnvSchema: publicDynamicEnvSchema,
-			env: process.env,
-		});
-	},
-	catch: (error) => {
-		return new ParsePublicEnvError({ cause: error });
-	},
-});
+import { parsePrivateEnv } from "./private/parse-private-env";
+import { parsePublicEnv } from "./public/parse-public-env";
 
 R.pipe(
 	R.do(),

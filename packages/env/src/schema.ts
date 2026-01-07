@@ -73,3 +73,11 @@ export const publicStaticEnvSchema = z.object({
 });
 
 export const publicDynamicEnvSchema = z.object({});
+
+export type PrivateEnvKey =
+	| keyof z.infer<typeof privateStaticEnvSchema>
+	| keyof z.infer<typeof privateDynamicEnvSchema>;
+
+export type PublicEnvKey =
+	| keyof z.infer<typeof publicStaticEnvSchema>
+	| keyof z.infer<typeof publicDynamicEnvSchema>;
