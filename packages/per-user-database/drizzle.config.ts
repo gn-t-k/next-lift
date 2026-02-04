@@ -1,19 +1,9 @@
-// biome-ignore-all lint/correctness/noProcessGlobal: drizzle-kitはCLIツールとして実行されるため、node:processをimportせずprocess.envを直接参照する
-// biome-ignore-all lint/complexity/useLiteralKeys: インデックスシグネチャの型ではドット記法が許可されていないため
 import { defineConfig } from "drizzle-kit";
 
-// drizzle-kitはCLIツールとして実行されるため、@next-lift/env/privateを使用すると
-// 全環境変数のバリデーションが走り、DB接続に不要な環境変数まで要求される。
-// CI/CDでマイグレーションのみ実行する場合に問題となるため、process.envを直接参照する。
-const url = process.env["TURSO_PER_USER_DATABASE_URL"];
-const authToken = process.env["TURSO_PER_USER_DATABASE_AUTH_TOKEN"];
-
-const dbCredentials =
-	url && authToken ? { url, authToken } : { url: "file:development-user.db" };
-
+// per-user-databaseはユーザーごとに動的に作成されるため、drizzle.config.tsではDB接続情報を指定しない。
+// マイグレーションSQLの生成（migration:generate）にはDB接続は不要。
 export default defineConfig({
 	out: "./drizzle",
-	schema: "./src/schema.ts",
+	schema: "./src/database-schemas/index.ts",
 	dialect: "turso",
-	dbCredentials,
 });
