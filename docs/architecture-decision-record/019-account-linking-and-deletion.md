@@ -20,19 +20,7 @@ Next Liftでは、Apple IDとGoogleの2つのソーシャルログインをサ�
 
 ### 1. Account Linkingの有効化
 
-Better Authの`accountLinking`機能を有効化し、同じメールアドレスを持つソーシャルアカウントを自動的にリンクする。
-
-```typescript
-export const auth = betterAuth({
-    account: {
-        accountLinking: {
-            enabled: true,
-        }
-    }
-});
-```
-
-これにより:
+Better Authの`accountLinking`機能を有効化し、同じメールアドレスを持つソーシャルアカウントを自動的にリンクする。これにより:
 
 - 新規ログイン時、メールアドレスで既存ユーザーを検索
 - 既存ユーザーが見つかり、かつプロバイダーがメール検証済みの場合
@@ -41,16 +29,6 @@ export const auth = betterAuth({
 ### 2. アカウント削除機能の実装
 
 Better Authの`deleteUser`機能を有効化し、ユーザーが自分のアカウントを削除できるようにする。
-
-```typescript
-export const auth = betterAuth({
-    user: {
-        deleteUser: {
-            enabled: true,
-        }
-    }
-});
-```
 
 #### 削除範囲
 
@@ -71,7 +49,7 @@ Per-User Databaseを認証データと同時に削除しない理由:
 
 1. 設定画面に「アカウント削除」ボタンを配置
 2. 確認ダイアログを表示
-3. `authClient.deleteUser({ callbackURL: "/auth/sign-in" })`を実行
+3. Better Authクライアントのアカウント削除APIを実行
 4. サインイン画面にリダイレクト
 
 認証方式がソーシャルログインのみ（パスワードなし）のため、フレッシュセッション（最近ログインしていれば即削除可能）方式を採用。
