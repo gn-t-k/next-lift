@@ -1,8 +1,8 @@
-import { auth } from "@next-lift/authentication/instance";
 import { headers } from "next/headers";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
+import { auth } from "../../../libs/auth";
 
 type User = {
 	id: string;
