@@ -1,7 +1,7 @@
 import { R } from "@praha/byethrow";
 import { vi } from "vitest";
 
-import * as module from "./index";
+import * as module from "./create-database";
 
 export const mockCreateDatabaseOk = (
 	overrides?: Partial<R.InferSuccess<typeof module.createDatabase>>,
