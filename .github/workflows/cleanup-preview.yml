@@ -13,32 +13,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
+
       - name: Delete Preview Database
         env:
-          TURSO_API_TOKEN: ${{ secrets.TURSO_PLATFORM_API_TOKEN }}
-          TURSO_ORG_SLUG: ${{ secrets.TURSO_ORG_SLUG }}
+          TURSO_PLATFORM_API_TOKEN: ${{ secrets.TURSO_PLATFORM_API_TOKEN }}
+          TURSO_ORGANIZATION: ${{ secrets.TURSO_ORG_SLUG }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           DB_NAME="next-lift-preview-pr${PR_NUMBER}-auth"
 
           # データベースを削除
-          DELETE_RESPONSE=$(curl -X DELETE \
-            -H "Authorization: Bearer ${TURSO_API_TOKEN}" \
-            "https://api.turso.tech/v1/organizations/${TURSO_ORG_SLUG}/databases/${DB_NAME}")
-
-          echo "Database deletion response: ${DELETE_RESPONSE}"
-
-          # エラーチェック（404は既に削除済みと判断）
-          if echo "${DELETE_RESPONSE}" | jq -e '.error' > /dev/null; then
-            ERROR_MSG=$(echo "${DELETE_RESPONSE}" | jq -r '.error')
-            if [[ "${ERROR_MSG}" == *"not found"* ]]; then
+          DELETE_OUTPUT=$(pnpm --filter @next-lift/turso run db:delete --name="${DB_NAME}" 2>&1) || {
+            # 存在しない場合のエラーは無視
+            if echo "${DELETE_OUTPUT}" | grep -q "404"; then
               echo "Database ${DB_NAME} was already deleted or does not exist."
               exit 0
             else
-              echo "Error deleting database: ${ERROR_MSG}"
+              echo "Error deleting database: ${DELETE_OUTPUT}"
               exit 1
             fi
-          fi
+          }
 
           echo "Successfully deleted database: ${DB_NAME}"
 
