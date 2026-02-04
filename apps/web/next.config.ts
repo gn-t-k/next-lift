@@ -1,8 +1,15 @@
+import path from "node:path";
 import { env } from "@next-lift/env/private";
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+	outputFileTracingRoot: path.resolve("../../"),
+	outputFileTracingIncludes: {
+		"/api/auth/\\[...all\\]": [
+			"../../packages/per-user-database/drizzle/**/*",
+		],
+	},
 	reactCompiler: true,
 	cacheComponents: true,
 	typedRoutes: true,
