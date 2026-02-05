@@ -39,31 +39,34 @@ jobs:
       - name: Create Preview Database
         id: create-db
         env:
-          TURSO_API_TOKEN: ${{ secrets.TURSO_PLATFORM_API_TOKEN }}
-          TURSO_ORG_SLUG: ${{ secrets.TURSO_ORG_SLUG }}
-          TURSO_GROUP: ${{ secrets.TURSO_GROUP }}
+          TURSO_PLATFORM_API_TOKEN: ${{ secrets.TURSO_PLATFORM_API_TOKEN }}
+          TURSO_ORGANIZATION: ${{ secrets.TURSO_ORG_SLUG }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
+          set -a
+          source .vercel/.env.preview.local
+          set +a
+
           DB_NAME="next-lift-preview-pr${PR_NUMBER}-auth"
 
-          # データベースを作成（既に存在する場合はエラーになるが続行）
-          CREATE_RESPONSE=$(curl -s -X POST \
-            -H "Authorization: Bearer ${TURSO_API_TOKEN}" \
-            -H "Content-Type: application/json" \
-            -d "{\"name\":\"${DB_NAME}\",\"group\":\"${TURSO_GROUP}\"}" \
-            "https://api.turso.tech/v1/organizations/${TURSO_ORG_SLUG}/databases")
+          # データベースを作成
+          CREATE_OUTPUT=$(pnpm --filter @next-lift/turso run db:create --name="${DB_NAME}" 2>&1) || {
+            # 既に存在する場合はエラーになるが続行
+            echo "Database creation output: ${CREATE_OUTPUT}"
+            echo "Database may already exist, continuing..."
+          }
 
-          echo "Database creation response: ${CREATE_RESPONSE}"
+          echo "Database creation output: ${CREATE_OUTPUT}"
 
-          # 作成成功時はレスポンスからHostnameを取得
-          DB_HOSTNAME=$(echo "${CREATE_RESPONSE}" | jq -r '.database.Hostname // empty')
+          # Hostnameを取得（出力から抽出）
+          DB_HOSTNAME=$(echo "${CREATE_OUTPUT}" | grep "Hostname:" | sed 's/.*Hostname: //')
 
           # 既に存在する場合は、データベース情報を取得
           if [ -z "${DB_HOSTNAME}" ]; then
-            echo "Database already exists or creation failed, fetching existing database info..."
+            echo "Fetching existing database info..."
             GET_RESPONSE=$(curl -s \
-              -H "Authorization: Bearer ${TURSO_API_TOKEN}" \
-              "https://api.turso.tech/v1/organizations/${TURSO_ORG_SLUG}/databases/${DB_NAME}")
+              -H "Authorization: Bearer ${TURSO_PLATFORM_API_TOKEN}" \
+              "https://api.turso.tech/v1/organizations/${TURSO_ORGANIZATION}/databases/${DB_NAME}")
             echo "Database get response: ${GET_RESPONSE}"
             DB_HOSTNAME=$(echo "${GET_RESPONSE}" | jq -r '.database.Hostname')
           fi
@@ -77,19 +80,21 @@ jobs:
       - name: Create Database Token
         id: create-token
         env:
-          TURSO_API_TOKEN: ${{ secrets.TURSO_PLATFORM_API_TOKEN }}
-          TURSO_ORG_SLUG: ${{ secrets.TURSO_ORG_SLUG }}
+          TURSO_PLATFORM_API_TOKEN: ${{ secrets.TURSO_PLATFORM_API_TOKEN }}
+          TURSO_ORGANIZATION: ${{ secrets.TURSO_ORG_SLUG }}
           DB_NAME: ${{ steps.create-db.outputs.db_name }}
         run: |
-          # データベースアクセス用のトークンを作成
-          TOKEN_RESPONSE=$(curl -X POST \
-            -H "Authorization: Bearer ${TURSO_API_TOKEN}" \
-            "https://api.turso.tech/v1/organizations/${TURSO_ORG_SLUG}/databases/${DB_NAME}/auth/tokens?expiration=never")
+          set -a
+          source .vercel/.env.preview.local
+          set +a
 
-          echo "Token creation response (hidden for security)"
+          # データベースアクセス用のトークンを作成（期限なし）
+          TOKEN_OUTPUT=$(pnpm --filter @next-lift/turso run db:issue-token --name="${DB_NAME}" 2>&1)
 
-          # トークンを取得
-          DB_AUTH_TOKEN=$(echo "${TOKEN_RESPONSE}" | jq -r '.jwt')
+          echo "Token creation completed (hidden for security)"
+
+          # トークンを取得（出力から抽出）
+          DB_AUTH_TOKEN=$(echo "${TOKEN_OUTPUT}" | grep "JWT:" | sed 's/.*JWT: //')
 
           echo "db_auth_token=${DB_AUTH_TOKEN}" >> $GITHUB_ENV
 
