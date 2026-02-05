@@ -6,9 +6,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
 	outputFileTracingRoot: path.resolve("../../"),
 	outputFileTracingIncludes: {
-		"/api/auth/\\[...all\\]": [
-			"../../packages/per-user-database/drizzle/**/*",
-		],
+		"/api/auth/\\[...all\\]": ["../../packages/per-user-database/drizzle/**/*"],
 	},
 	reactCompiler: true,
 	cacheComponents: true,
