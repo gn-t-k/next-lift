@@ -1,3 +1,4 @@
+import { env } from "@next-lift/env/private";
 import { R } from "@praha/byethrow";
 import { ErrorFactory } from "@praha/error-factory";
 import { z } from "zod";
@@ -18,7 +19,6 @@ export class GetDatabaseError extends ErrorFactory({
  */
 export const getDatabase = async (
 	databaseName: string,
-	credentials: { apiToken: string; organization: string },
 ): R.ResultAsync<
 	{ id: string; hostname: string; name: string },
 	DatabaseNotFoundError | GetDatabaseError
@@ -26,7 +26,8 @@ export const getDatabase = async (
 	R.try({
 		immediate: true,
 		try: async () => {
-			const { apiToken, organization } = credentials;
+			const apiToken = env.TURSO_PLATFORM_API_TOKEN;
+			const organization = env.TURSO_ORGANIZATION;
 
 			const response = await fetch(
 				`https://api.turso.tech/v1/organizations/${organization}/databases/${databaseName}`,

@@ -1,4 +1,3 @@
-// biome-ignore-all lint/complexity/useLiteralKeys: インデックスシグネチャの型ではドット記法が許可されていないため
 import process from "node:process";
 import { parseArgs } from "node:util";
 import { R } from "@praha/byethrow";
@@ -19,12 +18,7 @@ if (!values.name) {
 	process.exit(1);
 }
 
-const credentials = {
-	apiToken: process.env["TURSO_PLATFORM_API_TOKEN"] ?? "",
-	organization: process.env["TURSO_ORGANIZATION"] ?? "",
-};
-
-const result = await deleteDatabase(values.name, credentials);
+const result = await deleteDatabase(values.name);
 
 if (R.isFailure(result)) {
 	console.error("データベースの削除に失敗しました:", result.error.message);

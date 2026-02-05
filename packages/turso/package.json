@@ -20,6 +20,7 @@
 		"db:issue-token": "tsx src/features/cli/issue-token.ts"
 	},
 	"dependencies": {
+		"@next-lift/env": "workspace:*",
 		"@praha/byethrow": "0.8.2",
 		"@praha/error-factory": "1.2.1",
 		"zod": "4.1.13"

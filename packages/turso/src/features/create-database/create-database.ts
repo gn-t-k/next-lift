@@ -1,3 +1,4 @@
+import { env } from "@next-lift/env/private";
 import { R } from "@praha/byethrow";
 import { ErrorFactory } from "@praha/error-factory";
 import { z } from "zod";
@@ -20,12 +21,12 @@ export class CreateDatabaseError extends ErrorFactory({
  */
 export const createDatabase = async (
 	databaseName: string,
-	credentials: { apiToken: string; organization: string },
 ): R.ResultAsync<
 	{ id: string; hostname: string; name: string },
 	CreateDatabaseError | GetDatabaseError | DatabaseNotFoundError
 > => {
-	const { apiToken, organization } = credentials;
+	const apiToken = env.TURSO_PLATFORM_API_TOKEN;
+	const organization = env.TURSO_ORGANIZATION;
 
 	const response = await fetch(
 		`https://api.turso.tech/v1/organizations/${organization}/databases`,
@@ -41,7 +42,7 @@ export const createDatabase = async (
 
 	// 409 Conflict: すでに存在する場合、既存の情報を取得して返す
 	if (response.status === 409) {
-		return getDatabase(databaseName, credentials);
+		return getDatabase(databaseName);
 	}
 
 	return R.try({
