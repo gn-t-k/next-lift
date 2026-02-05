@@ -14,7 +14,7 @@
 	},
 	"dependencies": {
 		"@op-engineering/op-sqlite": "15.1.14",
-		"drizzle-orm": "0.45.0",
+		"drizzle-orm": "0.45.1",
 		"expo": "54.0.29",
 		"expo-dev-client": "6.0.20",
 		"expo-status-bar": "3.0.9",
