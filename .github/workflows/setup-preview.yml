@@ -43,6 +43,10 @@ jobs:
           TURSO_ORGANIZATION: ${{ secrets.TURSO_ORG_SLUG }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
+          set -a
+          source .vercel/.env.preview.local
+          set +a
+
           DB_NAME="next-lift-preview-pr${PR_NUMBER}-auth"
 
           # データベースを作成
@@ -80,6 +84,10 @@ jobs:
           TURSO_ORGANIZATION: ${{ secrets.TURSO_ORG_SLUG }}
           DB_NAME: ${{ steps.create-db.outputs.db_name }}
         run: |
+          set -a
+          source .vercel/.env.preview.local
+          set +a
+
           # データベースアクセス用のトークンを作成（期限なし）
           TOKEN_OUTPUT=$(pnpm --filter @next-lift/turso run db:issue-token --name="${DB_NAME}" 2>&1)
 
