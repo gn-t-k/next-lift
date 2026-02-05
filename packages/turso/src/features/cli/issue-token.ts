@@ -1,3 +1,4 @@
+// biome-ignore-all lint/complexity/useLiteralKeys: インデックスシグネチャの型ではドット記法が許可されていないため
 import process from "node:process";
 import { parseArgs } from "node:util";
 import { R } from "@praha/byethrow";
@@ -33,14 +34,25 @@ if (expiresInDays !== null && Number.isNaN(expiresInDays)) {
 	process.exit(1);
 }
 
+const credentials = {
+	apiToken: process.env["TURSO_PLATFORM_API_TOKEN"] ?? "",
+	organization: process.env["TURSO_ORGANIZATION"] ?? "",
+};
+
 const result =
 	expiresInDays === null
-		? await issueToken({ databaseName: values.name, expiresInDays: null })
-		: await issueToken({
-				databaseName: values.name,
-				expiresInDays,
-				startingFrom: new Date(),
-			});
+		? await issueToken(
+				{ databaseName: values.name, expiresInDays: null },
+				credentials,
+			)
+		: await issueToken(
+				{
+					databaseName: values.name,
+					expiresInDays,
+					startingFrom: new Date(),
+				},
+				credentials,
+			);
 
 if (R.isFailure(result)) {
 	console.error("トークンの発行に失敗しました:", result.error.message);

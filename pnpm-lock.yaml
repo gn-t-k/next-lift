@@ -404,9 +404,6 @@ importers:
 
   packages/turso:
     dependencies:
-      '@next-lift/env':
-        specifier: workspace:*
-        version: link:../env
       '@praha/byethrow':
         specifier: 0.8.2
         version: 0.8.2(typescript@5.9.3)

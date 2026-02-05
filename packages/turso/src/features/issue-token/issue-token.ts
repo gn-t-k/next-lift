@@ -1,4 +1,3 @@
-import { env } from "@next-lift/env/private";
 import { R } from "@praha/byethrow";
 import { ErrorFactory } from "@praha/error-factory";
 import { z } from "zod";
@@ -8,20 +7,27 @@ export class IssueTokenError extends ErrorFactory({
 	message: "トークンの発行中にエラーが発生しました。",
 }) {}
 
-export function issueToken(params: {
-	expiresInDays: null;
-	databaseName: string;
-}): R.ResultAsync<{ jwt: string; expiresAt: null }, IssueTokenError>;
-export function issueToken(params: {
-	expiresInDays: number;
-	startingFrom: Date;
-	databaseName: string;
-}): R.ResultAsync<{ jwt: string; expiresAt: Date }, IssueTokenError>;
+export function issueToken(
+	params: {
+		expiresInDays: null;
+		databaseName: string;
+	},
+	credentials: { apiToken: string; organization: string },
+): R.ResultAsync<{ jwt: string; expiresAt: null }, IssueTokenError>;
+export function issueToken(
+	params: {
+		expiresInDays: number;
+		startingFrom: Date;
+		databaseName: string;
+	},
+	credentials: { apiToken: string; organization: string },
+): R.ResultAsync<{ jwt: string; expiresAt: Date }, IssueTokenError>;
 
 export function issueToken(
 	params:
 		| { expiresInDays: null; databaseName: string }
 		| { expiresInDays: number; startingFrom: Date; databaseName: string },
+	credentials: { apiToken: string; organization: string },
 ): R.ResultAsync<
 	{ jwt: string; expiresAt: null } | { jwt: string; expiresAt: Date },
 	IssueTokenError
@@ -29,8 +35,7 @@ export function issueToken(
 	return R.try({
 		immediate: true,
 		try: async () => {
-			const apiToken = env.TURSO_PLATFORM_API_TOKEN;
-			const organization = env.TURSO_ORGANIZATION;
+			const { apiToken, organization } = credentials;
 
 			const hasExpiration = params.expiresInDays !== null;
 

@@ -1,3 +1,4 @@
+// biome-ignore-all lint/complexity/useLiteralKeys: インデックスシグネチャの型ではドット記法が許可されていないため
 import process from "node:process";
 import { parseArgs } from "node:util";
 import { R } from "@praha/byethrow";
@@ -18,7 +19,12 @@ if (!values.name) {
 	process.exit(1);
 }
 
-const result = await createDatabase(values.name);
+const credentials = {
+	apiToken: process.env["TURSO_PLATFORM_API_TOKEN"] ?? "",
+	organization: process.env["TURSO_ORGANIZATION"] ?? "",
+};
+
+const result = await createDatabase(values.name, credentials);
 
 if (R.isFailure(result)) {
 	console.error("データベースの作成に失敗しました:", result.error.message);
