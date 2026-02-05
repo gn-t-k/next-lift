@@ -15,6 +15,7 @@
 		"@libsql/client": "0.15.15",
 		"@next-lift/authentication": "workspace:*",
 		"@next-lift/env": "workspace:*",
+		"@next-lift/per-user-database": "workspace:*",
 		"@next-lift/react-components": "workspace:*",
 		"@next-lift/tailwind-config": "workspace:*",
 		"@next-lift/utilities": "workspace:*",
