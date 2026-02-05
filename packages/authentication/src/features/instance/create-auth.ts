@@ -1,13 +1,34 @@
 import { env } from "@next-lift/env/private";
-import { createLazyProxy } from "@next-lift/utilities";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
-import * as schema from "./generated/schema";
-import { appleClientSecret } from "./libs/apple-client-secret";
-import { getDatabase } from "./libs/get-database";
+import { schema } from "../../database-schemas";
+import { getDatabase } from "../../helpers/get-database";
+import { appleClientSecret } from "./apple-client-secret";
 
-export const auth = createLazyProxy(() => {
+export type CreateAuthOptions = {
+	databaseHooks?: {
+		user?: {
+			create?: {
+				after?: (user: {
+					id: string;
+					email: string;
+					name: string;
+					image?: string | null | undefined;
+					emailVerified: boolean;
+					createdAt: Date;
+					updatedAt: Date;
+				}) => Promise<void>;
+			};
+		};
+	};
+};
+
+/**
+ * Better Auth インスタンスを作成するファクトリ関数
+ * databaseHooks のみオプションで外部から受け取れる
+ */
+export const createAuth = (options?: CreateAuthOptions) => {
 	const baseURL = env.BETTER_AUTH_URL;
 
 	return betterAuth({
@@ -55,5 +76,6 @@ export const auth = createLazyProxy(() => {
 			},
 			errorURL: "/auth/sign-in",
 		},
+		databaseHooks: options?.databaseHooks,
 	});
-});
+};
