@@ -1,7 +1,7 @@
 import { R } from "@praha/byethrow";
 import { vi } from "vitest";
 
-import * as module from "./index";
+import * as module from "./issue-token";
 
 export const mockIssueTokenOk = (
 	overrides?: Partial<R.InferSuccess<typeof module.issueToken>>,
