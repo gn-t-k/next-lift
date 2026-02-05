@@ -4,17 +4,20 @@
 	"private": true,
 	"type": "module",
 	"exports": {
-		"./create-database": "./src/create-database/index.ts",
-		"./issue-token": "./src/issue-token/index.ts",
-		"./delete-database": "./src/delete-database/index.ts",
-		"./testing": "./src/testing.ts"
+		"./create-database": "./src/features/create-database/create-database.ts",
+		"./issue-token": "./src/features/issue-token/issue-token.ts",
+		"./delete-database": "./src/features/delete-database/delete-database.ts",
+		"./testing": "./src/testing/index.ts"
 	},
 	"scripts": {
 		"lint": "biome check .",
 		"lint:fix": "biome check --fix .",
 		"type-check": "tsc --noEmit",
 		"test": "vitest run",
-		"test:watch": "vitest"
+		"test:watch": "vitest",
+		"db:create": "tsx src/features/cli/create-database.ts",
+		"db:delete": "tsx src/features/cli/delete-database.ts",
+		"db:issue-token": "tsx src/features/cli/issue-token.ts"
 	},
 	"dependencies": {
 		"@next-lift/env": "workspace:*",
@@ -26,6 +29,7 @@
 		"@biomejs/biome": "2.3.6",
 		"@tsconfig/strictest": "2.0.8",
 		"@types/node": "24.10.2",
+		"tsx": "4.19.4",
 		"typescript": "5.9.3",
 		"vitest": "4.0.16"
 	}

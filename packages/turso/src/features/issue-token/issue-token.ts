@@ -32,31 +32,32 @@ export function issueToken(
 			const apiToken = env.TURSO_PLATFORM_API_TOKEN;
 			const organization = env.TURSO_ORGANIZATION;
 
-			const response =
-				params.expiresInDays === null
-					? await fetch(
-							`https://api.turso.tech/v1/organizations/${organization}/databases/${params.databaseName}/auth/tokens`,
-							{
-								method: "POST",
-								headers: {
-									Authorization: `Bearer ${apiToken}`,
-									"Content-Type": "application/json",
-								},
-								body: JSON.stringify({
-									expiration: "never",
-									authorization: "full-access",
-								}),
+			const hasExpiration = params.expiresInDays !== null;
+
+			const response = hasExpiration
+				? await fetch(
+						`https://api.turso.tech/v1/organizations/${organization}/databases/${params.databaseName}/auth/tokens?expiration=${params.expiresInDays}d`,
+						{
+							method: "POST",
+							headers: {
+								Authorization: `Bearer ${apiToken}`,
 							},
-						)
-					: await fetch(
-							`https://api.turso.tech/v1/organizations/${organization}/databases/${params.databaseName}/auth/tokens?expiration=${params.expiresInDays}d`,
-							{
-								method: "POST",
-								headers: {
-									Authorization: `Bearer ${apiToken}`,
-								},
+						},
+					)
+				: await fetch(
+						`https://api.turso.tech/v1/organizations/${organization}/databases/${params.databaseName}/auth/tokens`,
+						{
+							method: "POST",
+							headers: {
+								Authorization: `Bearer ${apiToken}`,
+								"Content-Type": "application/json",
 							},
-						);
+							body: JSON.stringify({
+								expiration: "never",
+								authorization: "full-access",
+							}),
+						},
+					);
 
 			if (!response.ok) {
 				const errorText = await response.text();
@@ -71,7 +72,7 @@ export function issueToken(
 				})
 				.parse(await response.json());
 
-			if (params.expiresInDays === null) {
+			if (!hasExpiration) {
 				return { jwt: data.jwt, expiresAt: null };
 			}
 
