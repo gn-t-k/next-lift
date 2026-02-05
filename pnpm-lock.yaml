@@ -78,6 +78,9 @@ importers:
       '@next-lift/env':
         specifier: workspace:*
         version: link:../../packages/env
+      '@next-lift/per-user-database':
+        specifier: workspace:*
+        version: link:../../packages/per-user-database
       '@next-lift/react-components':
         specifier: workspace:*
         version: link:../../packages/react-components
