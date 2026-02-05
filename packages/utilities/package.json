@@ -4,7 +4,9 @@
 	"private": true,
 	"type": "module",
 	"exports": {
-		".": "./src/index.ts"
+		".": "./src/create-lazy-proxy.ts",
+		"./create-lazy-proxy": "./src/create-lazy-proxy.ts",
+		"./generate-id": "./src/generate-id.ts"
 	},
 	"scripts": {
 		"lint": "biome check .",
@@ -15,5 +17,8 @@
 		"@tsconfig/strictest": "2.0.8",
 		"@types/node": "24.10.2",
 		"typescript": "5.9.3"
+	},
+	"dependencies": {
+		"nanoid": "5.1.6"
 	}
 }
