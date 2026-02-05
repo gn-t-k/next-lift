@@ -31,35 +31,9 @@ pnpmはフラットな`node_modules`構造ではなく、シンボリックリ�
 
 ## 決定
 
-### 戦略1: 各アプリケーションパッケージに直接依存関係をインストール
+### 戦略: 各アプリケーションパッケージに直接依存関係をインストール
 
-Workspace内の共有パッケージが持つ依存関係のうち、実行時に必要なものは各アプリケーションパッケージにも直接インストールします。
-
-```json
-// apps/web/package.json
-{
-  "dependencies": {
-    "@next-lift/authentication": "workspace:*",
-    "@libsql/client": "0.15.15",  // authenticationの子依存関係だが明示的に追加
-    "better-auth": "1.3.34"       // authenticationの子依存関係だが明示的に追加
-  }
-}
-```
-
-### 戦略2: 開発用データベースファイルのシンボリックリンク
-
-複数のパッケージが同じローカルSQLiteファイルを参照する場合、シンボリックリンクを使用します。
-
-```bash
-# packages/authentication/development-auth.db が実体
-# apps/web/development-auth.db はシンボリックリンク
-ln -s ../../packages/authentication/development-auth.db apps/web/development-auth.db
-```
-
-#### 理由
-
-- `getDatabase()`は`file:development-auth.db`（相対パス）を使用
-- カレントディレクトリがアプリケーションディレクトリになるため、各アプリから同じDBファイルにアクセスできる必要がある
+Workspace内の共有パッケージが持つ依存関係のうち、実行時に必要なものは各アプリケーションパッケージにも直接インストールする。
 
 ## 代替案
 

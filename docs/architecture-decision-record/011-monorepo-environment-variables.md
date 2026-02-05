@@ -27,20 +27,17 @@ Monorepo構成で、複数のパッケージ（apps/web、apps/ios、packages/*�
 
 ### 構成
 
+ルートに`.env`と`.env.example`を配置し、環境変数を参照する各アプリケーション・パッケージにシンボリックリンクを作成する。
+
 ```plaintext
 /
 ├── .env                      # 実際の環境変数（Gitで無視）
 ├── .env.example              # 環境変数のテンプレート（Gitで管理）
-├── .gitignore                # .envを追加
 ├── apps/
-│   ├── web/
-│   │   └── .env -> ../../.env  # シンボリックリンク
-│   └── ios/
+│   └── （各アプリ）/
 │       └── .env -> ../../.env  # シンボリックリンク
 └── packages/
-    ├── authentication/
-    │   └── .env -> ../../.env  # シンボリックリンク
-    └── per-user-database/
+    └── （各パッケージ）/
         └── .env -> ../../.env  # シンボリックリンク
 ```
 
@@ -48,12 +45,7 @@ Monorepo構成で、複数のパッケージ（apps/web、apps/ios、packages/*�
 
 1. ルートに`.env.example`をコピーして`.env`を作成
 2. `.env`に実際の値を設定
-3. 各パッケージ作成時にシンボリックリンクを作成
-
-```bash
-# パッケージディレクトリで実行
-ln -s ../../.env .env
-```
+3. 環境変数を参照する各パッケージにシンボリックリンクを作成
 
 ## 結果・影響
 

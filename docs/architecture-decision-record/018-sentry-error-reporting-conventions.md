@@ -29,7 +29,6 @@ catch: (error) => {
 エラークラスは発生場所に定義する（中央管理しない）。
 
 ```typescript
-// apps/web/src/app/auth/sign-in/_mutations/sign-in-with-google.ts
 class SignInWithGoogleError extends ErrorFactory({
   name: "SignInWithGoogleError",
   message: "Sign in with Google failed",
