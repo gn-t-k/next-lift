@@ -234,6 +234,9 @@ importers:
       '@next-lift/env':
         specifier: workspace:*
         version: link:../env
+      '@next-lift/turso':
+        specifier: workspace:*
+        version: link:../turso
       '@praha/byethrow':
         specifier: 0.8.2
         version: 0.8.2(typescript@5.9.3)
@@ -250,6 +253,9 @@ importers:
       '@biomejs/biome':
         specifier: 2.3.6
         version: 2.3.6
+      '@praha/drizzle-factory':
+        specifier: 1.4.2
+        version: 1.4.2(drizzle-orm@0.45.1(@libsql/client@0.15.15)(@op-engineering/op-sqlite@15.1.14(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.2.7)(react@19.2.3))(react@19.2.3))(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(kysely@0.28.8))
       '@tsconfig/strictest':
         specifier: 2.0.8
         version: 2.0.8
@@ -2564,6 +2570,11 @@ packages:
     resolution: {integrity: sha512-gUpjF6EVLbrSVH7XRfn3Ti655Hs87U0yZwdGJ5eIYUM27B94fqD7bkPh+ZLtEmd56LwBYWtk9uYkseenNfgxcQ==}
     peerDependencies:
       typescript: '>=5.0.0'
+
+  '@praha/drizzle-factory@1.4.2':
+    resolution: {integrity: sha512-q+XALcuc5OUnLyaUX4YHSxsaDEQeGG96X2HAr3Gei+jqGXTOInKjqpoihKEQ5HkkPz/LcU8qEDFWf0i23Syp3g==}
+    peerDependencies:
+      drizzle-orm: 0.x
 
   '@praha/error-factory@1.2.1':
     resolution: {integrity: sha512-F4KIuX48NLPlW/y95QrtJp2zUhAFkmHcOfXOyBWsGjFD82DUI+7aTYlFQ44Oci0rtCMSRAFHlgHlxcs1V9n9fg==}
@@ -10386,6 +10397,10 @@ snapshots:
     dependencies:
       '@standard-schema/spec': 1.0.0
       typescript: 5.9.3
+
+  '@praha/drizzle-factory@1.4.2(drizzle-orm@0.45.1(@libsql/client@0.15.15)(@op-engineering/op-sqlite@15.1.14(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.2.7)(react@19.2.3))(react@19.2.3))(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(kysely@0.28.8))':
+    dependencies:
+      drizzle-orm: 0.45.1(@libsql/client@0.15.15)(@op-engineering/op-sqlite@15.1.14(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.2.7)(react@19.2.3))(react@19.2.3))(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(kysely@0.28.8)
 
   '@praha/error-factory@1.2.1': {}
 
