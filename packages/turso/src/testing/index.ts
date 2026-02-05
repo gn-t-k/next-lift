@@ -3,12 +3,12 @@
 export {
 	mockCreateDatabaseError,
 	mockCreateDatabaseOk,
-} from "./create-database/index.mock";
+} from "../features/create-database/create-database.mock";
 export {
 	mockDeleteDatabaseError,
 	mockDeleteDatabaseOk,
-} from "./delete-database/index.mock";
+} from "../features/delete-database/delete-database.mock";
 export {
 	mockIssueTokenError,
 	mockIssueTokenOk,
-} from "./issue-token/index.mock";
+} from "../features/issue-token/issue-token.mock";

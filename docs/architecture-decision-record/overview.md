@@ -99,17 +99,7 @@ Next Liftは、筋トレの計画と記録を管理するシステムです。iO
 
 Next Liftは**pnpm**を使用したMonorepo構成です。([ADR-009](./architecture-decision-record/009-pnpm-monorepo.md))
 
-```text
-/apps
-  ├── ios                          # iOS app (React Native)
-  └── web                          # Web app (Next.js)
-/packages
-  ├── react-components             # Web用共通コンポーネント
-  ├── react-native-components      # iOS用共通コンポーネント
-  ├── per-user-database            # Per-User DBスキーマ + クライアント
-  ├── authentication               # 認証機能
-  └── tailwind-config              # Tailwind設定（Web用）
-```
+`/apps`にアプリケーション、`/packages`に共有パッケージを配置する。具体的なパッケージ構成はリポジトリを参照。
 
 ## Local-first アーキテクチャ
 
