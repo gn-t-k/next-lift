@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { mockPrivateEnv } from "@next-lift/env/private/private.mock";
+import { mockPrivateEnv } from "@next-lift/env/testing";
 import { sql } from "drizzle-orm";
 import { beforeEach, vi } from "vitest";
 
