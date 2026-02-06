@@ -28,18 +28,15 @@ if (R.isFailure(result)) {
 
 let databases = result.value;
 
-// prefixでフィルタリング
 if (values.prefix) {
 	const prefix = values.prefix;
 	databases = databases.filter((db) => db.name.startsWith(prefix));
 }
 
-// excludeで除外
 if (values.exclude) {
 	databases = databases.filter((db) => db.name !== values.exclude);
 }
 
-// 名前のみを出力（シェルスクリプトで使いやすいように）
 for (const db of databases) {
 	console.log(db.name);
 }
