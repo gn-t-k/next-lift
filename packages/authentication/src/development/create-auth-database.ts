@@ -15,7 +15,7 @@ export const createAuthDatabase = (
 	{ url: string; authToken: string; databaseName: string },
 	CreateAuthDatabaseError
 > => {
-	const databaseName = `next-lift-dev-${developerName}-auth`;
+	const databaseName = generateAuthDatabaseName(developerName);
 
 	return R.pipe(
 		R.do(),
@@ -39,4 +39,11 @@ export const createAuthDatabase = (
 		})),
 		R.mapError((error) => new CreateAuthDatabaseError({ cause: error })),
 	);
+};
+
+const generateAuthDatabaseName = (developerName: string) => {
+	// Turso DB名は小文字・数字・ハイフンのみ許可
+	const sanitized = developerName.toLowerCase().replaceAll("_", "-");
+
+	return `next-lift-development-${sanitized}-auth`;
 };

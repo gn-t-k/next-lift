@@ -5,7 +5,7 @@ import { sql } from "drizzle-orm";
 import { beforeEach, vi } from "vitest";
 
 mockPrivateEnv({
-	TURSO_PER_USER_DATABASE_PREFIX: "next-lift-test",
+	APP_ENV: "development-test",
 });
 
 // 通常のトップレベルawaitや同期importを使わない理由は、vitestによるモックより前にメモリDBを初期化したいから。

@@ -8,8 +8,16 @@ import { privateDynamicEnvSchema, privateStaticEnvSchema } from "../schema";
 // CI/Vercel: .envファイルが存在しないため、catchでスキップ
 // Next.js: 既にNext.jsが.envを読み込んでいるため、再設定されるが影響なし
 if (typeof process.loadEnvFile === "function") {
+	// import.meta.dirnameはNode.js v20.11.0+で使用可能
+	// このファイルはpackages/env/src/private/private.tsにあり、モノレポルートは4階層上
+	const dirname =
+		typeof import.meta.dirname === "string"
+			? import.meta.dirname
+			: new URL(".", import.meta.url).pathname;
+	const monorepoRoot = dirname.replace(/\/packages\/env\/.*$/, "");
+
 	try {
-		process.loadEnvFile();
+		process.loadEnvFile(`${monorepoRoot}/.env`);
 	} catch {
 		// .envファイルが存在しない環境ではスキップ
 	}

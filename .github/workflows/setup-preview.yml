@@ -36,18 +36,26 @@ jobs:
           echo "preview_url=${PREVIEW_URL}" >> $GITHUB_OUTPUT
           echo "Preview URL will be: ${PREVIEW_URL}"
 
+      - name: Set APP_ENV
+        id: app-env
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          APP_ENV="preview-pr${PR_NUMBER}"
+          echo "app_env=${APP_ENV}" >> $GITHUB_OUTPUT
+          echo "APP_ENV=${APP_ENV}" >> $GITHUB_ENV
+
       - name: Create Preview Database
         id: create-db
         env:
           TURSO_PLATFORM_API_TOKEN: ${{ secrets.TURSO_PLATFORM_API_TOKEN }}
           TURSO_ORGANIZATION: ${{ secrets.TURSO_ORG_SLUG }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           set -a
           source .vercel/.env.preview.local
           set +a
 
-          DB_NAME="next-lift-preview-pr${PR_NUMBER}-auth"
+          DB_NAME="next-lift-${APP_ENV}-auth"
 
           # データベースを作成
           CREATE_OUTPUT=$(pnpm --filter @next-lift/turso run db:create --name="${DB_NAME}" 2>&1) || {
@@ -136,6 +144,7 @@ jobs:
         run: |
           # プレビュー用の動的環境変数を追記（ビルド時用）
           echo "" >> .vercel/.env.preview.local
+          echo "APP_ENV=\"${APP_ENV}\"" >> .vercel/.env.preview.local
           echo "BETTER_AUTH_URL=\"${PREVIEW_URL}\"" >> .vercel/.env.preview.local
           echo "TURSO_AUTH_DATABASE_URL=\"${db_url}\"" >> .vercel/.env.preview.local
           echo "TURSO_AUTH_DATABASE_AUTH_TOKEN=\"${db_auth_token}\"" >> .vercel/.env.preview.local
@@ -149,6 +158,7 @@ jobs:
 
           # --prebuiltデプロイ時に--envでランタイム環境変数を渡す
           npx vercel deploy --prebuilt --token=$VERCEL_TOKEN \
+            --env APP_ENV="${APP_ENV}" \
             --env BETTER_AUTH_URL="${PREVIEW_URL}" \
             --env TURSO_AUTH_DATABASE_URL="${db_url}" \
             --env TURSO_AUTH_DATABASE_AUTH_TOKEN="${db_auth_token}" \

@@ -29,6 +29,8 @@ jobs:
           set -a
           source .vercel/.env.preview.local
           set +a
+          # CIビルド確認用のAPP_ENV（実際のデプロイはsetup-preview.ymlで設定）
+          export APP_ENV="development-ci"
           pnpm run build
 
       - name: Type check

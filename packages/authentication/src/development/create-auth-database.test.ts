@@ -27,8 +27,8 @@ describe("createAuthDatabase", () => {
 		beforeEach(() => {
 			createDatabaseSpy = mockCreateDatabaseOk({
 				id: "db-id-123",
-				hostname: "next-lift-dev-gntk-auth.turso.io",
-				name: "next-lift-dev-gntk-auth",
+				hostname: "next-lift-development-gntk-auth.turso.io",
+				name: "next-lift-development-gntk-auth",
 			});
 			issueTokenSpy = mockIssueTokenOk({ jwt: "dev-token-jwt" });
 			applyAuthMigrationSpy = mockApplyAuthMigrationOk();
@@ -37,14 +37,38 @@ describe("createAuthDatabase", () => {
 		test("正しいDB名でcreateDatabaseが呼ばれること", async () => {
 			await createAuthDatabase("gntk");
 
-			expect(createDatabaseSpy).toHaveBeenCalledWith("next-lift-dev-gntk-auth");
+			expect(createDatabaseSpy).toHaveBeenCalledWith(
+				"next-lift-development-gntk-auth",
+			);
+		});
+
+		test("開発者名が大文字の場合、小文字に変換されること", async () => {
+			await createAuthDatabase("GnTk");
+
+			expect(createDatabaseSpy).toHaveBeenCalledWith(
+				"next-lift-development-gntk-auth",
+			);
+		});
+
+		test("開発者名にアンダースコアがある場合、ハイフンに変換されること", async () => {
+			createDatabaseSpy = mockCreateDatabaseOk({
+				id: "db-id-123",
+				hostname: "next-lift-development-gn-t-k-auth.turso.io",
+				name: "next-lift-development-gn-t-k-auth",
+			});
+
+			await createAuthDatabase("gn_t_k");
+
+			expect(createDatabaseSpy).toHaveBeenCalledWith(
+				"next-lift-development-gn-t-k-auth",
+			);
 		});
 
 		test("発行されたトークンが無期限であること", async () => {
 			await createAuthDatabase("gntk");
 
 			expect(issueTokenSpy).toHaveBeenCalledWith({
-				databaseName: "next-lift-dev-gntk-auth",
+				databaseName: "next-lift-development-gntk-auth",
 				expiresInDays: null,
 			});
 		});
@@ -53,7 +77,7 @@ describe("createAuthDatabase", () => {
 			await createAuthDatabase("gntk");
 
 			expect(applyAuthMigrationSpy).toHaveBeenCalledWith({
-				url: "libsql://next-lift-dev-gntk-auth.turso.io",
+				url: "libsql://next-lift-development-gntk-auth.turso.io",
 				authToken: "dev-token-jwt",
 			});
 		});
@@ -65,9 +89,9 @@ describe("createAuthDatabase", () => {
 			if (R.isSuccess(result)) {
 				expect(result.value).toEqual(
 					expect.objectContaining({
-						url: "libsql://next-lift-dev-gntk-auth.turso.io",
+						url: "libsql://next-lift-development-gntk-auth.turso.io",
 						authToken: "dev-token-jwt",
-						databaseName: "next-lift-dev-gntk-auth",
+						databaseName: "next-lift-development-gntk-auth",
 					}),
 				);
 			}
@@ -93,8 +117,8 @@ describe("createAuthDatabase", () => {
 		beforeEach(() => {
 			mockCreateDatabaseOk({
 				id: "db-id-123",
-				hostname: "next-lift-dev-gntk-auth.turso.io",
-				name: "next-lift-dev-gntk-auth",
+				hostname: "next-lift-development-gntk-auth.turso.io",
+				name: "next-lift-development-gntk-auth",
 			});
 			mockIssueTokenError(new IssueTokenError());
 		});
@@ -113,8 +137,8 @@ describe("createAuthDatabase", () => {
 		beforeEach(() => {
 			mockCreateDatabaseOk({
 				id: "db-id-123",
-				hostname: "next-lift-dev-gntk-auth.turso.io",
-				name: "next-lift-dev-gntk-auth",
+				hostname: "next-lift-development-gntk-auth.turso.io",
+				name: "next-lift-development-gntk-auth",
 			});
 			mockIssueTokenOk({ jwt: "dev-token-jwt" });
 			mockApplyAuthMigrationError(new ApplyAuthMigrationError());

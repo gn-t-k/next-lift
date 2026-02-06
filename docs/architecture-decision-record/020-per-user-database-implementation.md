@@ -84,19 +84,34 @@ Better Auth自動生成スキーマと手動管理スキーマを分離する。
 
 - `TURSO_PLATFORM_API_TOKEN`: Turso Platform API Token
 - `TURSO_ORGANIZATION`: Turso組織名
-- `TURSO_PER_USER_DATABASE_PREFIX`: DB名のプレフィックス
 - `TURSO_TOKEN_ENCRYPTION_KEY`: Token暗号化用の32バイト（256ビット）キー（hex形式、64文字）
+- `APP_ENV`: 環境識別子（`production` | `development-{name}` | `preview-pr{n}`）
 
 ### 環境ごとの動作
 
 `NODE_ENV === "production"`で本番/プレビュー環境とローカル開発環境を判定する。
 
-| 環境 | 認証DB | Per-User DB | Platform API | Token保存 |
-|------|--------|-------------|--------------|-----------|
-| 本番 | Turso (`next-lift-production-auth`) | Turso (`next-lift-production-user-{userId}`) | 使用 | per_user_database（暗号化） |
-| プレビュー | Turso (`next-lift-preview-pr{N}-auth`) | Turso (`next-lift-preview-user-{userId}`) | 使用 | per_user_database（暗号化） |
-| 開発 | ローカルファイル | ローカルファイル (`./data/per-user-db/{userId}.db`) | 使用しない | ダミートークンを暗号化して保存 |
-| テスト | インメモリ | インメモリ | 使用しない | ダミートークンを暗号化して保存 |
+**APP_ENVと命名規則:**
+
+| 環境 | APP_ENV | 認証DB名 | Per-User DB名 |
+| ---- | ------- | -------- | ------------- |
+| 本番 | `production` | `next-lift-production-auth` | `next-lift-production-user-{userIdHash}` |
+| プレビュー | `preview-pr{N}` | `next-lift-preview-pr{N}-auth` | `next-lift-preview-pr{N}-user-{userIdHash}` |
+| 開発（Turso） | `development-{name}` | `next-lift-development-{name}-auth` | `next-lift-development-{name}-user-{userIdHash}` |
+| 開発（ローカル） | `development-{name}` | ローカルファイル | `./data/per-user-db/{userId}.db` |
+| テスト | `development-test` | インメモリ | インメモリ |
+
+**userIdHashについて:**
+
+Turso DB名は最大56文字の制限がある。userIdがUUID（36文字）の場合、`next-lift-development-gntk-user-{uuid}` は68文字となり制限を超える。
+
+そのため、userIdをSHA-256でハッシュ化し、先頭16文字（64ビット）を使用する：
+
+1. userIdを正規化（小文字化、アンダースコア→ハイフン）
+2. SHA-256でハッシュ化
+3. 先頭16文字を取得
+
+16文字（64ビット）の衝突確率は、10,000ユーザー（Turso制約上限）で約2.7×10⁻¹²と実質ゼロ。
 
 開発環境でローカルDBを使用する理由：
 
