@@ -40,18 +40,19 @@ jobs:
           TURSO_PLATFORM_API_TOKEN: ${{ secrets.TURSO_PLATFORM_API_TOKEN }}
           TURSO_ORGANIZATION: ${{ secrets.TURSO_ORG_SLUG }}
         run: |
-          # Vercel環境変数を読み込む
           set -a
           source .vercel/.env.preview.local
           set +a
 
-          # 現在のPRのDB名
-          CURRENT_DB="next-lift-${APP_ENV}-auth"
+          CURRENT_PR_PREFIX="next-lift-${APP_ENV}-"
 
-          # プレビューDBを一覧取得し、現在のPR以外を削除（プレビュー環境は1つのみに制限）
-          DATABASES=$(pnpm --filter @next-lift/turso run db:list --prefix="next-lift-preview-pr" --exclude="${CURRENT_DB}" 2>/dev/null || true)
+          DATABASES=$(pnpm --filter @next-lift/turso run db:list --prefix="next-lift-preview-pr" 2>/dev/null || true)
 
           for DB_NAME in $DATABASES; do
+            if [[ "$DB_NAME" == ${CURRENT_PR_PREFIX}* ]]; then
+              echo "Keeping current PR database: ${DB_NAME}"
+              continue
+            fi
             echo "Deleting old preview database: ${DB_NAME}"
             pnpm --filter @next-lift/turso run db:delete --name="${DB_NAME}" || true
           done
