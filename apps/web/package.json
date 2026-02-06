@@ -12,7 +12,7 @@
 	},
 	"dependencies": {
 		"@heroicons/react": "2.2.0",
-		"@libsql/client": "0.15.15",
+		"@libsql/client": "0.17.0",
 		"@next-lift/authentication": "workspace:*",
 		"@next-lift/env": "workspace:*",
 		"@next-lift/per-user-database": "workspace:*",
