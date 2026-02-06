@@ -36,17 +36,8 @@ jobs:
 
           DB_NAME="next-lift-preview-pr${PR_NUMBER}-auth"
 
-          # データベースを削除
-          DELETE_OUTPUT=$(pnpm --filter @next-lift/turso run db:delete --name="${DB_NAME}" 2>&1) || {
-            # 存在しない場合のエラーは無視
-            if echo "${DELETE_OUTPUT}" | grep -q "404"; then
-              echo "Database ${DB_NAME} was already deleted or does not exist."
-              exit 0
-            else
-              echo "Error deleting database: ${DELETE_OUTPUT}"
-              exit 1
-            fi
-          }
+          # データベースを削除（404は成功扱い）
+          pnpm --filter @next-lift/turso run db:delete --name="${DB_NAME}"
 
           echo "Successfully deleted database: ${DB_NAME}"
 
