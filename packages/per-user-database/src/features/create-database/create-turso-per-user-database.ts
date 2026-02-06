@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { env } from "@next-lift/env/private";
 import { createDatabase } from "@next-lift/turso/create-database";
 import { issueToken } from "@next-lift/turso/issue-token";
@@ -48,9 +49,12 @@ export const createTursoPerUserDatabase = (
 };
 
 const generatePerUserDatabaseName = (userId: string) => {
-	const prefix = env.TURSO_PER_USER_DATABASE_PREFIX;
-	// Turso DB名は小文字・数字・ダッシュのみ許可
-	const sanitizedUserId = userId.toLowerCase().replaceAll("_", "-");
+	// Turso DB名は小文字・数字・ハイフンのみ許可、最大56文字
+	const normalizedUserId = userId.toLowerCase().replaceAll("_", "-");
+	const hashedUserId = createHash("sha256")
+		.update(normalizedUserId)
+		.digest("hex")
+		.slice(0, 16);
 
-	return `${prefix}-user-${sanitizedUserId}`;
+	return `next-lift-${env.APP_ENV}-user-${hashedUserId}`;
 };
