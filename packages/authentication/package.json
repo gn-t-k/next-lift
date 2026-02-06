@@ -21,7 +21,7 @@
 		"dev:db:reset": "tsx src/development/cli/reset.ts"
 	},
 	"dependencies": {
-		"@libsql/client": "0.15.15",
+		"@libsql/client": "0.17.0",
 		"@next-lift/env": "workspace:*",
 		"@next-lift/utilities": "workspace:*",
 		"@praha/byethrow": "0.8.2",
