@@ -22,7 +22,13 @@ describe("listDatabases", () => {
 	});
 
 	describe("正常系", () => {
-		const mockDatabases = [
+		const mockApiResponse = [
+			{ Name: "next-lift-production-auth" },
+			{ Name: "next-lift-preview-pr123-auth" },
+			{ Name: "next-lift-preview-pr456-auth" },
+		];
+
+		const expectedDatabases = [
 			{ name: "next-lift-production-auth" },
 			{ name: "next-lift-preview-pr123-auth" },
 			{ name: "next-lift-preview-pr456-auth" },
@@ -32,7 +38,7 @@ describe("listDatabases", () => {
 			mockFetch.mockResolvedValue({
 				ok: true,
 				status: 200,
-				json: async () => ({ databases: mockDatabases }),
+				json: async () => ({ databases: mockApiResponse }),
 			});
 		});
 
@@ -55,7 +61,7 @@ describe("listDatabases", () => {
 
 			expect(R.isSuccess(result)).toBe(true);
 			if (R.isSuccess(result)) {
-				expect(result.value).toEqual(mockDatabases);
+				expect(result.value).toEqual(expectedDatabases);
 			}
 		});
 	});
