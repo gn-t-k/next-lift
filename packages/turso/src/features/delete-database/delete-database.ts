@@ -7,9 +7,14 @@ export class DeleteDatabaseError extends ErrorFactory({
 	message: "データベースの削除中にエラーが発生しました。",
 }) {}
 
-export const deleteDatabase = async (
+export class DatabaseNotFoundError extends ErrorFactory({
+	name: "DatabaseNotFoundError",
+	message: "指定されたデータベースが見つかりません。",
+}) {}
+
+export const deleteDatabase = (
 	databaseName: string,
-): R.ResultAsync<void, DeleteDatabaseError> =>
+): R.ResultAsync<void, DeleteDatabaseError | DatabaseNotFoundError> =>
 	R.try({
 		immediate: true,
 		try: async () => {
@@ -26,6 +31,10 @@ export const deleteDatabase = async (
 				},
 			);
 
+			if (response.status === 404) {
+				throw new DatabaseNotFoundError();
+			}
+
 			if (!response.ok) {
 				const errorText = await response.text();
 				throw new Error(
@@ -33,5 +42,10 @@ export const deleteDatabase = async (
 				);
 			}
 		},
-		catch: (error) => new DeleteDatabaseError({ cause: error }),
+		catch: (error) => {
+			if (error instanceof DatabaseNotFoundError) {
+				return error;
+			}
+			return new DeleteDatabaseError({ cause: error });
+		},
 	});

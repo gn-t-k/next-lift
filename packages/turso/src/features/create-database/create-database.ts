@@ -3,8 +3,8 @@ import { R } from "@praha/byethrow";
 import { ErrorFactory } from "@praha/error-factory";
 import { z } from "zod";
 import {
-	type DatabaseNotFoundError,
-	type GetDatabaseError,
+	DatabaseNotFoundError,
+	GetDatabaseError,
 	getDatabase,
 } from "./get-database";
 
@@ -19,35 +19,39 @@ export class CreateDatabaseError extends ErrorFactory({
  * データベースを作成する（冪等）
  * すでに同名のデータベースが存在する場合（409）、既存の情報を返す
  */
-export const createDatabase = async (
+export const createDatabase = (
 	databaseName: string,
 ): R.ResultAsync<
 	{ id: string; hostname: string; name: string },
 	CreateDatabaseError | GetDatabaseError | DatabaseNotFoundError
-> => {
-	const apiToken = env.TURSO_PLATFORM_API_TOKEN;
-	const organization = env.TURSO_ORGANIZATION;
-
-	const response = await fetch(
-		`https://api.turso.tech/v1/organizations/${organization}/databases`,
-		{
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${apiToken}`,
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ name: databaseName, group: "default" }),
-		},
-	);
-
-	// 409 Conflict: すでに存在する場合、既存の情報を取得して返す
-	if (response.status === 409) {
-		return getDatabase(databaseName);
-	}
-
-	return R.try({
+> =>
+	R.try({
 		immediate: true,
 		try: async () => {
+			const apiToken = env.TURSO_PLATFORM_API_TOKEN;
+			const organization = env.TURSO_ORGANIZATION;
+
+			const response = await fetch(
+				`https://api.turso.tech/v1/organizations/${organization}/databases`,
+				{
+					method: "POST",
+					headers: {
+						Authorization: `Bearer ${apiToken}`,
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ name: databaseName, group: "default" }),
+				},
+			);
+
+			// 409 Conflict: すでに存在する場合、既存の情報を取得して返す
+			if (response.status === 409) {
+				const existingDb = await getDatabase(databaseName);
+				if (R.isFailure(existingDb)) {
+					throw existingDb.error;
+				}
+				return existingDb.value;
+			}
+
 			if (!response.ok) {
 				const errorText = await response.text();
 				throw new Error(
@@ -71,6 +75,13 @@ export const createDatabase = async (
 				name: data.database.Name,
 			};
 		},
-		catch: (error) => new CreateDatabaseError({ cause: error }),
+		catch: (error) => {
+			if (
+				error instanceof DatabaseNotFoundError ||
+				error instanceof GetDatabaseError
+			) {
+				return error;
+			}
+			return new CreateDatabaseError({ cause: error });
+		},
 	});
-};
