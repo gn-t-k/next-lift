@@ -157,7 +157,7 @@ jobs:
           npx vercel build --token=$VERCEL_TOKEN
 
           # --prebuiltデプロイ時に--envでランタイム環境変数を渡す
-          npx vercel deploy --prebuilt --token=$VERCEL_TOKEN \
+          npx vercel deploy --prebuilt --archive=tgz --token=$VERCEL_TOKEN \
             --env APP_ENV="${APP_ENV}" \
             --env BETTER_AUTH_URL="${PREVIEW_URL}" \
             --env TURSO_AUTH_DATABASE_URL="${db_url}" \
