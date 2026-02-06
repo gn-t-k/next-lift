@@ -6,11 +6,18 @@ import {
 	deleteDatabase,
 } from "../delete-database/delete-database";
 
+const PREVIEW_DB_PATTERN = /^next-lift-preview-pr\d+-/;
+
 const { values } = parseArgs({
 	options: {
 		name: {
 			type: "string",
 			short: "n",
+		},
+		force: {
+			type: "boolean",
+			short: "f",
+			default: false,
 		},
 	},
 });
@@ -18,6 +25,18 @@ const { values } = parseArgs({
 if (!values.name) {
 	console.error("Error: --name フラグは必須です");
 	console.error("Usage: pnpm db:delete --name=<database-name>");
+	process.exit(1);
+}
+
+const isPreviewDatabase = PREVIEW_DB_PATTERN.test(values.name);
+if (!(isPreviewDatabase || values.force)) {
+	console.error(
+		`Error: "${values.name}" はプレビュー用データベースではありません。`,
+	);
+	console.error(
+		"本番データベースの誤削除を防ぐため、プレビュー用DB以外の削除には --force フラグが必要です。",
+	);
+	console.error("Usage: pnpm db:delete --name=<database-name> --force");
 	process.exit(1);
 }
 

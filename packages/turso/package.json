@@ -7,6 +7,7 @@
 		"./create-database": "./src/features/create-database/create-database.ts",
 		"./issue-token": "./src/features/issue-token/issue-token.ts",
 		"./delete-database": "./src/features/delete-database/delete-database.ts",
+		"./list-databases": "./src/features/list-databases/list-databases.ts",
 		"./testing": "./src/testing/index.ts"
 	},
 	"scripts": {
@@ -17,7 +18,8 @@
 		"test:watch": "vitest",
 		"db:create": "tsx src/features/cli/create-database.ts",
 		"db:delete": "tsx src/features/cli/delete-database.ts",
-		"db:issue-token": "tsx src/features/cli/issue-token.ts"
+		"db:issue-token": "tsx src/features/cli/issue-token.ts",
+		"db:list": "tsx src/features/cli/list-databases.ts"
 	},
 	"dependencies": {
 		"@next-lift/env": "workspace:*",
