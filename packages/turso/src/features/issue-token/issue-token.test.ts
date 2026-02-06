@@ -1,14 +1,12 @@
+import { mockPrivateEnv } from "@next-lift/env/testing";
 import { R } from "@praha/byethrow";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { IssueTokenError, issueToken } from "./issue-token";
 
-// 環境変数のモック
-vi.mock("@next-lift/env/private", () => ({
-	env: {
-		TURSO_PLATFORM_API_TOKEN: "test-api-token",
-		TURSO_ORGANIZATION: "test-org",
-	},
-}));
+mockPrivateEnv({
+	TURSO_PLATFORM_API_TOKEN: "test-api-token",
+	TURSO_ORGANIZATION: "test-org",
+});
 
 describe("issueToken", () => {
 	const mockFetch = vi.fn();

@@ -7,8 +7,7 @@
 	"exports": {
 		"./private": "./src/private/index.ts",
 		"./public": "./src/public/index.ts",
-		"./private/private.mock": "./src/private/private.mock.ts",
-		"./public/public.mock": "./src/public/public.mock.ts"
+		"./testing": "./src/testing/index.ts"
 	},
 	"scripts": {
 		"check": "tsx src/check.ts",
