@@ -12,9 +12,9 @@
 		"@heroicons/react": "2.2.0",
 		"@next-lift/tailwind-config": "workspace:*",
 		"clsx": "2.1.1",
-		"react": "19.2.3",
+		"react": "19.2.4",
 		"react-aria-components": "1.13.0",
-		"react-dom": "19.2.3",
+		"react-dom": "19.2.4",
 		"tailwind-merge": "3.4.0",
 		"tailwind-variants": "3.2.2"
 	},
@@ -30,7 +30,7 @@
 		"@tailwindcss/vite": "4.1.18",
 		"@tsconfig/create-react-app": "2.0.10",
 		"@tsconfig/strictest": "2.0.8",
-		"@types/react": "19.2.7",
+		"@types/react": "19.2.10",
 		"@types/react-dom": "19.2.3",
 		"@vitest/browser-playwright": "4.0.9",
 		"@vitest/coverage-v8": "4.0.9",
@@ -45,8 +45,8 @@
 		"vitest": "4.0.9"
 	},
 	"peerDependencies": {
-		"react": "19.2.3",
-		"react-dom": "19.2.3"
+		"react": "19.2.4",
+		"react-dom": "19.2.4"
 	},
 	"scripts": {
 		"lint": "biome check .",
