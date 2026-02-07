@@ -19,17 +19,18 @@ export const privateStaticEnvSchema = z.object({
 	TURSO_ORGANIZATION: z.string().min(1),
 	TURSO_TOKEN_ENCRYPTION_KEY: z.hex().length(64),
 
-	// 環境識別子: production | development-{name} | preview-pr{n}
+	// 環境識別子: production | ci | development-{name} | preview-pr{n}
 	APP_ENV: z
 		.string()
 		.refine(
 			(value) =>
 				value === "production" ||
+				value === "ci" ||
 				value.startsWith("development-") ||
 				value.startsWith("preview-pr"),
 			{
 				message:
-					"APP_ENV must be 'production', 'development-{name}', or 'preview-pr{n}'",
+					"APP_ENV must be 'production', 'ci', 'development-{name}', or 'preview-pr{n}'",
 			},
 		),
 

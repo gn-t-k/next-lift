@@ -28,6 +28,7 @@ jobs:
           npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
 
       - name: Delete Preview Databases
+        id: delete-dbs
         env:
           TURSO_PLATFORM_API_TOKEN: ${{ secrets.TURSO_PLATFORM_API_TOKEN }}
           TURSO_ORGANIZATION: ${{ secrets.TURSO_ORG_SLUG }}
@@ -40,31 +41,78 @@ jobs:
 
           DB_PREFIX="next-lift-preview-pr${PR_NUMBER}-"
 
-          DATABASES=$(pnpm --silent --filter @next-lift/turso run db:list --prefix="${DB_PREFIX}" 2>/dev/null || true)
+          echo "::group::Listing databases with prefix: ${DB_PREFIX}"
 
+          if ! DATABASES=$(pnpm --silent --filter @next-lift/turso run db:list --prefix="${DB_PREFIX}"); then
+            echo "::error::Failed to list databases"
+            exit 1
+          fi
+
+          echo "Found databases:"
+          echo "${DATABASES:-  (none)}"
+          echo "::endgroup::"
+
+          if [ -z "$DATABASES" ]; then
+            echo "No databases to delete"
+            echo "success_count=0" >> $GITHUB_OUTPUT
+            echo "fail_count=0" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          SUCCESS_COUNT=0
+          FAIL_COUNT=0
+
+          echo "::group::Deleting databases"
           for DB_NAME in $DATABASES; do
-            echo "Deleting preview database: ${DB_NAME}"
-            pnpm --silent --filter @next-lift/turso run db:delete --name="${DB_NAME}" || true
+            echo "Deleting: ${DB_NAME}"
+            if pnpm --silent --filter @next-lift/turso run db:delete --name="${DB_NAME}"; then
+              echo "  ✓ Deleted"
+              SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
+            else
+              echo "  ✗ Failed"
+              FAIL_COUNT=$((FAIL_COUNT + 1))
+            fi
           done
+          echo "::endgroup::"
 
-          echo "Successfully deleted all preview databases for PR #${PR_NUMBER}"
+          echo ""
+          echo "=== Summary ==="
+          echo "Deleted: ${SUCCESS_COUNT}"
+          echo "Failed: ${FAIL_COUNT}"
+
+          echo "success_count=${SUCCESS_COUNT}" >> $GITHUB_OUTPUT
+          echo "fail_count=${FAIL_COUNT}" >> $GITHUB_OUTPUT
+
+          if [ $FAIL_COUNT -gt 0 ]; then
+            echo "::warning::${FAIL_COUNT} database(s) failed to delete"
+          fi
 
       - name: Comment PR with Cleanup Info
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          SUCCESS_COUNT: ${{ steps.delete-dbs.outputs.success_count }}
+          FAIL_COUNT: ${{ steps.delete-dbs.outputs.fail_count }}
         with:
           script: |
             const prNumber = process.env.PR_NUMBER;
+            const successCount = parseInt(process.env.SUCCESS_COUNT) || 0;
+            const failCount = parseInt(process.env.FAIL_COUNT) || 0;
+            const total = successCount + failCount;
 
+            const status = failCount > 0 ? '⚠️' : '✅';
             const body = [
-              '## 🗑️ Preview Environment Cleaned Up',
+              '## 🗑️ Preview Environment Cleanup',
               '',
-              '✅ プレビュー環境をクリーンアップしました！',
+              `${status} PR #${prNumber} のプレビュー環境をクリーンアップしました`,
               '',
-              `**Database Prefix**: next-lift-preview-pr${prNumber}-*`,
+              '| 結果 | 件数 |',
+              '|------|------|',
+              `| 削除成功 | ${successCount} |`,
+              `| 削除失敗 | ${failCount} |`,
+              `| 合計 | ${total} |`,
               '',
-              '> PRがクローズされたため、関連するデータベースを自動的に削除しました。'
+              '> PRがクローズされたため、関連するデータベースを削除しました。'
             ].join('\n');
 
             github.rest.issues.createComment({
