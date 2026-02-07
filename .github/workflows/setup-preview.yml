@@ -46,16 +46,47 @@ jobs:
 
           CURRENT_PR_PREFIX="next-lift-${APP_ENV}-"
 
-          DATABASES=$(pnpm --filter @next-lift/turso run db:list --prefix="next-lift-preview-pr" 2>/dev/null || true)
+          echo "::group::Listing all preview databases"
+          echo "Current PR prefix (to keep): ${CURRENT_PR_PREFIX}"
 
+          if ! DATABASES=$(pnpm --silent --filter @next-lift/turso run db:list --prefix="next-lift-preview-pr"); then
+            echo "::warning::Failed to list databases, skipping cleanup"
+            exit 0
+          fi
+
+          echo "Found databases:"
+          echo "${DATABASES:-  (none)}"
+          echo "::endgroup::"
+
+          if [ -z "$DATABASES" ]; then
+            echo "No preview databases found"
+            exit 0
+          fi
+
+          KEEP_COUNT=0
+          DELETE_COUNT=0
+
+          echo "::group::Processing databases"
           for DB_NAME in $DATABASES; do
             if [[ "$DB_NAME" == ${CURRENT_PR_PREFIX}* ]]; then
-              echo "Keeping current PR database: ${DB_NAME}"
+              echo "  ⏭ Keeping: ${DB_NAME}"
+              KEEP_COUNT=$((KEEP_COUNT + 1))
               continue
             fi
-            echo "Deleting old preview database: ${DB_NAME}"
-            pnpm --filter @next-lift/turso run db:delete --name="${DB_NAME}" || true
+            echo "  🗑 Deleting: ${DB_NAME}"
+            if pnpm --silent --filter @next-lift/turso run db:delete --name="${DB_NAME}"; then
+              echo "    ✓ Deleted"
+              DELETE_COUNT=$((DELETE_COUNT + 1))
+            else
+              echo "    ✗ Failed to delete"
+            fi
           done
+          echo "::endgroup::"
+
+          echo ""
+          echo "=== Summary ==="
+          echo "Kept (current PR): ${KEEP_COUNT}"
+          echo "Deleted (old PRs): ${DELETE_COUNT}"
 
       - name: Create Preview Database
         id: create-db
