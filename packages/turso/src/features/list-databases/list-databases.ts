@@ -8,15 +8,15 @@ export class ListDatabasesError extends ErrorFactory({
 	message: "データベース一覧の取得中にエラーが発生しました。",
 }) {}
 
-const databaseSchema = z.object({
-	name: z.string(),
-});
-
 const listDatabasesResponseSchema = z.object({
-	databases: z.array(databaseSchema),
+	databases: z.array(
+		z.object({
+			Name: z.string(),
+		}),
+	),
 });
 
-export type Database = z.infer<typeof databaseSchema>;
+export type Database = { name: string };
 
 export const listDatabases = (): R.ResultAsync<
 	Database[],
@@ -48,7 +48,7 @@ export const listDatabases = (): R.ResultAsync<
 			const data = await response.json();
 			const parsed = listDatabasesResponseSchema.parse(data);
 
-			return parsed.databases;
+			return parsed.databases.map((db) => ({ name: db.Name }));
 		},
 		catch: (error) => new ListDatabasesError({ cause: error }),
 	});
