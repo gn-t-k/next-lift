@@ -46,7 +46,7 @@ jobs:
 
           CURRENT_PR_PREFIX="next-lift-${APP_ENV}-"
 
-          DATABASES=$(pnpm --filter @next-lift/turso run db:list --prefix="next-lift-preview-pr" 2>/dev/null || true)
+          DATABASES=$(pnpm --silent --filter @next-lift/turso run db:list --prefix="next-lift-preview-pr" 2>/dev/null || true)
 
           for DB_NAME in $DATABASES; do
             if [[ "$DB_NAME" == ${CURRENT_PR_PREFIX}* ]]; then
@@ -54,7 +54,7 @@ jobs:
               continue
             fi
             echo "Deleting old preview database: ${DB_NAME}"
-            pnpm --filter @next-lift/turso run db:delete --name="${DB_NAME}" || true
+            pnpm --silent --filter @next-lift/turso run db:delete --name="${DB_NAME}" || true
           done
 
       - name: Create Preview Database

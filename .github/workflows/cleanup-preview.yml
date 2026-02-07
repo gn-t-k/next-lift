@@ -32,6 +32,7 @@ jobs:
           TURSO_PLATFORM_API_TOKEN: ${{ secrets.TURSO_PLATFORM_API_TOKEN }}
           TURSO_ORGANIZATION: ${{ secrets.TURSO_ORG_SLUG }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          APP_ENV: ci
         run: |
           set -a
           source .vercel/.env.preview.local
@@ -39,11 +40,11 @@ jobs:
 
           DB_PREFIX="next-lift-preview-pr${PR_NUMBER}-"
 
-          DATABASES=$(pnpm --filter @next-lift/turso run db:list --prefix="${DB_PREFIX}" 2>/dev/null || true)
+          DATABASES=$(pnpm --silent --filter @next-lift/turso run db:list --prefix="${DB_PREFIX}" 2>/dev/null || true)
 
           for DB_NAME in $DATABASES; do
             echo "Deleting preview database: ${DB_NAME}"
-            pnpm --filter @next-lift/turso run db:delete --name="${DB_NAME}" || true
+            pnpm --silent --filter @next-lift/turso run db:delete --name="${DB_NAME}" || true
           done
 
           echo "Successfully deleted all preview databases for PR #${PR_NUMBER}"
