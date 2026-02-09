@@ -1,8 +1,8 @@
 import process from "node:process";
 import { R } from "@praha/byethrow";
 import { ErrorFactory } from "@praha/error-factory";
-import { parseEnv } from "../libs/parse-env";
-import { privateDynamicEnvSchema, privateStaticEnvSchema } from "../schema";
+import { parseEnv } from "../../helpers/parse-env";
+import { privateDynamicEnvSchema, privateStaticEnvSchema } from "../../schemas";
 
 export class ParsePrivateEnvError extends ErrorFactory({
 	name: "ParsePrivateEnvError",

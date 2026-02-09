@@ -1,6 +1,6 @@
 import { vi } from "vitest";
-import { createEnvProxy } from "../libs/create-env-proxy";
-import type { PrivateEnvKey } from "../schema";
+import { createMockEnv } from "../../helpers/create-mock-env";
+import type { PrivateEnvKey } from "../../schemas";
 
 const mockOverrides = vi.hoisted<Partial<Record<PrivateEnvKey, string>>>(
 	() => ({}),
@@ -8,7 +8,7 @@ const mockOverrides = vi.hoisted<Partial<Record<PrivateEnvKey, string>>>(
 
 vi.mock("@next-lift/env/private", () => ({
 	get env() {
-		return createEnvProxy(mockOverrides);
+		return createMockEnv(mockOverrides);
 	},
 }));
 

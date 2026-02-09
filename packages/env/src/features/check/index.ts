@@ -1,7 +1,7 @@
 import process from "node:process";
 import { R } from "@praha/byethrow";
-import { parsePrivateEnv } from "./private/parse-private-env";
-import { parsePublicEnv } from "./public/parse-public-env";
+import { parsePrivateEnv } from "./parse-private-env";
+import { parsePublicEnv } from "./parse-public-env";
 
 R.pipe(
 	R.do(),
