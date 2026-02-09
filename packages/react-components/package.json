@@ -28,7 +28,7 @@
 		"@storybook/react-vite": "10.1.9",
 		"@tailwindcss/postcss": "4.1.18",
 		"@tailwindcss/vite": "4.1.18",
-		"@tsconfig/create-react-app": "2.0.10",
+		"@tsconfig/create-react-app": "2.0.11",
 		"@tsconfig/strictest": "2.0.8",
 		"@types/react": "19.2.10",
 		"@types/react-dom": "19.2.3",

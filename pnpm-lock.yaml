@@ -131,8 +131,8 @@ importers:
         specifier: 4.1.18
         version: 4.1.18
       '@tsconfig/create-react-app':
-        specifier: 2.0.10
-        version: 2.0.10
+        specifier: 2.0.11
+        version: 2.0.11
       '@tsconfig/next':
         specifier: 2.0.5
         version: 2.0.5
@@ -348,8 +348,8 @@ importers:
         specifier: 4.1.18
         version: 4.1.18(vite@7.2.2(@types/node@24.10.10)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))
       '@tsconfig/create-react-app':
-        specifier: 2.0.10
-        version: 2.0.10
+        specifier: 2.0.11
+        version: 2.0.11
       '@tsconfig/strictest':
         specifier: 2.0.8
         version: 2.0.8
@@ -3788,8 +3788,8 @@ packages:
   '@ts-morph/common@0.11.1':
     resolution: {integrity: sha512-7hWZS0NRpEsNV8vWJzg7FEz6V8MaLNeJOmwmghqUXTpzk16V1LLZhdo+4QvE/+zv4cVci0OviuJFnqhEfoV3+g==}
 
-  '@tsconfig/create-react-app@2.0.10':
-    resolution: {integrity: sha512-cdQ7qpcYokWyAVVTOGR0Mnqss+ei/nOSUU0xrAmXyWl2pnnnDLFGyJ9i5nxEpRBgHxt9W+nNwLmpvVA2yR0hZQ==}
+  '@tsconfig/create-react-app@2.0.11':
+    resolution: {integrity: sha512-vvIx+rDshVTVyA0l8OAjt8LCFUX0xhp6I5me1ggoQCg4Lny0xLG2Y1aXC7b76TCAq5hbUwTRhKF1RR33Yl7mkA==}
 
   '@tsconfig/next@2.0.5':
     resolution: {integrity: sha512-Cnzzme52Hk+YWQX/BKbjxAyBmLJXQaXjhVBBLkCpUQK8j+aGBk4csWAt5XpbU64NHG5XxT2d/Yr9M0e1fxRN5A==}
@@ -11863,7 +11863,7 @@ snapshots:
       mkdirp: 1.0.4
       path-browserify: 1.0.1
 
-  '@tsconfig/create-react-app@2.0.10': {}
+  '@tsconfig/create-react-app@2.0.11': {}
 
   '@tsconfig/next@2.0.5': {}
 
