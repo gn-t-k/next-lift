@@ -1,4 +1,4 @@
-export const createEnvProxy = <TKey extends string>(
+export const createMockEnv = <TKey extends string>(
 	overrides: Partial<Record<TKey, string>>,
 ): Record<TKey, string> => {
 	return new Proxy({} as Record<TKey, string>, {

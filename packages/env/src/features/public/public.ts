@@ -1,8 +1,8 @@
 /** biome-ignore-all lint/complexity/useLiteralKeys: インデックスシグネチャからのプロパティアクセスはブラケット記法が必要 */
 /** biome-ignore-all lint/correctness/noProcessGlobal: ブラウザ環境では`node:process`のimportが不可のため、グローバルprocessを使用する */
 
-import { parseEnv } from "../libs/parse-env";
-import { publicDynamicEnvSchema, publicStaticEnvSchema } from "../schema";
+import { parseEnv } from "../../helpers/parse-env";
+import { publicDynamicEnvSchema, publicStaticEnvSchema } from "../../schemas";
 
 export const publicEnv = parseEnv({
 	staticEnvSchema: publicStaticEnvSchema,

@@ -5,12 +5,12 @@
 	"type": "module",
 	"sideEffects": false,
 	"exports": {
-		"./private": "./src/private/index.ts",
-		"./public": "./src/public/index.ts",
+		"./private": "./src/features/private/private.ts",
+		"./public": "./src/features/public/public.ts",
 		"./testing": "./src/testing/index.ts"
 	},
 	"scripts": {
-		"check": "tsx src/check.ts",
+		"check": "tsx src/features/check/index.ts",
 		"lint": "biome check .",
 		"test": "vitest run",
 		"test:watch": "vitest",

@@ -1,2 +1,2 @@
-export { mockPrivateEnv } from "../private/private.mock";
-export { mockPublicEnv } from "../public/public.mock";
+export { mockPrivateEnv } from "../features/private/private.mock";
+export { mockPublicEnv } from "../features/public/public.mock";

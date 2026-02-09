@@ -1,20 +1,18 @@
 /** biome-ignore-all lint/correctness/noProcessGlobal: Edge Runtimeでは`node:process`のimportが不可のため、グローバルprocessを使用する */
 
-import { parseEnv } from "../libs/parse-env";
-import { privateDynamicEnvSchema, privateStaticEnvSchema } from "../schema";
+import { parseEnv } from "../../helpers/parse-env";
+import { privateDynamicEnvSchema, privateStaticEnvSchema } from "../../schemas";
 
 // Node.js環境で.envファイルが存在する場合、自動的に読み込む
 // Edge Runtime: process.loadEnvFileが存在しないためスキップ
 // CI/Vercel: .envファイルが存在しないため、catchでスキップ
-// Next.js: 既にNext.jsが.envを読み込んでいるため、再設定されるが影響なし
-if (typeof process.loadEnvFile === "function") {
-	// import.meta.dirnameはNode.js v20.11.0+で使用可能
-	// このファイルはpackages/env/src/private/private.tsにあり、モノレポルートは4階層上
-	const dirname =
-		typeof import.meta.dirname === "string"
-			? import.meta.dirname
-			: new URL(".", import.meta.url).pathname;
-	const monorepoRoot = dirname.replace(/\/packages\/env\/.*$/, "");
+// Next.js build: import.meta.dirnameがundefinedのためスキップ（Next.jsが.envを読み込み済み）
+// Next.js dev: 既にNext.jsが.envを読み込んでいるため、再設定されるが影響なし
+if (
+	typeof process.loadEnvFile === "function" &&
+	typeof import.meta.dirname === "string"
+) {
+	const monorepoRoot = import.meta.dirname.replace(/\/packages\/env\/.*$/, "");
 
 	try {
 		process.loadEnvFile(`${monorepoRoot}/.env`);
