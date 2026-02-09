@@ -30,7 +30,7 @@
 		"@tailwindcss/vite": "4.1.18",
 		"@tsconfig/create-react-app": "2.0.11",
 		"@tsconfig/strictest": "2.0.8",
-		"@types/react": "19.2.10",
+		"@types/react": "19.2.13",
 		"@types/react-dom": "19.2.3",
 		"@vitest/browser-playwright": "4.0.9",
 		"@vitest/coverage-v8": "4.0.9",
