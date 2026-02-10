@@ -13,7 +13,7 @@
 		"@next-lift/tailwind-config": "workspace:*",
 		"clsx": "2.1.1",
 		"react": "19.2.4",
-		"react-aria-components": "1.13.0",
+		"react-aria-components": "1.15.1",
 		"react-dom": "19.2.4",
 		"tailwind-merge": "3.4.0",
 		"tailwind-variants": "3.2.2"
@@ -34,7 +34,7 @@
 		"@types/react-dom": "19.2.3",
 		"@vitest/browser-playwright": "4.0.9",
 		"@vitest/coverage-v8": "4.0.9",
-		"playwright": "1.58.1",
+		"playwright": "1.58.2",
 		"prop-types": "15.8.1",
 		"storybook": "10.1.9",
 		"tailwindcss": "4.1.18",
