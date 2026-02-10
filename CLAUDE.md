@@ -12,29 +12,37 @@
 - @docs/architecture-decision-record/overview.md : システムアーキテクチャと設計原則
 - @docs/model-based-ui-design/ : UI設計仕様（ユースケース、タスク分析、コンセプト定義）
 
-## コーディング規約
+## 開発ルール
 
-### コメント
+以下のルールファイルを参照:
 
-- コードコメントは日本語で記述する（ただし、コードから読み取れない内容のみ）
+- @.claude/rules/coding-style.md : コーディング規約
+- @.claude/rules/error-handling.md : エラー修正手順
+- @.claude/rules/testing.md : テスト開発ルール
 
-### 関数宣言
+## プロジェクト構造
 
-- 関数は`function`キーワードではなく、アロー関数（`const functionName = () => {}`）で記述する
-- 例外: `function`キーワードでしか書けない処理（例: ジェネレーター関数）の場合のみ許可
+```text
+apps/
+  web/   # Webアプリケーション
+  ios/   # iOSアプリケーション
 
-### ファイルとエクスポート
+packages/
+  env/                 # 環境変数の定義と取得
+  utilities/           # 汎用ユーティリティ関数
+  turso/               # Turso Platform APIとの通信
+  authentication/      # 認証とPer-User DBトークン管理
+  per-user-database/   # Per-User DBの作成とアクセス
+  react-components/    # 共通UIコンポーネント
+  tailwind-config/     # 共通スタイル定義
+```
 
-- 基本的に1つのファイルからは1つの関数/コンポーネントをexportする
-- ファイル名とexportする関数/コンポーネント名を揃える
-  - 例: `router-adapter.tsx` → `export const RouterAdapter`
-  - 例: `get-user-data.ts` → `export const getUserData`
+## 検証コマンド
 
-### 依存パッケージ
-
-- パッケージのバージョンは `^` や `~` などのレンジ指定を使わず、厳密なバージョン番号を指定する
-- Renovateを使用して常に最新の状態を保つ
-- 新しいパッケージを追加する際は、必ず最新バージョンを確認してから記述する（`npm view <package-name> version`）
+- `pnpm type-check` : 型チェック
+- `pnpm lint` : Biomeによるリント
+- `pnpm test` : テスト実行
+- `pnpm build` : ビルド確認
 
 ## 開発プロセス
 
@@ -70,15 +78,6 @@
 - とくに組み合わせ（例: monorepo + フレームワーク + デプロイサービス）の場合は、公式のベストプラクティスを最優先で確認
 - エラーが出たら、そのサービスの基本概念（例: Vercelの「Root Directory」）から理解する
 
-### エラー修正の手順
-
-- **CIやプレビュー環境で発生したエラーを修正する前に、必ず再現を行う**
-  1. まずテストで再現を試みる（最優先）
-  2. テストで再現が難しい場合は、ローカル環境で再現する
-  3. 再現できたら修正を行い、修正後に再現しなくなることを確認する
-  4. 確認が取れてからプッシュする
-- **プレビュー環境やCIに毎回プッシュして確認するのは非効率なので避ける**
-
 ### 開発ツールの活用
 
 - **調査・デバッグ時は、利用可能なMCPツールを最優先で使用する**
@@ -99,11 +98,3 @@
   - ADRで決定済みの内容を覆す提案は避ける
   - 変更が必要な場合は、新しいADRの作成を提案する
 - **ADRが見つからない場合のみ、新しい提案を行う**
-
-### Git ワークフロー
-
-- プルリクエストごとに新しいブランチを作成する
-- ブランチ命名規則: `<type>/<description>`（@.github/workflows/consistent-pull-request.yml参照）
-- mainブランチへの直接コミットは禁止
-- ブランチはPRマージ後に自動削除される（GitHubで設定済み）
-- PR作成時は `.github/pull_request_template.md` のテンプレートに従う
