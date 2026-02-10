@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+web-build/
+storybook-static/
+
+# Turbo cache
+.turbo/
+
+# Vercel
+.vercel/
+
+# Git
+.git/
+
+# Lock files (large)
+pnpm-lock.yaml
+
+# Coverage
+coverage/
+.nyc_output/
+*.lcov
+
+# Logs
+*.log
+
+# Expo
+.expo/
+
+# Database files
+*.db
+*.sqlite
+data/per-user-db/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE specific
+.idea/
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Sentry
+.sentryclirc
+sentry.properties
