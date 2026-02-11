@@ -1,0 +1,52 @@
+name: Document Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  document-review:
+    # Renovateによる依存関係更新PRを除外
+    if: ${{ !startsWith(github.head_ref, 'deps/') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            このPRの変更内容を分析し、ドキュメント更新漏れがないかチェックしてください。
+
+            ## チェック対象ドキュメント
+
+            以下のドキュメントが変更内容と整合しているか確認してください：
+
+            1. **CLAUDE.md** - 開発プロセス、ルール、プロジェクト構造の変更時
+            2. **.claude/rules/*.md** - コーディング規約、テストルール、エラー処理ルールの変更時
+            3. **docs/architecture-decision-record/*.md** - アーキテクチャ、技術スタック、設計パターンの変更時
+            4. **docs/project/overview.md** - 機能追加、開発計画の変更時
+            5. **docs/model-based-ui-design/** - UI設計、ユースケースの変更時
+            6. **各パッケージのREADME.md/CLAUDE.md** - パッケージ固有の変更時
+
+            ## レビュー方針
+
+            - 変更されたコードに対応するドキュメント更新が含まれているか確認
+            - 更新が必要だが含まれていない場合は、具体的に何を更新すべきか提案
+            - 軽微な変更（typo修正、リファクタリング）でドキュメント更新不要な場合は「更新不要」と明示
+            - 新しいADRが必要な場合は、その旨を提案
+
+            ## 出力形式
+
+            PRコメントとして、以下の形式で結果を報告：
+            - ✅ 更新済み: ドキュメントが適切に更新されている項目
+            - ⚠️ 要確認: 更新が必要かもしれない項目（理由と提案を含む）
+            - ❌ 更新漏れ: 明らかに更新が必要な項目（具体的な更新内容を提案）
+          claude_args: "--max-turns 5"
