@@ -49,4 +49,4 @@ jobs:
             - ✅ 更新済み: ドキュメントが適切に更新されている項目
             - ⚠️ 要確認: 更新が必要かもしれない項目（理由と提案を含む）
             - ❌ 更新漏れ: 明らかに更新が必要な項目（具体的な更新内容を提案）
-          claude_args: "--max-turns 5"
+          claude_args: "--max-turns 5 --allowedTools 'Bash(gh:*)'"
