@@ -58,5 +58,5 @@ jobs:
             gh pr comment ${{ github.event.pull_request.number }} --body "レビュー結果"
             ```
           claude_args: |
-            --max-turns 5
+            --max-turns 10
             --allowedTools Bash

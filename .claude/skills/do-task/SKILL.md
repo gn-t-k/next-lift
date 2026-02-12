@@ -1,4 +1,5 @@
 ---
+name: do-task
 description: Execute project tasks in depth-first order from docs/project/
 ---
 
