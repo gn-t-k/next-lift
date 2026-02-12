@@ -16,6 +16,7 @@
 
 以下のルールファイルを参照:
 
+- @.claude/rules/development-flow.md : 開発フロー（合意形成、設計プロセス）
 - @.claude/rules/coding-style.md : コーディング規約
 - @.claude/rules/error-handling.md : エラー修正手順
 - @.claude/rules/testing.md : テスト開発ルール
