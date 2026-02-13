@@ -58,8 +58,8 @@ importers:
         specifier: 3.0.0
         version: 3.0.0
       drizzle-kit:
-        specifier: 0.31.8
-        version: 0.31.8
+        specifier: 0.31.9
+        version: 0.31.9
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -177,7 +177,7 @@ importers:
         version: 1.3.1
       better-auth:
         specifier: 1.4.18
-        version: 1.4.18(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@libsql/client@0.17.0)(@op-engineering/op-sqlite@15.2.5(react-native@0.83.2(@babel/core@7.28.5)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4))(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(kysely@0.28.8))(next@16.1.6(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(vitest@4.0.16(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.10.12)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))
+        version: 1.4.18(drizzle-kit@0.31.9)(drizzle-orm@0.45.1(@libsql/client@0.17.0)(@op-engineering/op-sqlite@15.2.5(react-native@0.83.2(@babel/core@7.28.5)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4))(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(kysely@0.28.8))(next@16.1.6(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(vitest@4.0.16(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.10.12)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))
       drizzle-orm:
         specifier: 0.45.1
         version: 0.45.1(@libsql/client@0.17.0)(@op-engineering/op-sqlite@15.2.5(react-native@0.83.2(@babel/core@7.28.5)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4))(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(kysely@0.28.8)
@@ -201,8 +201,8 @@ importers:
         specifier: 24.10.12
         version: 24.10.12
       drizzle-kit:
-        specifier: 0.31.8
-        version: 0.31.8
+        specifier: 0.31.9
+        version: 0.31.9
       tsx:
         specifier: 4.21.0
         version: 4.21.0
@@ -284,8 +284,8 @@ importers:
         specifier: 24.10.12
         version: 24.10.12
       drizzle-kit:
-        specifier: 0.31.8
-        version: 0.31.8
+        specifier: 0.31.9
+        version: 0.31.9
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -5001,8 +5001,8 @@ packages:
     resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
     engines: {node: '>=12'}
 
-  drizzle-kit@0.31.8:
-    resolution: {integrity: sha512-O9EC/miwdnRDY10qRxM8P3Pg8hXe3LyU4ZipReKOgTwn4OqANmftj8XJz1UPUAS6NMHf0E2htjsbQujUTkncCg==}
+  drizzle-kit@0.31.9:
+    resolution: {integrity: sha512-GViD3IgsXn7trFyBUUHyTFBpH/FsHTxYJ66qdbVggxef4UBPHRYxQaRzYLTuekYnk9i5FIEL9pbBIwMqX/Uwrg==}
     hasBin: true
 
   drizzle-orm@0.45.1:
@@ -12947,7 +12947,7 @@ snapshots:
 
   basic-ftp@5.0.5: {}
 
-  better-auth@1.4.18(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@libsql/client@0.17.0)(@op-engineering/op-sqlite@15.2.5(react-native@0.83.2(@babel/core@7.28.5)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4))(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(kysely@0.28.8))(next@16.1.6(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(vitest@4.0.16(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.10.12)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2)):
+  better-auth@1.4.18(drizzle-kit@0.31.9)(drizzle-orm@0.45.1(@libsql/client@0.17.0)(@op-engineering/op-sqlite@15.2.5(react-native@0.83.2(@babel/core@7.28.5)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4))(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(kysely@0.28.8))(next@16.1.6(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(vitest@4.0.16(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.10.12)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2)):
     dependencies:
       '@better-auth/core': 1.4.18(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.8(zod@4.3.6))(jose@6.1.3)(kysely@0.28.8)(nanostores@1.0.1)
       '@better-auth/telemetry': 1.4.18(@better-auth/core@1.4.18(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.8(zod@4.3.6))(jose@6.1.3)(kysely@0.28.8)(nanostores@1.0.1))
@@ -12962,7 +12962,7 @@ snapshots:
       nanostores: 1.0.1
       zod: 4.3.6
     optionalDependencies:
-      drizzle-kit: 0.31.8
+      drizzle-kit: 0.31.9
       drizzle-orm: 0.45.1(@libsql/client@0.17.0)(@op-engineering/op-sqlite@15.2.5(react-native@0.83.2(@babel/core@7.28.5)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4))(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(kysely@0.28.8)
       next: 16.1.6(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react: 19.2.4
@@ -13401,7 +13401,7 @@ snapshots:
 
   dotenv@16.6.1: {}
 
-  drizzle-kit@0.31.8:
+  drizzle-kit@0.31.9:
     dependencies:
       '@drizzle-team/brocli': 0.10.2
       '@esbuild-kit/esm-loader': 2.6.5
