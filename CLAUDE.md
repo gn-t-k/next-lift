@@ -16,10 +16,11 @@
 
 以下のルールファイルを参照:
 
-- @.claude/rules/development-flow.md : 開発フロー（合意形成、設計プロセス）
 - @.claude/rules/coding-style.md : コーディング規約
 - @.claude/rules/error-handling.md : エラー修正手順
 - @.claude/rules/testing.md : テスト開発ルール
+
+作業内容が自明でない場合は `/dev-workflow` スキルを使用。
 
 ## プロジェクト構造
 
@@ -46,8 +47,6 @@ packages/
 - `pnpm build` : ビルド確認
 
 ## 開発の基本方針
-
-詳細な開発フローは @.claude/rules/development-flow.md を参照。
 
 ### 設計の意思決定
 
