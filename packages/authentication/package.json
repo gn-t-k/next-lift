@@ -21,6 +21,7 @@
 		"dev:db:reset": "tsx src/development/cli/reset.ts"
 	},
 	"dependencies": {
+		"@better-auth/expo": "1.4.18",
 		"@libsql/client": "0.17.0",
 		"@next-lift/env": "workspace:*",
 		"@next-lift/utilities": "workspace:*",
