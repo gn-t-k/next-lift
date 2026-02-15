@@ -129,18 +129,18 @@
     - [x] ローカルSQLiteでの動作確認
 
 - [ ] Web/iOS/Tursoの連携基盤
-  - [ ] Per-User Database管理機能
-    - [ ] per-user-databaseパッケージの作成
-      - [ ] パッケージの初期化
-      - [ ] ルート `.env` へのシンボリックリンク作成
-    - [ ] Per-User DB用Drizzleスキーマの定義
-    - [ ] Turso Platform API統合（作成・削除）
-    - [ ] 初回サインイン時のPer-User DB作成フロー
-    - [ ] Per-User DB作成ロジックのテスト（モック使用）
+  - [x] Per-User Database管理機能
+    - [x] per-user-databaseパッケージの作成
+      - [x] パッケージの初期化
+      - [x] ルート `.env` へのシンボリックリンク作成
+    - [x] Per-User DB用Drizzleスキーマの定義
+    - [x] Turso Platform API統合（作成・削除）
+    - [x] 初回サインイン時のPer-User DB作成フロー
+    - [x] Per-User DB作成ロジックのテスト（モック使用）
   - [ ] iOS: Better Auth統合
-    - [ ] @better-auth/expoのセットアップ
-    - [ ] iOS側での認証フロー実装
-    - [ ] セッション管理（expo-secure-store）
+    - [x] @better-auth/expoのセットアップ
+    - [x] iOS側での認証フロー実装
+    - [x] セッション管理（expo-secure-store）
     - [ ] サインイン・サインアウト機能の動作確認
   - [ ] iOS: Turso Embedded Replicas
     - [ ] op-sqliteでのEmbedded Replicas接続設定
