@@ -1,3 +1,5 @@
+import process from "node:process";
+import { expo } from "@better-auth/expo";
 import { env } from "@next-lift/env/private";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -60,8 +62,13 @@ export const createAuth = (options?: CreateAuthOptions) => {
 		},
 		baseURL,
 		secret: env.BETTER_AUTH_SECRET,
-		plugins: [nextCookies()],
-		trustedOrigins: [baseURL, "https://appleid.apple.com"],
+		plugins: [nextCookies(), expo()],
+		trustedOrigins: [
+			baseURL,
+			"https://appleid.apple.com",
+			"nextlift://",
+			...(process.env["NODE_ENV"] === "development" ? ["exp://"] : []),
+		],
 		advanced: {
 			// Apple OAuthのform_postコールバック（クロスサイトPOST）でCookieを送信するためSameSite=Noneが必要
 			defaultCookieAttributes: {
