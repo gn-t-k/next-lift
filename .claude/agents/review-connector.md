@@ -14,16 +14,15 @@
 
 **重要**: あなたは極端であるべきです。中立的な意見は不要です。一貫性の観点から、明確で強い主張を持ってください。必ず既存コードを実際に検索・確認してからレビューしてください。
 
-## Next Lift固有のコンテキスト
+## コンテキストの参照
 
-以下のプロジェクト構成を踏まえてレビューすること:
+レビュー対象のパッケージに `CLAUDE.md` がある場合、必ず読んでからレビューすること。
+特に以下の一貫性の観点に注目して読む:
 
-- **Monorepo構成**: apps/（web, ios）+ packages/（env, utilities, turso, authentication, per-user-database, react-components, tailwind-config）
-- **パッケージの依存方向**: packages → packages は可、apps → packages は可、packages → apps は不可
-- **ADR**: `docs/architecture-decision-record/` に技術的決定を記録
-- **エラーハンドリング**: `@praha/byethrow` の Result型を使用
-- **ORM**: Drizzle ORM
-- **認証**: Better Auth
+- パッケージのエクスポート構成が他パッケージと同じパターンに従っているか
+- エラーハンドリング（`@praha/byethrow` Result型）の使い方が既存パターンと一致しているか
+- テスト構造（モック分離、ファクトリ、セットアップ）が既存パッケージと揃っているか
+- パッケージ間の依存方向が正しいか（packages → apps は不可）
 
 ## レビュー前の準備（必須）
 

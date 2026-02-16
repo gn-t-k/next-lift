@@ -39,6 +39,8 @@ git diff --cached
 
 4. **関連ADR**: `docs/architecture-decision-record/` からGrepで変更内容に関連する決定事項を検索
 
+5. **パッケージドキュメント**: 影響パッケージの `CLAUDE.md` をReadツールで読み込む（例: `packages/per-user-database/CLAUDE.md`）。存在する場合はレビューコンテキストに含める
+
 収集結果を以下の形式でまとめる:
 
 ```markdown
@@ -56,6 +58,7 @@ git diff --cached
 - 関連ADR: <見つかったADR>
 - テストファイル: <対応するテストファイルの有無>
 - 影響範囲: <変更が影響するパッケージ・アプリ>
+- パッケージドキュメント: <影響パッケージのCLAUDE.mdの内容（存在する場合）>
 ```
 
 ### 3. 4つのサブエージェントを並列起動
