@@ -1,5 +1,20 @@
 {
 	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
 	"extends": ["github>praha-inc/renovate-config"],
-	"rebaseWhen": "never"
+	"rebaseWhen": "never",
+	"packageRules": [
+		{
+			"description": "iOS側のReact/React Nativeはmajor/minor更新を無効化（Expo SDKアップグレード時に手動更新）",
+			"matchPackageNames": ["react", "react-dom", "react-native", "@types/react"],
+			"matchFileNames": ["apps/ios/**"],
+			"matchUpdateTypes": ["major", "minor"],
+			"enabled": false
+		},
+		{
+			"description": "Web側のReact関連パッケージをグループ化",
+			"groupName": "react packages (web)",
+			"matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom"],
+			"matchFileNames": ["apps/web/**", "packages/react-components/**"]
+		}
+	]
 }
