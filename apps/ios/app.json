@@ -2,6 +2,7 @@
 	"expo": {
 		"name": "Next Lift",
 		"slug": "next-lift",
+		"scheme": "nextlift",
 		"version": "1.0.0",
 		"orientation": "portrait",
 		"icon": "./assets/icon.png",
@@ -14,16 +15,18 @@
 		},
 		"ios": {
 			"supportsTablet": true,
-			"bundleIdentifier": "dev.nextlift.ios"
+			"bundleIdentifier": "training.next-lift.ios",
+			"usesAppleSignIn": true,
+			"appleTeamId": "M962QB54YW"
 		},
-		"android": {
-			"adaptiveIcon": {
-				"foregroundImage": "./assets/adaptive-icon.png",
-				"backgroundColor": "#ffffff"
-			},
-			"edgeToEdgeEnabled": true,
-			"predictiveBackGestureEnabled": false
-		},
+		"plugins": [
+			[
+				"@react-native-google-signin/google-signin",
+				{
+					"iosUrlScheme": "com.googleusercontent.apps.240005413639-a5eq5257k4fiqpvt3f694p102a92cbdi"
+				}
+			]
+		],
 		"web": {
 			"favicon": "./assets/favicon.png"
 		}
