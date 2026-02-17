@@ -55,7 +55,7 @@ Better Authを使った認証とPer-User DBクレデンシャル管理を担う�
 ## マルチプラットフォーム対応
 
 - **Web（Next.js）**: `nextCookies()` プラグインでCookieベースのセッション管理
-- **iOS（Expo）**: `expo-secure-store` でセッション永続化
+- **iOS（Expo）**: `@better-auth/expo` プラグイン + `expo-secure-store` でセッション永続化
 
 ## 既知のリスクと制約
 
