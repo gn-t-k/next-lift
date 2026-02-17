@@ -18,11 +18,11 @@ describe("getAppleIdToken", () => {
 			mockAppleSignInOk("apple-id-token");
 		});
 
-		test("ID Token と raw nonce を返すこと", async () => {
+		test("ID Token と nonce（ハッシュ済み）を返すこと", async () => {
 			const result = await getAppleIdToken();
 
 			expect(result.token).toBe("apple-id-token");
-			expect(result.nonce).toBe("ab".repeat(32));
+			expect(result.nonce).toBe("hashed-nonce");
 		});
 
 		test("Apple にはハッシュ済み nonce が渡されること", async () => {

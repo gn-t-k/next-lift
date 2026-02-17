@@ -43,6 +43,8 @@ export const createAuth = (options?: CreateAuthOptions) => {
 				clientId: env.APPLE_CLIENT_ID,
 				// AppleがclientSecretとしてJWTを要求するため
 				clientSecret: appleClientSecret,
+				// iOSアプリからのApple Sign-InではIDトークンのaudがバンドルIDになるため、両方を許可する
+				audience: [env.APPLE_CLIENT_ID, "training.next-lift.ios"],
 			},
 			google: {
 				clientId: env.GOOGLE_CLIENT_ID,

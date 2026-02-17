@@ -15,19 +15,18 @@
 		},
 		"ios": {
 			"supportsTablet": true,
-			"bundleIdentifier": "dev.nextlift.ios",
-			"usesAppleSignIn": true
+			"bundleIdentifier": "training.next-lift.ios",
+			"usesAppleSignIn": true,
+			"appleTeamId": "M962QB54YW"
 		},
-		"plugins": ["@react-native-google-signin/google-signin"],
-		"android": {
-			"adaptiveIcon": {
-				"foregroundImage": "./assets/adaptive-icon.png",
-				"backgroundColor": "#ffffff"
-			},
-			"edgeToEdgeEnabled": true,
-			"predictiveBackGestureEnabled": false,
-			"package": "dev.nextlift.ios"
-		},
+		"plugins": [
+			[
+				"@react-native-google-signin/google-signin",
+				{
+					"iosUrlScheme": "com.googleusercontent.apps.240005413639-a5eq5257k4fiqpvt3f694p102a92cbdi"
+				}
+			]
+		],
 		"web": {
 			"favicon": "./assets/favicon.png"
 		}

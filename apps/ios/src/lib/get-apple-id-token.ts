@@ -25,5 +25,5 @@ export const getAppleIdToken = async (): Promise<{
 		throw new Error("Apple Sign-In: ID Token を取得できませんでした");
 	}
 
-	return { token: credential.identityToken, nonce: rawNonce };
+	return { token: credential.identityToken, nonce: hashedNonce };
 };
