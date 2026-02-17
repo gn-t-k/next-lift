@@ -28,14 +28,14 @@
 		"expo-secure-store": "15.0.8",
 		"expo-status-bar": "3.0.9",
 		"expo-web-browser": "15.0.10",
-		"react": "19.1.0",
-		"react-dom": "19.1.0",
+		"react": "19.2.4",
+		"react-dom": "19.2.4",
 		"react-native": "0.81.5"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.3.6",
 		"@tsconfig/strictest": "2.0.8",
-		"@types/react": "19.1.17",
+		"@types/react": "19.2.14",
 		"babel-plugin-inline-import": "3.0.0",
 		"drizzle-kit": "0.31.9",
 		"typescript": "5.9.3",
