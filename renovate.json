@@ -5,7 +5,7 @@
 	"packageRules": [
 		{
 			"description": "iOS側のReact/React Nativeはmajor/minor更新を無効化（Expo SDKアップグレード時に手動更新）",
-			"matchPackageNames": ["react", "react-dom", "react-native", "@types/react"],
+			"matchPackageNames": ["react", "react-native", "@types/react"],
 			"matchFileNames": ["apps/ios/**"],
 			"matchUpdateTypes": ["major", "minor"],
 			"enabled": false
