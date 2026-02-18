@@ -22,7 +22,7 @@
 		"@types/node": "24.10.13",
 		"tsx": "4.21.0",
 		"typescript": "5.9.3",
-		"vitest": "4.0.16"
+		"vitest": "4.0.18"
 	},
 	"dependencies": {
 		"@next-lift/utilities": "workspace:*",
