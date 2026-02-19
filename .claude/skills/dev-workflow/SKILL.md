@@ -151,7 +151,7 @@ TDDサイクルでタスクを実装する。
 
 ### 手順
 
-Exploreエージェント（subagent_type=Explore）でレビューを行う。
+`multi-review`スキルでレビューをするかどうかユーザーに質問する。`multi-review`スキルでレビューする必要がなければ、Exploreエージェント（subagent_type=Explore）でレビューを行う。
 
 ### 確認観点
 
