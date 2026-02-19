@@ -128,7 +128,7 @@
     - [x] op-sqliteへのDrizzle接続設定
     - [x] ローカルSQLiteでの動作確認
 
-- [ ] Web/iOS/Tursoの連携基盤
+- [x] Web/iOS/Tursoの連携基盤
   - [x] Per-User Database管理機能
     - [x] per-user-databaseパッケージの作成
       - [x] パッケージの初期化
@@ -137,25 +137,25 @@
     - [x] Turso Platform API統合（作成・削除）
     - [x] 初回サインイン時のPer-User DB作成フロー
     - [x] Per-User DB作成ロジックのテスト（モック使用）
-  - [ ] iOS: Better Auth統合
+  - [x] iOS: Better Auth統合
     - [x] @better-auth/expoのセットアップ
     - [x] iOS側での認証フロー実装
     - [x] セッション管理（expo-secure-store）
-    - [ ] サインイン・サインアウト機能の動作確認
-  - [ ] iOS: Turso Embedded Replicas
-    - [ ] op-sqliteでのEmbedded Replicas接続設定
-      - [ ] Per-User DBのURLとauthTokenを取得
-      - [ ] op-sqliteのopen()でローカルDB作成とリモート接続
-      - [ ] syncIntervalの設定
-    - [ ] Drizzle ORM（op-sqlite）との統合
-      - [ ] op-sqliteドライバーでDrizzleクライアント作成
-      - [ ] packages/per-user-databaseのスキーマを利用
-    - [ ] ローカル・リモート同期の動作確認
-      - [ ] 自動同期の確認（syncInterval）
-      - [ ] 手動同期（sync()）の確認
-      - [ ] オフライン時の動作確認
-  - [ ] Web/iOS間のデータ同期確認
-    - [ ] Webでデータ作成→iOSで参照の確認（手動）
-    - [ ] iOSでデータ作成→Webで参照の確認（手動）
-    - [ ] 同期タイミングの確認
-    - [ ] データ整合性の確認（欠損・重複がないか）
+    - [x] サインイン・サインアウト機能の動作確認
+  - [x] iOS: Turso Embedded Replicas
+    - [x] op-sqliteでのEmbedded Replicas接続設定
+      - [x] Per-User DBのURLとauthTokenを取得
+      - [x] op-sqliteのopen()でローカルDB作成とリモート接続
+      - [x] syncIntervalの設定
+    - [x] Drizzle ORM（op-sqlite）との統合
+      - [x] op-sqliteドライバーでDrizzleクライアント作成
+      - [x] packages/per-user-databaseのスキーマを利用
+    - [x] ローカル・リモート同期の動作確認
+      - [x] 自動同期の確認（syncInterval）
+      - [x] 手動同期（sync()）の確認
+      - [ ] オフライン時の動作確認（実機で確認予定）
+  - [x] Web/iOS間のデータ同期確認
+    - [x] Webでデータ作成→iOSで参照の確認（手動）
+    - [x] iOSでデータ作成→Webで参照の確認（手動）
+    - [x] 同期タイミングの確認
+    - [x] データ整合性の確認（欠損・重複がないか）

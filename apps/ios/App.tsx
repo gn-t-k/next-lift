@@ -4,6 +4,7 @@ import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { HomeScreen } from "./src/components/home-screen";
 import { SignInScreen } from "./src/components/sign-in-screen";
 import { useSession } from "./src/lib/auth-client";
+import { DatabaseProvider } from "./src/lib/database-context";
 
 const App: FC = () => {
 	const { data: session, isPending } = useSession();
@@ -17,11 +18,20 @@ const App: FC = () => {
 		);
 	}
 
+	if (session == null) {
+		return (
+			<>
+				<SignInScreen />
+				<StatusBar style="auto" />
+			</>
+		);
+	}
+
 	return (
-		<>
-			{session ? <HomeScreen /> : <SignInScreen />}
+		<DatabaseProvider>
+			<HomeScreen />
 			<StatusBar style="auto" />
-		</>
+		</DatabaseProvider>
 	);
 };
 
