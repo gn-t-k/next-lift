@@ -13,7 +13,7 @@ Better Authを使った認証とPer-User DBクレデンシャル管理を担う�
 | エクスポートパス | 機能 |
 | --- | --- |
 | `./create-auth` | Better Authインスタンス生成（OAuthプロバイダー、フック設定） |
-| `./user-database-credentials` | Per-User DBクレデンシャルのCRUD |
+| `./user-database-credentials` | Per-User DBクレデンシャルのCRUD、有効なクレデンシャル取得（期限切れ時自動更新） |
 | `./integrations/better-auth-nextjs` | Next.js向けBetter Auth統合 |
 | `./integrations/better-auth-react` | React/Expo向けBetter Auth統合 |
 
