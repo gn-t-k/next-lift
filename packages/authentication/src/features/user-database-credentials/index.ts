@@ -9,6 +9,10 @@ export {
 	UserDatabaseCredentialsNotFoundError,
 } from "./get-user-database-credentials";
 export {
+	type GetValidCredentialsError,
+	getValidCredentials,
+} from "./get-valid-credentials";
+export {
 	RefreshUserDatabaseTokenError,
 	refreshUserDatabaseToken,
 } from "./refresh-user-database-token";
