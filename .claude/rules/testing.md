@@ -16,9 +16,85 @@
 
 ## モックパターン
 
-- 実装ファイルと同じディレクトリに `{機能名}.mock.ts` を配置
-- `vi.spyOn()` でモジュール関数をスパイ
-- 成功/失敗のモック関数を `mockXxxOk` / `mockXxxError` として公開
+### mockファイルの作成基準
+
+- **mockファイルを作る**: モジュールからエクスポートされた関数（依存先）を差し替える場合
+  - 例: `create-database.mock.ts` で `createDatabase` をスパイ
+- **インライン `vi.fn()`**: テスト対象に渡すコールバックや引数の場合、またはグローバルAPI（`globalThis.fetch`）を差し替える場合
+  - 例: `vi.fn().mockResolvedValue("success")` をテスト対象の引数に渡す
+  - 例: `globalThis.fetch = vi.fn()` でfetchを差し替え
+
+### mockファイルの構造
+
+```ts
+import * as module from "./実装ファイル";
+
+export const mockXxxOk = (overrides?: Partial<成功時の型>) => {
+  return vi.spyOn(module, "関数名").mockResolvedValue(
+    R.succeed({ ...デフォルト値, ...overrides }),
+  );
+};
+
+export const mockXxxError = (error: エラー型) => {
+  return vi.spyOn(module, "関数名").mockResolvedValue(R.fail(error));
+};
+```
+
+- `import * as module` でモジュール全体をインポートし、`vi.spyOn(module, "関数名")` で差し替える
+- `mockXxxOk` は `overrides` 引数でデフォルト値を部分上書き可能にする
+- `mockXxxError` は具体的なエラー型を引数に取る
+- スパイオブジェクトを `return` する（テスト側で呼び出し引数を検証できるように）
+
+### 命名規則
+
+- 成功: `mockXxxOk`、失敗: `mockXxxError`
+- `Xxx` はモック対象の関数名に対応させる（例: `createDatabase` → `mockCreateDatabaseOk`）
+
+### モックのセットアップ位置
+
+- `describe` のすぐ下の `beforeEach` でモックをセットアップする
+- `describe` にシナリオの条件（前提）、`test` に期待値（検証）を書く構造になるため、テストの追加が容易になる
+
+```ts
+describe("トークン発行に失敗したとき", () => {
+  // describe = 条件 → beforeEachでその条件を再現
+  beforeEach(() => {
+    mockCreateDatabaseOk();
+    mockIssueTokenError(new IssueTokenError());
+  });
+
+  // test = 期待値のみ → テスト追加時はtestブロックを足すだけ
+  test("エラーが返されること", async () => { ... });
+});
+```
+
+### テストでのスパイ利用
+
+- 呼び出し引数を検証する場合: `let spy: ReturnType<typeof mockXxxOk>` で型付けし、`beforeEach` で代入してテストで参照する
+- 結果のみ検証する場合: `beforeEach` で `mockXxxOk()` を呼ぶだけでスパイ参照は不要
+
+```ts
+// 呼び出し引数を検証するパターン
+let createDatabaseSpy: ReturnType<typeof mockCreateDatabaseOk>;
+beforeEach(() => {
+  createDatabaseSpy = mockCreateDatabaseOk({ name: "test-db" });
+});
+test("...", async () => {
+  expect(createDatabaseSpy).toHaveBeenCalledWith("test-db");
+});
+
+// 結果のみ検証するパターン
+beforeEach(() => {
+  mockCreateDatabaseOk();
+  mockIssueTokenError(new IssueTokenError());
+});
+```
+
+### パッケージ間のモック共有
+
+- パッケージ内の `testing/index.ts` からmock関数を再エクスポートする
+- 利用側は `@next-lift/xxx/testing` でインポートする
+- `package.json` の `exports` に `"./testing"` エントリを定義する
 
 ## テストデータ生成
 
