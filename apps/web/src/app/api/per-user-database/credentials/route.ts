@@ -4,9 +4,12 @@ import {
 } from "@next-lift/authentication/user-database-credentials";
 import { R } from "@praha/byethrow";
 import { headers } from "next/headers";
+import { connection } from "next/server";
 import { auth } from "../../../../libs/auth";
 
 export const GET = async () => {
+	await connection();
+
 	const session = await auth.api.getSession({
 		headers: await headers(),
 	});

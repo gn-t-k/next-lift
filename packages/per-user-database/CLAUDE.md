@@ -17,6 +17,7 @@
 | `./apply-migration` | マイグレーション適用 |
 | `./database-schemas` | Drizzleテーブル定義 |
 | `./testing` | モック関数・ファクトリ |
+| `./migrations` | Expo/React Native用マイグレーションファイル |
 
 ## DB作成フロー
 
@@ -38,6 +39,12 @@
 - **DB不整合**: DB作成成功後にトークン発行が失敗すると、DBは存在するがアクセスできない状態になる（`createDatabase` の冪等性で再試行可能）
 - **マイグレーション失敗**: 接続時のマイグレーションが失敗した場合、ユーザーはDBにアクセスできない
 - **スケール上限**: Turso Scalerプランで最大10,000データベース
+
+## Expo/React Native対応
+
+- `dialect: "sqlite" + driver: "expo"` 設定により、SQLマイグレーションとReact Native用の `migrations.js` を同時生成
+- TursoはSQLiteベースのため、生成されるSQLは `dialect: "turso"` と同一
+- `migrations.js` は `drizzle/migrations.js` にエクスポートされ、iOSアプリから `@next-lift/per-user-database/migrations` でインポート可能
 
 ## テスト環境
 
