@@ -11,9 +11,17 @@ vi.mock("expo-apple-authentication", () => mockAppleAuthentication);
 
 vi.mock("expo-crypto", () => mockCrypto);
 
+vi.mock("expo-secure-store", () => ({
+	getItem: vi.fn(),
+	setItem: vi.fn(),
+	deleteItemAsync: vi.fn(),
+}));
+
 // auth-clientはbetter-auth/expo-secure-storeに依存しテスト環境では読み込めないためモック
 vi.mock("../lib/auth-client", () => ({
-	authClient: {},
+	authClient: {
+		getCredentials: vi.fn(),
+	},
 	signIn: async () => ({ data: {}, error: null }),
 	signOut: async () => ({ data: {}, error: null }),
 	useSession: () => ({ data: null }),
