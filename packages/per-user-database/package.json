@@ -8,6 +8,7 @@
 		"./client": "./src/features/client/create-per-user-database-client.ts",
 		"./create-database": "./src/features/create-database/create-turso-per-user-database.ts",
 		"./apply-migration": "./src/features/apply-migration/apply-migration.ts",
+		"./migrations": "./drizzle/migrations.js",
 		"./testing": "./src/testing/index.ts"
 	},
 	"scripts": {
