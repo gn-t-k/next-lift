@@ -1,6 +1,7 @@
 import { expoClient } from "@better-auth/expo/client";
 import { createAuthClient } from "better-auth/react";
 import * as SecureStore from "expo-secure-store";
+import { perUserDatabasePlugin } from "./per-user-database-plugin";
 
 // biome-ignore lint/correctness/noProcessGlobal: Expoではprocess.envはMetroがビルド時にインライン展開する
 const API_URL = process.env["EXPO_PUBLIC_API_URL"];
@@ -17,6 +18,7 @@ export const authClient = createAuthClient({
 			storagePrefix: "next-lift",
 			storage: SecureStore,
 		}),
+		perUserDatabasePlugin,
 	],
 });
 
