@@ -6,17 +6,20 @@
 	"exports": {
 		".": "./src/create-lazy-proxy.ts",
 		"./create-lazy-proxy": "./src/create-lazy-proxy.ts",
-		"./generate-id": "./src/generate-id.ts"
+		"./generate-id": "./src/generate-id.ts",
+		"./with-retry": "./src/with-retry.ts"
 	},
 	"scripts": {
 		"lint": "biome check .",
-		"type-check": "tsc --noEmit"
+		"type-check": "tsc --noEmit",
+		"test": "vitest run"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.3.6",
 		"@tsconfig/strictest": "2.0.8",
 		"@types/node": "24.10.13",
-		"typescript": "5.9.3"
+		"typescript": "5.9.3",
+		"vitest": "4.0.18"
 	},
 	"dependencies": {
 		"nanoid": "5.1.6"
