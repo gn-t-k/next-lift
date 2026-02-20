@@ -62,4 +62,5 @@ Webの実装をベースに、モバイル特化機能を追加:
 
 - [システムアーキテクチャ](../architecture-decision-record/overview.md) - Next Liftの全体アーキテクチャ
 - [フェーズ1タスク](./001-infra.md) - インフラ基盤整備の詳細タスク
+- [フェーズ2タスク](./002-web-app.md) - Webアプリケーション実装のタスクツリー
 - [UI設計仕様](../model-based-ui-design/) - ユースケース、タスク分析、コンセプト定義
