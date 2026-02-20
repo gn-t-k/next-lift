@@ -254,9 +254,6 @@ importers:
 
   packages/env:
     dependencies:
-      '@next-lift/utilities':
-        specifier: workspace:*
-        version: link:../utilities
       '@praha/byethrow':
         specifier: 0.9.0
         version: 0.9.0(typescript@5.9.3)
