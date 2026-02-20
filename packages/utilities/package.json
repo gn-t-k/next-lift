@@ -4,7 +4,6 @@
 	"private": true,
 	"type": "module",
 	"exports": {
-		".": "./src/create-lazy-proxy.ts",
 		"./create-lazy-proxy": "./src/create-lazy-proxy.ts",
 		"./generate-id": "./src/generate-id.ts",
 		"./with-retry": "./src/with-retry.ts"
