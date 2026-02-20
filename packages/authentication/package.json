@@ -7,7 +7,8 @@
 		"./create-auth": "./src/features/instance/create-auth.ts",
 		"./user-database-credentials": "./src/features/user-database-credentials/index.ts",
 		"./integrations/better-auth-nextjs": "./src/features/integrations/better-auth-nextjs.ts",
-		"./integrations/better-auth-react": "./src/features/integrations/better-auth-react.ts"
+		"./integrations/better-auth-react": "./src/features/integrations/better-auth-react.ts",
+		"./testing": "./src/testing/index.ts"
 	},
 	"scripts": {
 		"lint": "biome check .",

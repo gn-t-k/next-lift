@@ -1,11 +1,9 @@
-import {
-	getValidCredentials,
-	UserDatabaseCredentialsNotFoundError,
-} from "@next-lift/authentication/user-database-credentials";
+import { UserDatabaseCredentialsNotFoundError } from "@next-lift/authentication/user-database-credentials";
 import { R } from "@praha/byethrow";
 import { headers } from "next/headers";
 import { connection } from "next/server";
 import { auth } from "../../../../libs/auth";
+import { getCredentials } from "./_queries/get-credentials";
 
 export const GET = async () => {
 	await connection();
@@ -18,7 +16,7 @@ export const GET = async () => {
 		return new Response("Unauthorized", { status: 401 });
 	}
 
-	const result = await getValidCredentials(session.user.id);
+	const result = await getCredentials(session.user.id);
 
 	if (R.isFailure(result)) {
 		if (result.error instanceof UserDatabaseCredentialsNotFoundError) {
@@ -29,16 +27,9 @@ export const GET = async () => {
 		return new Response("Internal Server Error", { status: 500 });
 	}
 
-	return Response.json(
-		{
-			url: result.value.url,
-			authToken: result.value.token,
-			expiresAt: result.value.expiresAt.toISOString(),
+	return Response.json(result.value, {
+		headers: {
+			"Cache-Control": "no-store",
 		},
-		{
-			headers: {
-				"Cache-Control": "no-store",
-			},
-		},
-	);
+	});
 };

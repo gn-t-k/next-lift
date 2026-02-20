@@ -6,8 +6,8 @@ on:
 
 jobs:
   document-review:
-    # Renovateによる依存関係更新PRを除外
-    if: ${{ !startsWith(github.head_ref, 'deps/') }}
+    # Renovateによる依存関係更新PRとBot起因のイベントを除外
+    if: ${{ !startsWith(github.head_ref, 'deps/') && github.actor != 'claude[bot]' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -22,6 +22,7 @@ jobs:
       - uses: anthropics/claude-code-action@edd85d61533cbba7b57ed0ca4af1750b1fdfd3c4 # v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          allowed_bots: "next-lift-merge-master"
           prompt: |
             このPRの変更内容を分析し、ドキュメント更新漏れがないかチェックしてください。
 
