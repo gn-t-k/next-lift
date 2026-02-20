@@ -6,7 +6,7 @@
 
 | エクスポートパス | 機能 |
 | --- | --- |
-| `.` / `./create-lazy-proxy` | 遅延初期化Proxy |
+| `./create-lazy-proxy` | 遅延初期化Proxy |
 | `./generate-id` | nanoidベースのID生成 |
 | `./with-retry` | リトライ処理 + 指数バックオフ |
 
