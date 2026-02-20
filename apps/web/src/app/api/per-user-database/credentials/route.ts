@@ -1,11 +1,7 @@
-import {
-	getValidCredentials,
-	UserDatabaseCredentialsNotFoundError,
-} from "@next-lift/authentication/user-database-credentials";
-import { R } from "@praha/byethrow";
 import { headers } from "next/headers";
 import { connection } from "next/server";
 import { auth } from "../../../../libs/auth";
+import { getCredentialsResponse } from "./_queries/get-credentials-response";
 
 export const GET = async () => {
 	await connection();
@@ -18,27 +14,5 @@ export const GET = async () => {
 		return new Response("Unauthorized", { status: 401 });
 	}
 
-	const result = await getValidCredentials(session.user.id);
-
-	if (R.isFailure(result)) {
-		if (result.error instanceof UserDatabaseCredentialsNotFoundError) {
-			return new Response("Not Found", { status: 404 });
-		}
-
-		console.error("[Per-User DB Credentials Error]", result.error);
-		return new Response("Internal Server Error", { status: 500 });
-	}
-
-	return Response.json(
-		{
-			url: result.value.url,
-			authToken: result.value.token,
-			expiresAt: result.value.expiresAt.toISOString(),
-		},
-		{
-			headers: {
-				"Cache-Control": "no-store",
-			},
-		},
-	);
+	return getCredentialsResponse(session.user.id);
 };
