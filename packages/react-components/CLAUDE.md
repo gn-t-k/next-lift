@@ -1,14 +1,51 @@
 # packages/react-components
 
-このパッケージは、Next LiftのWebアプリケーション（apps/web）で使用するReactコンポーネントライブラリです。
+Next LiftのWebアプリケーション（apps/web）で使用するReactコンポーネントライブラリ。React DOM向け（React Native向けは`packages/react-native-components`）。
 
-**注意**: このパッケージはReact DOM向けです。React Native（iOS）向けのコンポーネントは`packages/react-native-components`で管理します。
+## 機能
 
-## コンポーネント実装規約
+| パス | 説明 |
+| --- | --- |
+| `./ui` | UIコンポーネント群（Button等）|
+| `./lib` | `cn`（通常HTML要素用）、`cx`（React Aria Components用）クラス名ユーティリティ |
+| `./demo` | Storybook用デモコンポーネント |
+| `pnpm storybook` | Storybookの起動 |
+| `pnpm ui:add` | shadcnコンポーネントの追加 |
+
+## 使い方
+
+### クラス名ユーティリティの使い分け
+
+#### `cn` - 通常のHTML要素用
+
+```typescript
+import { cn } from "@next-lift/react-components/lib";
+
+// 通常のHTML要素（div, pre, span等）に使用
+<div className={cn("bg-primary", "text-white", className)} />
+```
+
+#### `cx` - React Aria Components用
+
+```typescript
+import { cx } from "@next-lift/react-components/lib";
+
+// React Aria Components（Button, Link, Dialog等）に使用
+// className レンダープロップ（関数）をサポート
+<Button className={cx("bg-primary", "text-white")} />
+```
+
+### コンポーネントの利用
+
+```typescript
+import { Button } from "@next-lift/react-components/ui";
+
+<Button variant="primary">ボタン</Button>
+```
+
+## 開発ガイド
 
 ### コンポーネントの書き方
-
-すべてのReactコンポーネントは以下の形式で実装してください：
 
 ```typescript
 import type { FC } from "react";
@@ -23,64 +60,20 @@ export const ComponentName: FC<Props> = ({ ...props }) => {
 };
 ```
 
-**重要なポイント:**
+**ポイント:**
+- `import type { FC }` でFCをimport（Tree-shakingのため）
+- Props型は`export`しない、名前は`Props`、`type`を使用（`interface`ではなく）
+- アロー関数 + FC型注釈を使用（`export function`ではなく`export const`）
+- React 19では`forwardRef`が不要。`ref`は自動的にpropsの一部として扱われる
 
-1. **型定義**
-   - `import type { FC }` でFCをimport（Tree-shakingのため）
-   - Props型は`export`しない（外部に公開しない）
-   - Props型名は`Props`（シンプルな名前）
-   - `type`を使用（`interface`ではなく）
+### cn / cx の実装詳細
 
-2. **関数定義**
-   - アロー関数 + FC型注釈を使用
-   - `export function`ではなく`export const`
+- `cn`: `clsx` + `tailwind-merge` → 戻り値は `string`
+- `cx`: `composeRenderProps` + `tailwind-merge` → 戻り値は `string | ((v: T) => string)`
+- React Aria Componentsの`className`プロパティはレンダープロップ（関数）を受け付けるため、`cx`が必要
 
-3. **ref の扱い（React 19）**
-   - React 19では`forwardRef`が不要
-   - `ref`は自動的にpropsの一部として扱われる
-   - Props型に`ref?: React.Ref<...>`を含める必要なし
-   - コンポーネント内で`ref`を明示的に取り出す必要なし
-   - `{...props}`でネストされたコンポーネントに自動的に渡される
+## 制約と注意事項
 
-### 参考実装
-
-- [src/ui/button.tsx](src/ui/button.tsx): React 19のref仕様に準拠した実装例
-
-## クラス名ユーティリティの使い分け
-
-### `cn` - 通常のHTML要素用
-
-- **用途**: 通常のHTML要素の`className`属性
-- **対象**: `<div>`, `<pre>`, `<span>`等
-- **実装**: `clsx` + `tailwind-merge`
-- **戻り値**: `string`
-
-```typescript
-import { cn } from "../lib";
-
-<div className={cn("bg-primary", "text-white", className)} />
-```
-
-### `cx` - React Aria Components用
-
-- **用途**: React Aria Componentsの`className`レンダープロップ
-- **対象**: `<Button>`, `<Link>`, `<Dialog>`等のReact Ariaコンポーネント
-- **実装**: `composeRenderProps` + `tailwind-merge`
-- **戻り値**: `string | ((v: T) => string)`
-
-```typescript
-import { cx } from "../lib";
-
-<Button className={cx("bg-primary", "text-white")} />
-```
-
-### 使い分けの判断基準
-
-1. React Ariaコンポーネント（`react-aria-components`からimport）→ `cx`
-2. 通常のHTML要素 → `cn`
-
-### 理由
-
-React Aria Componentsの`className`プロパティは、レンダープロップ（関数）を受け付けます。これにより、コンポーネントの状態（hover、pressed等）に応じて動的にクラス名を変更できます。
-
-`cx`は`composeRenderProps`を使用してこの機能をサポートしていますが、通常のHTML要素の`className`属性は`string`のみを受け付けるため、`cn`を使用する必要があります。
+- React DOM専用。React Nativeでは使用不可
+- カラートークンは`@next-lift/tailwind-config`で定義（本パッケージで独自定義しない）
+- 参考実装: [src/ui/button.tsx](src/ui/button.tsx)（React 19のref仕様に準拠した実装例）
