@@ -2,23 +2,83 @@
 
 Better Authを使った認証とPer-User DBクレデンシャル管理を担うパッケージ。
 
-## アーキテクチャ
+## 機能
 
-- **Better Auth統合**: OAuth認証（Apple ID、Google）をBetter Authで一元管理（ADR-003）
-- **Authentication Database**: 認証情報専用のTursoデータベース（ユーザー、アカウント、セッション）
-- **Per-User DBクレデンシャル**: 各ユーザーのDB接続情報（URL、暗号化トークン、有効期限）を認証DBに保存
-
-## エクスポート構成
-
-| エクスポートパス | 機能 |
+| 提供機能 | 説明 |
 | --- | --- |
-| `./create-auth` | Better Authインスタンス生成（OAuthプロバイダー、フック設定） |
-| `./user-database-credentials` | Per-User DBクレデンシャルのCRUD、有効なクレデンシャル取得（期限切れ時自動更新） |
-| `./integrations/better-auth-nextjs` | Next.js向けBetter Auth統合 |
-| `./integrations/better-auth-react` | React/Expo向けBetter Auth統合 |
-| `./testing` | テスト用モック関数（saveUserDatabaseCredentials, getValidCredentials） |
+| Better Authインスタンス生成 | `./create-auth` からimport。OAuthプロバイダー、フック設定 |
+| Per-User DBクレデンシャル管理 | `./user-database-credentials` からimport。CRUD、有効なクレデンシャル取得（期限切れ時自動更新） |
+| Next.js向けBetter Auth統合 | `./integrations/better-auth-nextjs` からimport |
+| React/Expo向けBetter Auth統合 | `./integrations/better-auth-react` からimport |
+| テスト用モック関数 | `./testing` からimport。`saveUserDatabaseCredentials`, `getValidCredentials` |
 
-## データベーススキーマ
+## 使い方
+
+### Better Authインスタンスの生成
+
+```typescript
+import { createAuth } from "@next-lift/authentication/create-auth";
+
+const auth = createAuth({
+  database: tursoClient,
+  env: {
+    BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
+    BETTER_AUTH_URL: env.BETTER_AUTH_URL,
+    GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: env.GOOGLE_CLIENT_SECRET,
+    // ... Apple OAuth設定など
+  },
+  onUserCreated: async (userId) => {
+    // 初回サインイン時にPer-User DBを作成
+  },
+});
+```
+
+### Next.js統合
+
+```typescript
+import { toNextJsHandler } from "@next-lift/authentication/integrations/better-auth-nextjs";
+
+// app/api/auth/[...all]/route.ts
+export const { GET, POST } = toNextJsHandler(auth.handler);
+```
+
+### React/Expo統合
+
+```typescript
+import { createAuthClient } from "@next-lift/authentication/integrations/better-auth-react";
+
+const authClient = createAuthClient({
+  baseURL: publicEnv.NEXT_PUBLIC_APP_URL,
+});
+```
+
+### Per-User DBクレデンシャルの取得
+
+```typescript
+import { getValidCredentials } from "@next-lift/authentication/user-database-credentials";
+
+// 有効なクレデンシャルを取得（期限切れ時は自動更新）
+const credentials = await getValidCredentials(userId);
+// credentials: { url, authToken }
+```
+
+### テストでのモック利用
+
+```typescript
+import {
+  mockGetValidCredentialsOk,
+  mockGetValidCredentialsError,
+} from "@next-lift/authentication/testing";
+
+beforeEach(() => {
+  mockGetValidCredentialsOk({ url: "libsql://test.turso.io", authToken: "token" });
+});
+```
+
+## 開発ガイド
+
+### データベーススキーマ
 
 | テーブル | 用途 |
 | --- | --- |
@@ -28,47 +88,39 @@ Better Authを使った認証とPer-User DBクレデンシャル管理を担う�
 | `verification` | メール検証コード |
 | `per_user_database` | Per-User DB接続情報。userIdはユニークだが**外部キーなし**（ADR-019: ユーザー削除時もDB情報を保持） |
 
-## Account Linking（ADR-019）
+### Account Linking（ADR-019）
 
 - 同一メールアドレスで異なるプロバイダーからログインした場合、自動的に同一アカウントにリンク
 - `trustedProviders: ["google", "apple"]` — メール検証済みプロバイダーのみ自動リンク
-- セキュリティ担保: 未検証のプロバイダーではリンクしない
 
-## ユーザー削除（ADR-019）
+### ユーザー削除（ADR-019）
 
 - 認証データのみ削除（user, account, sessionテーブル — CASCADE）
 - Per-User Databaseは保持（誤削除時のデータ復旧のため）
 - `per_user_database` テーブルにFKを張らない理由: ユーザー削除時にDB情報が消えることを防ぐ
 
-## トークン暗号化
+### トークン暗号化
 
 - Per-User DBのJWTトークンをAES-256-GCMで暗号化して保存
-- IV: 12バイト、Auth Tag: 16バイト
-- Base64エンコード: `iv(12) + tag(16) + encrypted`
+- IV: 12バイト、Auth Tag: 16バイト、Base64エンコード: `iv(12) + tag(16) + encrypted`
 - 暗号化キー: 環境変数 `TURSO_TOKEN_ENCRYPTION_KEY`（256ビットhex文字列）
 
-## Apple OAuth
+### Apple OAuth
 
 - Apple OAuthの `clientSecret` は静的文字列ではなく、ES256 JWTを動的に生成
 - 有効期限: 約170日（Appleの上限180日未満）
 - form_postコールバックのため `SameSite=None` + `Secure` が必須
 
-## マルチプラットフォーム対応
+### マルチプラットフォーム対応
 
 - **Web（Next.js）**: `nextCookies()` プラグインでCookieベースのセッション管理
 - **iOS（Expo）**: `@better-auth/expo` プラグイン + `expo-secure-store` でセッション永続化
 
-## 既知のリスクと制約
-
-- **Account Linking**: 信頼されたプロバイダー以外でのリンクはセキュリティリスク
-- **トークン暗号化キーの漏洩**: Per-User DBの全トークンが復号可能になる
-- **Apple秘密鍵の管理**: 有効期限（180日）内のローテーションが必要
-- **セッション管理**: Cookie属性（SameSite, Secure）の設定ミスでCSRFリスク
-
-## テスト環境
+### テスト環境
 
 - インメモリSQLite + Drizzle ORMでモック
 - `vi.hoisted()` でモック前にDB初期化
 - `beforeEach` でテーブルドロップ + マイグレーション再実行
 - ファクトリ: `users`, `sessions`, `accounts`, `perUserDatabases`
 - 暗号化キーはテスト用の固定値（`"0".repeat(64)`）
+
