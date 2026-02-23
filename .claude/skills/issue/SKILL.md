@@ -39,7 +39,9 @@ GitHub Issueを使って問題を管理するスキル。
 
 ### 2. GitHub Issueの作成
 
-以下のテンプレートで `gh issue create` を実行する:
+以下のテンプレートで `gh issue create` を実行する。
+
+**重要**: `.github/ISSUE_TEMPLATE/default.md` のテンプレートに必ず準拠すること。
 
 **タイトル**: `{対象領域} — {概要}`
 
