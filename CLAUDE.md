@@ -8,8 +8,8 @@
 
 ## 関連ドキュメント
 
-- @docs/project/overview.md : プロジェクト概要、機能、開発状況
-- @docs/architecture-decision-record/overview.md : システムアーキテクチャと設計原則
+- docs/project/overview.md : プロジェクト概要、機能、開発状況
+- docs/architecture-decision-record/overview.md : システムアーキテクチャと設計原則
 - @docs/model-based-ui-design/ : UI設計仕様（ユースケース、タスク分析、コンセプト定義）
 
 ## 開発ルール
