@@ -19,3 +19,15 @@ export const mockCreateDatabaseOk = (
 export const mockCreateDatabaseError = (error: module.CreateDatabaseError) => {
 	return vi.spyOn(module, "createDatabase").mockResolvedValue(R.fail(error));
 };
+
+export const mockCreateDatabaseGetDatabaseError = (
+	error: module.GetDatabaseError,
+) => {
+	return vi.spyOn(module, "createDatabase").mockResolvedValue(R.fail(error));
+};
+
+export const mockCreateDatabaseDatabaseNotFoundError = (
+	error: module.DatabaseNotFoundError,
+) => {
+	return vi.spyOn(module, "createDatabase").mockResolvedValue(R.fail(error));
+};
