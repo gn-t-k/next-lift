@@ -8,7 +8,7 @@ import {
 	getDatabase,
 } from "./get-database";
 
-export type { DatabaseNotFoundError, GetDatabaseError };
+export { DatabaseNotFoundError, GetDatabaseError };
 
 export class CreateDatabaseError extends ErrorFactory({
 	name: "CreateDatabaseError",

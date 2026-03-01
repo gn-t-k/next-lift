@@ -1,7 +1,13 @@
-import { CreateDatabaseError } from "@next-lift/turso/create-database";
+import {
+	CreateDatabaseError,
+	DatabaseNotFoundError,
+	GetDatabaseError,
+} from "@next-lift/turso/create-database";
 import { IssueTokenError } from "@next-lift/turso/issue-token";
 import {
+	mockCreateDatabaseDatabaseNotFoundError,
 	mockCreateDatabaseError,
+	mockCreateDatabaseGetDatabaseError,
 	mockCreateDatabaseOk,
 	mockIssueTokenError,
 	mockIssueTokenOk,
@@ -133,9 +139,83 @@ describe("createTursoPerUserDatabase", () => {
 		});
 	});
 
+	describe("既登録userIdを渡した場合", () => {
+		// createDatabase は冪等設計のため（Turso側の409を内部処理して既存DB情報を返す）、
+		// 既登録userIdでも成功が返される
+		let issueTokenSpy: ReturnType<typeof mockIssueTokenOk>;
+
+		beforeEach(() => {
+			mockCreateDatabaseOk({
+				id: "existing-db-id",
+				hostname: "next-lift-development-test-user-c6c289e49e9c05b2.turso.io",
+				name: "next-lift-development-test-user-c6c289e49e9c05b2",
+			});
+			issueTokenSpy = mockIssueTokenOk({
+				jwt: "new-token-jwt",
+				expiresAt: new Date("2025-01-31T00:00:00.000Z"),
+			});
+		});
+
+		test("既存DBの名前でissueTokenが呼ばれること", async () => {
+			await createTursoPerUserDatabase("user-1", NOW);
+
+			expect(issueTokenSpy).toHaveBeenCalledWith(
+				expect.objectContaining({
+					databaseName: "next-lift-development-test-user-c6c289e49e9c05b2",
+				}),
+			);
+		});
+
+		test("既存DBの情報で成功が返されること", async () => {
+			const result = await createTursoPerUserDatabase("user-1", NOW);
+
+			expect(R.isSuccess(result)).toBe(true);
+			if (R.isSuccess(result)) {
+				expect(result.value).toEqual({
+					name: "next-lift-development-test-user-c6c289e49e9c05b2",
+					url: "libsql://next-lift-development-test-user-c6c289e49e9c05b2.turso.io",
+					authToken: "new-token-jwt",
+					expiresAt: new Date("2025-01-31T00:00:00.000Z"),
+				});
+			}
+		});
+	});
+
 	describe("DB作成に失敗したとき", () => {
 		beforeEach(() => {
 			mockCreateDatabaseError(new CreateDatabaseError());
+		});
+
+		test("CreateTursoPerUserDatabaseErrorが返されること", async () => {
+			const result = await createTursoPerUserDatabase("user-1", NOW);
+
+			expect(R.isFailure(result)).toBe(true);
+			if (R.isFailure(result)) {
+				expect(result.error).toBeInstanceOf(CreateTursoPerUserDatabaseError);
+			}
+		});
+	});
+
+	describe("既存DB情報の取得に失敗したとき", () => {
+		// createDatabase が409後にgetDatabaseの呼び出しに失敗した場合
+		beforeEach(() => {
+			mockCreateDatabaseGetDatabaseError(new GetDatabaseError());
+		});
+
+		test("CreateTursoPerUserDatabaseErrorが返されること", async () => {
+			const result = await createTursoPerUserDatabase("user-1", NOW);
+
+			expect(R.isFailure(result)).toBe(true);
+			if (R.isFailure(result)) {
+				expect(result.error).toBeInstanceOf(CreateTursoPerUserDatabaseError);
+			}
+		});
+	});
+
+	describe("既存DBが見つからなかったとき", () => {
+		// createDatabase が409後にgetDatabaseでDBが見つからなかった場合
+		beforeEach(() => {
+			mockCreateDatabaseDatabaseNotFoundError(new DatabaseNotFoundError());
 		});
 
 		test("CreateTursoPerUserDatabaseErrorが返されること", async () => {
