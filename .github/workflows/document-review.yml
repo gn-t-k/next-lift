@@ -6,8 +6,13 @@ on:
 
 jobs:
   document-review:
-    # Renovateによる依存関係更新PRとBot起因のイベントを除外
-    if: ${{ !startsWith(github.head_ref, 'deps/') && github.actor != 'claude[bot]' }}
+    # Renovateによる依存関係更新PR、Bot起因のイベント、フォークPRを除外
+    if: >-
+      ${{
+        !startsWith(github.head_ref, 'deps/') &&
+        github.actor != 'claude[bot]' &&
+        github.event.pull_request.head.repo.full_name == github.repository
+      }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -23,6 +28,7 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           allowed_bots: "next-lift-merge-master"
+          use_sticky_comment: true
           prompt: |
             このPRの変更内容を分析し、ドキュメント更新漏れがないかチェックしてください。
 
@@ -51,13 +57,8 @@ jobs:
             - ⚠️ 要確認: 更新が必要かもしれない項目（理由と提案を含む）
             - ❌ 更新漏れ: 明らかに更新が必要な項目（具体的な更新内容を提案）
 
-            ## 重要: 結果の投稿方法
-
-            分析完了後、必ず `gh pr comment` コマンドを使用してPRにコメントを投稿してください。
-
-            ```bash
-            gh pr comment ${{ github.event.pull_request.number }} --body "レビュー結果"
-            ```
+            分析結果をそのまま最終レスポンスとして返してください。
+            外部コマンドの実行やPRへのコメント投稿は不要です。
           claude_args: |
             --max-turns 10
-            --allowedTools Bash
+            --allowedTools "Read,Glob,Grep"
