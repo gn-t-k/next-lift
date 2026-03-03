@@ -6,6 +6,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "bash .claude/scripts/block-dangerous-commands.sh"
+          },
+          {
+            "type": "command",
             "command": "bash .claude/scripts/validate-gh-template.sh"
           }
         ]
