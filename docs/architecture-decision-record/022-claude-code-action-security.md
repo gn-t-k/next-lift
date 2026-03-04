@@ -23,6 +23,9 @@ PR #564のドキュメントレビューワークフロー（`document-review.ym
   - Bashが必要な場合: 具体的なコマンドプレフィックスで制限する（例: `Bash(git diff:*)`）
 - **`--allowedTools Bash`（無制限Bash）は使用しない**
 - PRコメント投稿はclaude-code-actionの組み込み機能（`use_sticky_comment`）を使用する
+- `prompt`を指定するagentモードワークフローでは`track_progress: true`を併用する
+  - `use_sticky_comment: true`のみではagent modeでコメントが投稿されない（claude-code-actionの制限: [#621](https://github.com/anthropics/claude-code-action/issues/621)）
+  - `track_progress: true`によりtag modeが強制され、tracking commentの自動投稿が有効になる
 - プロンプト内でシェルコマンドの実行を指示しない
 
 ### 2. インタラクティブワークフロー（@claudeメンション）
