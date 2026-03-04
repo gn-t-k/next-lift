@@ -60,6 +60,7 @@ jobs:
 
             分析結果をそのまま最終レスポンスとして返してください。
             外部コマンドの実行やPRへのコメント投稿は不要です。
+            利用可能なツールはRead, Glob, Grepのみです。Bashコマンドやファイル編集は行わないでください。
           claude_args: |
             --max-turns 10
             --allowedTools "Read,Glob,Grep"
