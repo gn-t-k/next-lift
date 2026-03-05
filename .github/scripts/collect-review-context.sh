@@ -19,15 +19,14 @@ changed_files=$(git diff --name-only origin/main...HEAD)
 diff_output=$(git diff origin/main...HEAD)
 diff_lines=$(echo "${diff_output}" | wc -l)
 
+if [ "${diff_lines}" -gt 1500 ]; then
+  echo "::error::差分が1500行を超えているため、document-reviewをスキップします（${diff_lines}行）"
+  exit 1
+fi
+
 {
   echo "REVIEW_DIFF<<${DELIMITER}"
-  if [ "${diff_lines}" -gt 500 ]; then
-    echo "(差分が500行を超えるため、ファイルリストのみ表示)"
-    echo ""
-    git diff --stat origin/main...HEAD
-  else
-    echo "${diff_output}"
-  fi
+  echo "${diff_output}"
   echo "${DELIMITER}"
 } >> "$GITHUB_ENV"
 
