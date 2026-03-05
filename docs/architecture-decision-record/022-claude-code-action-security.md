@@ -32,6 +32,10 @@ PR #564のドキュメントレビューワークフロー（`document-review.ym
 
 - デフォルトのツール構成を使用する
 - `allowedTools`の追加指定は原則として行わない
+- `permissions`は`contents: write`、`pull-requests: write`、`issues: write`を設定する
+  - ブランチのpushとPR作成にはwrite権限が必要
+  - Claude Code Actionはリポジトリのwrite accessを持つユーザーの`@claude`メンションにのみ反応するため、権限昇格のリスクは限定的
+- 自動ワークフロー（`document-review.yml`等）はread-only権限を維持する
 
 ### 3. 権限設定
 
