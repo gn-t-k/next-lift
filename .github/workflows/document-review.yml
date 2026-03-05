@@ -24,6 +24,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Collect review context
+        run: bash .github/scripts/collect-review-context.sh
+
       - uses: anthropics/claude-code-action@edd85d61533cbba7b57ed0ca4af1750b1fdfd3c4 # v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -32,6 +35,23 @@ jobs:
           track_progress: true
           prompt: |
             このPRの変更内容を分析し、ドキュメント更新漏れがないかチェックしてください。
+            以下にレビューに必要なコンテキストをすべて提供しています。ツール呼び出しは原則不要です。
+
+            ## 変更されたファイル一覧
+
+            ```
+            ${{ env.REVIEW_CHANGED_FILES }}
+            ```
+
+            ## 差分
+
+            ```diff
+            ${{ env.REVIEW_DIFF }}
+            ```
+
+            ## 関連ドキュメント
+
+            ${{ env.REVIEW_DOCS }}
 
             ## チェック対象ドキュメント
 
@@ -62,5 +82,5 @@ jobs:
             外部コマンドの実行やPRへのコメント投稿は不要です。
             利用可能なツールはRead, Glob, Grepのみです。Bashコマンドやファイル編集は行わないでください。
           claude_args: |
-            --max-turns 10
+            --max-turns 5
             --allowedTools "Read,Glob,Grep"
