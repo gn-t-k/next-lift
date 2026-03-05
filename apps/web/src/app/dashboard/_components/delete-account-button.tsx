@@ -29,7 +29,7 @@ export const DeleteAccountButton: FC = () => {
 				<ModalHeader>
 					<ModalTitle>アカウントを削除しますか？</ModalTitle>
 					<ModalDescription>
-						この操作は取り消せません。アカウントに関連するすべての認証情報が削除されます。
+						この操作は取り消せません。アカウントとすべてのトレーニングデータへのアクセスが失われます。同じアカウントで再登録しても、データは復元されません。
 					</ModalDescription>
 				</ModalHeader>
 				<ModalFooter>
