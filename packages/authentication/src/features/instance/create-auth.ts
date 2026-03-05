@@ -6,7 +6,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { schema } from "../../database-schemas";
 import { getDatabase } from "../../helpers/get-database";
-import { appleClientSecret } from "./apple-client-secret";
+import { generateAppleClientSecret } from "./generate-apple-client-secret";
 
 export type CreateAuthOptions = {
 	databaseHooks?: {
@@ -42,7 +42,7 @@ export const createAuth = (options?: CreateAuthOptions) => {
 			apple: {
 				clientId: env.APPLE_CLIENT_ID,
 				// AppleがclientSecretとしてJWTを要求するため
-				clientSecret: appleClientSecret,
+				clientSecret: generateAppleClientSecret(),
 				// iOSアプリからのApple Sign-InではIDトークンのaudがバンドルIDになるため、両方を許可する
 				audience: [env.APPLE_CLIENT_ID, "training.next-lift.ios"],
 			},
