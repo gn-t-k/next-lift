@@ -4,6 +4,10 @@ on:
   pull_request:
     types: [opened, reopened, synchronize, labeled]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   setup-and-deploy:
     name: Setup Database and Deploy to Vercel
