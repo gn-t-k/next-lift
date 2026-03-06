@@ -5,8 +5,34 @@ on:
     types: [opened, reopened, synchronize]
 
 jobs:
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      code: ${{ steps.check.outputs.code }}
+    permissions:
+      pull-requests: read
+    steps:
+      - name: Check for code changes
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          files=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" --paginate --jq '.[].filename')
+          code_changes="false"
+          while IFS= read -r file; do
+            case "$file" in
+              docs/*|*.md|.claude/*) ;;
+              *) code_changes="true"; break ;;
+            esac
+          done <<< "$files"
+          echo "code=$code_changes" >> "$GITHUB_OUTPUT"
+
   build-and-type-check:
     name: Build and Type check
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
@@ -38,6 +64,8 @@ jobs:
 
   lint:
     name: Lint
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
