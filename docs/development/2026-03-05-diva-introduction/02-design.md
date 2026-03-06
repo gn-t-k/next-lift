@@ -22,10 +22,10 @@
 
 ```
 [Entry Point: Server Action / Route Handler]
-  └─ withContexts([withPrivateEnv(...), withAuthDatabase(...), withFetch(...)])
+  └─ withContexts([envProvider, authDatabaseProvider, tursoFetchProvider])
        ├─ auth.api.getSession()  ← authDatabase() で認証DB解決
        ├─ getValidCredentials()  ← authDatabase() で認証DB解決
-       └─ createDatabase()       ← tursoFetch() + privateEnv() で通信
+       └─ createDatabase()       ← tursoFetch() + env.XXX で通信
 ```
 
 #### A. 認証DB接続（packages/authentication）— 優先度: 高
@@ -39,7 +39,8 @@
 
 **テスト移行**:
 - `vi.hoisted()` + `vi.mock("../helpers/get-database")` → `mockContext(withAuthDatabase, () => inMemoryDb)`
-- `setup.ts` のインメモリDB初期化ロジックはそのまま活用
+- `mockContext` はホイスティングと無関係に動作するため、`vi.hoisted()` による動的importは不要になる。通常のトップレベル import に簡略化する
+- `setup.ts` の `dropAllTables` + `executeMigrationFiles` の `beforeEach` はテストごとのDB初期化に必要なため維持
 
 #### B. Turso Platform API通信（packages/turso）— 優先度: 中
 
@@ -58,16 +59,16 @@
 **現状**: `env` は Proxy オブジェクトで `process.env` から遅延読込
 
 **変更後**:
-- `createContext<PrivateEnv>()` で `[privateEnv, withPrivateEnv]` を定義
-- `createContext<PublicEnv>()` で `[publicEnv, withPublicEnv]` を定義
-- 参照箇所の `env.XXX` → `privateEnv().XXX` に変更（全パッケージに影響）
+- `createContext<PrivateEnv>()` で resolver + provider を定義
+- resolver を Proxy でラップし、既存の `env.XXX` アクセスパターンを維持（呼び出し側の変更不要）
+- `publicEnv` も同様に Proxy でラップ
 - 既存の `parseEnv` をビルダーとして活用
 
 **テスト移行**:
-- `vi.hoisted()` + `vi.mock("@next-lift/env/private")` + `createMockEnv` → `mockContext(withPrivateEnv, () => ({ ... }))`
-- `mockPrivateEnv()` / `mockPublicEnv()` を `mockContext` ベースに再実装
+- `vi.hoisted()` + `vi.mock("@next-lift/env/private")` + `createMockEnv` → `mockContext(withEnv, () => ({ ... }))`
+- `mockEnv()` / `mockPublicEnv()` を `mockContext` ベースに再実装
 
-**トレードオフ**: 影響範囲が最も広い（全パッケージの `env` 参照を変更）。他のコンテキスト（A, B）が先に移行完了し、パターンが確立してから着手するのが安全。
+**トレードオフ**: Proxy による間接参照が1段増えるが、全パッケージの `env.XXX` 参照を変更せずに済むため差分が最小限になる。
 
 #### E. Server Action層（apps/web）— 優先度: 高
 
@@ -86,16 +87,13 @@
 
 ### withContexts の順序
 
-`withContexts` に渡すコンテキスト配列の順序は重要。先に登録されたコンテキストは、後のコンテキストのビルダー内から参照可能:
+`withContexts` に渡すコンテキスト配列の順序は重要。先に登録されたコンテキストは、後のコンテキストのビルダー内から参照可能。各パッケージが curried provider（ビルダー束縛済み）を export し、apps/web はそれを並べるだけ:
 
 ```typescript
 withContexts([
-  withPrivateEnv(() => parseEnv(process.env)),      // 1. まず env を解決
-  withAuthDatabase(() => {
-    const e = privateEnv();                          // 2. env を使って DB 接続
-    return drizzle({ client: createClient({ url: e.TURSO_AUTH_DATABASE_URL, ... }) });
-  }),
-  withTursoFetch(() => globalThis.fetch),            // 3. fetch を提供
+  envProvider,              // 1. まず env を解決
+  authDatabaseProvider,     // 2. env を使って DB 接続（内部で env.XXX を参照）
+  tursoFetchProvider,       // 3. fetch を提供
 ], async () => {
   // アプリケーションロジック
 });
@@ -103,10 +101,17 @@ withContexts([
 
 ### Resolver / Provider の export 方針
 
-パッケージごとに、アプリケーション（apps）からの利用形態に応じて export 範囲が異なる:
+`createContext()` が返す `[resolver, provider]` は `helpers/` に定義し、用途に応じて re-export する:
 
-- **auth DB**: Better Auth 経由でしかアクセスしない → resolver はパッケージ内部、provider のみ export
-- **per-user DB**: アプリケーションから drizzle クエリを直接組み立てる → resolver も provider も export
+- **curried provider**（ビルダー束縛済み）: `features/` から export → apps/web の `withContexts` で使用
+- **raw provider**: `testing/` から re-export → テストの `mockContext(rawProvider, () => mockValue)` で使用
+- **resolver**: パッケージ内部の feature が `helpers/` から直接 import。外部パッケージが値を参照する必要がある場合は `features/` からも export
+
+適用例:
+
+- **auth DB**: resolver は内部のみ、curried provider を `features/` から、raw provider を `testing/` から export
+- **env**: resolver を Proxy でラップして `env.XXX` のアクセスパターンを維持。Proxy を `features/` から export（他パッケージが `env.XXX` で参照するため）
+- **per-user DB**: resolver も curried provider も `features/` から export（アプリケーションから drizzle クエリを直接組み立てるため）
 
 ### パターン5（関数パラメータ注入）
 
