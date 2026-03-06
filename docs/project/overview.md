@@ -1,6 +1,6 @@
 # Next Lift Development Project
 
-このドキュメントは、Next Liftシステム開発プロジェクトの概要を記載します。
+このドキュメントは、Next Lift システム開発プロジェクトの概要を記載します。
 
 ## プロジェクト概要
 
