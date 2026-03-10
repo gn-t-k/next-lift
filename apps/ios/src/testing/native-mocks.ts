@@ -17,6 +17,15 @@ vi.mock("expo-secure-store", () => ({
 	deleteItemAsync: vi.fn(),
 }));
 
+// envモジュールはprocess.envをパースするため、テスト環境ではモック化
+vi.mock("../env/env", () => ({
+	env: {
+		EXPO_PUBLIC_API_URL: "https://test.example.com",
+		EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID: "test-web-client-id",
+		EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID: "test-ios-client-id",
+	},
+}));
+
 // auth-clientはbetter-auth/expo-secure-storeに依存しテスト環境では読み込めないためモック
 vi.mock("../lib/auth-client", () => ({
 	authClient: {
