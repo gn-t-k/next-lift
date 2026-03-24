@@ -1,7 +1,7 @@
 import { eq, sql } from "drizzle-orm";
 import { beforeEach, describe, expect, test } from "vitest";
 import { factories } from "../testing/factories";
-import { mockedAuthenticationDatabase } from "../testing/setup";
+import { mockedAuthenticationDatabase } from "../testing/mocked-authentication-database";
 import { perUserDatabase } from "./per-user-database";
 import { user } from "./user";
 

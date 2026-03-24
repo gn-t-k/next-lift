@@ -119,7 +119,9 @@ beforeEach(() => {
 ### テスト環境
 
 - インメモリSQLite + Drizzle ORMでモック
-- `vi.hoisted()` でモック前にDB初期化
+- `@praha/diva` の `mockContext` でデータベースコンテキストを差し替え
+  - `testing/mocked-authentication-database.ts`: インメモリDB作成、マイグレーション実行、環境変数モック（DB依存テストがインポートして使用）
+  - 各テストファイル: `mockContext(withDatabase, () => mockedAuthenticationDatabase)` でコンテキストをセットアップ
 - `beforeEach` でテーブルドロップ + マイグレーション再実行
 - ファクトリ: `users`, `sessions`, `accounts`, `perUserDatabases`
 - 暗号化キーはテスト用の固定値（`"0".repeat(64)`）

@@ -5,7 +5,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { schema } from "../../database-schemas";
-import { getDatabase } from "../../helpers/get-database";
+import { createDatabaseClient } from "../../helpers/get-database";
 import { generateAppleClientSecret } from "./generate-apple-client-secret";
 
 export type CreateAuthOptions = {
@@ -34,7 +34,7 @@ export const createAuth = (options?: CreateAuthOptions) => {
 	const baseURL = env.BETTER_AUTH_URL;
 
 	return betterAuth({
-		database: drizzleAdapter(getDatabase(), {
+		database: drizzleAdapter(createDatabaseClient(), {
 			provider: "sqlite",
 			schema,
 		}),
