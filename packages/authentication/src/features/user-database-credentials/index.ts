@@ -1,23 +1,24 @@
 export {
-	DeleteUserDatabaseCredentialsError,
-	deleteUserDatabaseCredentials,
-} from "./delete-user-database-credentials";
+	CredentialsNotFoundOnDeleteError,
+	DeleteCredentialsError,
+	deleteCredentials,
+} from "./delete-credentials";
 export {
+	CredentialsNotFoundError,
 	DecryptTokenError,
-	GetUserDatabaseCredentialsError,
-	getUserDatabaseCredentials,
-	UserDatabaseCredentialsNotFoundError,
-} from "./get-user-database-credentials";
+	FindCredentialsError,
+	getCredentials,
+} from "./get-credentials";
 export {
 	type GetValidCredentialsError,
 	getValidCredentials,
 } from "./get-valid-credentials";
 export {
-	RefreshUserDatabaseTokenError,
-	refreshUserDatabaseToken,
-} from "./refresh-user-database-token";
+	refreshToken,
+	UpdateTokenError,
+} from "./refresh-token";
 export {
 	EncryptTokenError,
-	SaveUserDatabaseCredentialsError,
-	saveUserDatabaseCredentials,
-} from "./save-user-database-credentials";
+	saveCredentials,
+	UpsertCredentialsError,
+} from "./save-credentials";

@@ -1,30 +1,26 @@
+import { mockPrivateEnv } from "@next-lift/env/testing";
 import { R } from "@praha/byethrow";
+import { mockContext } from "@praha/diva/test";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, test } from "vitest";
-import { perUserDatabase } from "../../database-schemas";
-import { factories } from "../../testing/factories";
-import { mockedAuthenticationDatabase } from "../../testing/setup";
-import { saveUserDatabaseCredentials } from "./save-user-database-credentials";
+import { perUserDatabase } from "../../../database-schemas";
+import { withDatabase } from "../../../helpers/database-context";
+import { mockedAuthenticationDatabase } from "../../../testing/mocked-authentication-database";
+import { upsertCredentials } from "./upsert-credentials";
 
-describe("saveUserDatabaseCredentials", () => {
-	const rawToken = "test-auth-token-plaintext";
+mockPrivateEnv({ TURSO_TOKEN_ENCRYPTION_KEY: "0".repeat(64) });
+mockContext(withDatabase, () => mockedAuthenticationDatabase);
 
+describe("upsertCredentials", () => {
 	describe("レコードが存在しないとき", () => {
-		let testUserId: string;
-
-		beforeEach(async () => {
-			const testUser = await factories(
-				mockedAuthenticationDatabase,
-			).users.create();
-			testUserId = testUser.id;
-		});
+		const testUserId = "test-user-id";
 
 		test("新規レコードが保存されること", async () => {
-			const result = await saveUserDatabaseCredentials({
+			const result = await upsertCredentials({
 				userId: testUserId,
 				dbName: "next-lift-test-user-db",
 				url: "libsql://next-lift-test-user-db.turso.io",
-				token: rawToken,
+				encryptedToken: "already-encrypted-token",
 				expiresAt: new Date("2025-12-31T00:00:00.000Z"),
 			});
 
@@ -40,59 +36,32 @@ describe("saveUserDatabaseCredentials", () => {
 					userId: testUserId,
 					databaseName: "next-lift-test-user-db",
 					databaseUrl: "libsql://next-lift-test-user-db.turso.io",
+					encryptedToken: "already-encrypted-token",
 					tokenExpiresAt: new Date("2025-12-31T00:00:00.000Z"),
 				}),
-			]);
-		});
-
-		test("トークンが暗号化されてDBに保存されていること", async () => {
-			await saveUserDatabaseCredentials({
-				userId: testUserId,
-				dbName: "next-lift-test-user-db",
-				url: "libsql://next-lift-test-user-db.turso.io",
-				token: rawToken,
-				expiresAt: new Date("2025-12-31T00:00:00.000Z"),
-			});
-
-			const records = await mockedAuthenticationDatabase
-				.select({
-					encryptedToken: perUserDatabase.encryptedToken,
-				})
-				.from(perUserDatabase)
-				.where(eq(perUserDatabase.userId, testUserId));
-
-			expect(records).toEqual([
-				{
-					encryptedToken: expect.not.stringContaining(rawToken),
-				},
 			]);
 		});
 	});
 
 	describe("同一userIdのレコードが既に存在するとき", () => {
-		let testUserId: string;
+		const testUserId = "test-user-id";
 
 		beforeEach(async () => {
-			const testUser = await factories(
-				mockedAuthenticationDatabase,
-			).users.create();
-			testUserId = testUser.id;
-
-			await saveUserDatabaseCredentials({
+			await upsertCredentials({
 				userId: testUserId,
 				dbName: "old-db-name",
 				url: "libsql://old-db.turso.io",
-				token: "old-token",
+				encryptedToken: "old-encrypted-token",
 				expiresAt: new Date("2025-06-01T00:00:00.000Z"),
 			});
 		});
 
 		test("レコードが更新（UPSERT）されること", async () => {
-			const result = await saveUserDatabaseCredentials({
+			const result = await upsertCredentials({
 				userId: testUserId,
 				dbName: "new-db-name",
 				url: "libsql://new-db.turso.io",
-				token: "new-token",
+				encryptedToken: "new-encrypted-token",
 				expiresAt: new Date("2025-12-31T00:00:00.000Z"),
 			});
 
@@ -108,6 +77,7 @@ describe("saveUserDatabaseCredentials", () => {
 					userId: testUserId,
 					databaseName: "new-db-name",
 					databaseUrl: "libsql://new-db.turso.io",
+					encryptedToken: "new-encrypted-token",
 					tokenExpiresAt: new Date("2025-12-31T00:00:00.000Z"),
 				}),
 			]);

@@ -26,10 +26,6 @@ export type CreateAuthOptions = {
 	};
 };
 
-/**
- * Better Auth インスタンスを作成するファクトリ関数
- * databaseHooks のみオプションで外部から受け取れる
- */
 export const createAuth = (options?: CreateAuthOptions) => {
 	const baseURL = env.BETTER_AUTH_URL;
 

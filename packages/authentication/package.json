@@ -4,7 +4,7 @@
 	"private": true,
 	"type": "module",
 	"exports": {
-		"./create-auth": "./src/features/instance/create-auth.ts",
+		"./create-auth": "./src/features/instance/index.ts",
 		"./user-database-credentials": "./src/features/user-database-credentials/index.ts",
 		"./integrations/better-auth-nextjs": "./src/features/integrations/better-auth-nextjs.ts",
 		"./integrations/better-auth-react": "./src/features/integrations/better-auth-react.ts",

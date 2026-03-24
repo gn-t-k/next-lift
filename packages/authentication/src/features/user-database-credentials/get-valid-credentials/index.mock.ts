@@ -1,7 +1,7 @@
 import { R } from "@praha/byethrow";
 import { vi } from "vitest";
-import type { GetValidCredentialsError } from "./get-valid-credentials";
-import * as module from "./get-valid-credentials";
+import type { GetValidCredentialsError } from "./index";
+import * as module from "./index";
 
 export const mockGetValidCredentialsOk = (
 	overrides?: Partial<R.InferSuccess<typeof module.getValidCredentials>>,
