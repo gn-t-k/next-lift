@@ -1,8 +1,8 @@
 export {
 	mockGetValidCredentialsError,
 	mockGetValidCredentialsOk,
-} from "../features/user-database-credentials/get-valid-credentials.mock.js";
+} from "../features/user-database-credentials/get-valid-credentials/index.mock.js";
 export {
-	mockSaveUserDatabaseCredentialsError,
-	mockSaveUserDatabaseCredentialsOk,
-} from "../features/user-database-credentials/save-user-database-credentials.mock.js";
+	mockSaveCredentialsError,
+	mockSaveCredentialsOk,
+} from "../features/user-database-credentials/save-credentials/index.mock.js";

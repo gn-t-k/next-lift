@@ -1,8 +1,8 @@
 import {
-	mockSaveUserDatabaseCredentialsError,
-	mockSaveUserDatabaseCredentialsOk,
+	mockSaveCredentialsError,
+	mockSaveCredentialsOk,
 } from "@next-lift/authentication/testing";
-import { SaveUserDatabaseCredentialsError } from "@next-lift/authentication/user-database-credentials";
+import { UpsertCredentialsError } from "@next-lift/authentication/user-database-credentials";
 import { ApplyMigrationError } from "@next-lift/per-user-database/apply-migration";
 import { CreateTursoPerUserDatabaseError } from "@next-lift/per-user-database/create-database";
 import {
@@ -17,9 +17,7 @@ import { setupPerUserDatabase } from "./setup-per-user-database";
 
 describe("setupPerUserDatabase", () => {
 	describe("すべてのステップが成功するとき", () => {
-		let saveCredentialsSpy: ReturnType<
-			typeof mockSaveUserDatabaseCredentialsOk
-		>;
+		let saveCredentialsSpy: ReturnType<typeof mockSaveCredentialsOk>;
 
 		beforeEach(() => {
 			mockCreateTursoPerUserDatabaseOk({
@@ -29,7 +27,7 @@ describe("setupPerUserDatabase", () => {
 				expiresAt: new Date("2026-12-31T00:00:00.000Z"),
 			});
 			mockApplyMigrationOk();
-			saveCredentialsSpy = mockSaveUserDatabaseCredentialsOk();
+			saveCredentialsSpy = mockSaveCredentialsOk();
 		});
 
 		test("voidが返されること", async () => {
@@ -38,7 +36,7 @@ describe("setupPerUserDatabase", () => {
 			expect(R.isSuccess(result)).toBe(true);
 		});
 
-		test("saveUserDatabaseCredentialsが正しい引数で呼ばれること", async () => {
+		test("saveCredentialsが正しい引数で呼ばれること", async () => {
 			await setupPerUserDatabase({ userId: "user-1" });
 
 			expect(saveCredentialsSpy).toHaveBeenCalledWith({
@@ -57,7 +55,7 @@ describe("setupPerUserDatabase", () => {
 				new CreateTursoPerUserDatabaseError(),
 			);
 			mockApplyMigrationOk();
-			mockSaveUserDatabaseCredentialsOk();
+			mockSaveCredentialsOk();
 		});
 
 		test("CreateTursoPerUserDatabaseErrorが返されること", async () => {
@@ -74,7 +72,7 @@ describe("setupPerUserDatabase", () => {
 		beforeEach(() => {
 			mockCreateTursoPerUserDatabaseOk();
 			mockApplyMigrationError(new ApplyMigrationError());
-			mockSaveUserDatabaseCredentialsOk();
+			mockSaveCredentialsOk();
 		});
 
 		test("ApplyMigrationErrorが返されること", async () => {
@@ -91,17 +89,15 @@ describe("setupPerUserDatabase", () => {
 		beforeEach(() => {
 			mockCreateTursoPerUserDatabaseOk();
 			mockApplyMigrationOk();
-			mockSaveUserDatabaseCredentialsError(
-				new SaveUserDatabaseCredentialsError(),
-			);
+			mockSaveCredentialsError(new UpsertCredentialsError());
 		});
 
-		test("SaveUserDatabaseCredentialsErrorが返されること", async () => {
+		test("UpsertCredentialsErrorが返されること", async () => {
 			const result = await setupPerUserDatabase({ userId: "user-1" });
 
 			expect(R.isFailure(result)).toBe(true);
 			if (R.isFailure(result)) {
-				expect(result.error).toBeInstanceOf(SaveUserDatabaseCredentialsError);
+				expect(result.error).toBeInstanceOf(UpsertCredentialsError);
 			}
 		});
 	});

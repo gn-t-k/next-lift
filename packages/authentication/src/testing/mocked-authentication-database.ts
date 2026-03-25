@@ -1,26 +1,18 @@
 import fs from "node:fs";
 import path from "node:path";
-import { mockPrivateEnv } from "@next-lift/env/testing";
+import { createClient } from "@libsql/client";
 import { sql } from "drizzle-orm";
-import { beforeEach, vi } from "vitest";
+import { drizzle } from "drizzle-orm/libsql";
+import { beforeEach } from "vitest";
+import * as schema from "../database-schemas";
 
-mockPrivateEnv({
-	TURSO_TOKEN_ENCRYPTION_KEY: "0".repeat(64),
+const client = createClient({ url: ":memory:" });
+export const mockedAuthenticationDatabase = drizzle(client, { schema });
+
+beforeEach(async () => {
+	await dropAllTables();
+	await executeMigrationFiles();
 });
-
-const { mockedAuthenticationDatabase } = await vi.hoisted(async () => {
-	const { createClient } = await import("@libsql/client");
-	const { drizzle } = await import("drizzle-orm/libsql");
-	const schema = await import("../database-schemas");
-	const client = createClient({ url: ":memory:" });
-	return { mockedAuthenticationDatabase: drizzle(client, { schema }) };
-});
-
-export { mockedAuthenticationDatabase };
-
-vi.mock("../helpers/get-database", () => ({
-	getDatabase: () => mockedAuthenticationDatabase,
-}));
 
 const executeMigrationFiles = async () => {
 	const drizzleDir = path.join(__dirname, "../../drizzle");
@@ -56,8 +48,3 @@ const dropAllTables = async () => {
 
 	await mockedAuthenticationDatabase.run(sql`PRAGMA foreign_keys = ON`);
 };
-
-beforeEach(async () => {
-	await dropAllTables();
-	await executeMigrationFiles();
-});

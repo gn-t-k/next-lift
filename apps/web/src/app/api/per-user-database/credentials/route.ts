@@ -1,4 +1,4 @@
-import { UserDatabaseCredentialsNotFoundError } from "@next-lift/authentication/user-database-credentials";
+import { CredentialsNotFoundError } from "@next-lift/authentication/user-database-credentials";
 import { R } from "@praha/byethrow";
 import { headers } from "next/headers";
 import { connection } from "next/server";
@@ -19,7 +19,7 @@ export const GET = async () => {
 	const result = await getCredentials(session.user.id);
 
 	if (R.isFailure(result)) {
-		if (result.error instanceof UserDatabaseCredentialsNotFoundError) {
+		if (result.error instanceof CredentialsNotFoundError) {
 			return new Response("Not Found", { status: 404 });
 		}
 

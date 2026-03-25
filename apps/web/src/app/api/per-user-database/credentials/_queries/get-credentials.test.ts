@@ -3,8 +3,8 @@ import {
 	mockGetValidCredentialsOk,
 } from "@next-lift/authentication/testing";
 import {
-	GetUserDatabaseCredentialsError,
-	UserDatabaseCredentialsNotFoundError,
+	CredentialsNotFoundError,
+	FindCredentialsError,
 } from "@next-lift/authentication/user-database-credentials";
 import { R } from "@praha/byethrow";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -13,32 +13,30 @@ import { getCredentials } from "./get-credentials";
 describe("getCredentials", () => {
 	describe("クレデンシャルが見つからないとき", () => {
 		beforeEach(() => {
-			mockGetValidCredentialsError(new UserDatabaseCredentialsNotFoundError());
+			mockGetValidCredentialsError(new CredentialsNotFoundError());
 		});
 
-		test("UserDatabaseCredentialsNotFoundErrorが返されること", async () => {
+		test("CredentialsNotFoundErrorが返されること", async () => {
 			const result = await getCredentials("user-1");
 
 			expect(R.isFailure(result)).toBe(true);
 			if (R.isFailure(result)) {
-				expect(result.error).toBeInstanceOf(
-					UserDatabaseCredentialsNotFoundError,
-				);
+				expect(result.error).toBeInstanceOf(CredentialsNotFoundError);
 			}
 		});
 	});
 
 	describe("その他のエラーが発生したとき", () => {
 		beforeEach(() => {
-			mockGetValidCredentialsError(new GetUserDatabaseCredentialsError());
+			mockGetValidCredentialsError(new FindCredentialsError());
 		});
 
-		test("GetUserDatabaseCredentialsErrorが返されること", async () => {
+		test("FindCredentialsErrorが返されること", async () => {
 			const result = await getCredentials("user-1");
 
 			expect(R.isFailure(result)).toBe(true);
 			if (R.isFailure(result)) {
-				expect(result.error).toBeInstanceOf(GetUserDatabaseCredentialsError);
+				expect(result.error).toBeInstanceOf(FindCredentialsError);
 			}
 		});
 	});

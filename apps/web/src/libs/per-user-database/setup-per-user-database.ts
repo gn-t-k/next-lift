@@ -1,7 +1,7 @@
 import {
 	type EncryptTokenError,
-	type SaveUserDatabaseCredentialsError,
-	saveUserDatabaseCredentials,
+	saveCredentials,
+	type UpsertCredentialsError,
 } from "@next-lift/authentication/user-database-credentials";
 import {
 	type ApplyMigrationError,
@@ -16,7 +16,7 @@ import { R } from "@praha/byethrow";
 export type SetupPerUserDatabaseError =
 	| CreateTursoPerUserDatabaseError
 	| ApplyMigrationError
-	| SaveUserDatabaseCredentialsError
+	| UpsertCredentialsError
 	| EncryptTokenError;
 
 /**
@@ -42,7 +42,7 @@ export const setupPerUserDatabase = ({
 			}),
 		),
 		R.andThen(({ createdDatabase }) =>
-			saveUserDatabaseCredentials({
+			saveCredentials({
 				userId,
 				dbName: createdDatabase.name,
 				url: createdDatabase.url,
