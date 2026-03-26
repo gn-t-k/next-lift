@@ -4,10 +4,10 @@
 	"private": true,
 	"type": "module",
 	"exports": {
-		"./create-database": "./src/features/create-database/create-database.ts",
-		"./issue-token": "./src/features/issue-token/issue-token.ts",
-		"./delete-database": "./src/features/delete-database/delete-database.ts",
-		"./list-databases": "./src/features/list-databases/list-databases.ts",
+		"./create-database": "./src/features/create-database/index.ts",
+		"./issue-token": "./src/features/issue-token/index.ts",
+		"./delete-database": "./src/features/delete-database/index.ts",
+		"./list-databases": "./src/features/list-databases/index.ts",
 		"./testing": "./src/testing/index.ts"
 	},
 	"scripts": {
@@ -24,6 +24,7 @@
 	"dependencies": {
 		"@next-lift/env": "workspace:*",
 		"@praha/byethrow": "0.9.0",
+		"@praha/diva": "1.0.2",
 		"@praha/error-factory": "1.3.1",
 		"zod": "4.3.6"
 	},
