@@ -1,7 +1,7 @@
 import process from "node:process";
 import { parseArgs } from "node:util";
 import { R } from "@praha/byethrow";
-import { listDatabases } from "../list-databases/list-databases";
+import { listDatabases } from "../list-databases";
 
 const { values } = parseArgs({
 	options: {

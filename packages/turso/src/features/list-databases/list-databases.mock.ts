@@ -1,8 +1,8 @@
 import { R } from "@praha/byethrow";
 import { vi } from "vitest";
 
-import type { Database } from "./list-databases";
-import * as module from "./list-databases";
+import type { Database } from "./index";
+import * as module from "./index";
 
 export const mockListDatabasesOk = (overrides?: Database[]) => {
 	return vi

@@ -76,8 +76,9 @@ beforeEach(() => {
 
 ### テスト環境
 
-- `globalThis.fetch` をモックしてAPIリクエストをテスト
-- 各テスト前に `fetch` モックをリセット
+- `@praha/diva` の `mockContext` で fetch コンテキストを差し替えてテスト
+- `helpers/fetch-context.mock.ts` に共通の fetch モックヘルパーを定義
+- `vitest.config.ts` の `clearMocks: true` で各テスト前にモックをリセット
 
 ## 制約と注意事項
 

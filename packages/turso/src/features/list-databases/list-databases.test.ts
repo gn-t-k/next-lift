@@ -1,6 +1,12 @@
 import { mockPrivateEnv } from "@next-lift/env/testing";
 import { R } from "@praha/byethrow";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
+import {
+	mockFetch,
+	mockFetchListDatabasesOk,
+	mockFetchNetworkError,
+	mockFetchServerError,
+} from "../../helpers/fetch-context.mock";
 import { ListDatabasesError, listDatabases } from "./list-databases";
 
 mockPrivateEnv({
@@ -9,18 +15,6 @@ mockPrivateEnv({
 });
 
 describe("listDatabases", () => {
-	const mockFetch = vi.fn();
-	const originalFetch = globalThis.fetch;
-
-	beforeEach(() => {
-		globalThis.fetch = mockFetch;
-	});
-
-	afterEach(() => {
-		globalThis.fetch = originalFetch;
-		vi.clearAllMocks();
-	});
-
 	describe("正常系", () => {
 		const mockApiResponse = [
 			{ Name: "next-lift-production-auth" },
@@ -35,11 +29,7 @@ describe("listDatabases", () => {
 		];
 
 		beforeEach(() => {
-			mockFetch.mockResolvedValue({
-				ok: true,
-				status: 200,
-				json: async () => ({ databases: mockApiResponse }),
-			});
+			mockFetchListDatabasesOk(mockApiResponse);
 		});
 
 		test("正しいURLとヘッダーでGETリクエストが送信されること", async () => {
@@ -68,11 +58,7 @@ describe("listDatabases", () => {
 
 	describe("空のデータベース一覧の場合", () => {
 		beforeEach(() => {
-			mockFetch.mockResolvedValue({
-				ok: true,
-				status: 200,
-				json: async () => ({ databases: [] }),
-			});
+			mockFetchListDatabasesOk([]);
 		});
 
 		test("空の配列が返されること", async () => {
@@ -87,12 +73,7 @@ describe("listDatabases", () => {
 
 	describe("APIエラーの場合", () => {
 		beforeEach(() => {
-			mockFetch.mockResolvedValue({
-				ok: false,
-				status: 500,
-				statusText: "Internal Server Error",
-				text: async () => "Server error details",
-			});
+			mockFetchServerError();
 		});
 
 		test("ListDatabasesErrorが返されること", async () => {
@@ -107,7 +88,7 @@ describe("listDatabases", () => {
 
 	describe("ネットワークエラーの場合", () => {
 		beforeEach(() => {
-			mockFetch.mockRejectedValue(new Error("Network error"));
+			mockFetchNetworkError();
 		});
 
 		test("ListDatabasesErrorが返されること", async () => {

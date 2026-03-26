@@ -1,7 +1,7 @@
 import process from "node:process";
 import { parseArgs } from "node:util";
 import { R } from "@praha/byethrow";
-import { issueToken } from "../issue-token/issue-token";
+import { issueToken } from "../issue-token";
 
 const { values } = parseArgs({
 	options: {

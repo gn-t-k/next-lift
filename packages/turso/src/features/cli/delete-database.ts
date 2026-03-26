@@ -1,10 +1,7 @@
 import process from "node:process";
 import { parseArgs } from "node:util";
 import { R } from "@praha/byethrow";
-import {
-	DatabaseNotFoundError,
-	deleteDatabase,
-} from "../delete-database/delete-database";
+import { DatabaseNotFoundError, deleteDatabase } from "../delete-database";
 
 const PREVIEW_DB_PATTERN = /^next-lift-preview-pr\d+-/;
 
