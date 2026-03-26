@@ -20,9 +20,11 @@
 
 - **mockファイルを作る**: モジュールからエクスポートされた関数（依存先）を差し替える場合
   - 例: `create-database.mock.ts` で `createDatabase` をスパイ
-- **インライン `vi.fn()`**: テスト対象に渡すコールバックや引数の場合、またはグローバルAPI（`globalThis.fetch`）を差し替える場合
+- **インライン `vi.fn()`**: テスト対象に渡すコールバックや引数の場合
   - 例: `vi.fn().mockResolvedValue("success")` をテスト対象の引数に渡す
-  - 例: `globalThis.fetch = vi.fn()` でfetchを差し替え
+- **diva の `mockContext`**: `@praha/diva` のコンテキスト経由で注入される依存（fetchなど）を差し替える場合
+  - `mockContext.transient(withXxx, () => mockFn)` でコンテキストにモックを登録
+  - 例: `fetch-context.mock.ts` で `mockContext.transient(withFetch, () => mockFetch)` を定義し、各テストで `mockFetch.mockResolvedValue(...)` を呼ぶ
 
 ### mockファイルの構造
 
@@ -118,3 +120,4 @@ beforeEach(() => {
 
 - `packages/authentication/` - 統合テストとモックパターン
 - `packages/per-user-database/` - ファクトリとセットアップ
+- `packages/turso/` - divaによるfetchモックパターン
