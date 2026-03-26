@@ -2,19 +2,12 @@ import { env } from "@next-lift/env/private";
 import { R } from "@praha/byethrow";
 import { ErrorFactory } from "@praha/error-factory";
 import { z } from "zod";
+import { getFetch } from "../../helpers/fetch-context";
 
 export class ListDatabasesError extends ErrorFactory({
 	name: "ListDatabasesError",
 	message: "データベース一覧の取得中にエラーが発生しました。",
 }) {}
-
-const listDatabasesResponseSchema = z.object({
-	databases: z.array(
-		z.object({
-			Name: z.string(),
-		}),
-	),
-});
 
 export type Database = { name: string };
 
@@ -25,10 +18,11 @@ export const listDatabases = (): R.ResultAsync<
 	R.try({
 		immediate: true,
 		try: async () => {
+			const fetchFn = getFetch();
 			const apiToken = env.TURSO_PLATFORM_API_TOKEN;
 			const organization = env.TURSO_ORGANIZATION;
 
-			const response = await fetch(
+			const response = await fetchFn(
 				`https://api.turso.tech/v1/organizations/${organization}/databases`,
 				{
 					method: "GET",
@@ -45,10 +39,17 @@ export const listDatabases = (): R.ResultAsync<
 				);
 			}
 
-			const data = await response.json();
-			const parsed = listDatabasesResponseSchema.parse(data);
+			const data = z
+				.object({
+					databases: z.array(
+						z.object({
+							Name: z.string(),
+						}),
+					),
+				})
+				.parse(await response.json());
 
-			return parsed.databases.map((db) => ({ name: db.Name }));
+			return data.databases.map((db) => ({ name: db.Name }));
 		},
 		catch: (error) => new ListDatabasesError({ cause: error }),
 	});

@@ -1,6 +1,7 @@
 import { env } from "@next-lift/env/private";
 import { R } from "@praha/byethrow";
 import { ErrorFactory } from "@praha/error-factory";
+import { getFetch } from "../../helpers/fetch-context";
 
 export class DeleteDatabaseError extends ErrorFactory({
 	name: "DeleteDatabaseError",
@@ -18,10 +19,11 @@ export const deleteDatabase = (
 	R.try({
 		immediate: true,
 		try: async () => {
+			const fetchFn = getFetch();
 			const apiToken = env.TURSO_PLATFORM_API_TOKEN;
 			const organization = env.TURSO_ORGANIZATION;
 
-			const response = await fetch(
+			const response = await fetchFn(
 				`https://api.turso.tech/v1/organizations/${organization}/databases/${databaseName}`,
 				{
 					method: "DELETE",

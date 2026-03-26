@@ -2,6 +2,7 @@ import { env } from "@next-lift/env/private";
 import { R } from "@praha/byethrow";
 import { ErrorFactory } from "@praha/error-factory";
 import { z } from "zod";
+import { getFetch } from "../../helpers/fetch-context";
 
 export class DatabaseNotFoundError extends ErrorFactory({
 	name: "DatabaseNotFoundError",
@@ -13,10 +14,6 @@ export class GetDatabaseError extends ErrorFactory({
 	message: "データベース情報の取得中にエラーが発生しました。",
 }) {}
 
-/**
- * 既存のデータベース情報を取得する（内部関数）
- * create-database の冪等化のために使用
- */
 export const getDatabase = async (
 	databaseName: string,
 ): R.ResultAsync<
@@ -26,10 +23,11 @@ export const getDatabase = async (
 	R.try({
 		immediate: true,
 		try: async () => {
+			const fetchFn = getFetch();
 			const apiToken = env.TURSO_PLATFORM_API_TOKEN;
 			const organization = env.TURSO_ORGANIZATION;
 
-			const response = await fetch(
+			const response = await fetchFn(
 				`https://api.turso.tech/v1/organizations/${organization}/databases/${databaseName}`,
 				{
 					method: "GET",

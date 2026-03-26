@@ -1,6 +1,12 @@
 import { mockPrivateEnv } from "@next-lift/env/testing";
 import { R } from "@praha/byethrow";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
+import {
+	mockFetch,
+	mockFetchIssueTokenOk,
+	mockFetchNetworkError,
+	mockFetchServerError,
+} from "../../helpers/fetch-context.mock";
 import { IssueTokenError, issueToken } from "./issue-token";
 
 mockPrivateEnv({
@@ -9,27 +15,11 @@ mockPrivateEnv({
 });
 
 describe("issueToken", () => {
-	const mockFetch = vi.fn();
-	const originalFetch = globalThis.fetch;
-
-	beforeEach(() => {
-		globalThis.fetch = mockFetch;
-	});
-
-	afterEach(() => {
-		globalThis.fetch = originalFetch;
-		vi.clearAllMocks();
-	});
-
 	describe("有効期限付きトークン", () => {
 		const NOW = new Date("2025-01-01T00:00:00.000Z");
 
 		beforeEach(() => {
-			mockFetch.mockResolvedValue({
-				ok: true,
-				status: 200,
-				json: async () => ({ jwt: "test-jwt-token" }),
-			});
+			mockFetchIssueTokenOk({ jwt: "test-jwt-token" });
 		});
 
 		test("正しいURLでPOSTリクエストが送信されること", async () => {
@@ -69,11 +59,7 @@ describe("issueToken", () => {
 
 	describe("無期限トークン", () => {
 		beforeEach(() => {
-			mockFetch.mockResolvedValue({
-				ok: true,
-				status: 200,
-				json: async () => ({ jwt: "permanent-jwt-token" }),
-			});
+			mockFetchIssueTokenOk({ jwt: "permanent-jwt-token" });
 		});
 
 		test("正しいURLとボディでPOSTリクエストが送信されること", async () => {
@@ -114,12 +100,7 @@ describe("issueToken", () => {
 
 	describe("エラーの場合", () => {
 		beforeEach(() => {
-			mockFetch.mockResolvedValue({
-				ok: false,
-				status: 500,
-				statusText: "Internal Server Error",
-				text: async () => "Server error details",
-			});
+			mockFetchServerError();
 		});
 
 		test("IssueTokenErrorが返されること", async () => {
@@ -137,7 +118,7 @@ describe("issueToken", () => {
 
 	describe("ネットワークエラーの場合", () => {
 		beforeEach(() => {
-			mockFetch.mockRejectedValue(new Error("Network error"));
+			mockFetchNetworkError();
 		});
 
 		test("IssueTokenErrorが返されること", async () => {

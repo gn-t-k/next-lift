@@ -1,6 +1,13 @@
 import { mockPrivateEnv } from "@next-lift/env/testing";
 import { R } from "@praha/byethrow";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
+import {
+	mockFetch,
+	mockFetchDeleteDatabaseNotFound,
+	mockFetchDeleteDatabaseOk,
+	mockFetchNetworkError,
+	mockFetchServerError,
+} from "../../helpers/fetch-context.mock";
 import {
 	DatabaseNotFoundError,
 	DeleteDatabaseError,
@@ -13,24 +20,9 @@ mockPrivateEnv({
 });
 
 describe("deleteDatabase", () => {
-	const mockFetch = vi.fn();
-	const originalFetch = globalThis.fetch;
-
-	beforeEach(() => {
-		globalThis.fetch = mockFetch;
-	});
-
-	afterEach(() => {
-		globalThis.fetch = originalFetch;
-		vi.clearAllMocks();
-	});
-
 	describe("正常系", () => {
 		beforeEach(() => {
-			mockFetch.mockResolvedValue({
-				ok: true,
-				status: 200,
-			});
+			mockFetchDeleteDatabaseOk();
 		});
 
 		test("正しいURLとヘッダーでDELETEリクエストが送信されること", async () => {
@@ -56,10 +48,7 @@ describe("deleteDatabase", () => {
 
 	describe("404エラーの場合", () => {
 		beforeEach(() => {
-			mockFetch.mockResolvedValue({
-				ok: false,
-				status: 404,
-			});
+			mockFetchDeleteDatabaseNotFound();
 		});
 
 		test("DatabaseNotFoundErrorが返されること", async () => {
@@ -74,12 +63,7 @@ describe("deleteDatabase", () => {
 
 	describe("その他のエラーの場合", () => {
 		beforeEach(() => {
-			mockFetch.mockResolvedValue({
-				ok: false,
-				status: 500,
-				statusText: "Internal Server Error",
-				text: async () => "Server error details",
-			});
+			mockFetchServerError();
 		});
 
 		test("DeleteDatabaseErrorが返されること", async () => {
@@ -94,7 +78,7 @@ describe("deleteDatabase", () => {
 
 	describe("ネットワークエラーの場合", () => {
 		beforeEach(() => {
-			mockFetch.mockRejectedValue(new Error("Network error"));
+			mockFetchNetworkError();
 		});
 
 		test("DeleteDatabaseErrorが返されること", async () => {

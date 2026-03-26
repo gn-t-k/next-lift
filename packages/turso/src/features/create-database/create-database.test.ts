@@ -1,8 +1,21 @@
 import { mockPrivateEnv } from "@next-lift/env/testing";
 import { R } from "@praha/byethrow";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { CreateDatabaseError, createDatabase } from "./create-database";
-import * as getDatabaseModule from "./get-database";
+import { beforeEach, describe, expect, test } from "vitest";
+import {
+	mockFetch,
+	mockFetchCreateDatabaseConflictGetDatabaseError,
+	mockFetchCreateDatabaseConflictNotFound,
+	mockFetchCreateDatabaseConflictOk,
+	mockFetchCreateDatabaseOk,
+	mockFetchNetworkError,
+	mockFetchServerError,
+} from "../../helpers/fetch-context.mock";
+import {
+	CreateDatabaseError,
+	createDatabase,
+	DatabaseNotFoundError,
+	GetDatabaseError,
+} from "./create-database";
 
 mockPrivateEnv({
 	TURSO_PLATFORM_API_TOKEN: "test-api-token",
@@ -10,30 +23,12 @@ mockPrivateEnv({
 });
 
 describe("createDatabase", () => {
-	const mockFetch = vi.fn();
-	const originalFetch = globalThis.fetch;
-
-	beforeEach(() => {
-		globalThis.fetch = mockFetch;
-	});
-
-	afterEach(() => {
-		globalThis.fetch = originalFetch;
-		vi.clearAllMocks();
-	});
-
 	describe("正常系", () => {
 		beforeEach(() => {
-			mockFetch.mockResolvedValue({
-				ok: true,
-				status: 201,
-				json: async () => ({
-					database: {
-						DbId: "db-id-123",
-						Hostname: "test-db.turso.io",
-						Name: "test-db",
-					},
-				}),
+			mockFetchCreateDatabaseOk({
+				DbId: "db-id-123",
+				Hostname: "test-db.turso.io",
+				Name: "test-db",
 			});
 		});
 
@@ -69,24 +64,16 @@ describe("createDatabase", () => {
 
 	describe("409 Conflict（既存DB）の場合", () => {
 		beforeEach(() => {
-			mockFetch.mockResolvedValue({
-				ok: false,
-				status: 409,
+			mockFetchCreateDatabaseConflictOk({
+				DbId: "existing-db-id",
+				Hostname: "existing-db.turso.io",
+				Name: "existing-db",
 			});
-
-			vi.spyOn(getDatabaseModule, "getDatabase").mockResolvedValue(
-				R.succeed({
-					id: "existing-db-id",
-					hostname: "existing-db.turso.io",
-					name: "existing-db",
-				}),
-			);
 		});
 
-		test("getDatabaseが呼ばれて既存DB情報が返されること", async () => {
+		test("既存DB情報が返されること", async () => {
 			const result = await createDatabase("existing-db");
 
-			expect(getDatabaseModule.getDatabase).toHaveBeenCalledWith("existing-db");
 			expect(R.isSuccess(result)).toBe(true);
 			if (R.isSuccess(result)) {
 				expect(result.value).toEqual({
@@ -96,16 +83,57 @@ describe("createDatabase", () => {
 				});
 			}
 		});
+
+		test("GETリクエストでDB情報が取得されること", async () => {
+			await createDatabase("existing-db");
+
+			expect(mockFetch).toHaveBeenCalledTimes(2);
+			expect(mockFetch).toHaveBeenNthCalledWith(
+				2,
+				"https://api.turso.tech/v1/organizations/test-org/databases/existing-db",
+				{
+					method: "GET",
+					headers: {
+						Authorization: "Bearer test-api-token",
+					},
+				},
+			);
+		});
+	});
+
+	describe("409後にDB情報の取得に失敗した場合", () => {
+		beforeEach(() => {
+			mockFetchCreateDatabaseConflictGetDatabaseError();
+		});
+
+		test("GetDatabaseErrorが返されること", async () => {
+			const result = await createDatabase("test-db");
+
+			expect(R.isFailure(result)).toBe(true);
+			if (R.isFailure(result)) {
+				expect(result.error).toBeInstanceOf(GetDatabaseError);
+			}
+		});
+	});
+
+	describe("409後にDBが見つからない場合", () => {
+		beforeEach(() => {
+			mockFetchCreateDatabaseConflictNotFound();
+		});
+
+		test("DatabaseNotFoundErrorが返されること", async () => {
+			const result = await createDatabase("test-db");
+
+			expect(R.isFailure(result)).toBe(true);
+			if (R.isFailure(result)) {
+				expect(result.error).toBeInstanceOf(DatabaseNotFoundError);
+			}
+		});
 	});
 
 	describe("その他のエラーの場合", () => {
 		beforeEach(() => {
-			mockFetch.mockResolvedValue({
-				ok: false,
-				status: 500,
-				statusText: "Internal Server Error",
-				text: async () => "Server error details",
-			});
+			mockFetchServerError();
 		});
 
 		test("CreateDatabaseErrorが返されること", async () => {
@@ -120,7 +148,7 @@ describe("createDatabase", () => {
 
 	describe("ネットワークエラーの場合", () => {
 		beforeEach(() => {
-			mockFetch.mockRejectedValue(new Error("Network error"));
+			mockFetchNetworkError();
 		});
 
 		test("CreateDatabaseErrorが返されること", async () => {

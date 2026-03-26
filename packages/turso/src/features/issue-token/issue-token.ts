@@ -2,40 +2,32 @@ import { env } from "@next-lift/env/private";
 import { R } from "@praha/byethrow";
 import { ErrorFactory } from "@praha/error-factory";
 import { z } from "zod";
+import { getFetch } from "../../helpers/fetch-context";
 
 export class IssueTokenError extends ErrorFactory({
 	name: "IssueTokenError",
 	message: "トークンの発行中にエラーが発生しました。",
 }) {}
 
-export function issueToken(params: {
-	expiresInDays: null;
-	databaseName: string;
-}): R.ResultAsync<{ jwt: string; expiresAt: null }, IssueTokenError>;
-export function issueToken(params: {
-	expiresInDays: number;
-	startingFrom: Date;
-	databaseName: string;
-}): R.ResultAsync<{ jwt: string; expiresAt: Date }, IssueTokenError>;
-
-export function issueToken(
+export const issueToken = (
 	params:
 		| { expiresInDays: null; databaseName: string }
 		| { expiresInDays: number; startingFrom: Date; databaseName: string },
 ): R.ResultAsync<
 	{ jwt: string; expiresAt: null } | { jwt: string; expiresAt: Date },
 	IssueTokenError
-> {
-	return R.try({
+> =>
+	R.try({
 		immediate: true,
 		try: async () => {
+			const fetchFn = getFetch();
 			const apiToken = env.TURSO_PLATFORM_API_TOKEN;
 			const organization = env.TURSO_ORGANIZATION;
 
 			const hasExpiration = params.expiresInDays !== null;
 
 			const response = hasExpiration
-				? await fetch(
+				? await fetchFn(
 						`https://api.turso.tech/v1/organizations/${organization}/databases/${params.databaseName}/auth/tokens?expiration=${params.expiresInDays}d`,
 						{
 							method: "POST",
@@ -44,7 +36,7 @@ export function issueToken(
 							},
 						},
 					)
-				: await fetch(
+				: await fetchFn(
 						`https://api.turso.tech/v1/organizations/${organization}/databases/${params.databaseName}/auth/tokens`,
 						{
 							method: "POST",
@@ -83,4 +75,3 @@ export function issueToken(
 		},
 		catch: (error) => new IssueTokenError({ cause: error }),
 	});
-}
