@@ -32,7 +32,6 @@ jobs:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           allowed_bots: "next-lift-merge-master"
           use_sticky_comment: true
-          track_progress: true
           prompt: |
             このPRの変更内容を分析し、ドキュメント更新漏れがないかチェックしてください。
             以下にレビューに必要なコンテキストをすべて提供しています。ツール呼び出しは原則不要です。
