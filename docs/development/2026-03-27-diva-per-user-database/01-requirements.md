@@ -80,7 +80,7 @@ PR #597 で `packages/turso` に diva（fetch context）を導入、`packages/au
 
 | 事項 | 保留理由 | 決定タイミング |
 | --- | --- | --- |
-| 合成ヘルパーのエラーハンドリング方針（throw vs Result） | 利用側（server action等）の実装パターンが確定してから決める方が適切 | FR5 の実装時 |
+| ~~合成ヘルパーのエラーハンドリング方針（throw vs Result）~~ | ~~利用側（server action等）の実装パターンが確定してから決める方が適切~~ | **解決済み**: Result 型（`@praha/byethrow`）で実装する（`02-breakdown.md` 議論ログ参照） |
 | `createPerUserDatabaseClient`（migration あり）を使うケースへの対応 | スキーマ進化後の既存ユーザーDB対応は別タスク（ADR-020関連） | per-user DB の本格利用開始時 |
 
 ## 議論ログ
