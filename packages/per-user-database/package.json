@@ -5,9 +5,9 @@
 	"type": "module",
 	"exports": {
 		"./database-schemas": "./src/database-schemas/index.ts",
-		"./client": "./src/features/client/create-per-user-database-client.ts",
 		"./create-database": "./src/features/create-database/create-turso-per-user-database.ts",
 		"./apply-migration": "./src/features/apply-migration/apply-migration.ts",
+		"./context": "./src/features/context/index.ts",
 		"./migrations": "./drizzle/migrations.js",
 		"./testing": "./src/testing/index.ts"
 	},
@@ -26,6 +26,7 @@
 		"@next-lift/env": "workspace:*",
 		"@next-lift/turso": "workspace:*",
 		"@praha/byethrow": "0.9.0",
+		"@praha/diva": "1.0.2",
 		"@praha/error-factory": "1.3.1",
 		"drizzle-orm": "0.45.1",
 		"zod": "4.3.6"

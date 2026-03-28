@@ -300,6 +300,9 @@ importers:
       '@praha/byethrow':
         specifier: 0.9.0
         version: 0.9.0(typescript@5.9.3)
+      '@praha/diva':
+        specifier: 1.0.2
+        version: 1.0.2
       '@praha/error-factory':
         specifier: 1.3.1
         version: 1.3.1

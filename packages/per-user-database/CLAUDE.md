@@ -7,7 +7,7 @@
 | 提供機能 | 説明 |
 | --- | --- |
 | Per-User DB作成 | `./create-database` からimport。Turso API経由でDB作成 + トークン発行 |
-| Drizzle ORMクライアント | `./client` からimport。マイグレーション自動実行あり/なし |
+| DBコンテキスト | `./context` からimport。diva context によるDB注入（resolver + scope関数） |
 | マイグレーション適用 | `./apply-migration` からimport |
 | テーブル定義 | `./database-schemas` からimport |
 | テスト用モック・ファクトリ | `./testing` からimport |
@@ -25,19 +25,19 @@ const result = await createTursoPerUserDatabase(userId);
 // result: { name, url, authToken, expiresAt }
 ```
 
-### DBクライアントの接続
+### Per-User DBスコープでの実行
 
 ```typescript
-import {
-  createPerUserDatabaseClient,
-  createPerUserDatabaseClientWithoutMigration,
-} from "@next-lift/per-user-database/client";
+import { getPerUserDatabase, runInPerUserDatabaseScope } from "@next-lift/per-user-database/context";
 
-// マイグレーション自動実行あり（既存ユーザーのスキーマ変更に対応）
-const client = await createPerUserDatabaseClient({ url, authToken });
-
-// マイグレーションなし（テスト環境やセットアップ直後に使用）
-const clientWithoutMigration = createPerUserDatabaseClientWithoutMigration({ url, authToken });
+// credentials を渡すだけでマイグレーション + DBスコープに入れる
+const result = await runInPerUserDatabaseScope(
+  { url, authToken },
+  async () => {
+    const db = getPerUserDatabase();
+    return await db.select().from(testTable).all();
+  },
+);
 ```
 
 ### iOS（React Native）でのマイグレーション利用
