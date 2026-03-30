@@ -78,8 +78,8 @@ beforeEach(() => {
 ### テスト環境
 
 - インメモリSQLite（`:memory:`）を使用
-- `vi.hoisted()` でモック前にDB初期化
-- `beforeEach` でテーブルドロップ + マイグレーション再実行
+- `mocked-per-user-database.ts` がDBインスタンス作成 + `beforeEach` でテーブルドロップ・マイグレーション再実行
+- `database-context.mock.ts` が diva コンテキストモック + `mockPrivateEnv` を提供
 - `@praha/drizzle-factory` でテストデータ生成
 
 ## 制約と注意事項
