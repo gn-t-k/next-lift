@@ -1,3 +1,4 @@
+import "../../helpers/database-context.mock";
 import {
 	CreateDatabaseError,
 	DatabaseNotFoundError,
@@ -14,6 +15,7 @@ import {
 } from "@next-lift/turso/testing";
 import { R } from "@praha/byethrow";
 import { beforeEach, describe, expect, test } from "vitest";
+
 import {
 	CreateTursoPerUserDatabaseError,
 	createTursoPerUserDatabase,
