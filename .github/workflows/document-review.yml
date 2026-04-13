@@ -60,8 +60,7 @@ jobs:
             2. **.claude/rules/*.md** - コーディング規約、テストルール、エラー処理ルールの変更時
             3. **docs/architecture-decision-record/*.md** - アーキテクチャ、技術スタック、設計パターンの変更時
             4. **docs/project/overview.md** - 機能追加、開発計画の変更時
-            5. **docs/model-based-ui-design/** - UI設計、ユースケースの変更時
-            6. **各パッケージのREADME.md/CLAUDE.md** - パッケージ固有の変更時
+            5. **各パッケージのREADME.md/CLAUDE.md** - パッケージ固有の変更時
 
             ## レビュー方針
 
