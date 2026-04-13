@@ -161,4 +161,4 @@ Next LiftはLocal-first Architectureを採用しています。([ADR-010](./arch
 ## 関連ドキュメント
 
 - [Architecture Decision Records (ADR)](./architecture-decision-record/README.md) - 技術的決定の詳細
-- [プロジェクト概要](./project.md) - Next Liftプロジェクト全体の概要
+- [プロジェクト概要](../project/overview.md) - Next Liftプロジェクト全体の概要
