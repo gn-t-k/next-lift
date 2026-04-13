@@ -61,9 +61,6 @@ while IFS= read -r file; do
     docs/project/*)
       collected_docs["${file}"]=1
       ;;
-    docs/model-based-ui-design/*)
-      collected_docs["${file}"]=1
-      ;;
     # packages配下の変更 → そのパッケージのCLAUDE.md/README.mdを含める
     packages/*)
       pkg_dir=$(echo "${file}" | grep -oE '^packages/[^/]+')
