@@ -9,7 +9,7 @@
 
 ## ステータス
 
-- 現在のフェーズ: 0/6（未開始）
+- 現在のフェーズ: 0/7（未開始）
 - ユースケース数: 0
 - 概念オブジェクト数: 0
 - 次のアクション: フェーズ1 ユースケース定義
@@ -79,6 +79,16 @@
 ### Improvement
 
 ### Note
+
+## Phase 7: ドキュメント分割
+
+- 分割先ディレクトリ:
+- 生成ファイル:
+  - [ ] index.md
+  - [ ] design-principles.md
+  - [ ] domain-model.md
+  - [ ] views-and-navigation.md
+  - [ ] design-decisions.md
 
 ## 設計判断ログ
 
