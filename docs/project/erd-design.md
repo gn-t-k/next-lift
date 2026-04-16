@@ -3,7 +3,7 @@
 ## ステータス
 
 - 状態: 作業中
-- 現在のフェーズ: 1/5（完了）
+- 現在のフェーズ: 3/5（完了）
 - 最終更新: 2026-04-16
 
 ## 要件サマリー
@@ -151,28 +151,496 @@
 
 ### 変更点
 
+- フェーズ1の9エンティティをRDBテーブル定義に変換（エンティティ名→テーブル名、属性→カラム名+型）
+- 全テーブルにサロゲートキー `id` (text PK) を追加
+- 参照属性を外部キー (`xxx_id`) に変換
+- 導出項目の検討を実施（排除対象なし）
+- 繰り返しデータ・ヘッダディテール分離・値の重複・リソース統合の検討を実施（変更なし）
+
 ### Mermaid ERD
 
 ```mermaid
 erDiagram
+    programs ||--o{ days : "has"
+    days ||--o{ exercise_plans : "has"
+    exercise_plans ||--o{ set_plans : "has"
+    exercises ||--o{ exercise_plans : "target"
+    exercises ||--o{ exercise_logs : "target"
+    exercises ||--o{ one_rep_maxes : "has"
+    workouts ||--o{ exercise_logs : "has"
+    days |o--o{ workouts : "followed by"
+    exercise_logs ||--o{ set_logs : "has"
+    set_logs |o--o| one_rep_maxes : "sourced by"
+
+    programs {
+        id text PK
+        name text
+        meta_info text "nullable"
+    }
+    days {
+        id text PK
+        program_id text FK
+        label text
+        display_order integer
+    }
+    exercise_plans {
+        id text PK
+        day_id text FK
+        exercise_id text FK
+        display_order integer
+    }
+    set_plans {
+        id text PK
+        exercise_plan_id text FK
+        weight_value real "nullable"
+        weight_type text "nullable"
+        reps integer "nullable"
+        rpe real "nullable"
+        display_order integer
+    }
+    exercises {
+        id text PK
+        name text
+    }
+    one_rep_maxes {
+        id text PK
+        exercise_id text FK
+        weight_kg real
+        set_log_id text "FK nullable"
+    }
+    workouts {
+        id text PK
+        day_id text "FK nullable"
+        started_at integer
+        completed_at integer "nullable"
+    }
+    exercise_logs {
+        id text PK
+        workout_id text FK
+        exercise_id text FK
+        memo text "nullable"
+        display_order integer
+    }
+    set_logs {
+        id text PK
+        exercise_log_id text FK
+        weight_kg real
+        reps integer
+        rpe real "nullable"
+        memo text "nullable"
+        display_order integer
+    }
 ```
 
 ### 議論ログ
 
+#### ステップ1: エンティティをテーブルに変換する
+
+**テーブル名の変換:**
+
+| エンティティ名（日本語） | テーブル名（英語snake_case） | 備考 |
+| --- | --- | --- |
+| プログラム | programs | 複数形 |
+| Day | days | 複数形 |
+| 種目計画 | exercise_plans | 複数形 |
+| セット計画 | set_plans | 複数形 |
+| ワークアウト | workouts | 複数形 |
+| 種目記録 | exercise_logs | 「記録」= log。複数形 |
+| セット記録 | set_logs | 「記録」= log。複数形 |
+| 種目 | exercises | 複数形 |
+| 1RM | one_rep_maxes | 「1 Rep Max」の略。複数形 |
+
+**テーブル名の複数形/単数形の設計判断:**
+
+既存の認証DBテーブルはBetter Authの規約に従い単数形（`user`, `session`, `account`）を使用している。Per-User DBのテーブル名は独立して命名規則を決定できる。
+
+- Pros(複数形): テーブルが「レコードの集合」であることを表現する。SQLの慣習として広く使われる。Drizzle ORMの公式ドキュメントも複数形を採用
+- Pros(単数形): 認証DBとの一貫性。Better Authの規約に合わせられる
+- 判断: **複数形を採用**。認証DBはBetter Authの自動生成であり命名規則の先例としない。Per-User DBは独自のドメインスキーマであり、SQL慣習に従う
+
+**カラム名・型の変換:**
+
+| カラム | 型 | 備考 |
+| --- | --- | --- |
+| id | text PK | サロゲートキー。既存コードベースに合わせてtext型 |
+| name, label, memo | text | テキスト属性 |
+| meta_info | text (nullable) | フリーテキスト。任意項目 |
+| display_order | integer | 表示順 |
+| weight_value | real (nullable) | セット計画の重量指定値（kg値 or %1RM値）。小数を扱うためreal型 |
+| weight_type | text (nullable) | 重量指定方法（"kg" / "percent_1rm"）。enum/CHECK制約なし |
+| reps | integer (nullable) | 回数 |
+| rpe | real (nullable) | RPE。小数（7.5等）を扱うためreal型 |
+| weight_kg | real | 重量(kg)。セット記録は実績値のため必須。1RMも必須 |
+| started_at | integer | ワークアウト実施日時。ms精度timestamp |
+| completed_at | integer (nullable) | ワークアウト完了日時。進行中はnull |
+| xxx_id | text FK | 外部キー |
+
+**タイムスタンプ命名の検討（テーブル設計ルール準拠）:**
+
+- ワークアウトの「実施日時」→ `started_at`: トレーニングを開始した事実を記録。`created_at`ではなく、ドメインの事実に即した名前
+- ワークアウトの「完了日時」→ `completed_at`: ワークアウトを完了した事実を記録
+- ~~`created_at` / `updated_at`は使用しない~~: 各テーブルに一律で付与する汎用タイムスタンプは不要。ドメインイベントの日時が必要な箇所にのみ、事実に即した名前で追加
+
+**セット計画のカラム設計（設計判断#18対応）:**
+
+セット計画は「3パラメータのうち2つを指定」するルール。3パターン:
+1. 重量+回数: weight_value, weight_type, reps を設定。rpeはnull
+2. 重量+RPE: weight_value, weight_type, rpe を設定。repsはnull
+3. 回数+RPE: reps, rpe を設定。weight_value, weight_typeはnull
+
+4カラム（weight_value, weight_type, reps, rpe）をすべてnullableにし、アプリ側のバリデーションで「2つ以上指定」を強制する。DB側にCHECK制約は設けない（プロジェクトルール: enum/CHECK制約禁止）。
+
+**1RMテーブルの設計:**
+
+1RMは「種目ごとに0または1つ」の関係（コンテンツ構造図の多重度: 種目 1→0..1 1RM）。設計選択肢:
+- (a) exercisesテーブルに `one_rep_max_kg` カラムを追加: 1RMのセット記録参照を持てない
+- (b) one_rep_maxes テーブルとして独立: セット記録への参照を持てる。設計判断#22で参照を持たせることが決定済み
+
+→ **(b)を採用**。`one_rep_maxes` テーブルに `exercise_id` (FK), `weight_kg`, `set_log_id` (FK nullable) を持たせる。
+
+#### ステップ2: ヘッダ・ディテール分離の検討
+
+**確認対象:**
+
+| 候補 | 判断 | 理由 |
+| --- | --- | --- |
+| ワークアウト→種目記録→セット記録 | 分離不要 | すでにフェーズ1で3層に分離済み。ワークアウトがヘッダ、種目記録が中間層、セット記録がディテールに相当する構造。明細全体をまとめて扱う計算（合計ボリューム等）は導出ビューで算出する方針（設計判断#4） |
+| プログラム→Day→種目計画→セット計画 | 分離不要 | 同上。すでに4層に分離済み |
+
+#### ステップ3: 繰り返しデータの確認
+
+各テーブルのカラムに、同じ種類のデータが複数並んでいるケースがないか確認:
+
+| テーブル | 確認結果 |
+| --- | --- |
+| programs | 繰り返しなし |
+| days | 繰り返しなし。program_idで親参照 |
+| exercise_plans | 繰り返しなし。day_id + exercise_idで参照 |
+| set_plans | 繰り返しなし。exercise_plan_idで親参照 |
+| exercises | 繰り返しなし |
+| one_rep_maxes | 繰り返しなし |
+| workouts | 繰り返しなし |
+| exercise_logs | 繰り返しなし |
+| set_logs | 繰り返しなし |
+
+フェーズ1のドメインモデリングで適切に分離されており、繰り返しデータは検出されなかった。
+
+#### ステップ4: 値の重複の確認
+
+| 確認箇所 | 結果 | 理由 |
+| --- | --- | --- |
+| exercise_plans.exercise_id → exercises | OK | 種目名はexercisesテーブルで管理。exercise_plansに種目名を持たせていない |
+| exercise_logs.exercise_id → exercises | OK | 同上 |
+| set_plans の weight_value と set_logs の weight_kg | 別の事実 | set_plansの重量は「計画値」、set_logsの重量は「実績値」。計画と実績は独立した事実であり、同じ値であっても別に持つのが正しい（正規化の原則: 「この値が変わったとき、関連するデータも連動して変わるべきか？」→ 連動しない）|
+| set_plans の reps と set_logs の reps | 別の事実 | 同上。計画レップ数と実績レップ数は独立 |
+| one_rep_maxes の weight_kg と set_logs の weight_kg | 別の事実 | 1RMは「現在の最大挙上重量」、set_logsの重量は「そのセットで使用した重量」。1RM更新後もセット記録の値は変わらない |
+
+#### ステップ5: リソース統合の確認
+
+同じ実体を指す別名のエンティティがないか確認:
+
+| 候補ペア | 判断 | 理由 |
+| --- | --- | --- |
+| exercise_plans と exercise_logs | 統合しない | 「計画」と「記録」は異なる種別のエンティティ（リソースとイベント）。同じ種目を対象とするが、計画は事前のパラメータ定義、記録は事後の実績記録であり、ライフサイクルが異なる |
+| set_plans と set_logs | 統合しない | 同上。計画パラメータと実績記録は独立した事実 |
+| programs の name と exercises の name | 異なる属性 | プログラム名と種目名は別の実体の属性 |
+
+フェーズ1のドメインモデリングで概念オブジェクトが適切に識別されており、別名の重複エンティティは検出されなかった。
+
+#### ステップ6: 導出項目の整理
+
+**6-1. 導出項目の候補洗い出し:**
+
+| 候補 | テーブル | 導出元 |
+| --- | --- | --- |
+| セットのボリューム（重量 x 回数） | set_logs | weight_kg × reps |
+| 種目のボリューム合計 | exercise_logs | SUM(set_logs.weight_kg × set_logs.reps) |
+| ワークアウトの総ボリューム | workouts | SUM(全set_logsのweight_kg × reps) |
+| e1RM（推定1RM） | set_logs | Epley公式等で算出（weight_kg × (1 + reps / 30)） |
+| %1RM | set_logs + one_rep_maxes | set_logs.weight_kg / one_rep_maxes.weight_kg × 100 |
+
+**6-2. 可逆性の判断:**
+
+| 候補 | 逆算可能か | 判断 | 理由 |
+| --- | --- | --- | --- |
+| セットのボリューム | はい | 排除 | weight_kg × repsの単純計算で常に再現可能 |
+| 種目のボリューム合計 | はい | 排除 | set_logsのSUM集計で常に再現可能 |
+| ワークアウトの総ボリューム | はい | 排除 | set_logsのSUM集計で常に再現可能 |
+| e1RM | はい | 排除 | 公式による計算で常に再現可能（設計判断#19で導出ビュー方針確定済み） |
+| %1RM | はい | 排除 | 除算で常に再現可能 |
+
+全候補が逆算可能であり、テーブルに持たせる導出項目はない。
+
+**6-3. 排除した導出項目の代替手段:**
+
+| 導出項目 | 代替手段 | 理由 |
+| --- | --- | --- |
+| セットのボリューム | アプリケーション側で計算 | 表示時にのみ必要。`weight_kg * reps` の単純計算 |
+| 種目/ワークアウトのボリューム合計 | アプリケーション側で計算またはビュー | 集計が必要だがパーソナルユースでデータ量が限定的 |
+| e1RM | アプリケーション側で計算 | Epley公式等のアルゴリズムをプログラムで表現する方が自然（設計判断#19） |
+| %1RM | アプリケーション側で計算 | 除算のみ。1RM未設定時は計算不可 |
+
+パーソナルユースのため、パフォーマンスのためのキャッシュカラムは初期段階では不要。将来パフォーマンス問題が顕在化した場合にのみ検討する。
+
 ## フェーズ3: 表現方法の設計
+
+### 変更点
+
+- workoutsテーブルのcompleted_atカラムを削除し、workout_completionsテーブルに分離（NULLable日時カラムのイベントテーブル分離）
+- one_rep_maxesテーブルをイベント化（INSERT only）。registered_atカラムを追加し、最新レコードが「現在の1RM」を表す
+- set_plansを基底テーブル + 3パラメータテーブルに分割（weight_reps_params, weight_rpe_params, reps_rpe_params）。nullable完全排除
+- workouts.day_idを削除し、workout_day_linksテーブルに分離（nullable FK排除）
+- one_rep_maxes.set_log_idを削除し、achieved_atカラムを追加（set_logsとの結合度低減、nullable FK排除）
+- nullable FKを全廃達成
 
 ### 設計判断
 
 | 対象 | 種別/変更パターン | 判断 | 理由 |
 | --- | --- | --- | --- |
+| set_plans.weight_type（kg/%1RM） | サブセット | 区分カラムで維持 | 種別間で属性の差がなく、単なるラベル。weight_valueの解釈が異なるだけ。将来VBT等が追加されてもweight_typeの値追加で対応可能 |
+| one_rep_maxes の出どころ | サブセット | 明示的な区分カラム不要 | set_log_idを削除したため暗黙的な区別は不要に。1RMは全てユーザーが達成日時と共に入力する値として統一。属性の差がない |
+| programs, days, exercise_plans, set_plans のUPDATE | 変更モデル | UPDATE管理 | 計画データの「現在の状態」のみが重要。変更履歴の要件なし。将来必要になった場合はイベントソーシングテーブルを追加可能 |
+| exercises.name のUPDATE | 変更モデル | UPDATE管理 | 名前変更はIDベースの参照に影響しない。変更履歴の要件なし |
+| workouts.completed_at | NULLable日時 → イベントテーブル分離 | workout_completionsテーブルに分離 | UPDATE回避。「ワークアウト完了」イベントが独立テーブルとして明示される。将来「完了メモ」等の属性追加が容易。完了の取り消しも行の削除で表現可能 |
+| one_rep_maxes のUPDATE | 変更モデル | イベント化（INSERT only + registered_at） | 1RMはトレーニーにとって重要な指標。推移追跡（過去の1RMがいつ何kgだったか）のシナリオがありうる。UPDATE回避 |
+| set_logs, exercise_logs のUPDATE | 変更モデル | UPDATE管理 | 入力ミスの訂正が主目的。修正履歴の追跡は不要（パーソナルアプリ）|
+| 各テーブルの物理DELETE | 変更モデル | 物理DELETE管理 | パーソナルアプリで論理削除の必要性なし。計画削除後もワークアウト記録は独立して残る |
+| set_plans の「2 of 3」パラメータ | サブタイプテーブル分割 | 基底テーブル + 3パラメータテーブルに分割 | nullableカラムを完全排除。plan_typeで組み合わせを明示し、各パラメータテーブルは全カラムNOT NULL。「2 of 3」制約を構造的に表現 |
+| workouts.day_id（nullable FK） | nullable FK → リンクテーブル分離 | workout_day_linksテーブルに分離 | nullable FK排除。Dayに紐づかないワークアウトはリンク行が存在しないことで表現 |
+| one_rep_maxes.set_log_id → achieved_at | nullable FK削除 + 属性追加 | set_log_idを削除しachieved_atを追加 | set_logsとの結合度を下げる。nullable FK排除。achieved_atはユーザー入力の達成日時（推移グラフのX軸） |
+| exercise_logs.memo, set_logs.rpe/memo | nullable属性 | nullable維持 | 「入力しなかった」= 該当なしの意味でNULLの用途が明確。RPE検索はWHERE rpe IS NOT NULL AND rpe >= 8で対応可能。set_logsは最もクエリ頻度が高いテーブルのため不要なLEFT JOINを避ける |
+| lbs対応 | 将来拡張 | 現時点でERD変更なし | 内部kg統一 + 表示層変換で対応可能。将来set_logs, one_rep_maxesにweight_input_unitカラム追加で対応。ジム内kg/lbs混在のためper-record単位保存が必要 |
+| 種目カテゴリ | 将来拡張 | 現時点でERD変更なし | exercisesへのカラム追加やリンクテーブルで後方互換対応可能。カテゴリの軸（部位/器具/動作パターン）が未定のため早期の構造決定は避ける |
 
 ### Mermaid ERD
 
 ```mermaid
 erDiagram
+    programs ||--o{ days : "has"
+    days ||--o{ exercise_plans : "has"
+    exercise_plans ||--o{ set_plans : "has"
+    set_plans ||--o| weight_reps_params : "params"
+    set_plans ||--o| weight_rpe_params : "params"
+    set_plans ||--o| reps_rpe_params : "params"
+    exercises ||--o{ exercise_plans : "target"
+    exercises ||--o{ exercise_logs : "target"
+    exercises ||--o{ one_rep_maxes : "has"
+    workouts ||--o{ exercise_logs : "has"
+    workouts ||--o| workout_completions : "completed as"
+    workouts ||--o| workout_day_links : "linked to"
+    days ||--o{ workout_day_links : "linked from"
+    exercise_logs ||--o{ set_logs : "has"
+
+    programs {
+        id text PK
+        name text
+        meta_info text "nullable"
+    }
+    days {
+        id text PK
+        program_id text FK
+        label text
+        display_order integer
+    }
+    exercise_plans {
+        id text PK
+        day_id text FK
+        exercise_id text FK
+        display_order integer
+    }
+    set_plans {
+        id text PK
+        exercise_plan_id text FK
+        plan_type text "NOT NULL"
+        display_order integer
+    }
+    weight_reps_params {
+        set_plan_id text "FK UK"
+        weight_value real
+        weight_type text
+        reps integer
+    }
+    weight_rpe_params {
+        set_plan_id text "FK UK"
+        weight_value real
+        weight_type text
+        rpe real
+    }
+    reps_rpe_params {
+        set_plan_id text "FK UK"
+        reps integer
+        rpe real
+    }
+    exercises {
+        id text PK
+        name text
+    }
+    one_rep_maxes {
+        id text PK
+        exercise_id text FK
+        weight_kg real
+        achieved_at integer
+        registered_at integer
+    }
+    workouts {
+        id text PK
+        started_at integer
+    }
+    workout_day_links {
+        id text PK
+        workout_id text "FK UK"
+        day_id text FK
+    }
+    workout_completions {
+        id text PK
+        workout_id text "FK UK"
+        completed_at integer
+    }
+    exercise_logs {
+        id text PK
+        workout_id text FK
+        exercise_id text FK
+        memo text "nullable"
+        display_order integer
+    }
+    set_logs {
+        id text PK
+        exercise_log_id text FK
+        weight_kg real
+        reps integer
+        rpe real "nullable"
+        memo text "nullable"
+        display_order integer
+    }
 ```
 
 ### 議論ログ
+
+#### ステップ1: サブセットの判断
+
+**1-1. 種別・区分のあるエンティティの特定:**
+
+| エンティティ | 種別の有無 | 分析 |
+| --- | --- | --- |
+| programs | なし | プログラムに種別はない |
+| days | なし | Dayに種別はない |
+| exercise_plans | なし | 種目計画に種別はない |
+| set_plans | あり（weight_type: kg/%1RM） | 重量指定方法の区分。種別間で属性の差がなく、単なるラベル |
+| exercises | なし | 部位カテゴリ等の種別を持たない方針（行動シナリオ設計判断） |
+| one_rep_maxes | 検討 | set_log_idの有無で暗黙的に出どころを区別。明示的な区分不要 |
+
+**1-2. 判断:**
+
+- set_plans.weight_type → 区分カラムで十分。属性の差がない
+- one_rep_maxes の出どころ → 区分カラム不要。set_log_idの有無で区別可能
+
+結論: サブセット分割が必要なエンティティはなし。
+
+#### ステップ2: 変更モデルの設計
+
+**NULLableカラムの精査:**
+
+| テーブル | カラム | NULLableの種類 | 3点チェック | 判断 |
+| --- | --- | --- | --- | --- |
+| programs | meta_info | NULLable属性 | 3値論理: 非該当、NULL伝播: 非該当、パフォーマンス: 非該当 | NULLable許容 |
+| set_plans | weight_value, weight_type, reps, rpe | 「2 of 3」属性群 | - | サブタイプテーブル分割（weight_reps_params, weight_rpe_params, reps_rpe_params）。nullable完全排除 |
+| workouts | completed_at | NULLable日時 | - | イベントテーブルに分離 → workout_completions |
+| workouts | day_id | NULLable FK | - | workout_day_linksテーブルに分離。nullable FK排除 |
+| exercise_logs | memo | NULLable属性 | 全て非該当 | NULLable許容 |
+| set_logs | rpe, memo | NULLable属性 | 全て非該当 | NULLable許容 |
+| one_rep_maxes | set_log_id | NULLable FK | - | 削除。achieved_atを追加。set_logsとの結合度低減、nullable FK排除 |
+
+**workouts.completed_at のイベントテーブル分離:**
+
+- 選択肢: (a) workout_completionsテーブルに分離 vs (b) 現状維持（completed_atカラム）
+- Pros(a): UPDATE回避。完了イベントが明示的。将来の属性追加が容易。完了取り消しが行の削除で表現可能
+- Pros(b): テーブル構造がシンプル。JOINなしで状態判定可能
+- Cons(a): テーブル数増加。JOINが必要（ただしテーブル設計ルールで理由にならない）
+- Cons(b): UPDATE操作が発生。完了履歴を追跡不可
+- 判断: **(a) workout_completionsテーブルに分離**
+
+**one_rep_maxes のイベント化:**
+
+- 選択肢: (a) INSERT only + registered_at vs (b) 現状維持（UPDATE管理）
+- Pros(a): 1RM推移の追跡が可能。UPDATE回避。「1RM登録」イベントが明示的
+- Pros(b): 構造がシンプル。最新の1RMをJOINなしで取得可能
+- Cons(a): 最新の1RM取得にサブクエリが必要
+- Cons(b): 過去の1RM値が失われる。将来1RM推移が必要な場合に履歴テーブルの追加が必要
+- 判断: **(a) イベント化**。1RMはトレーニーにとって重要な指標であり、推移追跡のシナリオがありうる
+
+**1RM削除（UC_D_3）の表現:**
+
+イベント化した場合の1RM削除の表現方法を検討:
+- (a-1) weight_kg = nullの行を挿入 → weight_kgがnullableになるのが不自然
+- (a-2) 該当exercise_idの全レコードを物理DELETE → DELETE操作だが「未設定に戻す」操作として許容
+- (a-3) cleared_atカラム追加 → カラム追加で複雑化
+- (a-4) current_one_rep_maxポインタテーブル → テーブル数増加
+- 暫定判断: **(a-2) 物理DELETE**。「未設定に戻す」操作であり、削除履歴の保持は不要。⚠️ 要確認
+
+**UPDATE/DELETEカラムの精査:**
+
+| グループ | 対象 | 判断 | 理由 |
+| --- | --- | --- | --- |
+| プログラム計画系 | programs, days, exercise_plans, set_plans | UPDATE管理 | 「現在の状態」のみ重要。変更履歴の要件なし |
+| 種目名 | exercises.name | UPDATE管理 | IDベースの参照に影響しない。変更履歴不要 |
+| セット記録 | set_logs | UPDATE管理 | 入力ミスの訂正。修正履歴不要 |
+| 種目記録 | exercise_logs | UPDATE管理 | 同上 |
+| 各テーブルのDELETE | 全テーブル | 物理DELETE | パーソナルアプリで論理削除不要 |
+
+#### ユーザーフィードバック対応
+
+フェーズ3完了後のユーザーフィードバックに基づき、以下の変更を実施した。
+
+**F1: lbs対応 → 現時点でERD変更なし**
+
+内部kg統一 + 表示層変換で将来対応可能。lbs対応時にset_logs, one_rep_maxesへweight_input_unitカラムを追加する方針。ジム内でkg/lbs機器が混在するケースや複数ジム利用のケースがあり、グローバル設定の表示単位だけでは不足するため、per-record単位での入力単位保存が必要。後方互換のカラム追加で対応可能なため、現時点ではERD変更不要。
+
+**F2-1: workouts.day_id → workout_day_linksテーブルに分離**
+
+nullable FKを排除するため、workoutsからday_idカラムを削除し、workout_day_links（id, workout_id FK UK, day_id FK）テーブルを新設。Dayに紐づかないワークアウト（フリートレーニング）はリンク行が存在しないことで表現する。workout_idにUK制約を付与し、1ワークアウト = 最大1 Dayの関係を維持。
+
+**F2-2: set_plans → サブタイプテーブル分割**
+
+set_plansの「3パラメータのうち2つを指定」ルールにより発生していたnullableカラム（weight_value, weight_type, reps, rpe）を完全排除するため、基底テーブル + 3パラメータテーブルに分割。
+
+- set_plans: id, exercise_plan_id FK, plan_type text NOT NULL ("weight_reps" / "weight_rpe" / "reps_rpe"), display_order
+- weight_reps_params: set_plan_id FK UK, weight_value real, weight_type text, reps integer（全NOT NULL）
+- weight_rpe_params: set_plan_id FK UK, weight_value real, weight_type text, rpe real（全NOT NULL）
+- reps_rpe_params: set_plan_id FK UK, reps integer, rpe real（全NOT NULL）
+
+plan_typeで組み合わせを明示し、「2 of 3」制約を構造的に表現。weightsの共通テーブル化は不要と判断（weightは独立エンティティではなく、セット計画に埋め込まれた値オブジェクト）。
+
+**F2-3: memo/rpe → nullable維持**
+
+exercise_logs.memo, set_logs.rpe, set_logs.memoのnullableは維持。「入力しなかった」= 該当なしの意味でNULLの用途が明確。RPE検索は `WHERE rpe IS NOT NULL AND rpe >= 8` で対応可能。set_logsは最もクエリ頻度が高いテーブルのため、不要なLEFT JOINを避ける。
+
+**F3: 種目カテゴリ → 現時点で変更不要**
+
+exercisesテーブルへのカラム追加やリンクテーブル追加で後方互換対応可能。カテゴリの軸（部位/器具/動作パターン）が未定のため早期の構造決定は避ける。
+
+**F4: one_rep_maxes → set_log_id削除、achieved_at追加**
+
+one_rep_maxesからset_log_idカラムを削除し、achieved_at integer NOT NULLを追加。変更後: one_rep_maxes（id, exercise_id FK, weight_kg, achieved_at, registered_at）。
+
+- set_logsとの結合度が下がり、ワークアウト削除時の影響処理が不要に
+- achieved_at: ユーザーが入力する達成日時（推移グラフのX軸）
+- registered_at: システム自動設定の登録日時（維持）
+- set_logs |o--o| one_rep_maxes の関係線を削除
+- 具体的なセット記録が必要な場合は検索で到達可能（achieved_at + exercise_id で期間を絞り、set_logsを検索）
+
+**F5-1: ワークアウト完了取り消し**
+
+workout_completions行の物理DELETEで対応。既にworkout_completionsテーブルに分離済みの構造であり、追加の変更は不要。
+
+**F5-2: 1RM削除（UC_D_3）**
+
+該当exercise_idの全レコードを物理DELETE。「クリア」= 完全リセットの意味。暫定判断(a-2)を確定。
+
+**フィードバック対応後のnullable状況:**
+
+- nullableカラム: programs.meta_info, exercise_logs.memo, set_logs.rpe, set_logs.memo（4カラム）
+- nullable FK: なし（全廃達成）
+- set_plansのnullable: なし（サブタイプテーブルで解消）
 
 ## フェーズ4: 関係の設計
 
@@ -201,6 +669,7 @@ erDiagram
 
 | # | 指摘内容 | 該当フェーズ | 対応状況 |
 | --- | --- | --- | --- |
+| P1 | F1: lbs対応時のper-record単位保存（set_logs, one_rep_maxesにweight_input_unitカラム追加） | 将来 | 未着手。内部kg統一で現時点は不要。ジム内kg/lbs混在ケースのためper-record単位が必要 |
 
 ## 設計判断サマリー
 
@@ -211,3 +680,20 @@ erDiagram
 | 3 | 表示順（並び順）を配列構造を持つエンティティの属性として追加 | ドメインモデルのコンテンツ構造図では「配列位置で順序を保持」（設計判断#15）とあるが、RDBでは明示的な順序カラムが必要。Day・種目計画・セット計画・種目記録・セット記録に表示順を追加 | 1 |
 | 4 | e1RM・%1RM・ボリューム等の導出値はエンティティとしない | 設計判断#19でe1RMを導出ビューとする方針が確定済み。セット記録から算出可能なデータは保存不要。将来パフォーマンス上の問題が出た場合はマテリアライズドビューやキャッシュテーブルの追加で対応可能。後方互換性への影響なし | 1 |
 | 5 | プログラム複製（UC_A_2）は独立エンティティとせず、複製元への参照も持たない | Pros: 複製後のプログラムは独立しており、複製元との関連を保持する要件がない。構造がシンプル。Cons: 複製元のトレーサビリティがなくなるが、現要件では不要。将来「テンプレート共有」等が入った場合は別途リレーションを追加でき、後方互換性の問題なし | 1 |
+| 6 | テーブル名は複数形を採用（programs, days, exercises等） | Pros(複数形): テーブルが「レコードの集合」であることを表現。SQL慣習として広く使われ、Drizzle ORM公式ドキュメントも複数形を採用。Pros(単数形): 認証DBとの一貫性。判断: 認証DBはBetter Authの自動生成であり命名規則の先例としない。Per-User DBは独自ドメインスキーマとしてSQL慣習に従う | 2 |
+| 7 | セット計画の3パラメータ（weight_value/weight_type, reps, rpe）はすべてnullableとし、「2つ以上指定」はアプリ側バリデーションで強制 | Pros: DB構造がシンプル。パターン追加時にスキーマ変更不要。Cons: DB単体ではデータの整合性を保証できない。判断: プロジェクトルールでenum/CHECK制約禁止のため、アプリ側で制御する。**→ #17で撤回: サブタイプテーブル分割に変更** | 2 |
+| 8 | 1RM（one_rep_maxes）をexercisesテーブルのカラムではなく独立テーブルとする | Pros(独立テーブル): セット記録への参照(set_log_id)を自然に持てる（設計判断#22で決定済み）。1RM未設定を行の不存在で表現でき、NULLカラムを避けられる。Pros(exercisesのカラム): テーブル数が減る。JOINが不要。判断: セット記録参照の要件があるため独立テーブルを採用。**→ #19でset_log_idを削除** | 2 |
+| 9 | 全導出項目（ボリューム、e1RM、%1RM）をテーブルから排除し、アプリケーション側で計算 | 全候補が逆算可能（可逆性あり）。パーソナルユースのためデータ量が限定的でパフォーマンス問題は発生しにくい。将来問題が顕在化した場合にキャッシュカラムを追加可能（後方互換性あり） | 2 |
+| 10 | タイムスタンプに汎用名（created_at/updated_at）を使わず、ドメインの事実に即した名前を使用 | started_at（トレーニング開始）、completed_at（ワークアウト完了）、registered_at（1RM登録）。テーブル設計ルールに準拠し、各カラムが記録する事実を明確にする | 2 |
+| 11 | workouts.completed_atをworkout_completionsテーブルに分離 | Pros(分離): UPDATE回避。完了イベントが明示的。将来の属性追加が容易。Cons(分離): テーブル数増加・JOINが必要。Pros(維持): 構造シンプル。Cons(維持): UPDATE発生・履歴追跡不可。判断: 分離。UPDATE回避を優先 | 3 |
+| 12 | one_rep_maxesをイベント化（INSERT only + registered_at）し、最新レコードが「現在の1RM」 | Pros(イベント化): 1RM推移追跡可能・UPDATE回避。Cons(イベント化): 最新取得にサブクエリ必要。Pros(UPDATE管理): 構造シンプル。Cons(UPDATE管理): 過去値が失われる。判断: イベント化。1RM推移は将来ありうるシナリオ | 3 |
+| 13 | プログラム計画系（programs, days, exercise_plans, set_plans）のUPDATE管理を採用 | 計画データの「現在の状態」のみが重要。変更履歴の要件なし。将来必要になった場合はイベントソーシングテーブル追加で後方互換性を保って移行可能 | 3 |
+| 14 | セット記録・種目記録（set_logs, exercise_logs）のUPDATE管理を採用 | 入力ミスの訂正が主目的。修正履歴の追跡は不要（パーソナルアプリ）。将来コーチ機能等で変更追跡が必要になった場合は監査テーブル追加で対応可能 | 3 |
+| 15 | 全テーブルで物理DELETE管理を採用 | パーソナルアプリで論理削除の必要性なし。プログラム削除後もワークアウト記録は独立して残る構造 | 3 |
+| 16 | set_plans.weight_typeは区分カラムで維持（kg/%1RMのサブセット分割は不要） | 種別間で属性の差がなく、単なるラベル。weight_valueの解釈が異なるだけ。将来VBT等が追加されてもweight_typeの値追加で対応可能 | 3 |
+| 17 | set_plansを基底テーブル + 3パラメータテーブルに分割 | 「2 of 3」制約を構造的に表現。nullableカラムを完全排除。plan_typeで組み合わせを明示し、各パラメータテーブルは全カラムNOT NULL | 3 |
+| 18 | workouts.day_idをworkout_day_linksテーブルに分離 | nullable FK排除。Dayに紐づかないワークアウトはリンク行の不存在で表現。workout_idにUK制約で1:0..1を維持 | 3 |
+| 19 | one_rep_maxesからset_log_idを削除しachieved_atを追加 | set_logsとの結合度低減。nullable FK排除。achieved_atはユーザー入力の達成日時（推移グラフのX軸）、registered_atはシステム自動設定の登録日時 | 3 |
+| 20 | exercise_logs.memo, set_logs.rpe/memoのnullableを維持 | 「入力しなかった」= 該当なしの意味でNULLの用途が明確。RPE検索はWHERE rpe IS NOT NULL AND rpe >= 8で対応可能。不要なLEFT JOIN回避 | 3 |
+| 21 | lbs対応は将来カラム追加で対応（現時点でERD変更なし） | 内部kg統一 + 表示層変換で対応可能。per-record単位のweight_input_unitカラム追加で後方互換対応。ジム内kg/lbs混在ケース対応 | 3 |
+| 22 | 種目カテゴリは将来追加で後方互換対応可能（現時点でERD変更なし） | exercisesへのカラム追加やリンクテーブルで対応。カテゴリの軸が未定のため早期の構造決定は避ける | 3 |
