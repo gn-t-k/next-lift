@@ -1,14 +1,16 @@
+> **アーカイブ**: このファイルは設計プロセスの記録です。実装時の参照には `docs/project/ui-design/index.md` を使用してください。
+
 # Next Lift UI設計
 
 ## ステータス
 
-- 現在のフェーズ: 6/6（最終レビュー完了）
+- 現在のフェーズ: 7/7（ドキュメント分割完了）
 - ユースケース数: 27
 - Feature数: 5
 - Function数: 28
 - 概念オブジェクト数: 9
 - 単位ビュー数: 14
-- 次のアクション: UI設計完了。実装フェーズへ
+- 次のアクション: 実装フェーズへ（参照: docs/project/ui-design/index.md）
 
 ## 要件サマリー
 
@@ -16,8 +18,8 @@
 - 対象プラットフォーム: iOS（React Native / Expo）、Web（Next.js）
 - 対象フォームファクタ: モバイル（iOS）+ デスクトップ/レスポンシブ（Web）
 - 入力資料:
-  - ペルソナモデル: docs/project/001-persona-model.md
-  - 行動シナリオ: docs/project/002-behavioral-scenarios.md
+  - ペルソナモデル: docs/project/ui-design/persona-model.md
+  - 行動シナリオ: docs/project/ui-design/behavioral-scenarios.md
   - プロジェクト概要: docs/project/overview.md
 - 外部サービス依存: Turso（Per-User Database）、Better Auth（認証）
 - コードベース調査結果:

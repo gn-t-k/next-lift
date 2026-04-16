@@ -11,8 +11,8 @@
 
 ### Phase 1: ペルソナモデルと行動シナリオの準備 [done]
 
-- [001-persona-model.md](./001-persona-model.md)
-- [002-behavioral-scenarios.md](./002-behavioral-scenarios.md)
+- [persona-model.md](./ui-design/persona-model.md)
+- [behavioral-scenarios.md](./ui-design/behavioral-scenarios.md)
 
 ### Phase 2: UI設計（MBUD）
 
