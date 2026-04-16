@@ -2,8 +2,8 @@
 
 ## ステータス
 
-- 状態: 作業中
-- 現在のフェーズ: 3/5（完了）
+- 状態: 完了
+- 現在のフェーズ: 5/5（完了）
 - 最終更新: 2026-04-16
 
 ## 要件サマリー
@@ -646,24 +646,492 @@ workout_completions行の物理DELETEで対応。既にworkout_completionsテー
 
 ### 変更点
 
+- フェーズ3の全リレーションシップに多重度を確定し、Mermaid ERD記号を精査
+- programs → days の多重度を `||--|{`（1対1以上）に変更（プログラムは最低1つのDayを持つ）
+- exercise_plans → set_plans の多重度を `||--|{`（1対1以上）に変更（種目計画は最低1つのセット計画を持つ）
+- workouts → exercise_logs の多重度を `||--|{`（1対1以上）に変更（ワークアウトは最低1種目の記録を持つ）
+- exercise_logs → set_logs の多重度を `||--|{`（1対1以上）に変更（種目記録は最低1セットの記録を持つ）
+- set_plans → パラメータテーブル3種の多重度を `||--||`（1対1必須）に変更（set_planは必ず1つのパラメータテーブルに対応する）
+- N:M関係は検出されず、新規中間テーブルの追加なし
+- 非依存リレーションシップの精査を実施し、exercises関連のリレーションシップが非依存であることを確認。既存の構造でnullable FK問題は発生しないことを確認
+- 主キー設計を確認: 全テーブルがサロゲートキー（id text PK）を使用する方針を維持。パラメータテーブル3種はset_plan_idがFK兼UKで実質的にPK
+
+### 設計判断
+
+| 対象 | 判断 | 理由 |
+| --- | --- | --- |
+| programs → days の多重度 | 1対1以上（必須）に変更 | ドメインモデルでDayは「0..n」だが、これはプログラム作成途中の一時状態。保存時はDay最低1つが必要（Day = 計画単位、Dayなしのプログラムに意味がない）。アプリ側バリデーションで1以上を強制する前提 |
+| days → exercise_plans の多重度 | 0以上（オプショナル）を維持 | Dayが存在しても、種目が未配置の状態は正当。Day作成後に種目を段階的に追加するフローがある |
+| exercise_plans → set_plans の多重度 | 1対1以上（必須）に変更 | 種目計画はセット計画なしには意味がない。「何セットやるか」が種目計画の本質的な情報 |
+| workouts → exercise_logs の多重度 | 1対1以上（必須）に変更 | ドメインモデルで「1 → 1..n」。ワークアウトは最低1種目の記録を持つ |
+| exercise_logs → set_logs の多重度 | 1対1以上（必須）に変更 | ドメインモデルで「1 → 1..n」。種目記録は最低1セットの記録を持つ |
+| set_plans → パラメータテーブル | 1対1必須に変更 | set_planのplan_typeに対応するパラメータテーブルに必ず1行存在する。set_planの意味的な完全性にパラメータが必要 |
+| exercises と exercise_plans/exercise_logs/one_rep_maxes の関係 | 非依存リレーションシップ。現構造で問題なし | exercisesは独立マスタ。exercise_plans/exercise_logs/one_rep_maxesはexercise_idをNOT NULL FKで持つが、これは「記録/計画時に必ず種目が指定される」というドメインルールの反映であり、nullable FKの問題は発生しない |
+| workouts と workout_day_links の関係 | 非依存リレーションシップ。既にフェーズ3で中間テーブルに分離済み | workoutsは独立（Dayなしのフリートレーニングが可能）。workout_day_linksが交差エンティティとして非依存を適切に表現 |
+| パラメータテーブルの主キー | set_plan_id（FK兼UK）を実質的なPKとして使用。独自のidカラムは不要 | 1:1関係で親テーブルのPKで一意に特定可能。独自のidを追加するとJOINのキーが増えるだけで利点がない。Pros(独自id追加): 他テーブルと一貫した構造。Cons(独自id追加): 不要な冗長性。Pros(set_plan_idのみ): シンプル、JOINが自然。Cons(set_plan_idのみ): テーブル間で主キー構造が不統一。判断: パラメータテーブルは子テーブル的性質が強く、独自idは不要 |
+
 ### Mermaid ERD
 
 ```mermaid
 erDiagram
+    programs ||--|{ days : "has"
+    days ||--o{ exercise_plans : "has"
+    exercise_plans ||--|{ set_plans : "has"
+    set_plans ||--|| weight_reps_params : "params"
+    set_plans ||--|| weight_rpe_params : "params"
+    set_plans ||--|| reps_rpe_params : "params"
+    exercises ||--o{ exercise_plans : "target"
+    exercises ||--o{ exercise_logs : "target"
+    exercises ||--o{ one_rep_maxes : "has"
+    workouts ||--|{ exercise_logs : "has"
+    workouts ||--o| workout_completions : "completed as"
+    workouts ||--o| workout_day_links : "linked to"
+    days ||--o{ workout_day_links : "linked from"
+    exercise_logs ||--|{ set_logs : "has"
+
+    programs {
+        id text PK
+        name text
+        meta_info text "nullable"
+    }
+    days {
+        id text PK
+        program_id text FK
+        label text
+        display_order integer
+    }
+    exercise_plans {
+        id text PK
+        day_id text FK
+        exercise_id text FK
+        display_order integer
+    }
+    set_plans {
+        id text PK
+        exercise_plan_id text FK
+        plan_type text "NOT NULL"
+        display_order integer
+    }
+    weight_reps_params {
+        set_plan_id text "PK FK"
+        weight_value real
+        weight_type text
+        reps integer
+    }
+    weight_rpe_params {
+        set_plan_id text "PK FK"
+        weight_value real
+        weight_type text
+        rpe real
+    }
+    reps_rpe_params {
+        set_plan_id text "PK FK"
+        reps integer
+        rpe real
+    }
+    exercises {
+        id text PK
+        name text
+    }
+    one_rep_maxes {
+        id text PK
+        exercise_id text FK
+        weight_kg real
+        achieved_at integer
+        registered_at integer
+    }
+    workouts {
+        id text PK
+        started_at integer
+    }
+    workout_day_links {
+        id text PK
+        workout_id text "FK UK"
+        day_id text FK
+    }
+    workout_completions {
+        id text PK
+        workout_id text "FK UK"
+        completed_at integer
+    }
+    exercise_logs {
+        id text PK
+        workout_id text FK
+        exercise_id text FK
+        memo text "nullable"
+        display_order integer
+    }
+    set_logs {
+        id text PK
+        exercise_log_id text FK
+        weight_kg real
+        reps integer
+        rpe real "nullable"
+        memo text "nullable"
+        display_order integer
+    }
 ```
 
 ### 議論ログ
 
-## フェーズ5: 検証
+#### ステップ1: 多重度の確定
 
-### 要件カバレッジ検証
+全エンティティペアの関係を「Aから見てBは複数存在するか？」「Bから見てAは複数存在するか？」で判定する。
+
+**計画系の多重度:**
+
+| 関係 | Aから見てB | Bから見てA | 判定 | Mermaid記号 |
+| --- | --- | --- | --- | --- |
+| programs → days | 1プログラムに複数Day | 1 Dayは1プログラムに属する | 1:N | `\|\|--\|{`（1対1以上）。プログラム保存時にDay最低1つ必須 |
+| days → exercise_plans | 1 Dayに複数種目計画 | 1種目計画は1 Dayに属する | 1:N | `\|\|--o{`（1対0以上）。種目未配置のDayは作成途中で正当 |
+| exercise_plans → set_plans | 1種目計画に複数セット計画 | 1セット計画は1種目計画に属する | 1:N | `\|\|--\|{`（1対1以上）。セットなしの種目計画は意味がない |
+| set_plans → weight_reps_params | 1セット計画に0or1 | 1パラメータは1セット計画に属する | 1:0..1 | plan_type="weight_reps"の場合のみ行が存在 |
+| set_plans → weight_rpe_params | 1セット計画に0or1 | 1パラメータは1セット計画に属する | 1:0..1 | plan_type="weight_rpe"の場合のみ行が存在 |
+| set_plans → reps_rpe_params | 1セット計画に0or1 | 1パラメータは1セット計画に属する | 1:0..1 | plan_type="reps_rpe"の場合のみ行が存在 |
+
+**set_plans → パラメータテーブルのMermaid表記について:**
+
+実際のドメインでは、1つのset_planに対して3つのパラメータテーブルのうち**必ず1つだけ**に行が存在する（plan_typeで排他制御）。Mermaid ERDの記号は個々のリレーションシップ線を表現するため、各線は `||--||`（1対1必須）で記述する。ただし、3本の線が同時に存在するわけではなく、plan_typeの値に応じて1本のみが有効であることをERD図上で完全には表現できない。この排他制御はアプリ側のバリデーションで担保する。
+
+**記録系の多重度:**
+
+| 関係 | Aから見てB | Bから見てA | 判定 | Mermaid記号 |
+| --- | --- | --- | --- | --- |
+| workouts → exercise_logs | 1ワークアウトに複数種目記録 | 1種目記録は1ワークアウトに属する | 1:N | `\|\|--\|{`（1対1以上）。ワークアウトは最低1種目を記録 |
+| exercise_logs → set_logs | 1種目記録に複数セット記録 | 1セット記録は1種目記録に属する | 1:N | `\|\|--\|{`（1対1以上）。種目記録は最低1セットを記録 |
+| workouts → workout_completions | 1ワークアウトに0or1完了 | 1完了は1ワークアウトに対応 | 1:0..1 | `\|\|--o\|`。未完了のワークアウトが正当 |
+| workouts → workout_day_links | 1ワークアウトに0or1リンク | 1リンクは1ワークアウトに対応 | 1:0..1 | `\|\|--o\|`。Dayに紐づかないフリーワークアウトが正当 |
+| days → workout_day_links | 1 Dayに複数リンク | 1リンクは1 Dayに対応 | 1:N | `\|\|--o{`。同じDayを複数回実施可能 |
+
+**マスタ系の多重度:**
+
+| 関係 | Aから見てB | Bから見てA | 判定 | Mermaid記号 |
+| --- | --- | --- | --- | --- |
+| exercises → exercise_plans | 1種目が複数の種目計画に参照される | 1種目計画は1種目に対応 | 1:N | `\|\|--o{`。未使用の種目が正当 |
+| exercises → exercise_logs | 1種目が複数の種目記録に参照される | 1種目記録は1種目に対応 | 1:N | `\|\|--o{`。記録のない種目が正当 |
+| exercises → one_rep_maxes | 1種目に複数の1RMレコード（イベント化で履歴） | 1つの1RMレコードは1種目に対応 | 1:N | `\|\|--o{`。1RM未設定の種目が正当 |
+
+**N:Mの確認:**
+
+全リレーションシップを精査した結果、N:M関係は存在しない:
+- 種目(exercises)は計画側(exercise_plans)と記録側(exercise_logs)の両方から参照されるが、これは種目マスタが2つの異なる1:N関係で参照されているだけであり、N:Mではない
+- 計画(programs/days)と記録(workouts)はworkout_day_linksを介して関連するが、これは1ワークアウト対最大1 Dayの関係（1:0..1）であり、N:Mではない
+
+#### ステップ2: 中間テーブルの導入
+
+N:M関係が検出されなかったため、新規中間テーブルの追加は不要。
+
+既存の中間テーブル（交差エンティティ）の確認:
+- **workout_day_links**: workoutsとdaysの非依存リレーションシップを表現する交差エンティティ。フェーズ3でnullable FK排除のために導入済み。1ワークアウト = 最大1 Dayの制約はworkout_idのUK制約で維持
+
+#### ステップ3: 非依存リレーションシップの検討
+
+**依存関係の判定（「Aが存在しなくてもBは存在できるか？」）:**
+
+| 関係 (A → B) | Aなしでも | Bが紐づかない | 判定 | 対処 |
+| --- | --- | --- | --- | --- |
+| programs → days | Noで依存。Dayはプログラムの構成要素 | No | 依存 | FKを直接持たせてよい（days.program_id NOT NULL） |
+| days → exercise_plans | Noで依存。種目計画はDayの構成要素 | No | 依存 | FKを直接持たせてよい（exercise_plans.day_id NOT NULL） |
+| exercise_plans → set_plans | Noで依存。セット計画は種目計画の構成要素 | No | 依存 | FKを直接持たせてよい（set_plans.exercise_plan_id NOT NULL） |
+| set_plans → パラメータテーブル | Noで依存。パラメータはセット計画の一部 | No | 依存 | FKを直接持たせてよい（set_plan_id NOT NULL） |
+| workouts → exercise_logs | Noで依存。種目記録はワークアウトの構成要素 | No | 依存 | FKを直接持たせてよい（exercise_logs.workout_id NOT NULL） |
+| exercise_logs → set_logs | Noで依存。セット記録は種目記録の構成要素 | No | 依存 | FKを直接持たせてよい（set_logs.exercise_log_id NOT NULL） |
+| workouts → workout_completions | Noで依存。完了はワークアウトのイベント | No | 依存 | FKを直接持たせてよい（workout_completions.workout_id NOT NULL FK UK） |
+| workouts → workout_day_links | Yesで非依存。ワークアウトはDay紐づけなしで存在可能 | Yesで非依存。フリーワークアウト | 非依存 | **既にフェーズ3で交差エンティティとして分離済み**。nullable FKの問題なし |
+| exercises → exercise_plans | Yesで非依存。種目はマスタとして独立 | Noで依存。種目計画は必ず種目を参照 | 非依存（Aから見て） | exercise_plans.exercise_id NOT NULL FK。種目計画作成時には必ず種目が指定されるため、FKがNULLになる期間は存在しない。交差エンティティ不要 |
+| exercises → exercise_logs | Yesで非依存。種目はマスタとして独立 | Noで依存。種目記録は必ず種目を参照 | 非依存（Aから見て） | exercise_logs.exercise_id NOT NULL FK。種目記録作成時には必ず種目が指定される。交差エンティティ不要 |
+| exercises → one_rep_maxes | Yesで非依存。種目はマスタとして独立 | Noで依存。1RMは必ず種目に紐づく | 非依存（Aから見て） | one_rep_maxes.exercise_id NOT NULL FK。1RM登録時には必ず種目が指定される。交差エンティティ不要 |
+| days → workout_day_links | Yesで非依存。Dayは計画として独立 | - | 非依存 | **既に交差エンティティで表現済み** |
+
+**非依存リレーションシップの精査結果:**
+
+exercises関連の3つの非依存リレーションシップ（exercises → exercise_plans, exercise_logs, one_rep_maxes）について:
+- exercises は独立マスタであり、exercise_plans/exercise_logs/one_rep_maxesが0件でも存在しうる（片側が非依存）
+- ただし、子テーブル側は作成時に必ずexercise_idが指定される（FKがNULLになるタイミングがない）
+- 交差エンティティの導入は不要: 「種目が未定の計画/記録」は存在しないため、FKをNULLableにする必要がない
+
+workouts → workout_day_linksの非依存リレーションシップ:
+- フェーズ3で既にworkout_day_links交差エンティティとして分離済み
+- Dayに紐づかないワークアウトはリンク行の不存在で表現
+
+**結論:** 非依存リレーションシップでnullable FKが発生するケースはない。全てのFKはNOT NULLを維持。
+
+#### ステップ4: 主キー設計の確認
+
+| テーブル | 主キー | 設計 |
+| --- | --- | --- |
+| programs | id text PK | サロゲートキー |
+| days | id text PK | サロゲートキー |
+| exercise_plans | id text PK | サロゲートキー |
+| set_plans | id text PK | サロゲートキー |
+| weight_reps_params | set_plan_id text PK FK | 親のPKを主キーとして使用。1:1関係のため独自idは不要 |
+| weight_rpe_params | set_plan_id text PK FK | 同上 |
+| reps_rpe_params | set_plan_id text PK FK | 同上 |
+| exercises | id text PK | サロゲートキー |
+| one_rep_maxes | id text PK | サロゲートキー。イベント化で同一exercise_idに複数行あるため独自id必要 |
+| workouts | id text PK | サロゲートキー |
+| workout_day_links | id text PK | サロゲートキー。workout_id UKで1:0..1制約 |
+| workout_completions | id text PK | サロゲートキー。workout_id UKで1:0..1制約 |
+| exercise_logs | id text PK | サロゲートキー |
+| set_logs | id text PK | サロゲートキー |
+
+**パラメータテーブルの主キー変更:**
+
+フェーズ3ではパラメータテーブルのset_plan_idは「FK UK」と記述していたが、フェーズ4で「PK FK」に変更する。
+
+- Pros(PK FK): set_plan_idがそのままPKとなり、JOINが自然。独自idの冗長性がない。1:1関係において親のPKを子のPKとして使うのはRDBの定石
+- Cons(PK FK): 他のテーブルとPK構造が不統一（他はidカラムがPK）
+- Pros(id PK + FK UK): 全テーブルで一貫したid PKの構造
+- Cons(id PK + FK UK): 不要なカラムが増える。JOINでset_plan_idを使うため、idを主キーにする意味が薄い
+- 判断: **PK FK を採用**。パラメータテーブルはset_plansの「属性を分離した子テーブル」であり、独自のアイデンティティを持たない
+
+## フェーズ5: 最終レビュー
+
+### ステップ1: 要件カバレッジ検証
+
+#### A. プログラム作成
 
 | # | ユースケース | 擬似SQL | 結果 |
 | --- | --- | --- | --- |
+| UC_A_1 | プログラム新規作成 | **W:** `INSERT INTO programs (id, name) VALUES (...);` `INSERT INTO days (id, program_id, label, display_order) VALUES (...);` | OK |
+| UC_A_2 | プログラム複製 | **R:** `SELECT * FROM programs WHERE id = ?;` `SELECT * FROM days WHERE program_id = ?;` `SELECT * FROM exercise_plans WHERE day_id IN (...);` `SELECT sp.*, wrp.*, wrpp.*, rrp.* FROM set_plans sp LEFT JOIN weight_reps_params wrp ON ... LEFT JOIN weight_rpe_params wrpp ON ... LEFT JOIN reps_rpe_params rrp ON ... WHERE sp.exercise_plan_id IN (...);` **W:** 読み取った全データを新しいIDでINSERT（programs → days → exercise_plans → set_plans → パラメータテーブル） | OK |
+| UC_A_3 | Day構成編集 | **W:** `INSERT INTO days (id, program_id, label, display_order) VALUES (...);` `UPDATE days SET label = ?, display_order = ? WHERE id = ?;` `DELETE FROM days WHERE id = ?;` | OK |
+| UC_A_4 | 種目配置 | **W:** `INSERT INTO exercise_plans (id, day_id, exercise_id, display_order) VALUES (...);` `INSERT INTO set_plans (id, exercise_plan_id, plan_type, display_order) VALUES (...);` `INSERT INTO weight_reps_params (set_plan_id, weight_value, weight_type, reps) VALUES (...);` | OK |
+| UC_A_5 | メタ情報記録 | **W:** `UPDATE programs SET meta_info = ? WHERE id = ?;` | OK |
+| UC_A_6 | プログラム編集 | **W:** `UPDATE programs SET name = ? WHERE id = ?;` `UPDATE days SET label = ?, display_order = ? WHERE id = ?;` `UPDATE exercise_plans SET display_order = ? WHERE id = ?;` `UPDATE set_plans SET plan_type = ?, display_order = ? WHERE id = ?;` + パラメータテーブルのDELETE→INSERT | OK |
+| UC_A_7 | プログラム削除 | **W:** `DELETE FROM programs WHERE id = ?;` + CASCADE的に days, exercise_plans, set_plans, パラメータテーブルを削除（アプリ側で順序制御） | OK |
+| UC_A_8 | 種目一覧閲覧 | **R:** `SELECT e.*, (SELECT orm.weight_kg FROM one_rep_maxes orm WHERE orm.exercise_id = e.id ORDER BY orm.registered_at DESC LIMIT 1) AS current_1rm FROM exercises e ORDER BY e.name;` | OK |
+| UC_A_9 | 種目名編集 | **W:** `UPDATE exercises SET name = ? WHERE id = ?;` | OK |
+| UC_A_10 | 種目登録 | **W:** `INSERT INTO exercises (id, name) VALUES (...);` | OK |
+| UC_A_11 | 種目削除 | **W:** `DELETE FROM exercises WHERE id = ?;` + exercise_plans, exercise_logs, one_rep_maxesの関連レコード削除（アプリ側で制御） | OK |
 
-### レビュー結果
+#### B. トレーニング記録
+
+| # | ユースケース | 擬似SQL | 結果 |
+| --- | --- | --- | --- |
+| UC_B_1 | プログラム選択 | **R:** `SELECT p.* FROM programs p ORDER BY p.name;` ※直近使用のサジェスト（UC_E_3）は別途 | OK |
+| UC_B_2 | セット記録 | **W:** `INSERT INTO workouts (id, started_at) VALUES (...);` `INSERT INTO workout_day_links (id, workout_id, day_id) VALUES (...);` `INSERT INTO exercise_logs (id, workout_id, exercise_id, display_order) VALUES (...);` `INSERT INTO set_logs (id, exercise_log_id, weight_kg, reps, display_order) VALUES (...);` | OK |
+| UC_B_3 | 記録値修正 | **W:** `UPDATE set_logs SET weight_kg = ?, reps = ? WHERE id = ?;` | OK |
+| UC_B_4 | RPE・メモ追加 | **W:** `UPDATE set_logs SET rpe = ?, memo = ? WHERE id = ?;` | OK |
+| UC_B_5 | ワークアウト完了 | **W:** `INSERT INTO workout_completions (id, workout_id, completed_at) VALUES (...);` | OK |
+| UC_B_6 | ワークアウト削除 | **W:** `DELETE FROM workouts WHERE id = ?;` + workout_day_links, workout_completions, exercise_logs, set_logsの関連レコード削除 | OK |
+| UC_B_7 | ワークアウト事後修正 | **W:** `UPDATE set_logs SET weight_kg = ?, reps = ?, rpe = ?, memo = ? WHERE id = ?;` `UPDATE exercise_logs SET memo = ? WHERE id = ?;` | OK |
+
+#### C. 振り返り
+
+| # | ユースケース | 擬似SQL | 結果 |
+| --- | --- | --- | --- |
+| UC_C_1 | 計画実績比較 | **R:** `SELECT ep.display_order, e.name, sp.plan_type, wrp.weight_value, wrp.weight_type, wrp.reps, wrpp.weight_value, wrpp.weight_type, wrpp.rpe, rrp.reps, rrp.rpe FROM exercise_plans ep JOIN exercises e ON e.id = ep.exercise_id JOIN set_plans sp ON sp.exercise_plan_id = ep.id LEFT JOIN weight_reps_params wrp ON wrp.set_plan_id = sp.id LEFT JOIN weight_rpe_params wrpp ON wrpp.set_plan_id = sp.id LEFT JOIN reps_rpe_params rrp ON rrp.set_plan_id = sp.id WHERE ep.day_id = ? ORDER BY ep.display_order, sp.display_order;` + `SELECT el.display_order, e.name, sl.weight_kg, sl.reps, sl.rpe FROM exercise_logs el JOIN exercises e ON e.id = el.exercise_id JOIN set_logs sl ON sl.exercise_log_id = el.id JOIN workouts w ON w.id = el.workout_id JOIN workout_day_links wdl ON wdl.workout_id = w.id WHERE wdl.day_id = ? ORDER BY el.display_order, sl.display_order;` ※計画と実績を種目(exercise_id)でマッチングし、セットのdisplay_orderで対比 | OK |
+| UC_C_2 | 強度・ボリューム推移確認 | **R:** `SELECT w.started_at, sl.weight_kg, sl.reps, sl.rpe FROM set_logs sl JOIN exercise_logs el ON el.id = sl.exercise_log_id JOIN workouts w ON w.id = el.workout_id WHERE el.exercise_id = ? ORDER BY w.started_at;` ※e1RM = weight_kg * (1 + reps / 30)、ボリューム = weight_kg * reps、%1RM = weight_kg / 1RMはアプリ側で算出 | OK |
+
+#### D. 1RM
+
+| # | ユースケース | 擬似SQL | 結果 |
+| --- | --- | --- | --- |
+| UC_D_1 | 1RM登録更新 | **W:** `INSERT INTO one_rep_maxes (id, exercise_id, weight_kg, achieved_at, registered_at) VALUES (...);` ※イベント化のため常にINSERT。最新レコードが「現在の1RM」 | OK |
+| UC_D_2 | e1RM採用 | **R:** e1RMはset_logsから算出（UC_E_1参照）。**W:** `INSERT INTO one_rep_maxes (id, exercise_id, weight_kg, achieved_at, registered_at) VALUES (...);` ※e1RM算出元セットの日時をachieved_atに設定 | OK |
+| UC_D_3 | 1RM削除 | **W:** `DELETE FROM one_rep_maxes WHERE exercise_id = ?;` ※該当種目の全レコードを物理DELETE（「クリア」= 完全リセット） | OK |
+
+#### E. システム
+
+| # | ユースケース | 擬似SQL | 結果 |
+| --- | --- | --- | --- |
+| UC_E_1 | e1RM自動算出 | **R:** `SELECT sl.weight_kg, sl.reps FROM set_logs sl JOIN exercise_logs el ON el.id = sl.exercise_log_id WHERE el.exercise_id = ? AND sl.reps > 0 ORDER BY (sl.weight_kg * (1 + sl.reps / 30.0)) DESC LIMIT 1;` ※Epley公式等はアプリ側で算出 | OK |
+| UC_E_2 | 計画値プリフィル | **R:** `SELECT d.id FROM days d WHERE d.program_id = ? ORDER BY d.display_order;` ※次のDayの判定: `SELECT wdl.day_id, MAX(w.started_at) AS last_done FROM workout_day_links wdl JOIN workouts w ON w.id = wdl.workout_id WHERE wdl.day_id IN (...) GROUP BY wdl.day_id;` ※最後に実施されたDayの次のDay（display_order順）を特定 + `SELECT ep.*, sp.*, wrp.*, wrpp.*, rrp.* FROM exercise_plans ep JOIN set_plans sp ON sp.exercise_plan_id = ep.id LEFT JOIN weight_reps_params wrp ON wrp.set_plan_id = sp.id LEFT JOIN weight_rpe_params wrpp ON wrpp.set_plan_id = sp.id LEFT JOIN reps_rpe_params rrp ON rrp.set_plan_id = sp.id WHERE ep.day_id = ? ORDER BY ep.display_order, sp.display_order;` | OK |
+| UC_E_3 | 直近プログラムサジェスト | **R:** `SELECT DISTINCT p.id, p.name, MAX(w.started_at) AS last_used FROM programs p JOIN days d ON d.program_id = p.id JOIN workout_day_links wdl ON wdl.day_id = d.id JOIN workouts w ON w.id = wdl.workout_id GROUP BY p.id, p.name ORDER BY last_used DESC;` | OK |
+| UC_E_4 | 推移データ表示 | **R:** `SELECT w.started_at, sl.weight_kg, sl.reps, sl.rpe FROM set_logs sl JOIN exercise_logs el ON el.id = sl.exercise_log_id JOIN workouts w ON w.id = el.workout_id WHERE el.exercise_id = ? ORDER BY w.started_at;` ※UC_C_2と同じクエリ。プログラム設計時に種目の推移データを参照 | OK |
+
+#### 検証結果サマリー
+
+全27ユースケースについて擬似SQLで読み取り/書き込みを検証し、**全てOK**。JOINパスの不足、カラムの欠落、多重度の誤りは検出されなかった。
+
+### ステップ2: よくある設計の間違いチェック
+
+#### 過剰に複雑な設計になっていないか
+
+- テーブル数14。うちパラメータテーブル3種はset_plansの属性分離であり、概念的には11エンティティ + 属性分離3テーブル
+- パラメータテーブルの分割は「2 of 3」nullableを構造的に解決するための分割であり、要件に直接根拠がある。過剰な構造ではない
+- workout_day_links, workout_completionsはnullable FK排除・UPDATE回避のためのイベントテーブル分離であり、それぞれの設計判断に理由が記録されている
+- 「将来必要になるかもしれない」だけで追加したテーブルはない。one_rep_maxesのイベント化（INSERT only）は1RM推移追跡のシナリオに基づくが、現時点の要件（UC_D_1: 1RM登録更新）でも成立する構造
+- DBだけで解決しようとせず、導出値（e1RM, %1RM, ボリューム）はアプリ側で算出。バリデーション（多重度の最低1件、plan_typeとパラメータテーブルの排他制御）もアプリ側で担保
+
+**結論:** 要件に対して適切な複雑さ。過剰な構造は検出されなかった。
+
+#### 判断基準をパターンとして暗記していないか
+
+- workout_completionsのイベントテーブル分離: 「イベントテーブル分離」パターンの適用だが、「ワークアウト完了」がドメイン上のイベントであること、UPDATE回避の具体的メリット（完了取り消し = 行削除で表現可能）が理由として記録されている
+- set_plansのサブタイプテーブル分割: 「2 of 3」パラメータのnullable完全排除という具体的な問題を解決している。パターンの機械的適用ではない
+- workout_day_linksの中間テーブル: nullable FK排除のための分離であり、Dayなしワークアウト（フリートレーニング）を表現する具体的要件がある
+
+**結論:** パターンの機械的適用は検出されなかった。各テーブルに「なぜこの構造にしたか」の理由がある。
+
+#### 要件のヒアリング不足はないか
+
+- 多重度の「たぶん〜だろう」判断: programs→days（1対1以上）はドメインモデルでは「0..n」だが、「Dayなしのプログラムに意味がない」として1以上に変更。この判断は設計判断#23に記録済み
+- サブセットの将来拡張: 種目カテゴリ（設計判断#22）、lbs対応（設計判断#21）について後方互換性を含めた検討が記録されている
+- 導出項目の保持/排除: 全導出項目が逆算可能であることを検証し、ビジネスルール（Epley公式等）を正確に把握したうえで排除を判断
+
+**結論:** 想定で埋めた箇所に重大な問題は検出されなかった。
+
+### ステップ3: 構造の整合性チェック
+
+| チェック項目 | 結果 | 詳細 |
+| --- | --- | --- |
+| 命名の一貫性 | OK | テーブル名: 全て複数形snake_case（設計判断#6）。カラム名: 全てsnake_case。FK: `xxx_id`形式で統一。タイムスタンプ: ドメインの事実に即した命名（started_at, completed_at, achieved_at, registered_at） |
+| NULLableカラムの3点チェック | OK | nullable属性カラム（programs.meta_info, exercise_logs.memo, set_logs.rpe, set_logs.memo）全てにフェーズ3で3値論理・NULL伝播・パフォーマンスの検討記録あり。「入力しなかった」= 該当なしの意味でNULLの用途が明確と判断 |
+| UPDATE/DELETE管理の判断プロセス | OK | フェーズ3で全テーブルについて変更モデル（UPDATE or INSERT only）と削除モデル（物理DELETE）を検討。将来の履歴要件シナリオの提示、後方互換性の評価が設計判断#11〜#15に記録 |
+| 既存スキーマとの一貫性 | OK | 既存の認証DBスキーマ（Better Auth管理）とは独立した命名規則を採用（設計判断#6）。Per-User DBの既存仮スキーマ（testTable）は本格設計で置き換え。snake_case、タイムスタンプms精度の規則は既存コードベースと一致 |
+| 孤立テーブル | OK | 全テーブルがリレーションシップで接続されている。exercisesは3つのテーブルから参照されるハブ |
+| 循環参照 | OK | 循環参照なし。グラフ構造は2系統（計画系: programs→days→exercise_plans→set_plans→params、記録系: workouts→exercise_logs→set_logs）+ マスタ（exercises→exercise_plans/exercise_logs/one_rep_maxes）+ リンクテーブル |
+| サロゲートキー | OK | 全テーブルにid text PK。パラメータテーブル3種のみset_plan_id PK FK（設計判断#25で理由記録済み） |
+| 多重度の明示 | OK | 全リレーションシップにMermaid記号で多重度を明示。フェーズ4で全ペアの判定を記録 |
+
+### 最終ERD（フェーズ4と同一、変更なし）
+
+フェーズ5の検証でERD構造への変更は不要と判断した。フェーズ4の最終ERDがそのまま最終版となる。
+
+```mermaid
+erDiagram
+    programs ||--|{ days : "has"
+    days ||--o{ exercise_plans : "has"
+    exercise_plans ||--|{ set_plans : "has"
+    set_plans ||--|| weight_reps_params : "params"
+    set_plans ||--|| weight_rpe_params : "params"
+    set_plans ||--|| reps_rpe_params : "params"
+    exercises ||--o{ exercise_plans : "target"
+    exercises ||--o{ exercise_logs : "target"
+    exercises ||--o{ one_rep_maxes : "has"
+    workouts ||--|{ exercise_logs : "has"
+    workouts ||--o| workout_completions : "completed as"
+    workouts ||--o| workout_day_links : "linked to"
+    days ||--o{ workout_day_links : "linked from"
+    exercise_logs ||--|{ set_logs : "has"
+
+    programs {
+        id text PK
+        name text
+        meta_info text "nullable"
+    }
+    days {
+        id text PK
+        program_id text FK
+        label text
+        display_order integer
+    }
+    exercise_plans {
+        id text PK
+        day_id text FK
+        exercise_id text FK
+        display_order integer
+    }
+    set_plans {
+        id text PK
+        exercise_plan_id text FK
+        plan_type text "NOT NULL"
+        display_order integer
+    }
+    weight_reps_params {
+        set_plan_id text "PK FK"
+        weight_value real
+        weight_type text
+        reps integer
+    }
+    weight_rpe_params {
+        set_plan_id text "PK FK"
+        weight_value real
+        weight_type text
+        rpe real
+    }
+    reps_rpe_params {
+        set_plan_id text "PK FK"
+        reps integer
+        rpe real
+    }
+    exercises {
+        id text PK
+        name text
+    }
+    one_rep_maxes {
+        id text PK
+        exercise_id text FK
+        weight_kg real
+        achieved_at integer
+        registered_at integer
+    }
+    workouts {
+        id text PK
+        started_at integer
+    }
+    workout_day_links {
+        id text PK
+        workout_id text "FK UK"
+        day_id text FK
+    }
+    workout_completions {
+        id text PK
+        workout_id text "FK UK"
+        completed_at integer
+    }
+    exercise_logs {
+        id text PK
+        workout_id text FK
+        exercise_id text FK
+        memo text "nullable"
+        display_order integer
+    }
+    set_logs {
+        id text PK
+        exercise_log_id text FK
+        weight_kg real
+        reps integer
+        rpe real "nullable"
+        memo text "nullable"
+        display_order integer
+    }
+```
+
+### セルフレビューチェックリスト
+
+#### フェーズ5固有チェックリスト
+
+- [x] すべての要件/ユースケースに対応する擬似SQLが書けることを確認したか → 全27ユースケースでOK
+- [x] 擬似SQLで読み取り（SELECT）と書き込み（INSERT）の両方を検証したか → R/Wの両方を記述
+- [x] 命名規則が統一されているか → snake_case統一、複数形統一、タイムスタンプは事実に即した命名
+- [x] 全フェーズの設計判断とその理由が記録されているか → 設計判断#1〜#27が設計判断サマリーに記録済み
+- [x] 最終ERDがMermaid形式で最新の状態を反映しているか → フェーズ4のERDと同一（変更なし）
+
+#### 共通ルールチェックリスト
+
+- [x] 設計判断がpros/consで記述されているか → 全フェーズの設計判断にpros/consまたは理由が記載
+- [x] 排除したエンティティ・属性に将来シナリオと後方互換性の検討があるか → 導出値排除（#4, #9）、種目カテゴリ排除（#22）、lbs排除（#21）に検討記録あり
+- [x] ユーザー確認が必要な判断を「⚠️ 要確認」マークで記録したか → フェーズ5で新たな「⚠️ 要確認」項目は発生しなかった
+
+#### テーブル設計ルールチェックリスト
+
+- [x] enum型やCHECK制約を使っていないか → plan_type, weight_typeの区分値はアプリ側定数で管理
+- [x] 「JOINが複雑」を理由にテーブル分割を避けていないか → 該当なし
+- [x] NULLを回避するためにセンチネル値（空文字、0、-1等）をデフォルト値として使っていないか → 該当なし
+- [x] `created_at`や`updated_at`のような汎用的な名前のタイムスタンプがないか → started_at, completed_at, achieved_at, registered_atを使用
 
 ### 議論ログ
+
+#### 検証中の補足確認事項
+
+**UC_E_2（計画値プリフィル）の「次のDay」判定:**
+
+「次のDay」の判定ロジックを擬似SQLで検証した。workout_day_linksとworkoutsを結合して、各Dayの最終実施日時を取得し、display_order順で次のDayを特定する。メソサイクルの繰り返し（同じDayを複数回実施）にも対応可能。JOINパスは workouts → workout_day_links → days で通る。
+
+**UC_E_3（直近プログラムサジェスト）のJOINパス:**
+
+プログラムの最終使用日時を取得するために programs → days → workout_day_links → workouts の4テーブルをJOINする。ワークアウトがDay経由でプログラムに紐づく間接的なパスだが、workout_day_linksが存在するためJOINパスは通る。Dayに紐づかないフリーワークアウトはこのクエリでは除外されるが、フリーワークアウトはプログラムに関連しないためサジェスト対象外で問題ない。
+
+**UC_C_1（計画実績比較）のマッチングロジック:**
+
+計画と実績の対比は、同一Dayに対する計画（exercise_plans + set_plans）と実績（exercise_logs + set_logs）をexercise_idでマッチングする。同じDayに同じ種目が複数回配置されている場合はdisplay_orderで対応付けする。このマッチングはアプリ側のロジックで行い、SQLは計画データと実績データを個別に取得する。
+
+**UC_D_2（e1RM採用）のachieved_at:**
+
+e1RMを1RMとして採用する際、achieved_atには算出元セットの日時（そのワークアウトのstarted_at）を設定する。set_logsから直接日時を取得するにはset_logs → exercise_logs → workoutsのJOINが必要だが、e1RM算出時にこの情報はすでに取得済みのため問題ない。
 
 ## パーキングロット（後で扱う項目）
 
@@ -697,3 +1165,9 @@ erDiagram
 | 20 | exercise_logs.memo, set_logs.rpe/memoのnullableを維持 | 「入力しなかった」= 該当なしの意味でNULLの用途が明確。RPE検索はWHERE rpe IS NOT NULL AND rpe >= 8で対応可能。不要なLEFT JOIN回避 | 3 |
 | 21 | lbs対応は将来カラム追加で対応（現時点でERD変更なし） | 内部kg統一 + 表示層変換で対応可能。per-record単位のweight_input_unitカラム追加で後方互換対応。ジム内kg/lbs混在ケース対応 | 3 |
 | 22 | 種目カテゴリは将来追加で後方互換対応可能（現時点でERD変更なし） | exercisesへのカラム追加やリンクテーブルで対応。カテゴリの軸が未定のため早期の構造決定は避ける | 3 |
+| 23 | programs→days, exercise_plans→set_plans, workouts→exercise_logs, exercise_logs→set_logsの多重度を1対1以上（必須）に変更 | ドメインモデルの多重度（1→1..n）に準拠。構成要素なしの親テーブルは意味を持たない。アプリ側バリデーションで最低1行を強制する前提 | 4 |
+| 24 | set_plans→パラメータテーブルのMermaid表記を1:1必須（`\|\|--\|\|`）で記述 | 個々のリレーションシップ線は1:1必須だが、3本のうち1本のみが有効（plan_typeで排他制御）。排他制御はアプリ側バリデーションで担保。ERD図上で排他制約を完全に表現できない制約を受け入れる | 4 |
+| 25 | パラメータテーブル3種の主キーをset_plan_id（PK FK）に変更（独自idを持たない） | Pros(PK FK): JOINが自然、冗長なidカラムが不要、1:1関係で親のPKを子のPKとして使うRDBの定石。Cons(PK FK): 他テーブルとPK構造が不統一。判断: パラメータテーブルは独自のアイデンティティを持たない子テーブルであり、独自idは不要 | 4 |
+| 26 | exercises関連の非依存リレーションシップに交差エンティティは不要 | exercisesは独立マスタだが、子テーブル側（exercise_plans, exercise_logs, one_rep_maxes）は作成時に必ずexercise_idが指定される。「種目未定の計画/記録」は存在しないためFKがNULLになるタイミングがなく、NOT NULL FKで問題ない | 4 |
+| 27 | N:M関係は存在しない。新規中間テーブルの追加は不要 | 全リレーションシップを精査した結果、全て1:1または1:Nの関係。workoutsとdaysの関係はworkout_day_linksで既に適切に表現済み | 4 |
+| 28 | 最終レビューでERD構造への変更なし | 全27ユースケースの擬似SQL検証で全てOK。JOINパスの不足・カラムの欠落・多重度の誤りなし。過剰な複雑さ・パターンの機械的適用・ヒアリング不足は検出されなかった。命名の一貫性・NULLableの3点チェック・UPDATE/DELETE管理の判断プロセス・既存スキーマとの一貫性も問題なし | 5 |
