@@ -23,7 +23,7 @@
 	},
 	"dependencies": {
 		"@better-auth/expo": "1.4.18",
-		"@libsql/client": "0.17.0",
+		"@libsql/client": "0.17.2",
 		"@next-lift/env": "workspace:*",
 		"@next-lift/utilities": "workspace:*",
 		"@praha/byethrow": "0.9.0",
