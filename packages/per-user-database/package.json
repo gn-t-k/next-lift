@@ -36,7 +36,7 @@
 		"@praha/drizzle-factory": "1.4.2",
 		"@tsconfig/strictest": "2.0.8",
 		"@types/node": "24.10.13",
-		"drizzle-kit": "0.31.9",
+		"drizzle-kit": "0.31.10",
 		"typescript": "5.9.3",
 		"vitest": "4.0.18"
 	}
