@@ -636,6 +636,50 @@ workout_completions行の物理DELETEで対応。既にworkout_completionsテー
 
 該当exercise_idの全レコードを物理DELETE。「クリア」= 完全リセットの意味。暫定判断(a-2)を確定。
 
+#### weight_type + weight_value 方式の検証
+
+set_plansのサブタイプテーブル（weight_reps_params, weight_rpe_params）で採用している weight_value (real) + weight_type (text) の方式について、安全性と将来拡張性を検証した。
+
+**weight_type の意味の整理:**
+
+weight_type は「単位」ではなく「重量指定の種類」を表す区分値:
+- "kg": 絶対重量指定（値はkg単位で保存。lbs入力時もkgに変換して保存する）
+- "percent_1rm": 1RMに対する相対指定（値は%。実重量への解決は表示時に1RMを参照して行う）
+
+lbs対応は weight_type の値追加ではなく、表示層での変換 + per-record の weight_input_unit カラム追加（将来）で対応する。F1の方針と一貫。
+
+**リスク分析:**
+
+| リスク | 深刻度 | 理由 |
+| --- | --- | --- |
+| 型安全性: weight_value=80 が 80kg か 80% か weight_type に依存 | 低 | plan_type も同パターン。プロジェクト全体でアプリ側バリデーション方針 |
+| 値の範囲: kg(0〜500) と %(0〜200) が同一カラムに混在 | 低 | weight_type ごとにアプリ側で範囲検証 |
+| 横断クエリ: 「重量100kg以上のセット計画」を型横断で検索困難 | 低 | 計画の重量横断検索は現要件にない |
+| %1RM解決不能: 1RM未設定/削除時に実重量へ変換できない | なし | 設計判断#47で対応済み（%1RM指定保持+UI警告） |
+| 将来の重量指定方式: single-value で表現できない方式の可能性 | 中（後述） | サブタイプテーブル追加で対応可能 |
+
+**将来の重量指定方式への対応:**
+
+| 将来の可能性 | weight_value で表現可能か | 対応方法 |
+| --- | --- | --- |
+| %トレーニングマックス | 可能 | weight_type = "percent_tm" + 別途TMの定義 |
+| 前回+2.5kg（漸進負荷） | 不可（参照+差分の2値が必要） | 新plan_type + 新サブタイプテーブルで対応 |
+| RPEチャートベース | 不可（1RM+RPE+repsの3値から導出） | 同上 |
+| VBT（速度ベース） | 不可（目標速度であり重量指定ではない） | 同上 |
+
+single-value で表現できない方式はサブタイプテーブルの追加（新しい plan_type + 新パラメータテーブル）で対応でき、weight_type + weight_value の仕組み自体を変更する必要はない。
+
+**代替案との比較:**
+
+| 代替案 | nullable | テーブル数 | 拡張性 | 不採用理由 |
+| --- | --- | --- | --- | --- |
+| 型ごとに別カラム（weight_kg?, weight_percent_1rm?） | 復活 | 変わらず | カラム追加が必要 | サブタイプテーブルでnullable排除した意味がなくなる |
+| 重量指定をさらにサブタイプ分割 | なし | 5+（組み合わせ爆発） | テーブル追加が必要 | lbs追加で7テーブル・7 plan_type。実用的でない |
+| 重量を独立テーブルに抽出 | なし | +1 | 現方式と同等 | 根本構造（value+type）は変わらず、テーブルが増えるだけ |
+| 常にkgに変換して保存 | なし | 変わらず | - | %1RMの意味が失われる。1RM変更時に全計画値の再計算が必要 |
+
+**結論:** 現方式（weight_type + weight_value）を維持。nullable を導入せず、最も可能性の高い拡張に対応でき、代替案のトレードオフが大きいため。
+
 **フィードバック対応後のnullable状況:**
 
 - nullableカラム: programs.meta_info, exercise_logs.memo, set_logs.rpe, set_logs.memo（4カラム）
