@@ -170,8 +170,8 @@ importers:
         specifier: 2.0.11
         version: 2.0.11
       '@tsconfig/next':
-        specifier: 2.0.5
-        version: 2.0.5
+        specifier: 2.0.6
+        version: 2.0.6
       '@tsconfig/strictest':
         specifier: 2.0.8
         version: 2.0.8
@@ -3860,8 +3860,8 @@ packages:
   '@tsconfig/create-react-app@2.0.11':
     resolution: {integrity: sha512-vvIx+rDshVTVyA0l8OAjt8LCFUX0xhp6I5me1ggoQCg4Lny0xLG2Y1aXC7b76TCAq5hbUwTRhKF1RR33Yl7mkA==}
 
-  '@tsconfig/next@2.0.5':
-    resolution: {integrity: sha512-Cnzzme52Hk+YWQX/BKbjxAyBmLJXQaXjhVBBLkCpUQK8j+aGBk4csWAt5XpbU64NHG5XxT2d/Yr9M0e1fxRN5A==}
+  '@tsconfig/next@2.0.6':
+    resolution: {integrity: sha512-C6eZoNyAMKv2UvzDZqcp8zXPviu6W4Ev1KUbqfmaMSZuq+tmbtTWaqxTif/yaui8WCEcRlQrHC8q9tNzBclHOw==}
 
   '@tsconfig/strictest@2.0.8':
     resolution: {integrity: sha512-XnQ7vNz5HRN0r88GYf1J9JJjqtZPiHt2woGJOo2dYqyHGGcd6OLGqSlBB6p1j9mpzja6Oe5BoPqWmeDx6X9rLw==}
@@ -11683,7 +11683,7 @@ snapshots:
 
   '@tsconfig/create-react-app@2.0.11': {}
 
-  '@tsconfig/next@2.0.5': {}
+  '@tsconfig/next@2.0.6': {}
 
   '@tsconfig/strictest@2.0.8': {}
 
