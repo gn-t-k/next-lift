@@ -21,6 +21,6 @@
 		"vitest": "4.0.18"
 	},
 	"dependencies": {
-		"nanoid": "5.1.7"
+		"nanoid": "5.1.9"
 	}
 }
