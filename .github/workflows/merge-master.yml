@@ -21,6 +21,6 @@ jobs:
         with:
           app-id: ${{ vars.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
-      - uses: praha-inc/merge-master@4e07f5941be6576eedaa77764b349de1f18d4350 # v1.1.1
+      - uses: praha-inc/merge-master@3b6060c932d815dccb297ab05907fddd06ae02fa # v1.2.0
         with:
           github-token: ${{ steps.get-app-token.outputs.token }}
