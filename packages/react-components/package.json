@@ -5,6 +5,7 @@
 	"type": "module",
 	"exports": {
 		"./primitive": "./src/primitive/index.ts",
+		"./view": "./src/view/index.ts",
 		"./lib": "./src/lib/index.ts",
 		"./demo": "./src/demo/index.ts"
 	},
