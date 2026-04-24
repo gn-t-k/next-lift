@@ -1,6 +1,6 @@
 "use client";
 
-import { Link } from "@next-lift/react-components/ui";
+import { Link } from "@next-lift/react-components/primitive";
 import type { Route } from "next";
 import { usePathname } from "next/navigation";
 import type { FC } from "react";

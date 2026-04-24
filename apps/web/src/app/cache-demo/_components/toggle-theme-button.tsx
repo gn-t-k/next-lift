@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@next-lift/react-components/ui";
+import { Button } from "@next-lift/react-components/primitive";
 import { useTheme } from "next-themes";
 import { type FC, useEffect, useState } from "react";
 
