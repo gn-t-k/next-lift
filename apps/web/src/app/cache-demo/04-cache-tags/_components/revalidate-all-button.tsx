@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@next-lift/react-components/ui";
+import { Button } from "@next-lift/react-components/primitive";
 import type { FC } from "react";
 import { useActionState } from "react";
 import { revalidateAllTags } from "../_mutations/revalidate-all-tags";

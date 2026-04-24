@@ -5,7 +5,7 @@ import {
 	DemoCardHeader,
 	DemoCardTitle,
 } from "@next-lift/react-components/demo";
-import { Link } from "@next-lift/react-components/ui";
+import { Link } from "@next-lift/react-components/primitive";
 import type { Route } from "next";
 import type { FC } from "react";
 

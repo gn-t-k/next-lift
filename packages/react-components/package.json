@@ -4,7 +4,7 @@
 	"private": true,
 	"type": "module",
 	"exports": {
-		"./ui": "./src/ui/index.ts",
+		"./primitive": "./src/primitive/index.ts",
 		"./lib": "./src/lib/index.ts",
 		"./demo": "./src/demo/index.ts"
 	},

@@ -11,7 +11,7 @@ import {
 	ModalHeader,
 	ModalTitle,
 	ModalTrigger,
-} from "@next-lift/react-components/ui";
+} from "@next-lift/react-components/primitive";
 import { R } from "@praha/byethrow";
 import { type FC, useActionState } from "react";
 import { deleteAccount } from "../_mutations/delete-account";
