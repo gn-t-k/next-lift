@@ -35,7 +35,7 @@ const result = await runInPerUserDatabaseScope(
   { url, authToken },
   async () => {
     const db = getPerUserDatabase();
-    return await db.select().from(testTable).all();
+    return await db.select().from(programs).all();
   },
 );
 ```
@@ -68,6 +68,20 @@ beforeEach(() => {
 - **Per-User Database構成**: 各ユーザーに1つのTursoデータベースを割り当てる（ADR-005）
 - **スキーマ進化**: 接続時にDrizzle ORMのマイグレーションを自動実行（Turso Multi-DB Schemasは非推奨、ADR-020）
 - **DB名の生成**: `next-lift-{APP_ENV}-user-{SHA256ハッシュ16文字}` 形式。同一userIdは常に同じDB名（冪等）
+
+### データベーススキーマ（15テーブル）
+
+ERD設計は `docs/project/erd-design/` を参照。
+
+| カテゴリ | テーブル |
+| --- | --- |
+| 計画系 | `programs` / `days` / `exercisePlans` / `exercisePlanExercises` / `setPlans` / `weightRepsParams` / `weightRpeParams` / `repsRpeParams` |
+| 記録系 | `workouts` / `workoutDayLinks` / `workoutCompletions` / `exerciseLogs` / `setLogs` |
+| マスタ系 | `exercises` / `oneRepMaxes` |
+
+- ID生成: `@next-lift/utilities/generate-id` の `generateId()` を使用（ADR-025）
+- FK制約: 全リレーションに `references()` を設定、ON DELETE は NO ACTION。接続時に `PRAGMA foreign_keys = ON` が必要（ADR-026）
+- 区分値カラム（`plan_type`, `weight_type`, `weight_input_unit`）はDB enum/CHECKを使わず、アプリ側の定数で管理
 
 ### Expo/React Native対応
 
