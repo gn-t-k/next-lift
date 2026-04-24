@@ -1,12 +1,12 @@
 import { defineFactory } from "@praha/drizzle-factory";
 import { schema } from "../../database-schemas";
 
-export const testTableFactory = defineFactory({
+export const programsFactory = defineFactory({
 	schema,
-	table: "testTable",
+	table: "programs",
 	resolver: ({ sequence }) => ({
-		id: `test-${sequence}`,
-		name: `Test Item ${sequence}`,
-		createdAt: new Date(),
+		id: `program-${sequence}`,
+		name: `Program ${sequence}`,
+		metaInfo: null,
 	}),
 });
