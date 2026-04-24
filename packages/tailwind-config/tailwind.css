@@ -62,6 +62,24 @@
 	--radius-2xl: calc(var(--radius-lg) * 1.5);
 	--radius-3xl: calc(var(--radius-lg) * 2);
 	--radius-4xl: calc(var(--radius-lg) * 3);
+
+	/* 密度トークン（コンテキスト依存）: デフォルト = ジム外 / Compact */
+	--density-label: 0.75rem;
+	--density-value: 0.875rem;
+	--density-unit: 0.875rem;
+	--density-section-gap: 1.5rem;
+	--density-card-pad: 0.75rem;
+	--density-action-h: 3.5rem;
+}
+
+/* ジム内コンテキスト: Comfortable 密度 */
+.context-gym {
+	--density-label: 0.875rem;
+	--density-value: 1rem;
+	--density-unit: 1rem;
+	--density-section-gap: 1.75rem;
+	--density-card-pad: 1rem;
+	--density-action-h: 3.75rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -86,6 +104,32 @@ body {
 		"Consolas", '"Liberation Mono"', '"Courier New"', "monospace";
 	--font-sans--font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 	--font-mono--font-feature-settings: "ss02", "zero";
+
+	/* テキストスケール: Major Third (1.25倍) */
+	--text-xs: 0.75rem;
+	--text-sm: 0.875rem;
+	--text-base: 1rem;
+	--text-lg: 1.125rem;
+	--text-xl: 1.25rem;
+	--text-2xl: 1.563rem;
+	--text-3xl: 1.953rem;
+	--text-4xl: 2.441rem;
+
+	/* 数値専用スケール（二重スケール） */
+	--text-num-sm: 0.875rem;
+	--text-num-md: 1.125rem;
+	--text-num-lg: 1.5rem;
+	--text-num-xl: 2rem;
+
+	/* 密度依存テキスト（.context-gym 配下で拡大） */
+	--text-density-label: var(--density-label);
+	--text-density-value: var(--density-value);
+	--text-density-unit: var(--density-unit);
+
+	/* 密度依存スペーシング */
+	--spacing-density-section: var(--density-section-gap);
+	--spacing-density-card: var(--density-card-pad);
+	--spacing-density-action: var(--density-action-h);
 	--color-border: var(--border);
 	--color-input: var(--input);
 	--color-ring: var(--ring);
