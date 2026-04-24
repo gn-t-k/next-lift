@@ -42,6 +42,29 @@ import { Button } from "@next-lift/react-components/ui";
 <Button variant="primary">ボタン</Button>
 ```
 
+### ジム内コンテキストの宣言（GymContext）
+
+Next Liftは**ジム外（計画・振り返り）**と**ジム内（記録）**の2コンテキストを持ち、テキストサイズ・スペーシングが密度依存で切り替わる。
+
+ジム内コンテキストのビュー（V5+V8、V6、およびジムから到達する V9/V13）は、ルートで `GymContext` を宣言する。ジム外はデフォルトなので何も必要ない。
+
+```tsx
+import { GymContext } from "@next-lift/react-components/ui";
+
+// V6 セット記録はジム内
+export const SetRecordingView = () => (
+  <GymContext>
+    {/* 配下は Comfortable 密度で表示される */}
+    <label className="text-density-label">重量</label>
+    <div className="text-density-value">120 kg × 5</div>
+  </GymContext>
+);
+```
+
+- 配下のコンポーネントは `context` prop を持たない。`text-density-*` `p-density-card` などの密度依存クラスを使うだけで自動的に切り替わる
+- V9 / V13 のようにジム内・ジム外どちらからも到達するビューは、呼び出し元（ルート層）で `GymContext` の有無を決める。ビュー本体は 1 つでよい
+- 密度依存トークンの一覧は `packages/tailwind-config/CLAUDE.md` を参照
+
 ## 開発ガイド
 
 ### コンポーネントの書き方
