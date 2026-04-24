@@ -1,4 +1,4 @@
-import { testTable } from "@next-lift/per-user-database/database-schemas";
+import { programs } from "@next-lift/per-user-database/database-schemas";
 import { eq } from "drizzle-orm";
 import * as Crypto from "expo-crypto";
 import {
@@ -21,7 +21,7 @@ import { clearCredentialsCache } from "../lib/credentials";
 import { useDatabase } from "../lib/database-context";
 import { deleteAccount } from "../lib/delete-account";
 
-type TestItem = typeof testTable.$inferSelect;
+type TestItem = typeof programs.$inferSelect;
 
 export const HomeScreen: FC = () => {
 	const { data: session } = useSession();
@@ -32,7 +32,7 @@ export const HomeScreen: FC = () => {
 	const [syncStatus, setSyncStatus] = useState<string>("");
 
 	const loadItems = useCallback(async () => {
-		const result = await db.select().from(testTable);
+		const result = await db.select().from(programs);
 		setItems(result);
 	}, [db]);
 
@@ -43,10 +43,10 @@ export const HomeScreen: FC = () => {
 	const handleAddItem = async () => {
 		try {
 			const id = Crypto.randomUUID();
-			await db.insert(testTable).values({
+			await db.insert(programs).values({
 				id,
 				name: `テスト ${new Date().toLocaleTimeString("ja-JP")}`,
-				createdAt: new Date(),
+				metaInfo: null,
 			});
 			await loadItems();
 		} catch (e) {
@@ -57,7 +57,7 @@ export const HomeScreen: FC = () => {
 
 	const handleDeleteItem = async (id: string) => {
 		try {
-			await db.delete(testTable).where(eq(testTable.id, id));
+			await db.delete(programs).where(eq(programs.id, id));
 			await loadItems();
 		} catch (e) {
 			console.error("削除エラー:", e);
