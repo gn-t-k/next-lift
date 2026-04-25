@@ -13,7 +13,7 @@
 		"test": "vitest run"
 	},
 	"dependencies": {
-		"@better-auth/expo": "1.4.18",
+		"@better-auth/expo": "1.6.5",
 		"@next-lift/per-user-database": "workspace:*",
 		"@next-lift/utilities": "workspace:*",
 		"@op-engineering/op-sqlite": "15.2.11",
