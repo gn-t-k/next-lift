@@ -3,7 +3,7 @@
 import type { FC } from "react";
 import { useState } from "react";
 import { cn } from "../lib";
-import { Button } from "../ui/button";
+import { Button } from "../primitive/button";
 
 type Props = {
 	code: string;

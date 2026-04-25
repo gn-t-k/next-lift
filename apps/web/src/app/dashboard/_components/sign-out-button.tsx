@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, ErrorAlert } from "@next-lift/react-components/ui";
+import { Button, ErrorAlert } from "@next-lift/react-components";
 import { R } from "@praha/byethrow";
 import { type FC, useActionState } from "react";
 import { signOut } from "../_mutations/sign-out";

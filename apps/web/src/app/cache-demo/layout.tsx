@@ -1,4 +1,4 @@
-import { Link } from "@next-lift/react-components/ui";
+import { Link } from "@next-lift/react-components";
 import type { FC } from "react";
 import { GlobalNavigation } from "./_components/global-navigation";
 import { ToggleThemeButton } from "./_components/toggle-theme-button";

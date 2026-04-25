@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@next-lift/react-components/ui";
+import { Button } from "@next-lift/react-components";
 import type { FC } from "react";
 import { useActionState } from "react";
 import { revalidatePostsTag } from "../_mutations/revalidate-posts-tag";

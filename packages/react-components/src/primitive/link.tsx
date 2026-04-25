@@ -10,7 +10,7 @@ type Props = Omit<LinkProps, "href"> & {
  * biome-ignore lint/suspicious/noEmptyInterface: 利用側でLinkのhrefの型を上書きできるようにするため（Module Augmentation）
  * @example Next.jsのtypedRoutes
  * import type { Route } from "next";
- * declare module "@next-lift/react-components/ui" {
+ * declare module "@next-lift/react-components" {
  * 	interface LinkConfig {
  * 		href: Route;
  * 	}

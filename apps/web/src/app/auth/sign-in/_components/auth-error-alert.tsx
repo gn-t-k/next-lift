@@ -1,4 +1,4 @@
-import { ErrorAlert } from "@next-lift/react-components/ui";
+import { ErrorAlert } from "@next-lift/react-components";
 import type { FC } from "react";
 
 type Props = {
