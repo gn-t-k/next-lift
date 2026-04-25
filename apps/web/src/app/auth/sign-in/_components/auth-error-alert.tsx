@@ -1,4 +1,4 @@
-import { ErrorAlert } from "@next-lift/react-components/primitive";
+import { ErrorAlert } from "@next-lift/react-components";
 import type { FC } from "react";
 
 type Props = {

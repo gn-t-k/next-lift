@@ -12,7 +12,7 @@ declare module "@next-lift/react-components/lib" {
 	}
 }
 
-declare module "@next-lift/react-components/primitive" {
+declare module "@next-lift/react-components" {
 	interface LinkConfig {
 		href?: Route;
 	}

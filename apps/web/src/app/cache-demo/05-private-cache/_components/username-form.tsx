@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@next-lift/react-components";
 import {
 	DemoCard,
 	DemoCardContent,
@@ -7,7 +8,6 @@ import {
 	DemoCardHeader,
 	DemoCardTitle,
 } from "@next-lift/react-components/demo";
-import { Button } from "@next-lift/react-components/primitive";
 import type { FC } from "react";
 import { useActionState } from "react";
 import { clearUsername } from "../_mutations/clear-username";

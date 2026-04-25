@@ -1,4 +1,4 @@
-import { Link } from "@next-lift/react-components/primitive";
+import { Link } from "@next-lift/react-components";
 import type { FC } from "react";
 
 const Page: FC<PageProps<"/">> = (_props) => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, ErrorAlert } from "@next-lift/react-components/primitive";
+import { Button, ErrorAlert } from "@next-lift/react-components";
 import { R } from "@praha/byethrow";
 import { type FC, useActionState } from "react";
 import { signInWithGoogle } from "../_mutations/sign-in-with-google";

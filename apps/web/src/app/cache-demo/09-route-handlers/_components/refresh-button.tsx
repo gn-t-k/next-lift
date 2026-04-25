@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@next-lift/react-components/primitive";
+import { Button } from "@next-lift/react-components";
 import type { FC } from "react";
 import { useActionState } from "react";
 import { revalidateCachedData } from "../_mutations/revalidate-cached-data";
