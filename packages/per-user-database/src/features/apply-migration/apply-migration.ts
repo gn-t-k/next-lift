@@ -17,7 +17,7 @@ export const applyMigration = (
 	R.try({
 		immediate: true,
 		try: async () => {
-			const db = createPerUserDatabaseClient(config);
+			const db = await createPerUserDatabaseClient(config);
 			await migrateDatabase(db);
 		},
 		catch: (e) => new ApplyMigrationError({ cause: e }),

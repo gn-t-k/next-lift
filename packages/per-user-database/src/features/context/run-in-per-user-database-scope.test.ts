@@ -16,7 +16,7 @@ describe("runInPerUserDatabaseScope", () => {
 
 		test("コールバックが per-user DB スコープ内で実行されること", async () => {
 			const result = await runInPerUserDatabaseScope(
-				{ url: "libsql://test.turso.io", authToken: "test-token" },
+				{ url: ":memory:", authToken: "" },
 				() => {
 					const db = getPerUserDatabase();
 					return db;
@@ -31,7 +31,7 @@ describe("runInPerUserDatabaseScope", () => {
 
 		test("非同期コールバックの結果が flatten されること", async () => {
 			const result = await runInPerUserDatabaseScope(
-				{ url: "libsql://test.turso.io", authToken: "test-token" },
+				{ url: ":memory:", authToken: "" },
 				async () => "async-result",
 			);
 
@@ -49,7 +49,7 @@ describe("runInPerUserDatabaseScope", () => {
 
 		test("ApplyMigrationErrorが返されること", async () => {
 			const result = await runInPerUserDatabaseScope(
-				{ url: "libsql://test.turso.io", authToken: "test-token" },
+				{ url: ":memory:", authToken: "" },
 				() => "should not reach",
 			);
 
