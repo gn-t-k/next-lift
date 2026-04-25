@@ -54,6 +54,6 @@
 		"type-check": "tsc --noEmit",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build",
-		"ui:add": "pnpm dlx shadcn@latest add"
+		"ui:fetch": "pnpm dlx shadcn@latest add"
 	}
 }

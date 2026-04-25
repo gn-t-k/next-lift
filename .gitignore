@@ -142,3 +142,6 @@ storybook-static
 sentry.properties
 
 .references/
+
+# Intent UI 取得テンプレート（参照用、コミットしない）
+.intent-templates/
