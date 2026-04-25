@@ -1,13 +1,9 @@
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
-
-// biome-ignore lint/correctness/noProcessGlobal: Expoではprocess.envはMetroがビルド時にインライン展開する
-const WEB_CLIENT_ID = process.env["EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID"];
-// biome-ignore lint/correctness/noProcessGlobal: Expoではprocess.envはMetroがビルド時にインライン展開する
-const IOS_CLIENT_ID = process.env["EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID"];
+import { env } from "../env/env";
 
 GoogleSignin.configure({
-	webClientId: WEB_CLIENT_ID,
-	iosClientId: IOS_CLIENT_ID,
+	webClientId: env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+	iosClientId: env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
 });
 
 export const getGoogleIdToken = async (): Promise<string> => {
