@@ -297,12 +297,18 @@ importers:
       '@next-lift/turso':
         specifier: workspace:*
         version: link:../turso
+      '@next-lift/utilities':
+        specifier: workspace:*
+        version: link:../utilities
       '@praha/byethrow':
         specifier: 0.9.0
         version: 0.9.0(typescript@5.9.3)
       '@praha/diva':
         specifier: 1.0.2
         version: 1.0.2
+      '@praha/drizzle-factory':
+        specifier: 1.4.2
+        version: 1.4.2(drizzle-orm@0.45.2(@libsql/client@0.17.2)(@op-engineering/op-sqlite@15.2.11(react-native@0.83.2(@babel/core@7.28.5)(@types/react@19.2.14)(react@19.2.5))(react@19.2.5))(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(kysely@0.28.8))
       '@praha/error-factory':
         specifier: 1.4.1
         version: 1.4.1
@@ -316,12 +322,6 @@ importers:
       '@biomejs/biome':
         specifier: 2.3.6
         version: 2.3.6
-      '@next-lift/utilities':
-        specifier: workspace:*
-        version: link:../utilities
-      '@praha/drizzle-factory':
-        specifier: 1.4.2
-        version: 1.4.2(drizzle-orm@0.45.2(@libsql/client@0.17.2)(@op-engineering/op-sqlite@15.2.11(react-native@0.83.2(@babel/core@7.28.5)(@types/react@19.2.14)(react@19.2.5))(react@19.2.5))(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(kysely@0.28.8))
       '@tsconfig/strictest':
         specifier: 2.0.8
         version: 2.0.8
@@ -9953,7 +9953,7 @@ snapshots:
   '@react-native/codegen@0.83.2(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/parser': 7.28.5
+      '@babel/parser': 7.29.2
       glob: 7.2.3
       hermes-parser: 0.32.0
       invariant: 2.2.4

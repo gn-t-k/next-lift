@@ -16,4 +16,5 @@ export {
 	mockCreateTursoPerUserDatabaseError,
 	mockCreateTursoPerUserDatabaseOk,
 } from "../features/create-database/create-turso-per-user-database.mock";
+export { factories } from "./factories";
 export { mockedPerUserDatabase } from "./mocked-per-user-database";
