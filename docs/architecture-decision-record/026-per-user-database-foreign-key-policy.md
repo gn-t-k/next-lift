@@ -86,6 +86,7 @@ FKの扱いについて、大きく3案が存在する:
 - **`PRAGMA foreign_keys = ON` の設定漏れリスク**: SQLiteはコネクションごとに enforcement フラグを持つ。接続時のイニシャライズを必ず実施する必要がある
 - **libSQLのデフォルト挙動**: 実証検証により、libSQL (`@libsql/client`) はビルド時に `SQLITE_DEFAULT_FOREIGN_KEYS=1` フラグが設定されており、`PRAGMA compile_options` の出力にも `DEFAULT_FOREIGN_KEYS` が含まれることを確認済み。ただし公式ドキュメントには記載がなく、未文書化の実装詳細である。将来変更されるリスクを踏まえ、本リポジトリでは明示的に `PRAGMA foreign_keys = ON` を発行する方針とする
 - **op-sqlite (libsqlバックエンド) の挙動**: op-sqliteはコンパイル時に libsql バックエンドを有効化することで本物のlibSQLをリンクする（`package.json` の `op-sqlite.libsql: true`）。デフォルトFK挙動は公式に保証されていないため、iOS側でも明示的にPRAGMAを発行する
+- **op-sqlite 実機検証結果（2026-04-27）**: iOSシミュレータ上で `PRAGMA compile_options`（54件）に `DEFAULT_FOREIGN_KEYS` が含まれることを確認。明示PRAGMA発行前後とも `foreign_keys = 1`。Web側（libSQL）と同じく `SQLITE_DEFAULT_FOREIGN_KEYS=1` でビルドされている前提が現時点では成立しているが、未文書化の実装詳細である点は変わらないため、明示PRAGMA発行を維持する
 
 ### 波及範囲
 
