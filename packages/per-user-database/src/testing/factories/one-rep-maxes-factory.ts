@@ -1,3 +1,4 @@
+import { generateId } from "@next-lift/utilities/generate-id";
 import { defineFactory } from "@praha/drizzle-factory";
 import { schema } from "../../database-schemas";
 import { exercisesFactory } from "./exercises-factory";
@@ -5,8 +6,8 @@ import { exercisesFactory } from "./exercises-factory";
 export const oneRepMaxesFactory = defineFactory({
 	schema,
 	table: "oneRepMaxes",
-	resolver: ({ sequence, use }) => ({
-		id: `one-rep-max-${sequence}`,
+	resolver: ({ use }) => ({
+		id: generateId(),
 		exerciseId: () =>
 			use(exercisesFactory)
 				.create()

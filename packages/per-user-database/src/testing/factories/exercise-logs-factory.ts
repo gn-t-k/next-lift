@@ -1,3 +1,4 @@
+import { generateId } from "@next-lift/utilities/generate-id";
 import { defineFactory } from "@praha/drizzle-factory";
 import { schema } from "../../database-schemas";
 import { exercisesFactory } from "./exercises-factory";
@@ -7,7 +8,7 @@ export const exerciseLogsFactory = defineFactory({
 	schema,
 	table: "exerciseLogs",
 	resolver: ({ sequence, use }) => ({
-		id: `exercise-log-${sequence}`,
+		id: generateId(),
 		workoutId: () =>
 			use(workoutsFactory)
 				.create()
