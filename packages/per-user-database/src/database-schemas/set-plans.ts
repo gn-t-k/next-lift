@@ -14,6 +14,7 @@ export const setPlans = sqliteTable(
 			.references(() => exercisePlans.id),
 		planType: text("plan_type").notNull(),
 		displayOrder: integer("display_order").notNull(),
+		// 自由記述テキスト。セット計画のメモ等。構造化はアプリ側で行わない（ERD design-decisions #30）
 		metaInfo: text("meta_info"),
 	},
 	(table) => [index("set_plans_exercise_plan_id_idx").on(table.exercisePlanId)],

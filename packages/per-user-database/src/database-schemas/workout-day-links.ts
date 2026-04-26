@@ -2,6 +2,10 @@ import { index, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { days } from "./days";
 import { workouts } from "./workouts";
 
+/**
+ * 行あり = Day準拠ワークアウト、行なし = フリーワークアウト。
+ * workouts.day_id の nullable FK を排除するための分離（ERD design-decisions #18）。
+ */
 export const workoutDayLinks = sqliteTable(
 	"workout_day_links",
 	{

@@ -10,6 +10,7 @@ export const days = sqliteTable(
 			.references(() => programs.id),
 		label: text("label").notNull(),
 		displayOrder: integer("display_order").notNull(),
+		// 自由記述テキスト。Day単位の補足等。構造化はアプリ側で行わない（ERD design-decisions #30）
 		metaInfo: text("meta_info"),
 	},
 	(table) => [index("days_program_id_idx").on(table.programId)],
