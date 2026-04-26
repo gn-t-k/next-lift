@@ -1,3 +1,4 @@
+import { generateId } from "@next-lift/utilities/generate-id";
 import { defineFactory } from "@praha/drizzle-factory";
 import { schema } from "../../database-schemas";
 import { userFactory } from "./user-factory";
@@ -6,7 +7,7 @@ export const perUserDatabaseFactory = defineFactory({
 	schema,
 	table: "perUserDatabase",
 	resolver: ({ sequence, use }) => ({
-		id: `per-user-db-${sequence}`,
+		id: generateId(),
 		userId: () =>
 			use(userFactory)
 				.create()

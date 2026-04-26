@@ -1,3 +1,4 @@
+import { generateId } from "@next-lift/utilities/generate-id";
 import { defineFactory } from "@praha/drizzle-factory";
 import { schema } from "../../database-schemas";
 import { userFactory } from "./user-factory";
@@ -6,7 +7,7 @@ export const accountFactory = defineFactory({
 	schema,
 	table: "account",
 	resolver: ({ sequence, use }) => ({
-		id: `account-${sequence}`,
+		id: generateId(),
 		userId: () =>
 			use(userFactory)
 				.create()
@@ -25,7 +26,7 @@ export const accountFactory = defineFactory({
 	}),
 	traits: {
 		github: ({ sequence, use }) => ({
-			id: `account-${sequence}`,
+			id: generateId(),
 			userId: () =>
 				use(userFactory)
 					.create()
