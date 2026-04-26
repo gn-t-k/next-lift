@@ -76,7 +76,7 @@ FKの扱いについて、大きく3案が存在する:
 - 野良データ発生がDBレベルで防がれる
 - iOS/Web いずれかの実装バグがもう一方のデータを汚染するリスクを低減
 - 不正なUPDATE（存在しないIDへの差し替え）もDBが弾く
-- `PRAGMA foreign_keys = ON` により、既存テストの `mocked-per-user-database` と同じ整合性保証が本番でも得られる
+- `PRAGMA foreign_keys = ON` の明示発行により、libSQL/op-sqlite のデフォルト挙動に依存せず整合性保証が得られる
 
 ### デメリット・注意事項
 
@@ -92,7 +92,7 @@ FKの扱いについて、大きく3案が存在する:
 - `packages/per-user-database/src/database-schemas/*` の全テーブル定義に `references()` を追加
 - `packages/per-user-database/src/features/client/create-per-user-database-client.ts` で接続直後に `PRAGMA foreign_keys = ON` を実行（実装済み）
 - `apps/ios/src/lib/database.ts` の `initializeDatabase` で同様に明示PRAGMAを実行（実装済み）
-- FK enforcementが効いていることは `packages/per-user-database/src/database-schemas/foreign-keys.test.ts` および `create-per-user-database-client.test.ts` で担保
+- FK enforcement が効いていることはテストで再検証しない（libSQL/SQLite の機能テストになるため）。本ADRと明示PRAGMAコードでの担保にとどめる
 - 削除系ユースケース実装時は子→親の順序を守る
 
 ## 代替案
