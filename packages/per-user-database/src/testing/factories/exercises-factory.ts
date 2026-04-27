@@ -8,5 +8,6 @@ export const exercisesFactory = defineFactory({
 	resolver: ({ sequence }) => ({
 		id: generateId(),
 		name: `Exercise ${sequence}`,
+		defaultWeightInputUnit: "kg",
 	}),
 });

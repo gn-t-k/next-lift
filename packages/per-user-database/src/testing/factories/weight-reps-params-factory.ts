@@ -12,7 +12,6 @@ export const weightRepsParamsFactory = defineFactory({
 				.then((sp) => sp.id),
 		weightValue: 60,
 		weightType: "kg",
-		weightInputUnit: "kg",
 		reps: 10,
 	}),
 });
