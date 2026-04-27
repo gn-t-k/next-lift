@@ -81,7 +81,7 @@ ERD設計は `docs/project/erd-design/` を参照。
 
 - ID生成: `@next-lift/utilities/generate-id` の `generateId()` を使用（ADR-025）
 - FK制約: 全リレーションに `references()` を設定、ON DELETE は NO ACTION。接続時に `PRAGMA foreign_keys = ON` が必要（ADR-026）
-- 区分値カラム（`plan_type`, `weight_type`, `weight_input_unit`）はDB enum/CHECKを使わず、アプリ側の定数で管理
+- 区分値カラム（`plan_type`, `weight_type`、実績系の `weight_input_unit`、種目設定の `default_weight_input_unit`）はDB enum/CHECKを使わず、アプリ側の定数で管理（ADR-027）
 
 ### Expo/React Native対応
 
@@ -103,4 +103,4 @@ ERD設計は `docs/project/erd-design/` を参照。
 - **DB不整合**: DB作成成功後にトークン発行が失敗すると、DBは存在するがアクセスできない状態になる（`createDatabase` の冪等性で再試行可能）
 - **マイグレーション失敗**: 接続時のマイグレーションが失敗した場合、ユーザーはDBにアクセスできない
 - **スケール上限**: Turso Scalerプランで最大10,000データベース
-- 関連ADR: [ADR-005](../../docs/architecture-decision-record/005-per-user-database-architecture.md), [ADR-020](../../docs/architecture-decision-record/020-drizzle-migration-strategy.md)
+- 関連ADR: [ADR-005](../../docs/architecture-decision-record/005-per-user-database-architecture.md), [ADR-020](../../docs/architecture-decision-record/020-drizzle-migration-strategy.md), [ADR-026](../../docs/architecture-decision-record/026-per-user-database-foreign-key-policy.md), [ADR-027](../../docs/architecture-decision-record/027-weight-input-unit-storage-policy.md)

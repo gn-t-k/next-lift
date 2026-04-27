@@ -12,7 +12,6 @@ export const weightRpeParamsFactory = defineFactory({
 				.then((sp) => sp.id),
 		weightValue: 60,
 		weightType: "kg",
-		weightInputUnit: "kg",
 		rpe: 8,
 	}),
 });

@@ -2,11 +2,11 @@
 
 ## ステータス
 
-- 状態: 完了
+- 状態: 完了（ADR-027でweight_input_unitを再設計）
 - テーブル数: 15（コアエンティティ9 + パラメータテーブル3 + リンクテーブル2 + イベントテーブル1）
-- 総カラム数: 61
+- 総カラム数: 60
 - nullableカラム: 7（nullable FK: 0）
-- 設計判断: 30件
+- 設計判断: 31件
 - ユースケース検証: 27/27 OK
 
 ## 要件サマリー
@@ -23,7 +23,7 @@
 |---------|------|-----------|
 | [schema.md](./schema.md) | 最終ERD、テーブル定義、リレーション、カラム設計の補足 | Drizzleスキーマを実装するとき読む。テーブル構造・型・制約を確認する |
 | [use-case-queries.md](./use-case-queries.md) | 27ユースケースの擬似SQL | 特定の機能を実装するとき読む。JOINパスやカラムの使い方を確認する |
-| [design-decisions.md](./design-decisions.md) | 設計判断ログ（30件） | 「なぜこのテーブル構造なのか」を調べるとき読む |
+| [design-decisions.md](./design-decisions.md) | 設計判断ログ（31件） | 「なぜこのテーブル構造なのか」を調べるとき読む |
 | [workspace.md](./workspace.md) | 全5フェーズの作業記録 | ERDを修正・拡張するとき読む。設計プロセスの全議論を含む |
 
 ## 実装時の注意事項
@@ -32,7 +32,7 @@
 
 - "kg" = 絶対重量指定（値はkg単位で保存。lbs入力時もkgに変換）
 - "percent_1rm" = 1RMに対する相対指定（値は%）
-- lbs対応はweight_typeの値追加ではなく、weight_input_unitカラム + 表示層変換で実現
+- lbs対応は3層分離: 種目別プリセットは `exercises.default_weight_input_unit`、実績は `set_logs.weight_input_unit` / `one_rep_maxes.weight_input_unit`、計画パラメータは保持しない（ADR-027）
 
 ### プレースホルダー枠
 
