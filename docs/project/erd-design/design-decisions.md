@@ -24,7 +24,7 @@
 | 18 | workouts.day_idをworkout_day_linksテーブルに分離 | nullable FK排除。Dayに紐づかないワークアウトはリンク行の不存在で表現。workout_idにUK制約で1:0..1を維持 | 3 |
 | 19 | one_rep_maxesからset_log_idを削除しachieved_atを追加 | set_logsとの結合度低減。nullable FK排除。achieved_atはユーザー入力の達成日時（推移グラフのX軸）、registered_atはシステム自動設定の登録日時 | 3 |
 | 20 | exercise_logs.memo, set_logs.rpe/memoのnullableを維持 | 「入力しなかった」= 該当なしの意味でNULLの用途が明確。RPE検索はWHERE rpe IS NOT NULL AND rpe >= 8で対応可能。不要なLEFT JOIN回避 | 3 |
-| 21 | lbs対応を初期スコープに組み込み。weight_input_unitカラムを4テーブルに追加 | 内部kg統一 + 表示層変換。per-record単位保存で種目別デフォルト単位（前回の入力単位をプリセット）を実現。ジム内kg/lbs混在・複数ジム利用に対応 | 3 |
+| 21 | ~~lbs対応を初期スコープに組み込み。weight_input_unitカラムを4テーブルに追加~~ | **→ #31で再設計: 計画パラメータからは削除し、種目設定は `exercises.default_weight_input_unit` に分離（ADR-027）** | 3 |
 | 22 | 種目カテゴリは将来追加で後方互換対応可能（現時点でERD変更なし） | exercisesへのカラム追加やリンクテーブルで対応。カテゴリの軸が未定のため早期の構造決定は避ける | 3 |
 | 23 | programs→days, exercise_plans→set_plans, workouts→exercise_logs, exercise_logs→set_logsの多重度を0以上（オプショナル）で維持 | ドメインモデルの「0..n」を維持。0は作成途中・記録途中の状態であり、途中保存を可能にするために必要。「最低1つ」の制約はワークフローの特定ポイント（完了時等）でアプリ側で強制する | 4 |
 | 24 | set_plans→パラメータテーブルのMermaid表記を1:1必須で記述 | 個々のリレーションシップ線は1:1必須だが、3本のうち1本のみが有効（plan_typeで排他制御）。排他制御はアプリ側バリデーションで担保。ERD図上で排他制約を完全に表現できない制約を受け入れる | 4 |
@@ -34,3 +34,4 @@
 | 28 | 最終レビュー（再検証）でERD構造への変更なし | 全27ユースケースの擬似SQLを再検証。前回はweight_input_unitが13箇所の擬似SQLで欠落していたため全て明示。meta_info、exercise_plan_exercisesリンクテーブルの反映も確認。多重度0..nの4箇所、Mermaid ERDのカラム定義が最新であることを確認。ERD構造自体への変更は不要 | 5 |
 | 29 | exercise_plans.exercise_idをexercise_plan_exercisesリンクテーブルに分離 | プレースホルダー枠（種目未確定の計画枠）に対応。workout_day_linksと同パターン（nullable FK → リンクテーブル）。記録側(exercise_logs)は影響なし。exercise_plan_idがPK（1:1関係で親のPKをPKとして使う） | 3 |
 | 30 | 計画系テーブル(days, exercise_plans, set_plans)にmeta_info text nullableを追加 | programs.meta_infoと同パターンで計画の各階層に自由テキスト注釈を持たせる。プレースホルダー枠の説明もexercise_plans.meta_infoで表現。計画側のmeta_info（意図）と記録側のmemo（実績）は別の関心事 | 3 |
+| 31 | weight_input_unitを3層に分離: 計画パラメータから削除、`exercises.default_weight_input_unit` を新設、実績(`set_logs`/`one_rep_maxes`)は維持 | 計画(指定)・実績(事実)・種目設定(プリセット)を関心事として分離。`weight_type=percent_1rm` での意味のオーバーロード解消。詳細はADR-027 | post-5 |

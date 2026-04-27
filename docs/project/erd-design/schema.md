@@ -53,14 +53,12 @@ erDiagram
         set_plan_id text "PK FK"
         weight_value real
         weight_type text
-        weight_input_unit text
         reps integer
     }
     weight_rpe_params {
         set_plan_id text "PK FK"
         weight_value real
         weight_type text
-        weight_input_unit text
         rpe real
     }
     reps_rpe_params {
@@ -71,6 +69,7 @@ erDiagram
     exercises {
         id text PK
         name text
+        default_weight_input_unit text "NOT NULL"
     }
     one_rep_maxes {
         id text PK
@@ -156,7 +155,8 @@ erDiagram
 ### 重量関連
 
 - **weight_kg**: 常にkg単位で保存。lbs入力時もkgに変換して格納
-- **weight_input_unit**: 入力時の単位（"kg" / "lbs"）。表示層でkg/lbs変換に使用。種目別デフォルト単位の導出元
+- **weight_input_unit**: 実績記録時の入力単位（"kg" / "lbs"）。`set_logs` / `one_rep_maxes` のみに存在。「ユーザーが当時どの単位で入力したか」という不変の事実を保持
+- **default_weight_input_unit**: 種目ごとの入力単位プリセット（"kg" / "lbs"）。`exercises` のみに存在し、新規入力フォームの初期値として使用。NOT NULL DEFAULT `'kg'`。詳細はADR-027
 - **weight_value**: セット計画の重量指定値。weight_typeが"kg"ならkg値、"percent_1rm"なら%値
 - **weight_type**: 重量指定の種類。"kg"=絶対重量、"percent_1rm"=1RMに対する相対指定。「単位」ではなく「種類」の区分
 
