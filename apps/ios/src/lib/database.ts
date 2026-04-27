@@ -1,6 +1,7 @@
 import { schema } from "@next-lift/per-user-database/database-schemas";
 import migrations from "@next-lift/per-user-database/migrations";
 import { openSync } from "@op-engineering/op-sqlite";
+import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/op-sqlite";
 import { migrate } from "drizzle-orm/op-sqlite/migrator";
 import { resolveCredentials } from "./credentials";
@@ -21,6 +22,8 @@ export const initializeDatabase = async () => {
 	sqlite.sync();
 
 	const db = drizzle(sqlite, { schema });
+	// op-sqliteのlibsqlバックエンドにおけるFKデフォルト挙動が未文書化のため、明示的に有効化する（ADR-026）
+	await db.run(sql`PRAGMA foreign_keys = ON`);
 	await migrate(db, migrations);
 
 	return { db, sync: () => sqlite.sync() };
