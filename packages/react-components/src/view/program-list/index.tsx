@@ -1,4 +1,7 @@
+import { PlusIcon } from "@heroicons/react/24/solid";
 import type { FC } from "react";
+import { buttonStyles } from "../../primitive/button";
+import { Link } from "../../primitive/link";
 import { ProgramListItem } from "./program-list-item";
 
 type Program = {
@@ -13,11 +16,18 @@ type Props = {
 	createHref: string;
 };
 
-export const ProgramList: FC<Props> = ({ programs }) => {
+export const ProgramList: FC<Props> = ({ programs, createHref }) => {
 	return (
 		<section className="mx-auto w-full max-w-2xl p-4">
-			<header className="mb-4 flex items-center justify-between">
+			<header className="mb-4 flex items-center justify-between gap-2">
 				<h1 className="font-semibold text-fg text-xl">プログラム</h1>
+				<Link
+					href={createHref}
+					className={buttonStyles({ intent: "primary", size: "sm" })}
+				>
+					<PlusIcon data-slot="icon" />
+					新規作成
+				</Link>
 			</header>
 			{programs.length === 0 ? (
 				<div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-border border-dashed bg-overlay px-6 py-16 text-center">
