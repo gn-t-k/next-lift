@@ -1,13 +1,15 @@
-"use client";
-
 import type { Meta, StoryObj } from "@storybook/react";
 import { type FC, useEffect, useState } from "react";
 import { Button } from "../../primitive/button";
 import { ProgramList } from "./program-list";
+import { ProgramListError } from "./program-list-error";
 import { ProgramListLoading } from "./program-list-loading";
+
+type Outcome = "success" | "error";
 
 type Props = {
 	delayMs: number;
+	outcome: Outcome;
 };
 
 const SAMPLE_PROGRAMS = [
@@ -37,22 +39,28 @@ const SAMPLE_PROGRAMS = [
 	},
 ];
 
-const FlowContent: FC<Props> = ({ delayMs }) => {
-	const [loaded, setLoaded] = useState(false);
+const FlowContent: FC<Props> = ({ delayMs, outcome }) => {
+	const [resolved, setResolved] = useState(false);
 
 	useEffect(() => {
-		const timer = setTimeout(() => setLoaded(true), delayMs);
+		const timer = setTimeout(() => setResolved(true), delayMs);
 		return () => clearTimeout(timer);
 	}, [delayMs]);
 
-	if (!loaded) {
+	if (!resolved) {
 		return <ProgramListLoading createHref="/programs/new" />;
+	}
+
+	if (outcome === "error") {
+		return (
+			<ProgramListError message="ネットワーク接続を確認して再試行してください。" />
+		);
 	}
 
 	return <ProgramList programs={SAMPLE_PROGRAMS} createHref="/programs/new" />;
 };
 
-const FlowDemo: FC<Props> = ({ delayMs }) => {
+const FlowDemo: FC<Props> = ({ delayMs, outcome }) => {
 	const [replayKey, setReplayKey] = useState(0);
 
 	return (
@@ -66,7 +74,7 @@ const FlowDemo: FC<Props> = ({ delayMs }) => {
 					もう一度見る
 				</Button>
 			</div>
-			<FlowContent key={replayKey} delayMs={delayMs} />
+			<FlowContent key={replayKey} delayMs={delayMs} outcome={outcome} />
 		</div>
 	);
 };
@@ -82,6 +90,10 @@ const meta = {
 		delayMs: {
 			control: { type: "range", min: 200, max: 5000, step: 100 },
 		},
+		outcome: {
+			control: { type: "radio" },
+			options: ["success", "error"] satisfies Outcome[],
+		},
 	},
 	args: {
 		delayMs: 1500,
@@ -91,4 +103,14 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const LoadingToList: Story = {};
+export const LoadingToList: Story = {
+	args: {
+		outcome: "success",
+	},
+};
+
+export const LoadingToError: Story = {
+	args: {
+		outcome: "error",
+	},
+};
