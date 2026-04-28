@@ -1,6 +1,7 @@
 import { PlusIcon } from "@heroicons/react/24/solid";
-import type { FC } from "react";
+import type { FC, ReactNode } from "react";
 import { buttonStyles } from "../../primitive/button";
+import { ErrorAlert } from "../../primitive/error-alert";
 import { Link } from "../../primitive/link";
 import { ProgramListItem } from "./program-list-item";
 
@@ -14,9 +15,10 @@ type Program = {
 type Props = {
 	programs: Program[];
 	createHref: string;
+	error?: ReactNode;
 };
 
-export const ProgramList: FC<Props> = ({ programs, createHref }) => {
+export const ProgramList: FC<Props> = ({ programs, createHref, error }) => {
 	return (
 		<section className="mx-auto w-full max-w-2xl p-4">
 			<header className="mb-4 flex items-center justify-between gap-2">
@@ -29,7 +31,9 @@ export const ProgramList: FC<Props> = ({ programs, createHref }) => {
 					新規作成
 				</Link>
 			</header>
-			{programs.length === 0 ? (
+			{error ? (
+				<ErrorAlert>{error}</ErrorAlert>
+			) : programs.length === 0 ? (
 				<div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-border border-dashed bg-overlay px-6 py-16 text-center">
 					<p className="font-medium text-base text-fg">
 						プログラムがありません

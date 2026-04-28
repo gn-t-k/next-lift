@@ -59,6 +59,13 @@ export const EmptyPrograms: Story = {
 	},
 };
 
+export const ErrorState: Story = {
+	args: {
+		programs: [],
+		error: "プログラムの取得に失敗しました。時間をおいて再試行してください。",
+	},
+};
+
 export const LongProgramName: Story = {
 	args: {
 		programs: [
