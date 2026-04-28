@@ -1,6 +1,7 @@
 import type { FC } from "react";
 import { CreateProgramCard } from "./create-program-card";
 import { ProgramListItem } from "./program-list-item";
+import { ProgramListSection } from "./program-list-section";
 
 type Program = {
 	id: string;
@@ -16,10 +17,7 @@ type Props = {
 
 export const ProgramList: FC<Props> = ({ programs, createHref }) => {
 	return (
-		<section className="mx-auto w-full max-w-2xl p-4">
-			<header className="mb-4">
-				<h1 className="font-semibold text-fg text-xl">プログラム</h1>
-			</header>
+		<ProgramListSection>
 			<ul className="flex flex-col gap-2">
 				<CreateProgramCard href={createHref} />
 				{programs.map((program) => (
@@ -31,6 +29,6 @@ export const ProgramList: FC<Props> = ({ programs, createHref }) => {
 					/>
 				))}
 			</ul>
-		</section>
+		</ProgramListSection>
 	);
 };
