@@ -1,13 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import {
-	Component,
-	type FC,
-	type ReactNode,
-	Suspense,
-	use,
-	useMemo,
-	useState,
-} from "react";
+import { type FC, Suspense, use, useMemo, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { Button } from "../../primitive/button";
 import { PageHeading } from "../../primitive/page-heading";
 import { PageSection } from "../../primitive/page-section";
@@ -82,24 +75,6 @@ const SuspendedProgramList: FC<{ promise: Promise<Programs> }> = ({
 	return <ProgramList programs={programs} createHref="/programs/new" />;
 };
 
-// 簡易 ErrorBoundary（Storybook デモ用）。実アプリでは
-// `react-error-boundary` ライブラリの利用を推奨
-class StoryErrorBoundary extends Component<
-	{ fallback: ReactNode; children: ReactNode },
-	{ hasError: boolean }
-> {
-	override state = { hasError: false };
-	static getDerivedStateFromError() {
-		return { hasError: true };
-	}
-	override render() {
-		if (this.state.hasError) {
-			return this.props.fallback;
-		}
-		return this.props.children;
-	}
-}
-
 const FlowContent: FC<Props> = ({ delayMs, outcome }) => {
 	const promise = useMemo(
 		() => fakeFetchPrograms(delayMs, outcome === "error"),
@@ -107,7 +82,7 @@ const FlowContent: FC<Props> = ({ delayMs, outcome }) => {
 	);
 
 	return (
-		<StoryErrorBoundary
+		<ErrorBoundary
 			fallback={
 				<ProgramListError
 					createHref="/programs/new"
@@ -118,7 +93,7 @@ const FlowContent: FC<Props> = ({ delayMs, outcome }) => {
 			<Suspense fallback={<ProgramListLoading createHref="/programs/new" />}>
 				<SuspendedProgramList promise={promise} />
 			</Suspense>
-		</StoryErrorBoundary>
+		</ErrorBoundary>
 	);
 };
 
