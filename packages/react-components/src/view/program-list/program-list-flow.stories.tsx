@@ -53,7 +53,10 @@ const FlowContent: FC<Props> = ({ delayMs, outcome }) => {
 
 	if (outcome === "error") {
 		return (
-			<ProgramListError message="ネットワーク接続を確認して再試行してください。" />
+			<ProgramListError
+				createHref="/programs/new"
+				message="ネットワーク接続を確認して再試行してください。"
+			/>
 		);
 	}
 

@@ -8,6 +8,9 @@ const meta = {
 		layout: "fullscreen",
 	},
 	tags: ["autodocs"],
+	args: {
+		createHref: "/programs/new",
+	},
 } satisfies Meta<typeof ProgramListError>;
 
 export default meta;

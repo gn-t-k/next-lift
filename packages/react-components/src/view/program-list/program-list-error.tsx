@@ -1,11 +1,13 @@
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import type { FC, ReactNode } from "react";
+import { CreateProgramCard } from "./create-program-card";
 
 type Props = {
+	createHref: string;
 	message?: ReactNode;
 };
 
-export const ProgramListError: FC<Props> = ({ message }) => {
+export const ProgramListError: FC<Props> = ({ createHref, message }) => {
 	return (
 		<section className="mx-auto w-full max-w-2xl p-4">
 			<header className="mb-4">
@@ -13,7 +15,7 @@ export const ProgramListError: FC<Props> = ({ message }) => {
 			</header>
 			<div
 				role="alert"
-				className="flex items-start gap-3 rounded-lg border border-border bg-overlay p-4"
+				className="mb-2 flex items-start gap-3 rounded-lg border border-border bg-overlay p-4"
 			>
 				<ExclamationTriangleIcon
 					aria-hidden
@@ -26,6 +28,9 @@ export const ProgramListError: FC<Props> = ({ message }) => {
 					{message ? <p className="text-muted-fg text-sm">{message}</p> : null}
 				</div>
 			</div>
+			<ul className="flex flex-col gap-2">
+				<CreateProgramCard href={createHref} />
+			</ul>
 		</section>
 	);
 };
