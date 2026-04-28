@@ -1,0 +1,31 @@
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import type { FC, ReactNode } from "react";
+
+type Props = {
+	message?: ReactNode;
+};
+
+export const ProgramListError: FC<Props> = ({ message }) => {
+	return (
+		<section className="mx-auto w-full max-w-2xl p-4">
+			<header className="mb-4">
+				<h1 className="font-semibold text-fg text-xl">プログラム</h1>
+			</header>
+			<div
+				role="alert"
+				className="flex items-start gap-3 rounded-lg border border-border bg-overlay p-4"
+			>
+				<ExclamationTriangleIcon
+					aria-hidden
+					className="mt-0.5 size-5 shrink-0 text-warning"
+				/>
+				<div className="flex flex-col gap-1">
+					<p className="font-medium text-base text-fg">
+						プログラムを取得できませんでした
+					</p>
+					{message ? <p className="text-muted-fg text-sm">{message}</p> : null}
+				</div>
+			</div>
+		</section>
+	);
+};
