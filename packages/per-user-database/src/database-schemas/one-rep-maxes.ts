@@ -1,4 +1,6 @@
+import { sql } from "drizzle-orm";
 import {
+	check,
 	index,
 	integer,
 	real,
@@ -24,5 +26,12 @@ export const oneRepMaxes = sqliteTable(
 		achievedAt: integer("achieved_at", { mode: "timestamp_ms" }).notNull(),
 		registeredAt: integer("registered_at", { mode: "timestamp_ms" }).notNull(),
 	},
-	(table) => [index("one_rep_maxes_exercise_id_idx").on(table.exerciseId)],
+	(table) => [
+		index("one_rep_maxes_exercise_id_idx").on(table.exerciseId),
+		check("one_rep_maxes_weight_kg_check", sql`${table.weightKg} > 0`),
+		check(
+			"one_rep_maxes_achieved_before_registered_check",
+			sql`${table.achievedAt} <= ${table.registeredAt}`,
+		),
+	],
 );
