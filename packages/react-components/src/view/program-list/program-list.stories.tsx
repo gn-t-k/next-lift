@@ -53,6 +53,12 @@ export const MultiplePrograms: Story = {
 	},
 };
 
+export const EmptyPrograms: Story = {
+	args: {
+		programs: [],
+	},
+};
+
 export const LongProgramName: Story = {
 	args: {
 		programs: [
