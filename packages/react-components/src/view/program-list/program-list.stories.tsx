@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ProgramList } from "./index";
+import { ProgramList } from "./program-list";
 
 const meta = {
 	title: "View/V1 プログラム一覧",

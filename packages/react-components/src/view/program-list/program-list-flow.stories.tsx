@@ -3,7 +3,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { type FC, useEffect, useState } from "react";
 import { Button } from "../../primitive/button";
-import { ProgramList } from "./index";
+import { ProgramList } from "./program-list";
 import { ProgramListLoading } from "./program-list-loading";
 
 type Props = {

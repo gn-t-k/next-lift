@@ -2,9 +2,6 @@ import type { FC } from "react";
 import { CreateProgramCard } from "./create-program-card";
 import { ProgramListItem } from "./program-list-item";
 
-export { ProgramListError } from "./program-list-error";
-export { ProgramListLoading } from "./program-list-loading";
-
 type Program = {
 	id: string;
 	name: string;
