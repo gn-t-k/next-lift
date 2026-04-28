@@ -13,9 +13,12 @@ export const ProgramListError: FC<Props> = ({ createHref, message }) => {
 			<header className="mb-4">
 				<h1 className="font-semibold text-fg text-xl">プログラム</h1>
 			</header>
+			<ul className="mb-2 flex flex-col gap-2">
+				<CreateProgramCard href={createHref} />
+			</ul>
 			<div
 				role="alert"
-				className="mb-2 flex items-start gap-3 rounded-lg border border-border bg-overlay p-4"
+				className="flex items-start gap-3 rounded-lg border border-border bg-overlay p-4"
 			>
 				<ExclamationTriangleIcon
 					aria-hidden
@@ -28,9 +31,6 @@ export const ProgramListError: FC<Props> = ({ createHref, message }) => {
 					{message ? <p className="text-muted-fg text-sm">{message}</p> : null}
 				</div>
 			</div>
-			<ul className="flex flex-col gap-2">
-				<CreateProgramCard href={createHref} />
-			</ul>
 		</section>
 	);
 };
