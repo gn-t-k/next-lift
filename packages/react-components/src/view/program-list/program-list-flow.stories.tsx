@@ -1,5 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { type FC, useEffect, useState } from "react";
+import {
+	Component,
+	type FC,
+	type ReactNode,
+	Suspense,
+	use,
+	useMemo,
+	useState,
+} from "react";
 import { Button } from "../../primitive/button";
 import { PageHeading } from "../../primitive/page-heading";
 import { PageSection } from "../../primitive/page-section";
@@ -14,7 +22,14 @@ type Props = {
 	outcome: Outcome;
 };
 
-const SAMPLE_PROGRAMS = [
+type Programs = Array<{
+	id: string;
+	name: string;
+	lastUsedAt: Date | null;
+	href: string;
+}>;
+
+const SAMPLE_PROGRAMS: Programs = [
 	{
 		id: "p1",
 		name: "5/3/1 BBB",
@@ -41,32 +56,77 @@ const SAMPLE_PROGRAMS = [
 	},
 ];
 
+// データ取得をモックする Promise。実アプリでは Server Component の await や
+// TanStack Query の useSuspenseQuery 等がこの位置に来る
+const fakeFetchPrograms = (
+	delayMs: number,
+	shouldFail: boolean,
+): Promise<Programs> =>
+	new Promise((resolve, reject) => {
+		setTimeout(() => {
+			if (shouldFail) {
+				reject(new Error("プログラムの取得に失敗しました"));
+			} else {
+				resolve(SAMPLE_PROGRAMS);
+			}
+		}, delayMs);
+	});
+
+// このストーリー専用のアダプター。Promise を `use()` で待機し、
+// 解決後の値で純プレゼンテーショナルな `ProgramList` を呼び出す。
+// 実アプリでは Server Component や useSuspenseQuery でこの層を実装する
+const SuspendedProgramList: FC<{ promise: Promise<Programs> }> = ({
+	promise,
+}) => {
+	const programs = use(promise);
+	return <ProgramList programs={programs} createHref="/programs/new" />;
+};
+
+// 簡易 ErrorBoundary（Storybook デモ用）。実アプリでは
+// `react-error-boundary` ライブラリの利用を推奨
+class StoryErrorBoundary extends Component<
+	{ fallback: ReactNode; children: ReactNode },
+	{ hasError: boolean }
+> {
+	override state = { hasError: false };
+	static getDerivedStateFromError() {
+		return { hasError: true };
+	}
+	override render() {
+		if (this.state.hasError) {
+			return this.props.fallback;
+		}
+		return this.props.children;
+	}
+}
+
 const FlowContent: FC<Props> = ({ delayMs, outcome }) => {
-	const [resolved, setResolved] = useState(false);
+	const promise = useMemo(
+		() => fakeFetchPrograms(delayMs, outcome === "error"),
+		[delayMs, outcome],
+	);
 
-	useEffect(() => {
-		const timer = setTimeout(() => setResolved(true), delayMs);
-		return () => clearTimeout(timer);
-	}, [delayMs]);
-
-	if (!resolved) {
-		return <ProgramListLoading createHref="/programs/new" />;
-	}
-
-	if (outcome === "error") {
-		return (
-			<ProgramListError
-				createHref="/programs/new"
-				message="ネットワーク接続を確認して再試行してください。"
-			/>
-		);
-	}
-
-	return <ProgramList programs={SAMPLE_PROGRAMS} createHref="/programs/new" />;
+	return (
+		<StoryErrorBoundary
+			fallback={
+				<ProgramListError
+					createHref="/programs/new"
+					message="ネットワーク接続を確認して再試行してください。"
+				/>
+			}
+		>
+			<Suspense fallback={<ProgramListLoading createHref="/programs/new" />}>
+				<SuspendedProgramList promise={promise} />
+			</Suspense>
+		</StoryErrorBoundary>
+	);
 };
 
 const FlowDemo: FC<Props> = ({ delayMs, outcome }) => {
 	const [replayKey, setReplayKey] = useState(0);
+
+	// delayMs / outcome 変更でも remount して再フェッチ + ErrorBoundary リセット
+	const remountKey = `${delayMs}-${outcome}-${replayKey}`;
 
 	return (
 		<div>
@@ -81,7 +141,9 @@ const FlowDemo: FC<Props> = ({ delayMs, outcome }) => {
 			</div>
 			<PageSection>
 				<PageHeading as="h1">プログラム</PageHeading>
-				<FlowContent key={replayKey} delayMs={delayMs} outcome={outcome} />
+				<div key={remountKey}>
+					<FlowContent delayMs={delayMs} outcome={outcome} />
+				</div>
 			</PageSection>
 		</div>
 	);
