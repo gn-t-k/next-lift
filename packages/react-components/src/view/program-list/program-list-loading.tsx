@@ -1,8 +1,13 @@
 import type { FC } from "react";
+import { CreateProgramCard } from "./create-program-card";
+
+type Props = {
+	createHref: string;
+};
 
 const SKELETON_KEYS = ["s1", "s2", "s3", "s4"] as const;
 
-export const ProgramListLoading: FC = () => {
+export const ProgramListLoading: FC<Props> = ({ createHref }) => {
 	return (
 		<section className="mx-auto w-full max-w-2xl p-4">
 			<header className="mb-4">
@@ -12,6 +17,7 @@ export const ProgramListLoading: FC = () => {
 				プログラムを読み込み中
 			</span>
 			<ul aria-busy className="flex flex-col gap-2">
+				<CreateProgramCard href={createHref} />
 				{SKELETON_KEYS.map((key) => (
 					<li
 						key={key}

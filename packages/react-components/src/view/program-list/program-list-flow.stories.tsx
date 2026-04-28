@@ -46,7 +46,7 @@ const FlowContent: FC<Props> = ({ delayMs }) => {
 	}, [delayMs]);
 
 	if (!loaded) {
-		return <ProgramListLoading />;
+		return <ProgramListLoading createHref="/programs/new" />;
 	}
 
 	return <ProgramList programs={SAMPLE_PROGRAMS} createHref="/programs/new" />;
