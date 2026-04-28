@@ -1,7 +1,6 @@
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import type { FC, ReactNode } from "react";
 import { CreateProgramCard } from "./create-program-card";
-import { ProgramListSection } from "./program-list-section";
 
 type Props = {
 	createHref: string;
@@ -10,7 +9,7 @@ type Props = {
 
 export const ProgramListError: FC<Props> = ({ createHref, message }) => {
 	return (
-		<ProgramListSection>
+		<>
 			<ul className="mb-2 flex flex-col gap-2">
 				<CreateProgramCard href={createHref} />
 			</ul>
@@ -29,6 +28,6 @@ export const ProgramListError: FC<Props> = ({ createHref, message }) => {
 					{message ? <p className="text-muted-fg text-sm">{message}</p> : null}
 				</div>
 			</div>
-		</ProgramListSection>
+		</>
 	);
 };

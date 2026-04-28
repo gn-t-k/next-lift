@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { PageHeading } from "../../primitive/page-heading";
+import { PageSection } from "../../primitive/page-section";
 import { ProgramList } from "./program-list";
 
 const meta = {
@@ -11,6 +13,14 @@ const meta = {
 	args: {
 		createHref: "/programs/new",
 	},
+	decorators: [
+		(Story) => (
+			<PageSection>
+				<PageHeading as="h1">プログラム</PageHeading>
+				<Story />
+			</PageSection>
+		),
+	],
 } satisfies Meta<typeof ProgramList>;
 
 export default meta;

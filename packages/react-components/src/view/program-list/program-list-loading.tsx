@@ -1,6 +1,5 @@
 import type { FC } from "react";
 import { CreateProgramCard } from "./create-program-card";
-import { ProgramListSection } from "./program-list-section";
 
 type Props = {
 	createHref: string;
@@ -10,7 +9,7 @@ const SKELETON_KEYS = ["s1", "s2", "s3", "s4"] as const;
 
 export const ProgramListLoading: FC<Props> = ({ createHref }) => {
 	return (
-		<ProgramListSection>
+		<>
 			<span className="sr-only" aria-live="polite">
 				プログラムを読み込み中
 			</span>
@@ -26,6 +25,6 @@ export const ProgramListLoading: FC<Props> = ({ createHref }) => {
 					</li>
 				))}
 			</ul>
-		</ProgramListSection>
+		</>
 	);
 };

@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { type FC, useEffect, useState } from "react";
 import { Button } from "../../primitive/button";
+import { PageHeading } from "../../primitive/page-heading";
+import { PageSection } from "../../primitive/page-section";
 import { ProgramList } from "./program-list";
 import { ProgramListError } from "./program-list-error";
 import { ProgramListLoading } from "./program-list-loading";
@@ -67,7 +69,7 @@ const FlowDemo: FC<Props> = ({ delayMs, outcome }) => {
 	const [replayKey, setReplayKey] = useState(0);
 
 	return (
-		<div className="relative">
+		<div>
 			<div className="sticky top-0 z-10 flex justify-end px-4 pt-4">
 				<Button
 					intent="outline"
@@ -77,7 +79,10 @@ const FlowDemo: FC<Props> = ({ delayMs, outcome }) => {
 					もう一度見る
 				</Button>
 			</div>
-			<FlowContent key={replayKey} delayMs={delayMs} outcome={outcome} />
+			<PageSection>
+				<PageHeading as="h1">プログラム</PageHeading>
+				<FlowContent key={replayKey} delayMs={delayMs} outcome={outcome} />
+			</PageSection>
 		</div>
 	);
 };
