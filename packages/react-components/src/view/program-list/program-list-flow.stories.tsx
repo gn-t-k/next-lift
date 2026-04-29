@@ -1,5 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { type FC, Suspense, use, useMemo, useState } from "react";
+import {
+	type ComponentProps,
+	type FC,
+	Suspense,
+	use,
+	useMemo,
+	useState,
+} from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Button } from "../../primitive/button";
 import { PageHeading } from "../../primitive/page-heading";
@@ -15,92 +22,9 @@ type Props = {
 	outcome: Outcome;
 };
 
-type Programs = Array<{
-	id: string;
-	name: string;
-	lastUsedAt: Date | null;
-	href: string;
-}>;
-
-const SAMPLE_PROGRAMS: Programs = [
-	{
-		id: "p1",
-		name: "5/3/1 BBB",
-		lastUsedAt: new Date("2026-04-26"),
-		href: "/programs/p1",
-	},
-	{
-		id: "p2",
-		name: "PPL Hypertrophy",
-		lastUsedAt: new Date("2026-04-22"),
-		href: "/programs/p2",
-	},
-	{
-		id: "p3",
-		name: "GZCLP",
-		lastUsedAt: new Date("2026-04-15"),
-		href: "/programs/p3",
-	},
-	{
-		id: "p4",
-		name: "ストロングリフト 5x5",
-		lastUsedAt: new Date("2026-03-30"),
-		href: "/programs/p4",
-	},
-];
-
-// データ取得をモックする Promise。実アプリでは Server Component の await や
-// TanStack Query の useSuspenseQuery 等がこの位置に来る
-const fakeFetchPrograms = (
-	delayMs: number,
-	shouldFail: boolean,
-): Promise<Programs> =>
-	new Promise((resolve, reject) => {
-		setTimeout(() => {
-			if (shouldFail) {
-				reject(new Error("プログラムの取得に失敗しました"));
-			} else {
-				resolve(SAMPLE_PROGRAMS);
-			}
-		}, delayMs);
-	});
-
-// このストーリー専用のアダプター。Promise を `use()` で待機し、
-// 解決後の値で純プレゼンテーショナルな `ProgramList` を呼び出す。
-// 実アプリでは Server Component や useSuspenseQuery でこの層を実装する
-const SuspendedProgramList: FC<{ promise: Promise<Programs> }> = ({
-	promise,
-}) => {
-	const programs = use(promise);
-	return <ProgramList programs={programs} createHref="/programs/new" />;
-};
-
-const FlowContent: FC<Props> = ({ delayMs, outcome }) => {
-	const promise = useMemo(
-		() => fakeFetchPrograms(delayMs, outcome === "error"),
-		[delayMs, outcome],
-	);
-
-	return (
-		<ErrorBoundary
-			fallback={
-				<ProgramListError
-					createHref="/programs/new"
-					message="ネットワーク接続を確認して再試行してください。"
-				/>
-			}
-		>
-			<Suspense fallback={<ProgramListLoading createHref="/programs/new" />}>
-				<SuspendedProgramList promise={promise} />
-			</Suspense>
-		</ErrorBoundary>
-	);
-};
-
 const FlowDemo: FC<Props> = ({ delayMs, outcome }) => {
 	const [replayKey, setReplayKey] = useState(0);
-
-	// delayMs / outcome 変更でも remount して再フェッチ + ErrorBoundary リセット
+	// delayMs / outcome の変更でも再フェッチ + ErrorBoundary リセットしたいので key に含める
 	const remountKey = `${delayMs}-${outcome}-${replayKey}`;
 
 	return (
@@ -116,9 +40,21 @@ const FlowDemo: FC<Props> = ({ delayMs, outcome }) => {
 			</div>
 			<PageSection>
 				<PageHeading as="h1">プログラム</PageHeading>
-				<div key={remountKey}>
-					<FlowContent delayMs={delayMs} outcome={outcome} />
-				</div>
+				<ErrorBoundary
+					key={remountKey}
+					fallback={
+						<ProgramListError
+							createHref="/programs/new"
+							message="ネットワーク接続を確認して再試行してください。"
+						/>
+					}
+				>
+					<Suspense
+						fallback={<ProgramListLoading createHref="/programs/new" />}
+					>
+						<SuspendedProgramList delayMs={delayMs} outcome={outcome} />
+					</Suspense>
+				</ErrorBoundary>
 			</PageSection>
 		</div>
 	);
@@ -159,3 +95,58 @@ export const LoadingToError: Story = {
 		outcome: "error",
 	},
 };
+
+// 実アプリでは Server Component の await や useSuspenseQuery がこの位置に来る Storybook 専用アダプター
+const SuspendedProgramList: FC<Props> = ({ delayMs, outcome }) => {
+	const promise = useMemo(
+		() =>
+			outcome === "success"
+				? fakeFetchProgramsSuccess(delayMs)
+				: fakeFetchProgramsFailure(delayMs),
+		[delayMs, outcome],
+	);
+	const programs = use(promise);
+	return <ProgramList programs={programs} createHref="/programs/new" />;
+};
+
+const fakeFetchProgramsSuccess = (delayMs: number): Promise<Program[]> =>
+	new Promise((resolve) => {
+		setTimeout(() => resolve(SAMPLE_PROGRAMS), delayMs);
+	});
+
+const fakeFetchProgramsFailure = (delayMs: number): Promise<Program[]> =>
+	new Promise((_, reject) => {
+		setTimeout(
+			() => reject(new Error("プログラムの取得に失敗しました")),
+			delayMs,
+		);
+	});
+
+type Program = ComponentProps<typeof ProgramList>["programs"][number];
+
+const SAMPLE_PROGRAMS: Program[] = [
+	{
+		id: "p1",
+		name: "5/3/1 BBB",
+		lastUsedAt: new Date("2026-04-26"),
+		href: "/programs/p1",
+	},
+	{
+		id: "p2",
+		name: "PPL Hypertrophy",
+		lastUsedAt: new Date("2026-04-22"),
+		href: "/programs/p2",
+	},
+	{
+		id: "p3",
+		name: "GZCLP",
+		lastUsedAt: new Date("2026-04-15"),
+		href: "/programs/p3",
+	},
+	{
+		id: "p4",
+		name: "ストロングリフト 5x5",
+		lastUsedAt: new Date("2026-03-30"),
+		href: "/programs/p4",
+	},
+];
