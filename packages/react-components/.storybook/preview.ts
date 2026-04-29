@@ -18,7 +18,7 @@ export default {
 		},
 
 		viewport: {
-			viewports: {
+			options: {
 				mobile: {
 					name: "Mobile",
 					styles: { width: "375px", height: "667px" },

@@ -62,16 +62,18 @@ packages/react-components/src/
 │   └── ...
 └── view/
     ├── program-list/
-    │   ├── index.tsx              # V1 プログラム一覧
+    │   ├── index.ts               # バレル（再エクスポートのみ）
+    │   ├── program-list.tsx       # V1 プログラム一覧
     │   └── program-list-item.tsx  # V1 専用のサブコンポーネント
     ├── program-detail/
-    │   └── index.tsx              # V2
+    │   ├── index.ts
+    │   └── program-detail.tsx     # V2
     └── ...
 ```
 
 基本の配置基準:
 
-1. V1〜V15 のどれかに対応する → `src/view/{ビュー名}/index.tsx`
+1. V1〜V15 のどれかに対応する → `src/view/{ビュー名}/{ビュー名}.tsx`（`coding-style.md`「ファイル名と export する関数/コンポーネント名を揃える」原則）。`index.ts` はバレル専用
 2. 特定ビュー専用のサブコンポーネント → `src/view/{ビュー名}/` 配下にコロケーション
 3. ドメイン用語（Program / Day / ExercisePlan / SetPlan / Workout / Exercise / 1RM など）を含まない汎用部品 → `src/primitive/`
 
@@ -90,11 +92,14 @@ src/
 │   └── numeric-value.tsx       # ドメイン用語を剥がして昇格した例
 └── view/
     ├── program-list/
-    │   └── index.tsx
+    │   ├── index.ts
+    │   └── program-list.tsx
     ├── program-detail/
-    │   └── index.tsx
+    │   ├── index.ts
+    │   └── program-detail.tsx
     ├── day-detail/
-    │   └── index.tsx
+    │   ├── index.ts
+    │   └── day-detail.tsx
     └── set-plan-row.tsx        # V3, V10 などで使う → view/ 直下に昇格
 ```
 
