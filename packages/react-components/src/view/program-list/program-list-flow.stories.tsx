@@ -24,7 +24,7 @@ type Props = {
 
 const FlowDemo: FC<Props> = ({ delayMs, outcome }) => {
 	const [replayKey, setReplayKey] = useState(0);
-	// delayMs / outcome の変更でも再フェッチ + ErrorBoundary リセットしたいので key に含める
+	// delayMs / outcome / replayKey の変更で ProgramListBoundary を remount し、新しい promise で再フェッチ + ErrorBoundary リセットする
 	const remountKey = `${delayMs}-${outcome}-${replayKey}`;
 
 	return (
@@ -40,21 +40,11 @@ const FlowDemo: FC<Props> = ({ delayMs, outcome }) => {
 			</div>
 			<PageSection>
 				<PageHeading as="h1">プログラム</PageHeading>
-				<ErrorBoundary
+				<ProgramListBoundary
 					key={remountKey}
-					fallback={
-						<ProgramListError
-							createHref="/programs/new"
-							message="ネットワーク接続を確認して再試行してください。"
-						/>
-					}
-				>
-					<Suspense
-						fallback={<ProgramListLoading createHref="/programs/new" />}
-					>
-						<SuspendedProgramList delayMs={delayMs} outcome={outcome} />
-					</Suspense>
-				</ErrorBoundary>
+					delayMs={delayMs}
+					outcome={outcome}
+				/>
 			</PageSection>
 		</div>
 	);
@@ -96,8 +86,8 @@ export const LoadingToError: Story = {
 	},
 };
 
-// 実アプリでは Server Component の await や useSuspenseQuery がこの位置に来る Storybook 専用アダプター
-const SuspendedProgramList: FC<Props> = ({ delayMs, outcome }) => {
+// promise は use() を呼ぶ子（AwaitedProgramList）の外側で生成して参照を安定させる。子側で生成すると suspend → 再描画のたびに新 promise になり永久ループになる
+const ProgramListBoundary: FC<Props> = ({ delayMs, outcome }) => {
 	const promise = useMemo(
 		() =>
 			outcome === "success"
@@ -105,6 +95,27 @@ const SuspendedProgramList: FC<Props> = ({ delayMs, outcome }) => {
 				: fakeFetchProgramsFailure(delayMs),
 		[delayMs, outcome],
 	);
+
+	return (
+		<ErrorBoundary
+			fallback={
+				<ProgramListError
+					createHref="/programs/new"
+					message="ネットワーク接続を確認して再試行してください。"
+				/>
+			}
+		>
+			<Suspense fallback={<ProgramListLoading createHref="/programs/new" />}>
+				<AwaitedProgramList promise={promise} />
+			</Suspense>
+		</ErrorBoundary>
+	);
+};
+
+// 実アプリでは Server Component の await や useSuspenseQuery がこの位置に来る Storybook 専用アダプター
+const AwaitedProgramList: FC<{ promise: Promise<Program[]> }> = ({
+	promise,
+}) => {
 	const programs = use(promise);
 	return <ProgramList programs={programs} createHref="/programs/new" />;
 };
