@@ -1,14 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import {
-	type ComponentProps,
-	type FC,
-	Suspense,
-	use,
-	useMemo,
-	useState,
-} from "react";
+import { type ComponentProps, type FC, Suspense, use, useMemo } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { Button } from "../../primitive/button";
 import { PageHeading } from "../../primitive/page-heading";
 import { PageSection } from "../../primitive/page-section";
 import { ProgramList } from "./program-list";
@@ -23,30 +15,31 @@ type Props = {
 };
 
 const FlowDemo: FC<Props> = ({ delayMs, outcome }) => {
-	const [replayKey, setReplayKey] = useState(0);
-	// delayMs / outcome / replayKey の変更で ProgramListBoundary を remount し、新しい promise で再フェッチ + ErrorBoundary リセットする
-	const remountKey = `${delayMs}-${outcome}-${replayKey}`;
+	const promise = useMemo(
+		() =>
+			outcome === "success"
+				? fakeFetchProgramsSuccess(delayMs)
+				: fakeFetchProgramsFailure(delayMs),
+		[delayMs, outcome],
+	);
 
 	return (
-		<div>
-			<div className="sticky top-0 z-10 flex justify-end px-4 pt-4">
-				<Button
-					intent="outline"
-					size="sm"
-					onPress={() => setReplayKey((key) => key + 1)}
-				>
-					もう一度見る
-				</Button>
-			</div>
-			<PageSection>
-				<PageHeading as="h1">プログラム</PageHeading>
-				<ProgramListBoundary
-					key={remountKey}
-					delayMs={delayMs}
-					outcome={outcome}
-				/>
-			</PageSection>
-		</div>
+		<PageSection>
+			<PageHeading as="h1">プログラム</PageHeading>
+			<ErrorBoundary
+				key={outcome} // outcome が変わるたびにエラーバウンダリーをリセット
+				fallback={
+					<ProgramListError
+						createHref="/programs/new"
+						message="ネットワーク接続を確認して再試行してください。"
+					/>
+				}
+			>
+				<Suspense fallback={<ProgramListLoading createHref="/programs/new" />}>
+					<ProgramListContainer promise={promise} />
+				</Suspense>
+			</ErrorBoundary>
+		</PageSection>
 	);
 };
 
@@ -86,34 +79,8 @@ export const LoadingToError: Story = {
 	},
 };
 
-// promise は use() を呼ぶ子（AwaitedProgramList）の外側で生成して参照を安定させる。子側で生成すると suspend → 再描画のたびに新 promise になり永久ループになる
-const ProgramListBoundary: FC<Props> = ({ delayMs, outcome }) => {
-	const promise = useMemo(
-		() =>
-			outcome === "success"
-				? fakeFetchProgramsSuccess(delayMs)
-				: fakeFetchProgramsFailure(delayMs),
-		[delayMs, outcome],
-	);
-
-	return (
-		<ErrorBoundary
-			fallback={
-				<ProgramListError
-					createHref="/programs/new"
-					message="ネットワーク接続を確認して再試行してください。"
-				/>
-			}
-		>
-			<Suspense fallback={<ProgramListLoading createHref="/programs/new" />}>
-				<AwaitedProgramList promise={promise} />
-			</Suspense>
-		</ErrorBoundary>
-	);
-};
-
-// 実アプリでは Server Component の await や useSuspenseQuery がこの位置に来る Storybook 専用アダプター
-const AwaitedProgramList: FC<{ promise: Promise<Program[]> }> = ({
+// 実アプリでは Server Component の await や useSuspenseQuery がこの位置に来る
+const ProgramListContainer: FC<{ promise: Promise<Program[]> }> = ({
 	promise,
 }) => {
 	const programs = use(promise);
