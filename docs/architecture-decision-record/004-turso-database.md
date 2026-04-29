@@ -8,6 +8,7 @@ Accepted
 
 - [ADR-005: Per-User Database Architecture](./005-per-user-database-architecture.md) - Tursoの制約により必須となるアーキテクチャ
 - [ADR-010: Local-first Architecture](./010-local-first-architecture.md) - Turso Embedded Replicasを活用したアーキテクチャパターン
+- [ADR-029: @tursodatabase スイートへの移行](./029-tursodatabase-suite-migration.md) - 本ADRの実装方法（クライアントパッケージ）を新スイート（@tursodatabase/sync-react-native, @tursodatabase/serverless）で更新（移行中）
 
 ## コンテキスト
 

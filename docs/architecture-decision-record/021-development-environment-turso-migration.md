@@ -4,6 +4,8 @@
 
 Accepted
 
+> **Note**: [ADR-029](./029-tursodatabase-suite-migration.md) (2026-04-29) により、開発環境のデータ実体のみ Partially Superseded（Turso Hosted DB → ローカル sync server）。命名規則と管理スクリプト体系は読み替えて継承。
+
 ## コンテキスト
 
 [ADR-012](./012-database-environment-strategy.md)では、開発環境でローカルSQLiteファイルを使用する戦略を採用していた。しかし、運用を通じて以下の課題が明らかになった。

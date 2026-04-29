@@ -2,7 +2,7 @@
 
 ## ステータス
 
-Accepted
+Superseded by [ADR-029](./029-tursodatabase-suite-migration.md) (2026-04-29)
 
 ## コンテキスト
 

@@ -8,6 +8,7 @@ Accepted
 
 - [ADR-004: Turso Database](./004-turso-database.md) - Local-firstを実現するデータベース選定
 - [ADR-005: Per-User Database Architecture](./005-per-user-database-architecture.md) - Local-firstで必須となるDB構成
+- [ADR-029: @tursodatabase スイートへの移行](./029-tursodatabase-suite-migration.md) - 本ADRの実装方法を新クライアント（@tursodatabase/sync-react-native, @tursodatabase/serverless）で更新（移行中）
 
 ## コンテキスト
 
