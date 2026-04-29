@@ -1,7 +1,43 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import type { ComponentProps } from "react";
 import { PageHeading } from "../../primitive/page-heading";
 import { PageSection } from "../../primitive/page-section";
 import { ProgramList } from "./program-list";
+
+type Program = ComponentProps<typeof ProgramList>["programs"][number];
+
+const SAMPLE_PROGRAMS: Program[] = [
+	{
+		id: "p1",
+		name: "5/3/1 BBB",
+		lastUsedAt: new Date("2026-04-26"),
+		href: "/programs/p1",
+	},
+	{
+		id: "p2",
+		name: "PPL Hypertrophy",
+		lastUsedAt: new Date("2026-04-22"),
+		href: "/programs/p2",
+	},
+	{
+		id: "p3",
+		name: "GZCLP",
+		lastUsedAt: new Date("2026-04-15"),
+		href: "/programs/p3",
+	},
+	{
+		id: "p4",
+		name: "ストロングリフト 5x5",
+		lastUsedAt: new Date("2026-03-30"),
+		href: "/programs/p4",
+	},
+	{
+		id: "p5",
+		name: "新規プログラム（未使用）",
+		lastUsedAt: null,
+		href: "/programs/p5",
+	},
+];
 
 const meta = {
 	title: "View/V1 プログラム一覧",
@@ -15,7 +51,7 @@ const meta = {
 	},
 	decorators: [
 		(Story) => (
-			<PageSection>
+			<PageSection width="wide">
 				<PageHeading as="h1">プログラム</PageHeading>
 				<Story />
 			</PageSection>
@@ -28,38 +64,25 @@ type Story = StoryObj<typeof meta>;
 
 export const MultiplePrograms: Story = {
 	args: {
-		programs: [
-			{
-				id: "p1",
-				name: "5/3/1 BBB",
-				lastUsedAt: new Date("2026-04-26"),
-				href: "/programs/p1",
-			},
-			{
-				id: "p2",
-				name: "PPL Hypertrophy",
-				lastUsedAt: new Date("2026-04-22"),
-				href: "/programs/p2",
-			},
-			{
-				id: "p3",
-				name: "GZCLP",
-				lastUsedAt: new Date("2026-04-15"),
-				href: "/programs/p3",
-			},
-			{
-				id: "p4",
-				name: "ストロングリフト 5x5",
-				lastUsedAt: new Date("2026-03-30"),
-				href: "/programs/p4",
-			},
-			{
-				id: "p5",
-				name: "新規プログラム（未使用）",
-				lastUsedAt: null,
-				href: "/programs/p5",
-			},
-		],
+		programs: SAMPLE_PROGRAMS,
+	},
+};
+
+export const Mobile: Story = {
+	args: {
+		programs: SAMPLE_PROGRAMS,
+	},
+	globals: {
+		viewport: { value: "mobile" },
+	},
+};
+
+export const Desktop: Story = {
+	args: {
+		programs: SAMPLE_PROGRAMS,
+	},
+	globals: {
+		viewport: { value: "desktop" },
 	},
 };
 

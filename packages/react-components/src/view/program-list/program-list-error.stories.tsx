@@ -15,7 +15,7 @@ const meta = {
 	},
 	decorators: [
 		(Story) => (
-			<PageSection>
+			<PageSection width="wide">
 				<PageHeading as="h1">プログラム</PageHeading>
 				<Story />
 			</PageSection>
@@ -31,5 +31,23 @@ export const Default: Story = {};
 export const WithMessage: Story = {
 	args: {
 		message: "ネットワーク接続を確認して再試行してください。",
+	},
+};
+
+export const Mobile: Story = {
+	args: {
+		message: "ネットワーク接続を確認して再試行してください。",
+	},
+	globals: {
+		viewport: { value: "mobile" },
+	},
+};
+
+export const Desktop: Story = {
+	args: {
+		message: "ネットワーク接続を確認して再試行してください。",
+	},
+	globals: {
+		viewport: { value: "desktop" },
 	},
 };

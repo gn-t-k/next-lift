@@ -24,7 +24,7 @@ const FlowDemo: FC<Props> = ({ delayMs, outcome }) => {
 	);
 
 	return (
-		<PageSection>
+		<PageSection width="wide">
 			<PageHeading as="h1">プログラム</PageHeading>
 			<ErrorBoundary
 				key={outcome} // outcome が変わるたびにエラーバウンダリーをリセット

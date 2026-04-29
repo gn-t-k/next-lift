@@ -11,7 +11,7 @@ export const ProgramListItem: FC<Props> = ({ name, lastUsedAt, href }) => {
 	return (
 		<Link
 			href={href}
-			className="block rounded-lg border border-border bg-overlay p-4 text-overlay-fg no-underline outline-none transition-colors hover:bg-secondary focus-visible:bg-secondary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+			className="block h-full min-h-20 rounded-lg bg-overlay p-4 text-overlay-fg no-underline shadow-sm outline-none transition-all hover:bg-secondary hover:shadow-md focus-visible:bg-secondary focus-visible:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
 		>
 			<span className="wrap-break-word line-clamp-2 font-medium text-base">
 				{name}

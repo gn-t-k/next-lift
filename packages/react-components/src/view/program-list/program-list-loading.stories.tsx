@@ -15,7 +15,7 @@ const meta = {
 	},
 	decorators: [
 		(Story) => (
-			<PageSection>
+			<PageSection width="wide">
 				<PageHeading as="h1">プログラム</PageHeading>
 				<Story />
 			</PageSection>
@@ -27,3 +27,15 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+
+export const Mobile: Story = {
+	globals: {
+		viewport: { value: "mobile" },
+	},
+};
+
+export const Desktop: Story = {
+	globals: {
+		viewport: { value: "desktop" },
+	},
+};

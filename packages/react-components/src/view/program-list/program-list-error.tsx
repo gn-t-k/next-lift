@@ -9,15 +9,12 @@ type Props = {
 
 export const ProgramListError: FC<Props> = ({ createHref, message }) => {
 	return (
-		<ul className="mb-2 flex flex-col gap-2">
+		<ul className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
 			<li>
 				<CreateProgramCard href={createHref} />
 			</li>
-			<li>
-				<div
-					role="alert"
-					className="flex items-start gap-3 rounded-lg border border-border bg-overlay p-4"
-				>
+			<li className="lg:col-span-2">
+				<div role="alert" className="flex items-start gap-3 p-4">
 					<ExclamationTriangleIcon
 						aria-hidden
 						className="mt-0.5 size-5 shrink-0 text-warning"

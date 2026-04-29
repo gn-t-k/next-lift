@@ -16,7 +16,7 @@ type Props = {
 
 export const ProgramList: FC<Props> = ({ programs, createHref }) => {
 	return (
-		<ul className="flex flex-col gap-2">
+		<ul className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
 			<li>
 				<CreateProgramCard href={createHref} />
 			</li>
