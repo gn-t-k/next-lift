@@ -1,5 +1,6 @@
 import type { FC } from "react";
 import { CreateProgramCard } from "./create-program-card";
+import { ProgramListGrid, ProgramListGridItem } from "./program-list-grid";
 import { ProgramListItem } from "./program-list-item";
 
 type Program = {
@@ -16,19 +17,19 @@ type Props = {
 
 export const ProgramList: FC<Props> = ({ programs, createHref }) => {
 	return (
-		<ul className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
-			<li>
+		<ProgramListGrid>
+			<ProgramListGridItem>
 				<CreateProgramCard href={createHref} />
-			</li>
+			</ProgramListGridItem>
 			{programs.map((program) => (
-				<li key={program.id}>
+				<ProgramListGridItem key={program.id}>
 					<ProgramListItem
 						name={program.name}
 						lastUsedAt={program.lastUsedAt}
 						href={program.href}
 					/>
-				</li>
+				</ProgramListGridItem>
 			))}
-		</ul>
+		</ProgramListGrid>
 	);
 };

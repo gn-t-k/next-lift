@@ -1,6 +1,7 @@
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import type { FC, ReactNode } from "react";
 import { CreateProgramCard } from "./create-program-card";
+import { ProgramListGrid, ProgramListGridItem } from "./program-list-grid";
 
 type Props = {
 	createHref: string;
@@ -9,11 +10,11 @@ type Props = {
 
 export const ProgramListError: FC<Props> = ({ createHref, message }) => {
 	return (
-		<ul className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
-			<li>
+		<ProgramListGrid>
+			<ProgramListGridItem>
 				<CreateProgramCard href={createHref} />
-			</li>
-			<li className="lg:col-span-2">
+			</ProgramListGridItem>
+			<ProgramListGridItem className="lg:col-span-2">
 				<div role="alert" className="flex items-start gap-3 p-4">
 					<ExclamationTriangleIcon
 						aria-hidden
@@ -28,7 +29,7 @@ export const ProgramListError: FC<Props> = ({ createHref, message }) => {
 						) : null}
 					</div>
 				</div>
-			</li>
-		</ul>
+			</ProgramListGridItem>
+		</ProgramListGrid>
 	);
 };
