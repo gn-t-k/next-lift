@@ -13,7 +13,7 @@ import {
 	Modal as ModalPrimitive,
 } from "react-aria-components";
 import { tv, type VariantProps } from "tailwind-variants";
-import { cx } from "../lib/primitive";
+import { cx } from "../../lib/primitive";
 import {
 	Dialog,
 	DialogBody,
