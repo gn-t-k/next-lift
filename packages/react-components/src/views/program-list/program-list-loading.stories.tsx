@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { PageHeading } from "../../primitive/page-heading";
-import { PageSection } from "../../primitive/page-section";
+import { PageHeading } from "../../primitives/page-heading";
+import { PageSection } from "../../primitives/page-section";
 import { ProgramListLoading } from "./program-list-loading";
 
 const meta = {

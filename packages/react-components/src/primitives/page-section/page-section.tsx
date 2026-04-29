@@ -1,5 +1,5 @@
 import type { FC, PropsWithChildren } from "react";
-import { cn } from "../../lib";
+import { cn } from "../../libs";
 
 type Props = {
 	as?: "main" | "section";

@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { type ComponentProps, type FC, Suspense, use, useMemo } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { PageHeading } from "../../primitive/page-heading";
-import { PageSection } from "../../primitive/page-section";
+import { PageHeading } from "../../primitives/page-heading";
+import { PageSection } from "../../primitives/page-section";
 import { ProgramList } from "./program-list";
 import { ProgramListError } from "./program-list-error";
 import { ProgramListLoading } from "./program-list-loading";

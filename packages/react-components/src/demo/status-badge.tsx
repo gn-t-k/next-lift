@@ -1,6 +1,6 @@
 import type { FC } from "react";
 import { tv } from "tailwind-variants";
-import { cn } from "../lib";
+import { cn } from "../libs";
 
 const badge = tv({
 	base: "inline-flex items-center rounded-full px-2.5 py-0.5 font-medium text-xs",

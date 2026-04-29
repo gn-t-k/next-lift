@@ -1,6 +1,6 @@
 import type { ComponentProps, FC } from "react";
 import { tv } from "tailwind-variants";
-import { cn } from "../lib";
+import { cn } from "../libs";
 
 export const DemoCard: FC<ComponentProps<"div">> = ({
 	children,

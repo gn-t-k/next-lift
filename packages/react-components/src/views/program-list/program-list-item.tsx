@@ -1,6 +1,6 @@
 import type { FC } from "react";
-import { cn } from "../../lib/utils";
-import { Link } from "../../primitive/link";
+import { cn } from "../../libs/utils";
+import { Link } from "../../primitives/link";
 
 type Props = {
 	name: string;
