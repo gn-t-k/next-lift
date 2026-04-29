@@ -4,6 +4,8 @@
 
 技術的な決定の詳細については、[Architecture Decision Records (ADR)](./architecture-decision-record/README.md)を参照してください。
 
+> **Note**: 本ドキュメントの DB 同期スタック（op-sqlite + libSQL Embedded Replicas / @libsql/client）の記述は、現状コードに合わせています。[ADR-029](./architecture-decision-record/029-tursodatabase-suite-migration.md) (2026-04-29) で `@tursodatabase` スイート（CDC ベース sync）への移行が決定済みで、Phase 1〜6 で順次置換中です。
+
 ## システム概要
 
 Next Liftは、筋トレの計画と記録を管理するシステムです。iOS AppとWeb Appの2つのアプリケーションで構成されています。
@@ -63,10 +65,10 @@ Next Liftは、筋トレの計画と記録を管理するシステムです。iO
 
 - **フレームワーク**: React Native ([ADR-001](./architecture-decision-record/001-react-native-for-ios.md))
 - **認証**: Better Auth + `@better-auth/expo` ([ADR-003](./architecture-decision-record/003-better-auth.md))
-- **データベース**: Turso Embedded Replicas (Per-User Database) ([ADR-004](./architecture-decision-record/004-turso-database.md), [ADR-005](./architecture-decision-record/005-per-user-database-architecture.md))
-- **SQLiteドライバー**: op-sqlite ([ADR-007](./architecture-decision-record/007-op-sqlite-for-ios.md))
+- **データベース**: Turso Embedded Replicas (Per-User Database) ([ADR-004](./architecture-decision-record/004-turso-database.md), [ADR-005](./architecture-decision-record/005-per-user-database-architecture.md)) — `@tursodatabase/sync-react-native` へ移行中 ([ADR-029](./architecture-decision-record/029-tursodatabase-suite-migration.md))
+- **SQLiteドライバー**: op-sqlite ([ADR-007](./architecture-decision-record/007-op-sqlite-for-ios.md)) — ADR-029 で Superseded、`@tursodatabase/sync-react-native` の独立ネイティブモジュールに置換予定
 - **ORM**: Drizzle ORM ([ADR-006](./architecture-decision-record/006-drizzle-orm.md))
-- **Local-first**: Turso Embedded Replicas ([ADR-010](./architecture-decision-record/010-local-first-architecture.md))
+- **Local-first**: Turso Embedded Replicas ([ADR-010](./architecture-decision-record/010-local-first-architecture.md)) — CDC ベース sync へ移行中 ([ADR-029](./architecture-decision-record/029-tursodatabase-suite-migration.md))
 - **開発環境**: Expo Development Build（op-sqlite使用のため）
 
 ### Web App
@@ -109,7 +111,7 @@ Next LiftはLocal-first Architectureを採用しています。([ADR-010](./arch
 
 - **読み取り**: ローカルSQLiteから（マイクロ秒単位、ネットワーク遅延ゼロ）
 - **書き込み**: リモートTurso Databaseへ送信→自動同期
-- **同期**: Turso Embedded Replicasによる自動同期（syncInterval設定可能）
+- **同期**: Turso Embedded Replicasによる自動同期（syncInterval設定可能） — ADR-029 で CDC ベース sync（書き込み即push + ライフサイクル pull）へ移行中
 - **オフライン対応**: ローカルDBで動作、オンライン時に自動同期
 
 ### メリット
