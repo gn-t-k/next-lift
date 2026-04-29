@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { PageHeading } from "./page-heading";
+import { PageHeading } from "../page-heading";
 import { PageSection } from "./page-section";
 
 const meta = {

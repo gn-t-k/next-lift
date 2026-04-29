@@ -1,5 +1,5 @@
 import type { ComponentProps, FC } from "react";
-import { cn } from "../lib/utils";
+import { cn } from "../libs/utils";
 
 export const DataFieldList: FC<ComponentProps<"dl">> = ({
 	children,

@@ -8,8 +8,8 @@ import {
 	Button as PrimitiveButton,
 	Dialog as PrimitiveDialog,
 } from "react-aria-components";
-import { cn } from "../lib/utils";
-import { Button } from "./button";
+import { cn } from "../../libs/utils";
+import { Button } from "../button";
 
 type DialogProps = {
 	role?: "dialog" | "alertdialog";

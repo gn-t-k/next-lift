@@ -5,7 +5,7 @@
 	"type": "module",
 	"exports": {
 		".": "./src/index.ts",
-		"./lib": "./src/lib/index.ts",
+		"./libs": "./src/libs/index.ts",
 		"./demo": "./src/demo/index.ts"
 	},
 	"dependencies": {

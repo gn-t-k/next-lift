@@ -1,7 +1,7 @@
 "use client";
 
 import type { FC, ReactNode } from "react";
-import { cn } from "../lib";
+import { cn } from "../../libs";
 
 type Props = {
 	children: ReactNode;

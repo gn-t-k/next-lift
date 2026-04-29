@@ -1,7 +1,7 @@
 import { PlusIcon } from "@heroicons/react/24/solid";
 import type { FC } from "react";
-import { cn } from "../../lib/utils";
-import { Link } from "../../primitive/link";
+import { cn } from "../../libs/utils";
+import { Link } from "../../primitives/link";
 
 type Props = {
 	href: string;

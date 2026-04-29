@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps } from "react";
-import { PageHeading } from "../../primitive/page-heading";
-import { PageSection } from "../../primitive/page-section";
+import { PageHeading } from "../../primitives/page-heading";
+import { PageSection } from "../../primitives/page-section";
 import { ProgramList } from "./program-list";
 
 type Program = ComponentProps<typeof ProgramList>["programs"][number];

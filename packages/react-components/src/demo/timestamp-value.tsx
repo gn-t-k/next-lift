@@ -1,5 +1,5 @@
 import type { ComponentProps, FC } from "react";
-import { cn } from "../lib";
+import { cn } from "../libs";
 
 type Props = ComponentProps<"time"> & {
 	dateTime: string;

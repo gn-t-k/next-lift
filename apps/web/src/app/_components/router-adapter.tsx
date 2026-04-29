@@ -1,12 +1,12 @@
 "use client";
 
-import { RouterProvider } from "@next-lift/react-components/lib";
+import { RouterProvider } from "@next-lift/react-components/libs";
 import type { Route } from "next";
 import type { NavigateOptions } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useRouter } from "next/navigation";
 import type { ComponentProps, FC, PropsWithChildren } from "react";
 
-declare module "@next-lift/react-components/lib" {
+declare module "@next-lift/react-components/libs" {
 	interface RouterConfig {
 		routerOptions: NavigateOptions;
 	}
