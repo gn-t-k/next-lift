@@ -1,5 +1,15 @@
 {
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "case \"$PWD\" in *.claude/worktrees/*) printf '\\xf0\\x9f\\x8c\\xbf worktree環境で起動しました。並列運用の罠は /worktree-tips で確認できます。\\n';; esac"
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash",
