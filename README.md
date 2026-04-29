@@ -42,3 +42,4 @@ packages/
 
 - [開発計画](docs/project/overview.md)
 - [ADR](docs/architecture-decision-record/overview.md)
+- [worktree 運用ガイド](docs/development/worktree.md)
