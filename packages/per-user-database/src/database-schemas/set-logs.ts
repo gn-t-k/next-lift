@@ -1,4 +1,6 @@
+import { sql } from "drizzle-orm";
 import {
+	check,
 	index,
 	integer,
 	real,
@@ -25,5 +27,18 @@ export const setLogs = sqliteTable(
 		memo: text("memo"),
 		displayOrder: integer("display_order").notNull(),
 	},
-	(table) => [index("set_logs_exercise_log_id_idx").on(table.exerciseLogId)],
+	(table) => [
+		index("set_logs_exercise_log_id_idx").on(table.exerciseLogId),
+		check("set_logs_weight_kg_check", sql`${table.weightKg} >= 0`),
+		check("set_logs_reps_check", sql`${table.reps} >= 0`),
+		check(
+			"set_logs_rpe_check",
+			sql`${table.rpe} IS NULL OR ${table.rpe} BETWEEN 1 AND 10`,
+		),
+		check(
+			"set_logs_memo_length_check",
+			sql`${table.memo} IS NULL OR length(${table.memo}) BETWEEN 1 AND 10000`,
+		),
+		check("set_logs_display_order_check", sql`${table.displayOrder} >= 0`),
+	],
 );

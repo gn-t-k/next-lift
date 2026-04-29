@@ -15,6 +15,13 @@
 			"when": 1777273658768,
 			"tag": "0001_workable_proudstar",
 			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "6",
+			"when": 1777342025930,
+			"tag": "0002_oval_colossus",
+			"breakpoints": true
 		}
 	]
 }
