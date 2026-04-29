@@ -17,14 +17,17 @@ type Props = {
 export const ProgramList: FC<Props> = ({ programs, createHref }) => {
 	return (
 		<ul className="flex flex-col gap-2">
-			<CreateProgramCard href={createHref} />
+			<li>
+				<CreateProgramCard href={createHref} />
+			</li>
 			{programs.map((program) => (
-				<ProgramListItem
-					key={program.id}
-					name={program.name}
-					lastUsedAt={program.lastUsedAt}
-					href={program.href}
-				/>
+				<li key={program.id}>
+					<ProgramListItem
+						name={program.name}
+						lastUsedAt={program.lastUsedAt}
+						href={program.href}
+					/>
+				</li>
 			))}
 		</ul>
 	);
