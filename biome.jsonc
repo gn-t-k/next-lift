@@ -55,6 +55,10 @@
 				"noSecrets": "off"
 			},
 			"style": {
+				"useConsistentArrayType": {
+					"level": "warn",
+					"options": { "syntax": "shorthand" }
+				},
 				"useObjectSpread": "warn"
 			},
 			"suspicious": {
