@@ -84,7 +84,7 @@ describe("proxyExecute", () => {
 	});
 
 	describe("method が 'run' のとき", () => {
-		test("drizzle が期待する {rows: []} 形式で返ること", async () => {
+		test("INSERT で rowsAffected と lastInsertRowid が返ること", async () => {
 			const result = await proxyExecute(
 				db,
 				"INSERT INTO users (id, name, age) VALUES (?, ?, ?)",
@@ -92,12 +92,38 @@ describe("proxyExecute", () => {
 				"run",
 			);
 
-			expect(result).toEqual({ rows: [] });
+			expect(result).toEqual({
+				rows: [],
+				rowsAffected: 1,
+				lastInsertRowid: 3,
+			});
 
 			const inserted = await db
 				.prepare("SELECT name FROM users WHERE id = ?")
 				.get(3);
 			expect(inserted).toEqual({ name: "Carol" });
+		});
+
+		test("UPDATE で該当行が無い場合は rowsAffected が 0 になること", async () => {
+			const result = await proxyExecute(
+				db,
+				"UPDATE users SET name = ? WHERE id = ?",
+				["NotExist", 999],
+				"run",
+			);
+
+			expect(result.rowsAffected).toBe(0);
+		});
+
+		test("UPDATE で該当行が有る場合は rowsAffected が変更行数になること", async () => {
+			const result = await proxyExecute(
+				db,
+				"UPDATE users SET name = ? WHERE id = ?",
+				["Renamed", 1],
+				"run",
+			);
+
+			expect(result.rowsAffected).toBe(1);
 		});
 	});
 
