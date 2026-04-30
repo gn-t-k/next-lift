@@ -1,4 +1,12 @@
+import { PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
 import type { Meta, StoryObj } from "@storybook/react";
+import { type FC, useState } from "react";
+import { Button } from "../button/button";
+import {
+	TextField,
+	TextFieldInput,
+	TextFieldLabel,
+} from "../text-field/text-field";
 import { Tab, TabList, TabPanel, Tabs } from "./tabs";
 
 const meta = {
@@ -111,4 +119,121 @@ export const ManyTabs: Story = {
 			))}
 		</Tabs>
 	),
+};
+
+const WithAddActionDemo: FC = () => {
+	const [items, setItems] = useState([
+		{ id: "tab-1", label: "Tab 1" },
+		{ id: "tab-2", label: "Tab 2" },
+	]);
+	const handleAdd = () => {
+		const next = items.length + 1;
+		setItems([...items, { id: `tab-${next}`, label: `Tab ${next}` }]);
+	};
+	return (
+		<Tabs>
+			<TabList aria-label="Tabs">
+				{items.map((item) => (
+					<Tab key={item.id} id={item.id}>
+						{item.label}
+					</Tab>
+				))}
+				<Button
+					intent="plain"
+					size="sq-sm"
+					onPress={handleAdd}
+					aria-label="タブを追加"
+				>
+					<PlusIcon className="size-4" />
+				</Button>
+			</TabList>
+			{items.map((item) => (
+				<TabPanel key={item.id} id={item.id}>
+					<p>{item.label} の内容</p>
+				</TabPanel>
+			))}
+		</Tabs>
+	);
+};
+
+export const WithAddAction: Story = {
+	render: () => <WithAddActionDemo />,
+};
+
+const EditFromPanelDemo: FC = () => {
+	const [items, setItems] = useState([
+		{ id: "tab-1", label: "Tab 1" },
+		{ id: "tab-2", label: "Tab 2" },
+		{ id: "tab-3", label: "Tab 3" },
+	]);
+	const handleChange = (id: string, label: string) => {
+		setItems(items.map((item) => (item.id === id ? { ...item, label } : item)));
+	};
+	return (
+		<Tabs>
+			<TabList aria-label="Tabs">
+				{items.map((item) => (
+					<Tab key={item.id} id={item.id}>
+						{item.label}
+					</Tab>
+				))}
+			</TabList>
+			{items.map((item) => (
+				<TabPanel key={item.id} id={item.id}>
+					<TextField
+						value={item.label}
+						onChange={(value) => handleChange(item.id, value)}
+					>
+						<TextFieldLabel>ラベル</TextFieldLabel>
+						<TextFieldInput />
+					</TextField>
+				</TabPanel>
+			))}
+		</Tabs>
+	);
+};
+
+export const EditFromPanel: Story = {
+	render: () => <EditFromPanelDemo />,
+};
+
+const DeleteFromPanelDemo: FC = () => {
+	const [items, setItems] = useState([
+		{ id: "tab-1", label: "Tab 1" },
+		{ id: "tab-2", label: "Tab 2" },
+		{ id: "tab-3", label: "Tab 3" },
+	]);
+	const handleDelete = (id: string) => {
+		setItems(items.filter((item) => item.id !== id));
+	};
+	return (
+		<Tabs>
+			<TabList aria-label="Tabs">
+				{items.map((item) => (
+					<Tab key={item.id} id={item.id}>
+						{item.label}
+					</Tab>
+				))}
+			</TabList>
+			{items.map((item) => (
+				<TabPanel key={item.id} id={item.id}>
+					<div className="flex flex-col items-start gap-3">
+						<p>{item.label} の内容</p>
+						<Button
+							intent="danger"
+							size="sm"
+							onPress={() => handleDelete(item.id)}
+						>
+							<TrashIcon className="size-4" />
+							削除
+						</Button>
+					</div>
+				</TabPanel>
+			))}
+		</Tabs>
+	);
+};
+
+export const DeleteFromPanel: Story = {
+	render: () => <DeleteFromPanelDemo />,
 };
