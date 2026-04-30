@@ -42,17 +42,14 @@ describe("per_user_databaseテーブル - ユーザー削除時の挙動", () =>
 
 	describe("per_user_databaseテーブルのスキーマ", () => {
 		test("user_idカラムに外部キー制約がないこと", async () => {
-			const foreignKeys = await mockedAuthenticationDatabase.all<{
-				table: string;
-				from: string;
-				to: string;
-			}>(sql`PRAGMA foreign_key_list('per_user_database')`);
-
-			const userForeignKey = foreignKeys.find(
-				(fk) => fk.from === "user_id" && fk.table === "user",
+			// PRAGMA foreign_key_list は @tursodatabase/database が未対応のため sqlite_master の CREATE 文で検証する
+			// drizzle sqlite-proxy 経由の raw .all() はカラム値の配列で返る（libsql のオブジェクト形式と異なる）
+			const rows = await mockedAuthenticationDatabase.all<[string]>(
+				sql`SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'per_user_database'`,
 			);
 
-			expect(userForeignKey).toBeUndefined();
+			expect(rows).toHaveLength(1);
+			expect(rows[0]?.[0]).not.toMatch(/REFERENCES\s+["`]?user["`]?/i);
 		});
 	});
 });
