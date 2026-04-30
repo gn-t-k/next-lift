@@ -407,6 +407,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: 4.1.4
         version: 4.1.4(@vitest/browser@4.1.4)(vitest@4.1.4)
+      chromatic:
+        specifier: 16.6.3
+        version: 16.6.3
       playwright:
         specifier: 1.59.1
         version: 1.59.1
@@ -4424,6 +4427,21 @@ packages:
       '@chromatic-com/cypress':
         optional: true
       '@chromatic-com/playwright':
+        optional: true
+
+  chromatic@16.6.3:
+    resolution: {integrity: sha512-N9WCRuezqrxujRvgnAlE9XKxXcF6q2kowKH2Ba82FYkRc4xlY9g8r+ESEph9jLv500s43/9oDmB/kZ9r24BcgQ==}
+    hasBin: true
+    peerDependencies:
+      '@chromatic-com/cypress': ^0.*.* || ^1.0.0
+      '@chromatic-com/playwright': ^0.*.* || ^1.0.0
+      '@chromatic-com/vitest': ^0.*.* || ^1.0.0
+    peerDependenciesMeta:
+      '@chromatic-com/cypress':
+        optional: true
+      '@chromatic-com/playwright':
+        optional: true
+      '@chromatic-com/vitest':
         optional: true
 
   chrome-launcher@0.15.2:
@@ -11818,6 +11836,10 @@ snapshots:
   chownr@3.0.0: {}
 
   chromatic@13.3.5: {}
+
+  chromatic@16.6.3:
+    dependencies:
+      semver: 7.7.3
 
   chrome-launcher@0.15.2:
     dependencies:
