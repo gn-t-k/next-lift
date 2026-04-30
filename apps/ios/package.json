@@ -16,7 +16,7 @@
 		"@better-auth/expo": "1.6.9",
 		"@next-lift/per-user-database": "workspace:*",
 		"@next-lift/utilities": "workspace:*",
-		"@op-engineering/op-sqlite": "15.2.11",
+		"@op-engineering/op-sqlite": "15.2.12",
 		"@react-native-google-signin/google-signin": "16.1.2",
 		"better-auth": "1.6.9",
 		"drizzle-orm": "0.45.2",
