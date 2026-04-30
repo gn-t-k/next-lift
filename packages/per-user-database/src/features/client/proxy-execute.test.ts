@@ -1,0 +1,116 @@
+import type { Database } from "@tursodatabase/database";
+import { afterEach, beforeEach, describe, expect, test } from "vitest";
+import { createTursoDatabaseHandle } from "./create-turso-database-handle";
+import { proxyExecute } from "./proxy-execute";
+
+describe("proxyExecute", () => {
+	let db: Database;
+
+	beforeEach(async () => {
+		db = await createTursoDatabaseHandle(":memory:");
+		await db.exec(
+			"CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL, age INTEGER)",
+		);
+		await db
+			.prepare("INSERT INTO users (id, name, age) VALUES (?, ?, ?)")
+			.run(1, "Alice", 30);
+		await db
+			.prepare("INSERT INTO users (id, name, age) VALUES (?, ?, ?)")
+			.run(2, "Bob", 25);
+	});
+
+	afterEach(async () => {
+		await db.close();
+	});
+
+	describe("method が 'all' のとき", () => {
+		test("複数行が rows: any[][] 形式で返ること", async () => {
+			const result = await proxyExecute(
+				db,
+				"SELECT id, name, age FROM users ORDER BY id",
+				[],
+				"all",
+			);
+
+			expect(result).toEqual({
+				rows: [
+					[1, "Alice", 30],
+					[2, "Bob", 25],
+				],
+			});
+		});
+	});
+
+	describe("method が 'values' のとき", () => {
+		test("複数行が rows: any[][] 形式で返ること", async () => {
+			const result = await proxyExecute(
+				db,
+				"SELECT id, name FROM users ORDER BY id",
+				[],
+				"values",
+			);
+
+			expect(result).toEqual({
+				rows: [
+					[1, "Alice"],
+					[2, "Bob"],
+				],
+			});
+		});
+	});
+
+	describe("method が 'get' のとき", () => {
+		test("単一行がカラム値の配列として返ること", async () => {
+			const result = await proxyExecute(
+				db,
+				"SELECT id, name, age FROM users WHERE id = ?",
+				[1],
+				"get",
+			);
+
+			expect(result).toEqual({ rows: [1, "Alice", 30] });
+		});
+
+		test("該当行がないとき rows が空配列になること", async () => {
+			const result = await proxyExecute(
+				db,
+				"SELECT id, name FROM users WHERE id = ?",
+				[999],
+				"get",
+			);
+
+			expect(result).toEqual({ rows: [] });
+		});
+	});
+
+	describe("method が 'run' のとき", () => {
+		test("drizzle が期待する {rows: []} 形式で返ること", async () => {
+			const result = await proxyExecute(
+				db,
+				"INSERT INTO users (id, name, age) VALUES (?, ?, ?)",
+				[3, "Carol", 28],
+				"run",
+			);
+
+			expect(result).toEqual({ rows: [] });
+
+			const inserted = await db
+				.prepare("SELECT name FROM users WHERE id = ?")
+				.get(3);
+			expect(inserted).toEqual({ name: "Carol" });
+		});
+	});
+
+	describe("パラメータバインディングのとき", () => {
+		test("? プレースホルダが正しく置換されること", async () => {
+			const result = await proxyExecute(
+				db,
+				"SELECT id FROM users WHERE name = ? AND age = ?",
+				["Alice", 30],
+				"all",
+			);
+
+			expect(result).toEqual({ rows: [[1]] });
+		});
+	});
+});
