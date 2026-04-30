@@ -18,7 +18,6 @@ type State = R.Result<string, SignInWithAppleError> | undefined;
 export const signInWithApple = async (_prevState: State, _formData: FormData) =>
 	R.pipe(
 		R.try({
-			immediate: true,
 			try: async () => {
 				const { url } = await auth.api.signInSocial({
 					headers: await headers(),

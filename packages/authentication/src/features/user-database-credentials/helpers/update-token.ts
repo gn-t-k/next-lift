@@ -15,7 +15,6 @@ export const updateToken = (params: {
 	expiresAt: Date;
 }): R.ResultAsync<void, UpdateTokenError> => {
 	return R.try({
-		immediate: true,
 		try: async () => {
 			const result = await getDatabase()
 				.update(perUserDatabase)

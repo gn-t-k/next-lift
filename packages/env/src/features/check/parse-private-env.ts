@@ -9,7 +9,7 @@ export class ParsePrivateEnvError extends ErrorFactory({
 	message: "private環境変数のパースに失敗しました",
 }) {}
 
-export const parsePrivateEnv = R.try({
+export const parsePrivateEnv = R.fn({
 	try: () => {
 		parseEnv({
 			staticEnvSchema: privateStaticEnvSchema,

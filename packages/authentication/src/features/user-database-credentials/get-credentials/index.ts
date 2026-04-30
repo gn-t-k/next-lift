@@ -33,7 +33,6 @@ export const getCredentials = (
 			findCredentials(userId),
 			R.andThen((record) =>
 				R.try({
-					immediate: true,
 					try: () => ({
 						dbName: record.dbName,
 						url: record.url,

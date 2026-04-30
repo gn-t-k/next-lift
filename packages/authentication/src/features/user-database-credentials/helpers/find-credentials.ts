@@ -27,7 +27,6 @@ export const findCredentials = (
 > => {
 	return R.pipe(
 		R.try({
-			immediate: true,
 			try: async () => {
 				const records = await getDatabase()
 					.select()

@@ -16,7 +16,6 @@ export const refreshToken = (params: {
 }): R.ResultAsync<void, UpdateTokenError | EncryptTokenError> => {
 	return R.pipe(
 		R.try({
-			immediate: true,
 			try: () => encrypt(params.token, getEncryptionKey()),
 			catch: (error) => new EncryptTokenError({ cause: error }),
 		}),

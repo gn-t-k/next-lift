@@ -16,7 +16,6 @@ export const listDatabases = (): R.ResultAsync<
 	ListDatabasesError
 > =>
 	R.try({
-		immediate: true,
 		try: async () => {
 			const fetchFn = getFetch();
 			const apiToken = env.TURSO_PLATFORM_API_TOKEN;
