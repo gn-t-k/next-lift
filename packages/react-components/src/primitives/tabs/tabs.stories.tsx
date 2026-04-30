@@ -132,12 +132,14 @@ const WithAddActionDemo: FC = () => {
 	};
 	return (
 		<Tabs>
-			<TabList aria-label="Tabs">
-				{items.map((item) => (
-					<Tab key={item.id} id={item.id}>
-						{item.label}
-					</Tab>
-				))}
+			<div className="flex items-end gap-1 border-border border-b">
+				<TabList aria-label="Tabs" className="border-b-0">
+					{items.map((item) => (
+						<Tab key={item.id} id={item.id}>
+							{item.label}
+						</Tab>
+					))}
+				</TabList>
 				<Button
 					intent="plain"
 					size="sq-sm"
@@ -146,7 +148,7 @@ const WithAddActionDemo: FC = () => {
 				>
 					<PlusIcon className="size-4" />
 				</Button>
-			</TabList>
+			</div>
 			{items.map((item) => (
 				<TabPanel key={item.id} id={item.id}>
 					<p>{item.label} の内容</p>
