@@ -17,7 +17,6 @@ type State = R.Result<void, SignOutError> | undefined;
 export const signOut = async (_prevState: State, _formData: FormData) =>
 	R.pipe(
 		R.try({
-			immediate: true,
 			try: async () => {
 				await auth.api.signOut({
 					headers: await headers(),

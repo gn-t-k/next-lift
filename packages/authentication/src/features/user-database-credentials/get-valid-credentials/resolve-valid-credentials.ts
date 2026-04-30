@@ -39,7 +39,6 @@ export const resolveValidCredentials = (
 		R.bind("record", () => findCredentials(userId)),
 		R.bind("credentials", ({ record }) =>
 			R.try({
-				immediate: true,
 				try: () => ({
 					dbName: record.dbName,
 					url: record.url,
@@ -65,7 +64,6 @@ export const resolveValidCredentials = (
 				),
 				R.bind("encryptedToken", ({ issued }) =>
 					R.try({
-						immediate: true,
 						try: () => encrypt(issued.jwt, getEncryptionKey()),
 						catch: (error) => new EncryptTokenError({ cause: error }),
 					}),

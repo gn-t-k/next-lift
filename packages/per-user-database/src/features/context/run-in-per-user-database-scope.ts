@@ -10,7 +10,6 @@ export const runInPerUserDatabaseScope = <T>(
 	fn: () => T | Promise<T>,
 ): R.ResultAsync<Awaited<T>, ApplyMigrationError> => {
 	return R.try({
-		immediate: true,
 		try: async () => {
 			const client = await createPerUserDatabaseClient(credentials);
 			await migrateDatabase(client);

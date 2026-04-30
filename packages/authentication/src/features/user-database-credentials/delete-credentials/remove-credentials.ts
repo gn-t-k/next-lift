@@ -21,7 +21,6 @@ export const removeCredentials = (
 	DeleteCredentialsError | CredentialsNotFoundOnDeleteError
 > => {
 	return R.try({
-		immediate: true,
 		try: async () => {
 			const result = await getDatabase()
 				.delete(perUserDatabase)

@@ -20,7 +20,6 @@ export const applyAuthMigration = (config: {
 	authToken: string;
 }): R.ResultAsync<void, ApplyAuthMigrationError> =>
 	R.try({
-		immediate: true,
 		try: async () => {
 			const client = createClient({
 				url: config.url,

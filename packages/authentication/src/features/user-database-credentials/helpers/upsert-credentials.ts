@@ -18,7 +18,6 @@ export const upsertCredentials = (info: {
 	expiresAt: Date;
 }): R.ResultAsync<void, UpsertCredentialsError> => {
 	return R.try({
-		immediate: true,
 		try: async () => {
 			await getDatabase()
 				.insert(perUserDatabase)

@@ -17,7 +17,6 @@ export const deleteDatabase = (
 	databaseName: string,
 ): R.ResultAsync<void, DeleteDatabaseError | DatabaseNotFoundError> =>
 	R.try({
-		immediate: true,
 		try: async () => {
 			const fetchFn = getFetch();
 			const apiToken = env.TURSO_PLATFORM_API_TOKEN;
