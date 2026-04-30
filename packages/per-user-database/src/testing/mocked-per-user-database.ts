@@ -1,10 +1,12 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+	applyMigrations,
+	createDrizzleFromTursoDatabase,
+	createTursoDatabaseHandle,
+} from "@next-lift/turso-drizzle-adapter";
 import { beforeEach } from "vitest";
 import * as schema from "../database-schemas";
-import { applyMigrations } from "../features/client/apply-migrations";
-import { createDrizzleFromTursoDatabase } from "../features/client/create-drizzle-from-turso-database";
-import { createTursoDatabaseHandle } from "../features/client/create-turso-database-handle";
 
 const migrationsFolder = path.join(
 	path.dirname(fileURLToPath(import.meta.url)),
