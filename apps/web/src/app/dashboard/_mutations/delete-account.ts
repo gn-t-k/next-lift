@@ -17,7 +17,6 @@ type State = R.Result<void, DeleteAccountError> | undefined;
 export const deleteAccount = async (_prevState: State, _formData: FormData) =>
 	R.pipe(
 		R.try({
-			immediate: true,
 			try: async () => {
 				await auth.api.deleteUser({
 					headers: await headers(),

@@ -22,7 +22,6 @@ export const saveCredentials = (info: {
 }): R.ResultAsync<void, UpsertCredentialsError | EncryptTokenError> => {
 	return R.pipe(
 		R.try({
-			immediate: true,
 			try: () => encrypt(info.token, getEncryptionKey()),
 			catch: (error) => new EncryptTokenError({ cause: error }),
 		}),
