@@ -5,6 +5,7 @@
 - 状態: 確定
 - 現在のフェーズ: 5/5（完了）
 - 葉タスク: 70件（Phase 1: 8, Phase 2: 8, Phase 3: 10, Phase 4: 19, Phase 5: 9, Phase 6: 16）
+- 完了済みタスク: 9件（Phase 1: 8, Phase 5: 1）
 - 未展開ノード: 0件
 - 最終更新: 2026-04-30
 
@@ -62,24 +63,24 @@
 `drizzle-orm/sqlite-proxy` ベースのラッパーを `packages/per-user-database/src/features/client/` 配下に新設し、`@tursodatabase/database`（`:memory:`）への接続でテストグリーン化までを行う。後続 Phase の土台。
 
 - 1.1. `@tursodatabase/database` のインストールと sqlite-proxy アダプタの新設
-  - [ ] 1.1.1. `@tursodatabase/database` を `packages/per-user-database` に追加
+  - [x] 1.1.1. `@tursodatabase/database` を `packages/per-user-database` に追加
     - 説明: `pnpm add @tursodatabase/database@<最新>` を `packages/per-user-database` 配下で実行する。バージョンは `npm view @tursodatabase/database version` で確認する
     - 完了条件:
       - 確認: `packages/per-user-database/package.json` の dependencies に厳密バージョンで記載されること（レンジ指定なし）
       - 確認: `pnpm-lock.yaml` に追加されていること
-  - [ ] 1.1.2. `connect(':memory:')` で SQL を直接実行できる薄い helper の作成
+  - [x] 1.1.2. `connect(':memory:')` で SQL を直接実行できる薄い helper の作成
     - 説明: `packages/per-user-database/src/features/client/` 配下に、`@tursodatabase/database` の `connect()` をラップして `prepare/run/get/all` を露出する関数を作る。マイグレーション SQL を `exec` できることを最小目標とする
     - 完了条件:
       - テスト: `connect(':memory:')` で得たハンドルに対し `CREATE TABLE` → `INSERT` → `SELECT` が一連で成功すること
       - テスト: `exec('PRAGMA foreign_keys = ON')` 実行後に FK 制約違反が `RESULT` で失敗すること
-  - [ ] 1.1.3. `drizzle-orm/sqlite-proxy` 用の `proxyExecute` / `proxyTransaction` 実装
+  - [x] 1.1.3. `drizzle-orm/sqlite-proxy` 用の `proxyExecute` / `proxyTransaction` 実装
     - 説明: drizzle が要求する `(sql, params, method) => Promise<{rows: ...}>` の形に、1.1.2 の helper を橋渡しする関数を実装する。`method` ごとの `run`/`get`/`all`/`values` を分岐
     - 完了条件:
       - テスト: `method === "all"` で複数行が `rows: any[][]` 形式で返ること
       - テスト: `method === "get"` で単一行（または undefined）が返ること
       - テスト: `method === "run"` で `rowsAffected` 等の戻り値が drizzle 期待形式で返ること
       - テスト: パラメータバインディング（`?` 経由）が正しく置換されること
-  - [ ] 1.1.4. drizzle トランザクション境界の sqlite-proxy 対応
+  - [x] 1.1.4. drizzle トランザクション境界の sqlite-proxy 対応
     - 説明: sqlite-proxy のトランザクションコールバックを `BEGIN` / `COMMIT` / `ROLLBACK` に翻訳し、ネスト時に SAVEPOINT を発行する。アダプタ最大の地雷ポイント（ADR 5A 注記）
     - 完了条件:
       - テスト: 単一トランザクションで途中エラー → ROLLBACK され副作用が残らないこと
@@ -87,24 +88,24 @@
       - テスト: 正常終了で COMMIT され副作用が確定すること
 
 - 1.2. アダプタを drizzle インスタンスに統合する関数の作成
-  - [ ] 1.2.1. `createDatabaseFromTursoDatabase` ヘルパーの作成
+  - [x] 1.2.1. `createDatabaseFromTursoDatabase` ヘルパーの作成
     - 説明: `@tursodatabase/database` の `connect(':memory:')` で得たハンドルを `drizzle-orm/sqlite-proxy` に渡し、`packages/per-user-database/src/database-schemas` の型推論を保ったまま `BetterSQLite3Database<typeof schema>` 互換の drizzle インスタンスを返すヘルパーを作る
     - 完了条件:
       - 型: 戻り値が `packages/per-user-database` のスキーマ型に完全に合致すること（`.select().from(programs)` の戻り値型が現状と同じ）
       - テスト: 戻り値の drizzle インスタンスでスキーマ経由 `.select().from(programs)` が空配列を返せること（マイグレーション後）
-  - [ ] 1.2.2. アダプタ向け `applyMigrations` ユーティリティ整備
+  - [x] 1.2.2. アダプタ向け `applyMigrations` ユーティリティ整備
     - 説明: drizzle-orm が生成した SQL マイグレーション（`drizzle/0000_*.sql` 〜 `0002_*.sql`）を 1.2.1 の drizzle インスタンスに適用する関数を作成。`drizzle-orm/expo-sqlite/migrator` 相当の経路を sqlite-proxy 上で再現
     - 完了条件:
       - テスト: 空 DB に適用後、`programs` / `days` / `exercises` / `workouts` 等の主要テーブルが存在し、`PRAGMA foreign_keys` が ON になっていること
       - テスト: 既に適用済みの DB に再適用しても副作用がないこと（冪等）
 
 - 1.3. アダプタ経由で既存テストスイートが緑になる確認
-  - [ ] 1.3.1. per-user-database のスキーマ単体テストをアダプタで動かす検証
+  - [x] 1.3.1. per-user-database のスキーマ単体テストをアダプタで動かす検証
     - 説明: 既存の `mocked-per-user-database.ts` を直接書き換えるのは Phase 2。本タスクでは Phase 1 のアダプタを利用する独立した検証用 setup（テストフィクスチャ）を作って、いずれか 1 つの統合テストファイルをアダプタ経由で実行する
     - 完了条件:
       - テスト: 対象テストファイルが新アダプタ経由で全グリーンになること
       - テスト: drizzle-factory（`@praha/drizzle-factory`）で生成したデータが INSERT 経路で永続することを最低 1 ケース確認
-  - [ ] 1.3.2. アダプタの既知制約とトレードオフのドキュメント化
+  - [x] 1.3.2. アダプタの既知制約とトレードオフのドキュメント化
     - 説明: `packages/per-user-database/src/features/client/` のアダプタ実装ファイルの先頭コメント、または `README.md`（既存があれば追記）に、Drizzle 公式対応待ちで自前保守する旨と剥がし方の方針を 1 段落で記録
     - 完了条件:
       - 確認: アダプタファイル先頭または README に「Drizzle 公式ドライバーが提供されたら剥がす」「現状のスコープは sqlite-proxy 経由の橋渡しのみ」が記述されていること
