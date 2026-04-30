@@ -5,7 +5,6 @@ import {
 	createDrizzleFromTursoDatabase,
 	createTursoDatabaseHandle,
 } from "@next-lift/per-user-database/adapter";
-import type { LibSQLDatabase } from "drizzle-orm/libsql";
 import { beforeEach } from "vitest";
 import * as schema from "../database-schemas";
 
@@ -17,11 +16,10 @@ const migrationsFolder = path.join(
 // :memory: は接続単位で独立する SQLite DB のため、ハンドルをモジュールスコープで保持してテスト間で共有する
 const handle = await createTursoDatabaseHandle(":memory:");
 
-// 本番経路は Phase 3 まで `LibSQLDatabase` を context 型として保持する。Phase 2 のテスト経路はバックを sqlite-proxy に切り替えたが、context 型に合わせるためここで寄せる。Phase 3 で context 型自体が sqlite-proxy 系に切り替わったら不要になる
 export const mockedAuthenticationDatabase = createDrizzleFromTursoDatabase(
 	handle,
 	schema,
-) as unknown as LibSQLDatabase<typeof schema>;
+);
 
 beforeEach(async () => {
 	await dropAllTables();
