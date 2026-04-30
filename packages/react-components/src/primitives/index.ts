@@ -5,4 +5,5 @@ export * from "./link";
 export * from "./modal";
 export * from "./page-heading";
 export * from "./page-section";
+export * from "./tabs";
 export * from "./text-field";
