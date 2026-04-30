@@ -132,6 +132,7 @@ const WithAddActionDemo: FC = () => {
 	};
 	return (
 		<Tabs>
+			{/* react-aria の TabList は Collection ベースで Tab 以外の子要素は描画されないため、+ ボタンは TabList の兄弟として配置する */}
 			<div className="flex items-end gap-1 border-border border-b">
 				<TabList aria-label="Tabs" className="border-b-0">
 					{items.map((item) => (
