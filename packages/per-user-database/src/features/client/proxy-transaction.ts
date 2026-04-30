@@ -1,5 +1,6 @@
 import type { Database } from "@tursodatabase/database";
 
+// drizzle 経由ではトランザクション境界も SQL として proxyExecute を通るため、本関数は drizzle 非経由でトランザクションを扱う場面用
 export const proxyTransaction = async <T>(
 	db: Database,
 	callback: () => Promise<T>,
