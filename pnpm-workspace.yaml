@@ -3,3 +3,7 @@ packages:
   - packages/*
 
 nodeLinker: hoisted
+
+peerDependencyRules:
+  allowedVersions:
+    typescript: "6"
