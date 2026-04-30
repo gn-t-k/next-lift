@@ -2,17 +2,17 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { programs } from "../../database-schemas";
 import { factories } from "../../testing/factories";
 import { applyMigrations } from "./apply-migrations";
-import { createDatabaseFromTursoDatabase } from "./create-database-from-turso-database";
+import { createDrizzleFromTursoDatabase } from "./create-drizzle-from-turso-database";
 import { createTursoDatabaseHandle } from "./create-turso-database-handle";
 
 describe("新アダプタ経由の統合テスト", () => {
 	let handle: Awaited<ReturnType<typeof createTursoDatabaseHandle>>;
-	let db: ReturnType<typeof createDatabaseFromTursoDatabase>;
+	let db: ReturnType<typeof createDrizzleFromTursoDatabase>;
 
 	beforeEach(async () => {
 		handle = await createTursoDatabaseHandle(":memory:");
 		await applyMigrations(handle);
-		db = createDatabaseFromTursoDatabase(handle);
+		db = createDrizzleFromTursoDatabase(handle);
 		factories.resetSequence();
 	});
 
