@@ -25,10 +25,12 @@
 		"@better-auth/expo": "1.6.9",
 		"@libsql/client": "0.17.3",
 		"@next-lift/env": "workspace:*",
+		"@next-lift/per-user-database": "workspace:*",
 		"@next-lift/utilities": "workspace:*",
 		"@praha/byethrow": "0.11.1",
 		"@praha/diva": "1.0.2",
 		"@praha/error-factory": "1.4.1",
+		"@tursodatabase/database": "0.5.3",
 		"better-auth": "1.6.9",
 		"drizzle-orm": "0.45.2"
 	},
