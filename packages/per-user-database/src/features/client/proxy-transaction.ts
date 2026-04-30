@@ -26,6 +26,7 @@ export const proxyTransaction = async <T>(
 		if (depth === 0) {
 			await db.exec("ROLLBACK");
 		} else {
+			// ROLLBACK TO は SAVEPOINT 自体を残すため、RELEASE で明示的に片付ける必要がある（SQLite 仕様）
 			await db.exec(`ROLLBACK TO SAVEPOINT ${savepoint}`);
 			await db.exec(`RELEASE SAVEPOINT ${savepoint}`);
 		}
