@@ -23,7 +23,6 @@ export const createDatabase = (
 	CreateDatabaseError | GetDatabaseError | DatabaseNotFoundError
 > =>
 	R.try({
-		immediate: true,
 		try: async () => {
 			const fetchFn = getFetch();
 			const apiToken = env.TURSO_PLATFORM_API_TOKEN;

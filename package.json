@@ -16,12 +16,12 @@
 		"worktree:copy-env": "bash .claude/scripts/copy-worktree-env.sh"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.3.6",
+		"@biomejs/biome": "2.4.13",
 		"@turbo/gen": "2.9.6",
 		"turbo": "2.9.6",
 		"vercel": "50.44.0"
 	},
-	"packageManager": "pnpm@10.33.0",
+	"packageManager": "pnpm@10.33.2",
 	"engines": {
 		"node": ">=18.0.0"
 	}

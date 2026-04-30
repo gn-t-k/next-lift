@@ -23,17 +23,17 @@
 	},
 	"dependencies": {
 		"@next-lift/env": "workspace:*",
-		"@praha/byethrow": "0.9.0",
+		"@praha/byethrow": "0.11.1",
 		"@praha/diva": "1.0.2",
 		"@praha/error-factory": "1.4.1",
 		"zod": "4.3.6"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.3.6",
+		"@biomejs/biome": "2.4.13",
 		"@tsconfig/strictest": "2.0.8",
 		"@types/node": "24.12.2",
 		"tsx": "4.21.0",
-		"typescript": "5.9.3",
+		"typescript": "6.0.3",
 		"vitest": "4.1.4"
 	}
 }

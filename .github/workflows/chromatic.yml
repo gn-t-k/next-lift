@@ -1,0 +1,29 @@
+name: Chromatic
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, labeled]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  chromatic:
+    name: Run Chromatic
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: contains(github.event.pull_request.labels.*.name, 'with-storybook')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
+
+      - name: Run Chromatic
+        env:
+          CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+        run: pnpm --filter @next-lift/react-components chromatic

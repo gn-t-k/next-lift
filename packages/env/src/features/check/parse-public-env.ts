@@ -9,7 +9,7 @@ export class ParsePublicEnvError extends ErrorFactory({
 	message: "public環境変数のパースに失敗しました",
 }) {}
 
-export const parsePublicEnv = R.try({
+export const parsePublicEnv = R.fn({
 	try: () => {
 		parseEnv({
 			staticEnvSchema: publicStaticEnvSchema,
