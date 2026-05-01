@@ -1,6 +1,13 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { applyMigrations } from "./apply-migrations";
 import { createTursoDatabaseHandle } from "./create-turso-database-handle";
+
+const migrationsFolder = path.join(
+	path.dirname(fileURLToPath(import.meta.url)),
+	"../../../drizzle",
+);
 
 describe("applyMigrations", () => {
 	let handle: Awaited<ReturnType<typeof createTursoDatabaseHandle>>;
@@ -15,7 +22,7 @@ describe("applyMigrations", () => {
 
 	describe("空 DB に適用したとき", () => {
 		test("主要テーブルが作成されること", async () => {
-			await applyMigrations(handle);
+			await applyMigrations(handle, migrationsFolder);
 
 			const rows = await handle
 				.prepare(
@@ -38,7 +45,7 @@ describe("applyMigrations", () => {
 		});
 
 		test("PRAGMA foreign_keys が ON になっていること", async () => {
-			await applyMigrations(handle);
+			await applyMigrations(handle, migrationsFolder);
 
 			const result = await handle
 				.prepare("PRAGMA foreign_keys")
@@ -51,12 +58,12 @@ describe("applyMigrations", () => {
 
 	describe("既にマイグレーション済みのDBに再適用したとき", () => {
 		test("副作用がない（既存データが保持される）こと", async () => {
-			await applyMigrations(handle);
+			await applyMigrations(handle, migrationsFolder);
 			await handle
 				.prepare("INSERT INTO programs (id, name) VALUES (?, ?)")
 				.run("p1", "Program1");
 
-			await applyMigrations(handle);
+			await applyMigrations(handle, migrationsFolder);
 
 			const rows = await handle.prepare("SELECT id, name FROM programs").all();
 			expect(rows).toEqual([{ id: "p1", name: "Program1" }]);

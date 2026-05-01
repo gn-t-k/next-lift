@@ -7,7 +7,7 @@ import {
 	TextFieldInput,
 	TextFieldLabel,
 } from "../text-field/text-field";
-import { Tab, TabList, TabPanel, Tabs } from "./tabs";
+import { Tab, TabList, TabPanel, TabScrollArea, Tabs } from "./tabs";
 
 const meta = {
 	title: "UI/Tabs",
@@ -239,4 +239,40 @@ const DeleteFromPanelDemo: FC = () => {
 
 export const DeleteFromPanel: Story = {
 	render: () => <DeleteFromPanelDemo />,
+};
+
+const longLabelTabs = Array.from({ length: 10 }, (_, i) => ({
+	id: `day-${i + 1}`,
+	label: `Day ${i + 1}: 種目グループ ${String.fromCharCode(65 + i)}`,
+}));
+
+export const WithScrollableTabs: Story = {
+	parameters: {
+		layout: "fullscreen",
+	},
+	decorators: [
+		(Story) => (
+			<div className="mx-auto w-full max-w-sm p-4">
+				<Story />
+			</div>
+		),
+	],
+	render: () => (
+		<Tabs>
+			<TabScrollArea>
+				<TabList aria-label="Day">
+					{longLabelTabs.map((day) => (
+						<Tab key={day.id} id={day.id}>
+							{day.label}
+						</Tab>
+					))}
+				</TabList>
+			</TabScrollArea>
+			{longLabelTabs.map((day) => (
+				<TabPanel key={day.id} id={day.id}>
+					<p>{day.label} の内容</p>
+				</TabPanel>
+			))}
+		</Tabs>
+	),
 };

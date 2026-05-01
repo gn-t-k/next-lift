@@ -7,6 +7,7 @@
 		"./database-schemas": "./src/database-schemas/index.ts",
 		"./create-database": "./src/features/create-database/create-turso-per-user-database.ts",
 		"./apply-migration": "./src/features/apply-migration/apply-migration.ts",
+		"./adapter": "./src/features/client/adapter.ts",
 		"./context": "./src/features/context/index.ts",
 		"./migrations": "./drizzle/migrations.js",
 		"./testing": "./src/testing/index.ts"

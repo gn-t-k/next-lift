@@ -1,15 +1,22 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
-import { programs } from "../../database-schemas";
+import { programs, schema } from "../../database-schemas";
 import { applyMigrations } from "./apply-migrations";
 import { createDrizzleFromTursoDatabase } from "./create-drizzle-from-turso-database";
 import { createTursoDatabaseHandle } from "./create-turso-database-handle";
+
+const migrationsFolder = path.join(
+	path.dirname(fileURLToPath(import.meta.url)),
+	"../../../drizzle",
+);
 
 describe("createDrizzleFromTursoDatabase", () => {
 	let handle: Awaited<ReturnType<typeof createTursoDatabaseHandle>>;
 
 	beforeEach(async () => {
 		handle = await createTursoDatabaseHandle(":memory:");
-		await applyMigrations(handle);
+		await applyMigrations(handle, migrationsFolder);
 	});
 
 	afterEach(async () => {
@@ -18,7 +25,7 @@ describe("createDrizzleFromTursoDatabase", () => {
 
 	describe("マイグレーション後のDBから drizzle インスタンスを生成したとき", () => {
 		test("スキーマ経由の .select().from(programs) が空配列を返すこと", async () => {
-			const db = createDrizzleFromTursoDatabase(handle);
+			const db = createDrizzleFromTursoDatabase(handle, schema);
 
 			const rows = await db.select().from(programs);
 
@@ -26,7 +33,7 @@ describe("createDrizzleFromTursoDatabase", () => {
 		});
 
 		test("INSERT 後にスキーマ経由の .select().from(programs) で取得できること", async () => {
-			const db = createDrizzleFromTursoDatabase(handle);
+			const db = createDrizzleFromTursoDatabase(handle, schema);
 			await db.insert(programs).values({ id: "p1", name: "Program1" });
 
 			const rows = await db.select().from(programs);
