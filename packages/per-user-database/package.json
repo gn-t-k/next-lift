@@ -7,7 +7,6 @@
 		"./database-schemas": "./src/database-schemas/index.ts",
 		"./create-database": "./src/features/create-database/create-turso-per-user-database.ts",
 		"./apply-migration": "./src/features/apply-migration/apply-migration.ts",
-		"./adapter": "./src/features/client/adapter.ts",
 		"./context": "./src/features/context/index.ts",
 		"./migrations": "./drizzle/migrations.js",
 		"./testing": "./src/testing/index.ts"
@@ -26,12 +25,12 @@
 		"@libsql/client": "0.17.3",
 		"@next-lift/env": "workspace:*",
 		"@next-lift/turso": "workspace:*",
+		"@next-lift/turso-drizzle-adapter": "workspace:*",
 		"@next-lift/utilities": "workspace:*",
 		"@praha/byethrow": "0.11.1",
 		"@praha/diva": "1.0.2",
 		"@praha/drizzle-factory": "1.4.2",
 		"@praha/error-factory": "1.4.1",
-		"@tursodatabase/database": "0.5.3",
 		"drizzle-orm": "0.45.2",
 		"zod": "4.3.6"
 	},

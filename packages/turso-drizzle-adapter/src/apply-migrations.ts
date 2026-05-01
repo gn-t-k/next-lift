@@ -1,7 +1,7 @@
 import type { Database } from "@tursodatabase/database";
 import { migrate } from "drizzle-orm/sqlite-proxy/migrator";
 import { createDrizzleFromTursoDatabase } from "./create-drizzle-from-turso-database";
-import { proxyTransaction } from "./proxy-transaction";
+import { proxyTransaction } from "./sqlite-proxy/proxy-transaction";
 
 export const applyMigrations = async (
 	database: Database,
