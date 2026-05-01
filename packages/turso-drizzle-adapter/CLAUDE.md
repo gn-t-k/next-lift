@@ -2,14 +2,28 @@
 
 `@tursodatabase/*` 系ドライバーと Drizzle ORM を `drizzle-orm/sqlite-proxy` 経由で橋渡しするための暫定アダプタパッケージ。Drizzle 公式が `@tursodatabase/*` 用ドライバーを提供したら剥がす想定。
 
+`drizzle-orm/sqlite-proxy` は `(sql, params, method) => Promise<{rows: ...}>` を実装すれば任意のドライバを drizzle に繋げられる仕組み。本パッケージは `@tursodatabase/database` の `prepare/run/get/all` をこの形式に翻訳し、それを使って drizzle インスタンス生成 / マイグレーション適用の API を露出する。
+
 ## 機能
+
+主要機能:
 
 | 提供API | 説明 |
 | --- | --- |
-| `createTursoDatabaseHandle` | `@tursodatabase/database` の `connect()` を呼ぶ薄いラッパー。`Database` ハンドルを返す |
 | `createDrizzleFromTursoDatabase` | `Database` ハンドルとスキーマから `drizzle-orm/sqlite-proxy` 経由の drizzle インスタンスを生成 |
 | `applyMigrations` | `drizzle/<n>_*.sql` 形式のマイグレーションを `Database` ハンドルに適用（FK 有効化 + トランザクション内で順次 exec） |
-| `SqliteRunResult` | drizzle のドライバ間で共通に扱える run 結果の最小契約型（`rowsAffected` を含む） |
+
+補助API:
+
+| 提供API | 説明 |
+| --- | --- |
+| `createTursoDatabaseHandle` | `@tursodatabase/database` の `connect()` を呼ぶ薄いラッパー。利用側が `@tursodatabase/database` を直接 import せずに `Database` ハンドルを得られるようにするための窓口 |
+
+型契約:
+
+| 提供型 | 説明 |
+| --- | --- |
+| `SqliteRunResult` | drizzle のドライバ間で共通に扱える run 結果の最小契約。`BaseSQLiteDatabase<'async', SqliteRunResult, schema>` の形で driver 非依存の context 型を書くために利用する |
 
 すべて root `.` から `import { ... } from "@next-lift/turso-drizzle-adapter"` で取得する。
 
@@ -60,26 +74,10 @@ src/
 
 `src/` 直下が公開 API、`sqlite-proxy/` は本パッケージ内部からのみ呼ばれる翻訳層。
 
-### 本パッケージが解決している問題
-
-`drizzle-orm/sqlite-proxy` は `(sql, params, method) => Promise<{rows: ...}>` を実装すれば任意のドライバを drizzle に繋げられる仕組み。`@tursodatabase/database` の `prepare/run/get/all` をこの形式に翻訳する処理（`sqlite-proxy/`）と、それを使った drizzle インスタンス生成 / マイグレーション適用の公開 API を本パッケージに集約している。
-
-依存関係:
-
-```text
-authentication ──┐
-                 ├──> @next-lift/turso-drizzle-adapter ──> @tursodatabase/database
-per-user-database ─┘                                  └──> drizzle-orm/sqlite-proxy
-```
-
-### Phase 4 での拡張余地
-
-ADR-029 Phase 4 で `@tursodatabase/sync-react-native` ドライバを追加する際は、`createTursoDatabaseHandle` 相当のドライバ別ハンドルヘルパーを増やしつつ `sqlite-proxy/` の翻訳層は流用できる構造。
-
 ## 制約と注意事項
 
 - **暫定アダプタ**: Drizzle 公式が `@tursodatabase/*` 用ドライバーを提供したらパッケージごと削除する想定。`createDrizzleFromTursoDatabase` の先頭コメント参照
-- **対応ドライバー**: 現状は `@tursodatabase/database`（in-memory + ローカルファイル）のみ。Phase 3 で `@tursodatabase/serverless`、Phase 4 で `@tursodatabase/sync-react-native` を追加予定
+- **対応ドライバー**: 現状は `@tursodatabase/database`（in-memory + ローカルファイル）のみ
 - **`PRAGMA foreign_keys`**: `applyMigrations` の中で明示的に `ON` にしている（接続時のデフォルトは将来変わるリスクがあるため、ADR-026）
 - **トランザクション境界**: `proxy-transaction.ts` がネスト時の SAVEPOINT も含めて翻訳。drizzle 経由のトランザクションは drizzle 自身が SQL を発行するため `proxyExecute` を通る。`proxyTransaction` は drizzle 非経由でトランザクションを扱う場面用（`applyMigrations` 等）
 - 関連ADR: [ADR-029](../../docs/architecture-decision-record/029-tursodatabase-suite-migration.md)
