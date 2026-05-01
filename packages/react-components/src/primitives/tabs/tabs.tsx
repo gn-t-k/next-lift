@@ -1,6 +1,6 @@
 "use client";
 
-import type { FC } from "react";
+import type { FC, PropsWithChildren } from "react";
 import {
 	TabList as TabListPrimitive,
 	type TabListProps as TabListPrimitiveProps,
@@ -50,6 +50,15 @@ export const TabPanel: FC<TabPanelPrimitiveProps> = ({
 		className={cx(tabPanelStyles(), className)}
 		{...props}
 	/>
+);
+
+export const TabScrollArea: FC<PropsWithChildren> = ({ children }) => (
+	<div
+		data-slot="tab-scroll-area"
+		className="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+	>
+		{children}
+	</div>
 );
 
 const tabsStyles = tv({
