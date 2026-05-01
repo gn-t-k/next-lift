@@ -6,6 +6,7 @@ import {
 	TabScrollArea,
 	Tabs,
 } from "../../primitives/tabs";
+import { CreateDayCard } from "./create-day-card";
 
 type Day = {
 	id: string;
@@ -18,6 +19,7 @@ type Props = {
 	meta: string | null;
 	days: Day[];
 	defaultSelectedDayId?: string;
+	onAddDay: () => void;
 };
 
 export const ProgramDetail: FC<Props> = ({
@@ -25,6 +27,7 @@ export const ProgramDetail: FC<Props> = ({
 	meta,
 	days,
 	defaultSelectedDayId,
+	onAddDay,
 }) => {
 	const tabsProps =
 		defaultSelectedDayId !== undefined
@@ -38,21 +41,25 @@ export const ProgramDetail: FC<Props> = ({
 					<p className="whitespace-pre-wrap text-muted-fg text-sm">{meta}</p>
 				)}
 			</header>
-			<Tabs {...tabsProps}>
-				<TabScrollArea>
-					<TabList aria-label="Day">
-						{days.map((day) => (
-							<Tab key={day.id} id={day.id}>
-								{day.label}
-							</Tab>
-						))}
-					</TabList>
-				</TabScrollArea>
-				{days.map((day) => (
-					// Day の中身 (種目計画等) は別タスクで実装予定のため、骨格段階では空
-					<TabPanel key={day.id} id={day.id} />
-				))}
-			</Tabs>
+			{days.length === 0 ? (
+				<CreateDayCard onAddDay={onAddDay} />
+			) : (
+				<Tabs {...tabsProps}>
+					<TabScrollArea>
+						<TabList aria-label="Day">
+							{days.map((day) => (
+								<Tab key={day.id} id={day.id}>
+									{day.label}
+								</Tab>
+							))}
+						</TabList>
+					</TabScrollArea>
+					{days.map((day) => (
+						// Day の中身 (種目計画等) は別タスクで実装予定のため、骨格段階では空
+						<TabPanel key={day.id} id={day.id} />
+					))}
+				</Tabs>
+			)}
 		</div>
 	);
 };
