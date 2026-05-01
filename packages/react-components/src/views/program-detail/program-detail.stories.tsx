@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps } from "react";
-import { PageHeading } from "../../primitives/page-heading";
 import { PageSection } from "../../primitives/page-section";
 import { ProgramDetail } from "./program-detail";
 
@@ -34,7 +33,6 @@ const meta = {
 	decorators: [
 		(Story) => (
 			<PageSection width="wide">
-				<PageHeading as="h1">プログラム</PageHeading>
 				<Story />
 			</PageSection>
 		),
@@ -60,18 +58,32 @@ export const NoMeta: Story = {
 	},
 };
 
-export const NewlyCreatedEmptyName: Story = {
-	args: {
-		name: "",
-		meta: null,
-		days: SAMPLE_DAYS,
-	},
-};
-
 export const LongProgramName: Story = {
 	args: {
 		name: "Wendler 5/3/1 Boring But Big with Joker Sets and First Set Last AMRAP Conjugate Method (3-day split, 16-week mesocycle, deload weeks included) 詳細メソッド付きの上級者向け長期プログラム（完全版）",
 		meta: "メインリフトは 5/3/1 で、補助は BBB（Boring But Big）。\nDeload week は 4 週ごとに挿入する。",
 		days: SAMPLE_DAYS,
+	},
+};
+
+export const Mobile: Story = {
+	args: {
+		name: "5/3/1 BBB",
+		meta: "メインリフトは 5/3/1 で、補助は BBB（Boring But Big）。\nDeload week は 4 週ごとに挿入する。",
+		days: SAMPLE_DAYS,
+	},
+	globals: {
+		viewport: { value: "mobile" },
+	},
+};
+
+export const Desktop: Story = {
+	args: {
+		name: "5/3/1 BBB",
+		meta: "メインリフトは 5/3/1 で、補助は BBB（Boring But Big）。\nDeload week は 4 週ごとに挿入する。",
+		days: SAMPLE_DAYS,
+	},
+	globals: {
+		viewport: { value: "desktop" },
 	},
 };
