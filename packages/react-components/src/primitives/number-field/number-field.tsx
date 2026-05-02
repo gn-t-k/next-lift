@@ -17,9 +17,18 @@ import {
 	Text,
 	type TextProps,
 } from "react-aria-components";
-import { tv } from "tailwind-variants";
 import { cx } from "../../libs/primitive";
 import { cn } from "../../libs/utils";
+
+const fieldClass = [
+	"w-full",
+	"[&>[data-slot=label]+[data-slot=control]]:mt-2",
+	"[&>[data-slot=label]+[slot='description']]:mt-1",
+	"[&>[slot=description]+[data-slot=control]]:mt-2",
+	"[&>[data-slot=control]+[slot=description]]:mt-2",
+	"[&>[data-slot=control]+[role=alert]]:mt-2",
+	"in-disabled:opacity-50",
+].join(" ");
 
 export const NumberField: FC<NumberFieldPrimitiveProps> = ({
 	className,
@@ -27,25 +36,55 @@ export const NumberField: FC<NumberFieldPrimitiveProps> = ({
 }) => (
 	<NumberFieldPrimitive
 		data-slot="control"
-		className={cx(fieldStyles(), className)}
+		className={cx(fieldClass, className)}
 		{...props}
 	/>
 );
+
+const labelClass = [
+	"block select-none font-medium text-base/6 text-fg sm:text-sm/6",
+	"in-data-[required=true]:after:ml-1.5 in-data-[required=true]:after:text-danger-subtle-fg in-data-[required=true]:after:content-['*']",
+	"in-disabled:opacity-50",
+].join(" ");
 
 export const NumberFieldLabel: FC<LabelProps> = ({ className, ...props }) => (
 	<LabelPrimitive
 		data-slot="label"
-		className={cn(labelStyles(), className)}
+		className={cn(labelClass, className)}
 		{...props}
 	/>
 );
 
+const groupClass = [
+	"flex w-full overflow-hidden rounded-lg border border-border bg-overlay",
+	"focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-bg",
+	"data-[invalid]:border-danger",
+	"data-[disabled]:opacity-50",
+].join(" ");
+
+const inputClass = [
+	"block min-h-10 min-w-0 flex-1 bg-transparent px-3 py-2 text-center text-base/6 text-fg tabular-nums outline-none",
+	"placeholder:text-muted-fg",
+	"disabled:opacity-50",
+	"sm:min-h-9 sm:text-sm/6",
+].join(" ");
+
+const stepperButtonClass = [
+	"flex min-h-10 min-w-10 shrink-0 items-center justify-center text-muted-fg",
+	"border-border first:border-r last:border-l",
+	"hover:enabled:bg-secondary hover:enabled:text-fg",
+	"pressed:bg-secondary pressed:text-fg",
+	"focus-visible:outline-none",
+	"disabled:opacity-50",
+	"sm:min-h-9 sm:min-w-9",
+].join(" ");
+
 export const NumberFieldInput: FC<InputProps> = ({ className, ...props }) => (
-	<Group data-slot="control" className={cx(groupStyles())}>
+	<Group data-slot="control" className={cx(groupClass)}>
 		<NumberFieldStepperButton slot="decrement" aria-label="減らす">
 			<MinusIcon className="size-4" aria-hidden />
 		</NumberFieldStepperButton>
-		<InputPrimitive className={cx(inputStyles(), className)} {...props} />
+		<InputPrimitive className={cx(inputClass, className)} {...props} />
 		<NumberFieldStepperButton slot="increment" aria-label="増やす">
 			<PlusIcon className="size-4" aria-hidden />
 		</NumberFieldStepperButton>
@@ -53,11 +92,11 @@ export const NumberFieldInput: FC<InputProps> = ({ className, ...props }) => (
 );
 
 const NumberFieldStepperButton: FC<ButtonProps> = ({ className, ...props }) => (
-	<ButtonPrimitive
-		className={cx(stepperButtonStyles(), className)}
-		{...props}
-	/>
+	<ButtonPrimitive className={cx(stepperButtonClass, className)} {...props} />
 );
+
+const descriptionClass =
+	"block text-base/6 text-muted-fg in-disabled:opacity-50 sm:text-sm/6";
 
 export const NumberFieldDescription: FC<TextProps> = ({
 	className,
@@ -65,75 +104,17 @@ export const NumberFieldDescription: FC<TextProps> = ({
 }) => (
 	<Text
 		slot="description"
-		className={cn(descriptionStyles(), className)}
+		className={cn(descriptionClass, className)}
 		{...props}
 	/>
 );
+
+const fieldErrorClass =
+	"block text-base/6 text-danger-subtle-fg in-disabled:opacity-50 sm:text-sm/6 forced-colors:text-[Mark]";
 
 export const NumberFieldError: FC<FieldErrorProps> = ({
 	className,
 	...props
 }) => (
-	<FieldErrorPrimitive
-		className={cx(fieldErrorStyles(), className)}
-		{...props}
-	/>
+	<FieldErrorPrimitive className={cx(fieldErrorClass, className)} {...props} />
 );
-
-const fieldStyles = tv({
-	base: [
-		"w-full",
-		"[&>[data-slot=label]+[data-slot=control]]:mt-2",
-		"[&>[data-slot=label]+[slot='description']]:mt-1",
-		"[&>[slot=description]+[data-slot=control]]:mt-2",
-		"[&>[data-slot=control]+[slot=description]]:mt-2",
-		"[&>[data-slot=control]+[role=alert]]:mt-2",
-		"in-disabled:opacity-50",
-	],
-});
-
-const labelStyles = tv({
-	base: [
-		"block select-none font-medium text-base/6 text-fg sm:text-sm/6",
-		"in-data-[required=true]:after:ml-1.5 in-data-[required=true]:after:text-danger-subtle-fg in-data-[required=true]:after:content-['*']",
-		"in-disabled:opacity-50",
-	],
-});
-
-const groupStyles = tv({
-	base: [
-		"flex w-full overflow-hidden rounded-lg border border-border bg-overlay",
-		"focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-bg",
-		"data-[invalid]:border-danger",
-		"data-[disabled]:opacity-50",
-	],
-});
-
-const inputStyles = tv({
-	base: [
-		"block min-h-10 min-w-0 flex-1 bg-transparent px-3 py-2 text-center text-base/6 text-fg tabular-nums outline-none",
-		"placeholder:text-muted-fg",
-		"disabled:opacity-50",
-		"sm:min-h-9 sm:text-sm/6",
-	],
-});
-
-const stepperButtonStyles = tv({
-	base: [
-		"flex min-h-10 min-w-10 shrink-0 items-center justify-center text-muted-fg",
-		"border-border first:border-r last:border-l",
-		"hover:enabled:bg-secondary hover:enabled:text-fg",
-		"pressed:bg-secondary pressed:text-fg",
-		"focus-visible:outline-none",
-		"disabled:opacity-50",
-		"sm:min-h-9 sm:min-w-9",
-	],
-});
-
-const descriptionStyles = tv({
-	base: "block text-base/6 text-muted-fg in-disabled:opacity-50 sm:text-sm/6",
-});
-
-const fieldErrorStyles = tv({
-	base: "block text-base/6 text-danger-subtle-fg in-disabled:opacity-50 sm:text-sm/6 forced-colors:text-[Mark]",
-});

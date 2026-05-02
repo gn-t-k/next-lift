@@ -47,41 +47,37 @@ export const WithDescription: Story = {
 	),
 };
 
-export const WeightKg: Story = {
-	name: "重量 (kg, step=2.5)",
+export const WeightWithUnitLabel: Story = {
+	name: "重量 (kg, step=2.5、単位は外側ラベルで表示)",
 	render: () => (
-		<NumberField
-			defaultValue={60}
-			step={2.5}
-			minValue={0}
-			formatOptions={{
-				style: "unit",
-				unit: "kilogram",
-				unitDisplay: "short",
-				maximumFractionDigits: 2,
-			}}
-		>
-			<NumberFieldLabel>重量</NumberFieldLabel>
+		<NumberField defaultValue={60} step={2.5} minValue={0}>
+			<NumberFieldLabel>重量 (kg)</NumberFieldLabel>
 			<NumberFieldInput />
+			<NumberFieldDescription>
+				単位はラベルに含めて、入力欄は数値だけにする
+			</NumberFieldDescription>
 		</NumberField>
 	),
 };
 
-export const WeightLbs: Story = {
-	name: "重量 (lbs, step=5)",
+export const WeightWithUnitSuffix: Story = {
+	name: "重量 (kg, step=2.5、単位は input 隣に suffix で表示)",
 	render: () => (
-		<NumberField
-			defaultValue={135}
-			step={5}
-			minValue={0}
-			formatOptions={{
-				style: "unit",
-				unit: "pound",
-				unitDisplay: "short",
-				maximumFractionDigits: 0,
-			}}
-		>
-			<NumberFieldLabel>重量</NumberFieldLabel>
+		<div className="flex items-end gap-2">
+			<NumberField defaultValue={60} step={2.5} minValue={0}>
+				<NumberFieldLabel>重量</NumberFieldLabel>
+				<NumberFieldInput />
+			</NumberField>
+			<span className="pb-2 text-fg text-sm">kg</span>
+		</div>
+	),
+};
+
+export const WeightLbsWithUnitLabel: Story = {
+	name: "重量 (lbs, step=5、単位はラベルで表示)",
+	render: () => (
+		<NumberField defaultValue={135} step={5} minValue={0}>
+			<NumberFieldLabel>重量 (lbs)</NumberFieldLabel>
 			<NumberFieldInput />
 		</NumberField>
 	),
