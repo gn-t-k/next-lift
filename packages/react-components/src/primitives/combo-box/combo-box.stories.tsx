@@ -170,14 +170,17 @@ const CreateNewOptionDemo = () => {
 
 	const items = useMemo(() => {
 		const trimmed = inputValue.trim();
-		const exactMatch = registered.some((e) => e.name === trimmed);
-		if (trimmed === "" || exactMatch) {
-			return registered;
+		if (trimmed === "") return registered;
+		// React Aria の ComboBox は controlled inputValue では自動フィルタしないので
+		// 自前で contains フィルタ + 一致なし時の CREATE 候補挿入を行う
+		const lower = trimmed.toLowerCase();
+		const filtered = registered.filter((e) =>
+			e.name.toLowerCase().includes(lower),
+		);
+		if (filtered.length === 0) {
+			return [{ id: CREATE_OPTION_ID, name: `「${trimmed}」を登録する` }];
 		}
-		return [
-			...registered,
-			{ id: CREATE_OPTION_ID, name: `「${trimmed}」を登録する` },
-		];
+		return filtered;
 	}, [inputValue, registered]);
 
 	const onSelectionChange = (key: Key | null) => {
@@ -244,11 +247,19 @@ export const CreateNewOption: Story = {
 			const options = Array.from(
 				document.querySelectorAll<HTMLElement>('[role="option"]'),
 			);
+			const labels = options.map((el) => el.textContent ?? "");
+			const listbox = document.querySelector('[role="listbox"]');
+			const ariaExpanded = input.getAttribute("aria-expanded");
+			const inputValue = (input as HTMLInputElement).value;
 			const found = options.find((el) =>
 				el.textContent?.includes("「懸垂」を登録する"),
 			);
-			expect(found).toBeDefined();
-			return found as HTMLElement;
+			if (found === undefined) {
+				throw new Error(
+					`CREATE option not found. inputValue=${inputValue}, ariaExpanded=${ariaExpanded}, listboxExists=${Boolean(listbox)}, options=${JSON.stringify(labels)}`,
+				);
+			}
+			return found;
 		});
 
 		// 候補をクリックすると、input が「懸垂」に置き換わる
@@ -270,6 +281,23 @@ export const CreateNewOption: Story = {
 			expect(labels.some((l) => l.includes("「懸垂」を登録する"))).toBe(false);
 			// 登録済みの「懸垂」が候補に出ていること
 			expect(labels.some((l) => l.trim() === "懸垂")).toBe(true);
+		});
+
+		// 部分一致 (「ベ」) を入力すると登録済みの該当項目だけが絞り込まれ
+		// CREATE 候補は出ない (一部マッチがあるなら新規登録は不要というUX)
+		await userEvent.clear(input);
+		await userEvent.type(input, "ベ");
+		await waitFor(() => {
+			const options = Array.from(
+				document.querySelectorAll<HTMLElement>('[role="option"]'),
+			);
+			const labels = options.map((el) => el.textContent ?? "");
+			expect(labels.some((l) => l.includes("「ベ」を登録する"))).toBe(false);
+			// ベンチプレス / インクラインベンチプレス / ダンベルプレス の 3 件が contains で絞られて出る
+			expect(options.length).toBeGreaterThan(0);
+			expect(
+				labels.every((l) => l.toLowerCase().includes("ベ".toLowerCase())),
+			).toBe(true);
 		});
 	},
 };
