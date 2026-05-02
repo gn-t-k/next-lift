@@ -1,8 +1,2 @@
-// Web（Vercel Serverless）から import される root エントリ。`@tursodatabase/database` のネイティブバインディングに依存するエントリは `./database` サブパスに分離している
-export { applyMigrationsToTursoServerless } from "./apply-migrations-to-turso-serverless";
-export { createDrizzleFromTursoServerless } from "./create-drizzle-from-turso-serverless";
-export {
-	createTursoServerlessClient,
-	type TursoServerlessClientConfig,
-} from "./create-turso-serverless-client";
+// 共通型のみを露出する root エントリ。実装は `./serverless`（Web 用）/ `./database`（Node 用）のドライバ別サブパスに分離している。詳細は CLAUDE.md
 export type { SqliteRunResult } from "./sqlite-run-result";

@@ -2,7 +2,7 @@ import { env } from "@next-lift/env/private";
 import {
 	createDrizzleFromTursoServerless,
 	createTursoServerlessClient,
-} from "@next-lift/turso-drizzle-adapter";
+} from "@next-lift/turso-drizzle-adapter/serverless";
 import * as schema from "../database-schemas";
 
 export const createDatabaseClient = () => {

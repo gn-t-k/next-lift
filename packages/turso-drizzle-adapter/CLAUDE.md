@@ -6,7 +6,9 @@
 
 ## 機能
 
-### root エントリ `@next-lift/turso-drizzle-adapter`（Web / Vercel Serverless 用）
+公開エントリは **ドライバ軸** で 2 つのサブパスに分離している（root は共通型のみ）。Web bundle に混入させたくないネイティブバインディング（`@tursodatabase/database`）と、HTTP プロトコルで動く serverless 系を確実に切り分けるため。
+
+### `@next-lift/turso-drizzle-adapter/serverless`（Web / Vercel Serverless 用）
 
 `@tursodatabase/serverless/compat`（HTTP プロトコル）に依存するエントリ。Vercel Serverless / Edge / iOS など、ネイティブバインディングを持ち込めない環境向け。
 
@@ -16,9 +18,9 @@
 | `createDrizzleFromTursoServerless` | `Client` とスキーマから `drizzle-orm/sqlite-proxy` 経由の drizzle インスタンスを生成 |
 | `applyMigrationsToTursoServerless` | `drizzle/<n>_*.sql` 形式のマイグレーションを `Client` 経由で適用（FK 有効化 + トランザクション内で順次 exec） |
 
-### サブパス `@next-lift/turso-drizzle-adapter/database`（Node ローカル / テスト用）
+### `@next-lift/turso-drizzle-adapter/database`（Node ローカル / テスト用）
 
-`@tursodatabase/database`（ネイティブ `.node` バインディング）に依存するエントリ。テストの `:memory:` 接続や CLI でのローカル DB 操作向け。**Web bundle に混入させないため root とは分離している**（混入すると Turbopack の `non-ecmascript placeable asset` エラーで落ちる）。
+`@tursodatabase/database`（ネイティブ `.node` バインディング）に依存するエントリ。テストの `:memory:` 接続や CLI でのローカル DB 操作向け。**Web bundle に混入させないため `./serverless` とは別パスで分離している**（混入すると Turbopack の `non-ecmascript placeable asset` エラーで落ちる）。
 
 | 提供API | 説明 |
 | --- | --- |
@@ -26,7 +28,7 @@
 | `createDrizzleFromTursoDatabase` | `Database` ハンドルとスキーマから drizzle インスタンスを生成 |
 | `applyMigrations` | マイグレーションを `Database` ハンドルに適用 |
 
-### 型契約（両エントリで共通）
+### `@next-lift/turso-drizzle-adapter`（root: 共通型のみ）
 
 | 提供型 | 説明 |
 | --- | --- |
@@ -41,7 +43,7 @@ import {
   applyMigrationsToTursoServerless,
   createDrizzleFromTursoServerless,
   createTursoServerlessClient,
-} from "@next-lift/turso-drizzle-adapter";
+} from "@next-lift/turso-drizzle-adapter/serverless";
 import * as schema from "./database-schemas";
 
 const client = createTursoServerlessClient({ url, authToken });
@@ -83,7 +85,8 @@ type DatabaseContext = BaseSQLiteDatabase<"async", SqliteRunResult, typeof schem
 
 ```text
 src/
-  index.ts                                 # 公開: root エントリ（serverless/compat 系のみ）
+  index.ts                                 # 公開: root エントリ（共通型のみ）
+  serverless.ts                            # 公開: ./serverless エントリ（@tursodatabase/serverless/compat 系）
   database.ts                              # 公開: ./database エントリ（@tursodatabase/database 系）
   apply-migrations.ts                      # 公開: database 用マイグレーション適用
   apply-migrations-to-turso-serverless.ts  # 公開: serverless 用マイグレーション適用
@@ -105,8 +108,8 @@ src/
 ## 制約と注意事項
 
 - **暫定アダプタ**: Drizzle 公式が `@tursodatabase/*` 用ドライバーを提供したらパッケージごと削除する想定。`createDrizzleFromTursoDatabase` / `createDrizzleFromTursoServerless` の先頭コメント参照
-- **エントリ分離の理由**: `@tursodatabase/database` は `.node` ネイティブバインディングを含むため、Web bundle に混入すると Turbopack の `non-ecmascript placeable asset` エラーで落ちる。root エントリには serverless/compat 系のみを置き、database 系は `./database` サブパスに分離している
-- **対応ドライバー**: `@tursodatabase/database`（in-memory + ローカルファイル）/ `@tursodatabase/serverless/compat`（HTTP）。Phase 4 で `@tursodatabase/sync-react-native` 追加予定
+- **エントリ分離の理由**: `@tursodatabase/database` は `.node` ネイティブバインディングを含むため、Web bundle に混入すると Turbopack の `non-ecmascript placeable asset` エラーで落ちる。`./serverless` と `./database` をドライバ軸で別パスに分離し、root には依存を持たない共通型のみ置くことで、利用側が誤って混在させても bundler が片側だけを解析する構造にしている
+- **対応ドライバー**: `@tursodatabase/database`（in-memory + ローカルファイル）/ `@tursodatabase/serverless/compat`（HTTP）。Phase 4 で `@tursodatabase/sync-react-native` を `./sync-react-native` サブパスとして追加予定
 - **`PRAGMA foreign_keys`**: `applyMigrations` / `applyMigrationsToTursoServerless` の中で明示的に `ON` にしている（接続時のデフォルトは将来変わるリスクがあるため、ADR-026）
 - **トランザクション境界**: `proxy-transaction.ts` がネスト時の SAVEPOINT も含めて翻訳。drizzle 経由のトランザクションは drizzle 自身が SQL を発行するため `proxyExecute` を通る。`proxyTransaction` は drizzle 非経由でトランザクションを扱う場面用（`applyMigrations` 等）
 - 関連ADR: [ADR-029](../../docs/architecture-decision-record/029-tursodatabase-suite-migration.md)

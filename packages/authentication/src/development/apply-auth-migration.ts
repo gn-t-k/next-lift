@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import {
 	applyMigrationsToTursoServerless,
 	createTursoServerlessClient,
-} from "@next-lift/turso-drizzle-adapter";
+} from "@next-lift/turso-drizzle-adapter/serverless";
 import { R } from "@praha/byethrow";
 import { ErrorFactory } from "@praha/error-factory";
 

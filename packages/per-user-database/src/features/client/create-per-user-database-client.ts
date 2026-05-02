@@ -1,7 +1,7 @@
 import {
 	createDrizzleFromTursoServerless,
 	createTursoServerlessClient,
-} from "@next-lift/turso-drizzle-adapter";
+} from "@next-lift/turso-drizzle-adapter/serverless";
 import type { Client } from "@tursodatabase/serverless/compat";
 import * as schema from "../../database-schemas";
 

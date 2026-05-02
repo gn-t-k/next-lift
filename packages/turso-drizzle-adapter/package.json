@@ -5,6 +5,7 @@
 	"type": "module",
 	"exports": {
 		".": "./src/index.ts",
+		"./serverless": "./src/serverless.ts",
 		"./database": "./src/database.ts"
 	},
 	"scripts": {
