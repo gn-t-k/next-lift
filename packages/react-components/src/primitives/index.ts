@@ -1,4 +1,5 @@
 export * from "./button";
+export * from "./combo-box";
 export * from "./drawer";
 export * from "./error-alert";
 export * from "./gym-context";
