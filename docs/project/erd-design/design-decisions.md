@@ -27,7 +27,7 @@
 | 21 | ~~lbs対応を初期スコープに組み込み。weight_input_unitカラムを4テーブルに追加~~ | **→ #31で再設計: 計画パラメータからは削除し、種目設定は `exercises.default_weight_input_unit` に分離（ADR-027）** | 3 |
 | 22 | 種目カテゴリは将来追加で後方互換対応可能（現時点でERD変更なし） | exercisesへのカラム追加やリンクテーブルで対応。カテゴリの軸が未定のため早期の構造決定は避ける | 3 |
 | 23 | programs→days, exercise_plans→set_plans, workouts→exercise_logs, exercise_logs→set_logsの多重度を0以上（オプショナル）で維持 | ドメインモデルの「0..n」を維持。0は作成途中・記録途中の状態であり、途中保存を可能にするために必要。「最低1つ」の制約はワークフローの特定ポイント（完了時等）でアプリ側で強制する | 4 |
-| 24 | set_plans→パラメータテーブルのMermaid表記を1:1必須で記述 | 個々のリレーションシップ線は1:1必須だが、3本のうち1本のみが有効（plan_typeで排他制御）。排他制御はアプリ側バリデーションで担保。ERD図上で排他制約を完全に表現できない制約を受け入れる | 4 |
+| ~~24~~ | ~~set_plans→パラメータテーブルのMermaid表記を1:1必須で記述~~ | **→ #32で撤回: 1:0..1 に緩める** | 4 |
 | 25 | パラメータテーブル3種の主キーをset_plan_id（PK FK）に変更（独自idを持たない） | Pros(PK FK): JOINが自然、冗長なidカラムが不要、1:1関係で親のPKを子のPKとして使うRDBの定石。Cons(PK FK): 他テーブルとPK構造が不統一。判断: パラメータテーブルは独自のアイデンティティを持たない子テーブルであり、独自idは不要 | 4 |
 | 26 | exercises関連の非依存リレーションシップ: exercise_plan_exercisesが交差エンティティ、exercise_logs/one_rep_maxesは交差エンティティ不要 | exercisesは独立マスタ。exercise_plansはexerciseなしで存在可能（プレースホルダー枠）→ exercise_plan_exercisesリンクテーブルで表現。exercise_logs/one_rep_maxesは作成時に必ずexercise_idが指定されるためNOT NULL FKで問題ない | 4 |
 | 27 | N:M関係は存在しない。新規中間テーブルの追加は不要 | 全リレーションシップを精査した結果、全て1:1または1:Nの関係。workoutsとdaysの関係はworkout_day_linksで既に適切に表現済み | 4 |
@@ -35,3 +35,4 @@
 | 29 | exercise_plans.exercise_idをexercise_plan_exercisesリンクテーブルに分離 | プレースホルダー枠（種目未確定の計画枠）に対応。workout_day_linksと同パターン（nullable FK → リンクテーブル）。記録側(exercise_logs)は影響なし。exercise_plan_idがPK（1:1関係で親のPKをPKとして使う） | 3 |
 | 30 | 計画系テーブル(days, exercise_plans, set_plans)にmeta_info text nullableを追加 | programs.meta_infoと同パターンで計画の各階層に自由テキスト注釈を持たせる。プレースホルダー枠の説明もexercise_plans.meta_infoで表現。計画側のmeta_info（意図）と記録側のmemo（実績）は別の関心事 | 3 |
 | 31 | weight_input_unitを3層に分離: 計画パラメータから削除、`exercises.default_weight_input_unit` を新設、実績(`set_logs`/`one_rep_maxes`)は維持 | 計画(指定)・実績(事実)・種目設定(プリセット)を関心事として分離。`weight_type=percent_1rm` での意味のオーバーロード解消。詳細はADR-027 | post-5 |
+| 32 | set_plans→パラメータテーブルの多重度を 1:1必須から 1:0..1 に緩める（#24撤回） | ui-design設計判断#58（新規作成時の初期構造）で「値未入力のセット計画」をアプリ層が初期生成する要件が出た。これを「`set_plans` 行あり + 3つの params テーブルどこにも行なし」で表現するため、Mermaidの `\|\|--\|\|` を `\|\|--o\|` に変更する。`schema.md` のリレーション説明も「`plan_type` に応じて 0 または 1 行存在」に更新。値未入力 = 「params 行なし」をアプリレイヤー規約として明文化（plan_type の解釈は params 行が存在する場合のみ有効）。設計判断#23「途中保存を許容」設計思想と整合 | post-5 |
