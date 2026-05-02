@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { useMemo, useState } from "react";
+import type { Key } from "react-aria-components";
 import {
 	ComboBox,
 	ComboBoxDescription,
@@ -156,4 +158,76 @@ export const Disabled: Story = {
 			</ComboBoxList>
 		</ComboBox>
 	),
+};
+
+const CREATE_OPTION_ID = "__create__";
+
+const CreateNewOptionDemo = () => {
+	const [registered, setRegistered] = useState(exercises);
+	const [inputValue, setInputValue] = useState("");
+	const [selectedKey, setSelectedKey] = useState<Key | null>(null);
+
+	const items = useMemo(() => {
+		const trimmed = inputValue.trim();
+		const exactMatch = registered.some((e) => e.name === trimmed);
+		if (trimmed === "" || exactMatch) {
+			return registered;
+		}
+		return [
+			...registered,
+			{ id: CREATE_OPTION_ID, name: `「${trimmed}」を登録する` },
+		];
+	}, [inputValue, registered]);
+
+	const onSelectionChange = (key: Key | null) => {
+		if (key === CREATE_OPTION_ID) {
+			const trimmed = inputValue.trim();
+			const newId = `custom-${Date.now()}`;
+			setRegistered((prev) => [...prev, { id: newId, name: trimmed }]);
+			setSelectedKey(newId);
+			setInputValue(trimmed);
+			return;
+		}
+		setSelectedKey(key);
+		const matched = registered.find((e) => e.id === key);
+		if (matched !== undefined) {
+			setInputValue(matched.name);
+		}
+	};
+
+	return (
+		<ComboBox
+			items={items}
+			inputValue={inputValue}
+			onInputChange={setInputValue}
+			selectedKey={selectedKey}
+			onSelectionChange={onSelectionChange}
+			allowsCustomValue
+		>
+			<ComboBoxLabel>種目</ComboBoxLabel>
+			<ComboBoxInput placeholder="種目名で検索 / 新規登録" />
+			<ComboBoxDescription>
+				一致する種目がなければ「<strong>○○を登録する</strong>」が候補に出ます
+			</ComboBoxDescription>
+			<ComboBoxList<{ id: string; name: string }>>
+				{(item) =>
+					item.id === CREATE_OPTION_ID ? (
+						<ComboBoxItem
+							id={item.id}
+							className="text-primary data-[focused]:bg-primary/10 data-[focused]:text-primary"
+						>
+							{item.name}
+						</ComboBoxItem>
+					) : (
+						<ComboBoxItem id={item.id}>{item.name}</ComboBoxItem>
+					)
+				}
+			</ComboBoxList>
+		</ComboBox>
+	);
+};
+
+export const CreateNewOption: Story = {
+	name: "未登録項目をその場で登録 (拡張性確認)",
+	render: () => <CreateNewOptionDemo />,
 };
