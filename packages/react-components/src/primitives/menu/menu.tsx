@@ -18,16 +18,6 @@ import { cn } from "../../libs/utils";
 
 export const MenuTrigger = MenuTriggerPrimitive;
 
-const popoverClass = [
-	"min-w-(--trigger-width) max-w-xs origin-(--trigger-anchor-point)",
-	"rounded-lg border border-border bg-overlay text-overlay-fg shadow-lg outline-hidden",
-	"entering:fade-in entering:animate-in entering:duration-150",
-	"exiting:fade-out exiting:animate-out exiting:duration-100",
-].join(" ");
-
-const menuClass =
-	"flex max-h-[inherit] flex-col gap-px overflow-y-auto overscroll-contain p-1 outline-hidden";
-
 type MenuProps<T> = MenuPrimitiveProps<T> &
 	Pick<PopoverProps, "placement" | "offset">;
 
@@ -38,11 +28,22 @@ export const Menu = <T extends object>({
 	...props
 }: MenuProps<T>) => (
 	<Popover
-		className={cx(popoverClass)}
+		className={cx(
+			"min-w-(--trigger-width) max-w-xs origin-(--trigger-anchor-point)",
+			"rounded-lg border border-border bg-overlay text-overlay-fg shadow-lg outline-hidden",
+			"entering:fade-in entering:animate-in entering:duration-150",
+			"exiting:fade-out exiting:animate-out exiting:duration-100",
+		)}
 		offset={offset}
 		{...(placement !== undefined ? { placement } : {})}
 	>
-		<MenuPrimitive className={cx(menuClass, className)} {...props} />
+		<MenuPrimitive
+			className={cx(
+				"flex max-h-[inherit] flex-col gap-px overflow-y-auto overscroll-contain p-1 outline-hidden",
+				className,
+			)}
+			{...props}
+		/>
 	</Popover>
 );
 
@@ -81,15 +82,13 @@ export const MenuItem: FC<MenuItemProps> = ({
 	/>
 );
 
-const menuSeparatorClass = "-mx-1 my-1 h-px bg-border";
-
 export const MenuSeparator: FC<Omit<SeparatorProps, "orientation">> = ({
 	className,
 	...props
 }) => (
 	<Separator
 		orientation="horizontal"
-		className={cn(menuSeparatorClass, className)}
+		className={cn("-mx-1 my-1 h-px bg-border", className)}
 		{...props}
 	/>
 );
