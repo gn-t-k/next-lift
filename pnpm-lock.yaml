@@ -134,10 +134,10 @@ importers:
         version: 1.4.1
       '@sentry/nextjs':
         specifier: 10.50.0
-        version: 10.50.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.7.1(@opentelemetry/api@1.9.1))(next@16.2.4(@babel/core@7.28.5)(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)(webpack@5.102.1)
+        version: 10.50.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.7.1(@opentelemetry/api@1.9.1))(next@16.2.4(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)(webpack@5.102.1)
       next:
         specifier: 16.2.4
-        version: 16.2.4(@babel/core@7.28.5)(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 16.2.4(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       next-themes:
         specifier: 0.4.6
         version: 0.4.6(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -223,6 +223,9 @@ importers:
       '@praha/error-factory':
         specifier: 1.4.1
         version: 1.4.1
+      '@tursodatabase/serverless':
+        specifier: 1.1.2
+        version: 1.1.2
       better-auth:
         specifier: 1.6.9
         version: 1.6.9(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@libsql/client@0.17.3)(@op-engineering/op-sqlite@15.2.12(react-native@0.83.2(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.5))(react@19.2.5))(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(kysely@0.28.16))(next@16.2.4(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@4.1.4)
@@ -318,6 +321,9 @@ importers:
       '@praha/error-factory':
         specifier: 1.4.1
         version: 1.4.1
+      '@tursodatabase/serverless':
+        specifier: 1.1.2
+        version: 1.1.2
       drizzle-orm:
         specifier: 0.45.2
         version: 0.45.2(@libsql/client@0.17.3)(@op-engineering/op-sqlite@15.2.12(react-native@0.83.2(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.5))(react@19.2.5))(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(kysely@0.28.16)
@@ -504,6 +510,9 @@ importers:
       '@tursodatabase/database':
         specifier: 0.5.3
         version: 0.5.3
+      '@tursodatabase/serverless':
+        specifier: 1.1.2
+        version: 1.1.2
       drizzle-orm:
         specifier: 0.45.2
         version: 0.45.2(@libsql/client@0.17.3)(@op-engineering/op-sqlite@15.2.12(react-native@0.83.2(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.5))(react@19.2.5))(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(kysely@0.28.16)
@@ -3735,6 +3744,9 @@ packages:
 
   '@tursodatabase/database@0.5.3':
     resolution: {integrity: sha512-Dd9x+oKKkfNPDbBtoCO4QMzBwkNNpQET4wQPt72Yy4bZ1old2gUNjrUzEi17JSSAVpdtCbSaFmeKpsxb/Ie+fw==}
+
+  '@tursodatabase/serverless@1.1.2':
+    resolution: {integrity: sha512-4nN4a0diq4rurNJ/JZypfWJugzZtZeydxxOzzJinSZjyOg+YBt9xtBqPsILfFDMiWRBKSHLH+7WLL6tV64nm4Q==}
 
   '@tybys/wasm-util@0.10.1':
     resolution: {integrity: sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==}
@@ -10538,7 +10550,7 @@ snapshots:
 
   '@sentry/core@10.50.0': {}
 
-  '@sentry/nextjs@10.50.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.7.1(@opentelemetry/api@1.9.1))(next@16.2.4(@babel/core@7.28.5)(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)(webpack@5.102.1)':
+  '@sentry/nextjs@10.50.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.7.1(@opentelemetry/api@1.9.1))(next@16.2.4(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)(webpack@5.102.1)':
     dependencies:
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/semantic-conventions': 1.40.0
@@ -10551,7 +10563,7 @@ snapshots:
       '@sentry/react': 10.50.0(react@19.2.5)
       '@sentry/vercel-edge': 10.50.0
       '@sentry/webpack-plugin': 5.2.1(webpack@5.102.1)
-      next: 16.2.4(@babel/core@7.28.5)(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      next: 16.2.4(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       rollup: 4.52.5
       stacktrace-parser: 0.1.11
     transitivePeerDependencies:
@@ -10933,6 +10945,8 @@ snapshots:
       '@tursodatabase/database-linux-arm64-gnu': 0.5.3
       '@tursodatabase/database-linux-x64-gnu': 0.5.3
       '@tursodatabase/database-win32-x64-msvc': 0.5.3
+
+  '@tursodatabase/serverless@1.1.2': {}
 
   '@tybys/wasm-util@0.10.1':
     dependencies:
@@ -13988,32 +14002,6 @@ snapshots:
       react: 19.2.5
       react-dom: 19.2.5(react@19.2.5)
 
-  next@16.2.4(@babel/core@7.28.5)(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
-    dependencies:
-      '@next/env': 16.2.4
-      '@swc/helpers': 0.5.15
-      baseline-browser-mapping: 2.10.20
-      caniuse-lite: 1.0.30001760
-      postcss: 8.4.31
-      react: 19.2.5
-      react-dom: 19.2.5(react@19.2.5)
-      styled-jsx: 5.1.6(@babel/core@7.28.5)(react@19.2.5)
-    optionalDependencies:
-      '@next/swc-darwin-arm64': 16.2.4
-      '@next/swc-darwin-x64': 16.2.4
-      '@next/swc-linux-arm64-gnu': 16.2.4
-      '@next/swc-linux-arm64-musl': 16.2.4
-      '@next/swc-linux-x64-gnu': 16.2.4
-      '@next/swc-linux-x64-musl': 16.2.4
-      '@next/swc-win32-arm64-msvc': 16.2.4
-      '@next/swc-win32-x64-msvc': 16.2.4
-      '@opentelemetry/api': 1.9.1
-      babel-plugin-react-compiler: 1.0.0
-      sharp: 0.34.5
-    transitivePeerDependencies:
-      - '@babel/core'
-      - babel-plugin-macros
-
   next@16.2.4(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
     dependencies:
       '@next/env': 16.2.4
@@ -14039,7 +14027,6 @@ snapshots:
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
-    optional: true
 
   node-fetch@2.6.7:
     dependencies:
@@ -15010,20 +14997,12 @@ snapshots:
 
   structured-headers@0.4.1: {}
 
-  styled-jsx@5.1.6(@babel/core@7.28.5)(react@19.2.5):
-    dependencies:
-      client-only: 0.0.1
-      react: 19.2.5
-    optionalDependencies:
-      '@babel/core': 7.28.5
-
   styled-jsx@5.1.6(@babel/core@7.29.0)(react@19.2.5):
     dependencies:
       client-only: 0.0.1
       react: 19.2.5
     optionalDependencies:
       '@babel/core': 7.29.0
-    optional: true
 
   sucrase@3.35.1:
     dependencies:
