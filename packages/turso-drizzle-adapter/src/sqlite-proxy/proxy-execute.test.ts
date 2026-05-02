@@ -1,13 +1,17 @@
 import type { Database } from "@tursodatabase/database";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { createTursoDatabaseHandle } from "../create-turso-database-handle";
+import { createDatabaseExecutor } from "./create-database-executor";
+import type { SqliteExecutor } from "./executor";
 import { proxyExecute } from "./proxy-execute";
 
 describe("proxyExecute", () => {
 	let db: Database;
+	let executor: SqliteExecutor;
 
 	beforeEach(async () => {
 		db = await createTursoDatabaseHandle(":memory:");
+		executor = createDatabaseExecutor(db);
 		await db.exec(
 			"CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL, age INTEGER)",
 		);
@@ -26,7 +30,7 @@ describe("proxyExecute", () => {
 	describe("method が 'all' のとき", () => {
 		test("複数行が rows: any[][] 形式で返ること", async () => {
 			const result = await proxyExecute(
-				db,
+				executor,
 				"SELECT id, name, age FROM users ORDER BY id",
 				[],
 				"all",
@@ -44,7 +48,7 @@ describe("proxyExecute", () => {
 	describe("method が 'values' のとき", () => {
 		test("複数行が rows: any[][] 形式で返ること", async () => {
 			const result = await proxyExecute(
-				db,
+				executor,
 				"SELECT id, name FROM users ORDER BY id",
 				[],
 				"values",
@@ -62,7 +66,7 @@ describe("proxyExecute", () => {
 	describe("method が 'get' のとき", () => {
 		test("単一行がカラム値の配列として返ること", async () => {
 			const result = await proxyExecute(
-				db,
+				executor,
 				"SELECT id, name, age FROM users WHERE id = ?",
 				[1],
 				"get",
@@ -73,7 +77,7 @@ describe("proxyExecute", () => {
 
 		test("該当行がないとき rows が空配列になること", async () => {
 			const result = await proxyExecute(
-				db,
+				executor,
 				"SELECT id, name FROM users WHERE id = ?",
 				[999],
 				"get",
@@ -86,7 +90,7 @@ describe("proxyExecute", () => {
 	describe("method が 'run' のとき", () => {
 		test("INSERT で rowsAffected と lastInsertRowid が返ること", async () => {
 			const result = await proxyExecute(
-				db,
+				executor,
 				"INSERT INTO users (id, name, age) VALUES (?, ?, ?)",
 				[3, "Carol", 28],
 				"run",
@@ -106,7 +110,7 @@ describe("proxyExecute", () => {
 
 		test("UPDATE で該当行が無い場合は rowsAffected が 0 になること", async () => {
 			const result = await proxyExecute(
-				db,
+				executor,
 				"UPDATE users SET name = ? WHERE id = ?",
 				["NotExist", 999],
 				"run",
@@ -117,7 +121,7 @@ describe("proxyExecute", () => {
 
 		test("UPDATE で該当行が有る場合は rowsAffected が変更行数になること", async () => {
 			const result = await proxyExecute(
-				db,
+				executor,
 				"UPDATE users SET name = ? WHERE id = ?",
 				["Renamed", 1],
 				"run",
@@ -130,7 +134,7 @@ describe("proxyExecute", () => {
 	describe("パラメータバインディングのとき", () => {
 		test("? プレースホルダが正しく置換されること", async () => {
 			const result = await proxyExecute(
-				db,
+				executor,
 				"SELECT id FROM users WHERE name = ? AND age = ?",
 				["Alice", 30],
 				"all",
