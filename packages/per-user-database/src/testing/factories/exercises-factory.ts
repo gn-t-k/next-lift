@@ -9,5 +9,6 @@ export const exercisesFactory = defineFactory({
 		id: generateId(),
 		name: `Exercise ${sequence}`,
 		defaultWeightInputUnit: "kg",
+		weightStep: 2.5,
 	}),
 });
