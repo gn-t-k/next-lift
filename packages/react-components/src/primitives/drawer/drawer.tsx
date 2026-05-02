@@ -71,12 +71,6 @@ type DrawerContentProps = Omit<ModalOverlayProps, "children" | "className"> & {
 	children?: ReactNode;
 } & VariantProps<typeof drawerPanelStyles>;
 
-const overlayClass = [
-	"fixed inset-0 z-50 bg-black/30",
-	"entering:fade-in entering:animate-in entering:duration-300",
-	"exiting:fade-out exiting:animate-out exiting:duration-200",
-].join(" ");
-
 export const DrawerContent: FC<DrawerContentProps> = ({
 	className,
 	placement,
@@ -90,7 +84,11 @@ export const DrawerContent: FC<DrawerContentProps> = ({
 	return (
 		<ModalOverlayPrimitive
 			isDismissable={isDismissable}
-			className={cx(overlayClass)}
+			className={cx(
+				"fixed inset-0 z-50 bg-black/30",
+				"entering:fade-in entering:animate-in entering:duration-300",
+				"exiting:fade-out exiting:animate-out exiting:duration-200",
+			)}
 			{...props}
 		>
 			<ModalPrimitive
