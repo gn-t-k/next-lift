@@ -2,48 +2,69 @@
 
 `@tursodatabase/*` 系ドライバーと Drizzle ORM を `drizzle-orm/sqlite-proxy` 経由で橋渡しするための暫定アダプタパッケージ。Drizzle 公式が `@tursodatabase/*` 用ドライバーを提供したら剥がす想定。
 
-`drizzle-orm/sqlite-proxy` は `(sql, params, method) => Promise<{rows: ...}>` を実装すれば任意のドライバを drizzle に繋げられる仕組み。本パッケージは `@tursodatabase/database` の `prepare/run/get/all` をこの形式に翻訳し、それを使って drizzle インスタンス生成 / マイグレーション適用の API を露出する。
+`drizzle-orm/sqlite-proxy` は `(sql, params, method) => Promise<{rows: ...}>` を実装すれば任意のドライバを drizzle に繋げられる仕組み。本パッケージは各ドライバの実行 API を共通の `SqliteExecutor` 抽象に揃え、それを使って drizzle インスタンス生成 / マイグレーション適用の API を露出する。
 
 ## 機能
 
-主要機能:
+### root エントリ `@next-lift/turso-drizzle-adapter`（Web / Vercel Serverless 用）
+
+`@tursodatabase/serverless/compat`（HTTP プロトコル）に依存するエントリ。Vercel Serverless / Edge / iOS など、ネイティブバインディングを持ち込めない環境向け。
 
 | 提供API | 説明 |
 | --- | --- |
-| `createDrizzleFromTursoDatabase` | `Database` ハンドルとスキーマから `drizzle-orm/sqlite-proxy` 経由の drizzle インスタンスを生成 |
-| `applyMigrations` | `drizzle/<n>_*.sql` 形式のマイグレーションを `Database` ハンドルに適用（FK 有効化 + トランザクション内で順次 exec） |
+| `createTursoServerlessClient` | `@tursodatabase/serverless/compat` の `createClient({ url, authToken })` を呼ぶ薄いラッパー |
+| `createDrizzleFromTursoServerless` | `Client` とスキーマから `drizzle-orm/sqlite-proxy` 経由の drizzle インスタンスを生成 |
+| `applyMigrationsToTursoServerless` | `drizzle/<n>_*.sql` 形式のマイグレーションを `Client` 経由で適用（FK 有効化 + トランザクション内で順次 exec） |
 
-補助API:
+### サブパス `@next-lift/turso-drizzle-adapter/database`（Node ローカル / テスト用）
+
+`@tursodatabase/database`（ネイティブ `.node` バインディング）に依存するエントリ。テストの `:memory:` 接続や CLI でのローカル DB 操作向け。**Web bundle に混入させないため root とは分離している**（混入すると Turbopack の `non-ecmascript placeable asset` エラーで落ちる）。
 
 | 提供API | 説明 |
 | --- | --- |
-| `createTursoDatabaseHandle` | `@tursodatabase/database` の `connect()` を呼ぶ薄いラッパー。利用側が `@tursodatabase/database` を直接 import せずに `Database` ハンドルを得られるようにするための窓口 |
+| `createTursoDatabaseHandle` | `@tursodatabase/database` の `connect()` を呼ぶ薄いラッパー |
+| `createDrizzleFromTursoDatabase` | `Database` ハンドルとスキーマから drizzle インスタンスを生成 |
+| `applyMigrations` | マイグレーションを `Database` ハンドルに適用 |
 
-型契約:
+### 型契約（両エントリで共通）
 
 | 提供型 | 説明 |
 | --- | --- |
 | `SqliteRunResult` | drizzle のドライバ間で共通に扱える run 結果の最小契約。`BaseSQLiteDatabase<'async', SqliteRunResult, schema>` の形で driver 非依存の context 型を書くために利用する |
 
-すべて root `.` から `import { ... } from "@next-lift/turso-drizzle-adapter"` で取得する。
-
 ## 使い方
 
-### drizzle インスタンス生成 + マイグレーション適用
+### Web から接続（serverless/compat）
+
+```typescript
+import {
+  applyMigrationsToTursoServerless,
+  createDrizzleFromTursoServerless,
+  createTursoServerlessClient,
+} from "@next-lift/turso-drizzle-adapter";
+import * as schema from "./database-schemas";
+
+const client = createTursoServerlessClient({ url, authToken });
+await client.execute("PRAGMA foreign_keys = ON");
+await applyMigrationsToTursoServerless(client, "./drizzle");
+const db = createDrizzleFromTursoServerless(client, schema);
+
+const rows = await db.select().from(schema.programs);
+```
+
+### Node ローカル / テストから接続（database, :memory:）
 
 ```typescript
 import {
   applyMigrations,
   createDrizzleFromTursoDatabase,
   createTursoDatabaseHandle,
-} from "@next-lift/turso-drizzle-adapter";
+} from "@next-lift/turso-drizzle-adapter/database";
 import * as schema from "./database-schemas";
 
 const handle = await createTursoDatabaseHandle(":memory:");
 await applyMigrations(handle, "./drizzle");
 const db = createDrizzleFromTursoDatabase(handle, schema);
-
-const rows = await db.select().from(schema.programs);
 ```
 
 ### context 型での共通契約
@@ -52,7 +73,7 @@ const rows = await db.select().from(schema.programs);
 import type { SqliteRunResult } from "@next-lift/turso-drizzle-adapter";
 import type { BaseSQLiteDatabase } from "drizzle-orm/sqlite-core";
 
-// libsql / sqlite-proxy のどちらの戻り値型にも assignable な context 型
+// database / serverless どちらの drizzle インスタンスにも assignable な context 型
 type DatabaseContext = BaseSQLiteDatabase<"async", SqliteRunResult, typeof schema>;
 ```
 
@@ -62,22 +83,30 @@ type DatabaseContext = BaseSQLiteDatabase<"async", SqliteRunResult, typeof schem
 
 ```text
 src/
-  index.ts                              # 公開エントリ（re-export のみ）
-  apply-migrations.ts                   # 公開: マイグレーション適用
-  create-drizzle-from-turso-database.ts # 公開: drizzle インスタンス生成
-  create-turso-database-handle.ts       # 公開: Database ハンドル生成
-  sqlite-run-result.ts                  # 公開: 共通契約型
-  sqlite-proxy/                         # 内部: drizzle-orm/sqlite-proxy への翻訳層
-    proxy-execute.ts                    # SQL 実行 → sqlite-proxy 形式の結果へ変換
-    proxy-transaction.ts                # トランザクション境界 → BEGIN/COMMIT/ROLLBACK + SAVEPOINT へ変換
+  index.ts                                 # 公開: root エントリ（serverless/compat 系のみ）
+  database.ts                              # 公開: ./database エントリ（@tursodatabase/database 系）
+  apply-migrations.ts                      # 公開: database 用マイグレーション適用
+  apply-migrations-to-turso-serverless.ts  # 公開: serverless 用マイグレーション適用
+  create-drizzle-from-turso-database.ts    # 公開: database 用 drizzle 生成
+  create-drizzle-from-turso-serverless.ts  # 公開: serverless 用 drizzle 生成
+  create-turso-database-handle.ts          # 公開: Database ハンドル生成
+  create-turso-serverless-client.ts        # 公開: compat Client 生成
+  sqlite-run-result.ts                     # 公開: 共通契約型
+  sqlite-proxy/                            # 内部: drizzle-orm/sqlite-proxy への翻訳層
+    executor.ts                            # 共通 SqliteExecutor 契約
+    create-database-executor.ts            # database → executor wrapper
+    create-serverless-executor.ts          # serverless/compat → executor wrapper
+    proxy-execute.ts                       # SQL 実行 → sqlite-proxy 形式の結果へ変換
+    proxy-transaction.ts                   # トランザクション境界 → BEGIN/COMMIT/ROLLBACK + SAVEPOINT へ変換
 ```
 
 `src/` 直下が公開 API、`sqlite-proxy/` は本パッケージ内部からのみ呼ばれる翻訳層。
 
 ## 制約と注意事項
 
-- **暫定アダプタ**: Drizzle 公式が `@tursodatabase/*` 用ドライバーを提供したらパッケージごと削除する想定。`createDrizzleFromTursoDatabase` の先頭コメント参照
-- **対応ドライバー**: 現状は `@tursodatabase/database`（in-memory + ローカルファイル）のみ
-- **`PRAGMA foreign_keys`**: `applyMigrations` の中で明示的に `ON` にしている（接続時のデフォルトは将来変わるリスクがあるため、ADR-026）
+- **暫定アダプタ**: Drizzle 公式が `@tursodatabase/*` 用ドライバーを提供したらパッケージごと削除する想定。`createDrizzleFromTursoDatabase` / `createDrizzleFromTursoServerless` の先頭コメント参照
+- **エントリ分離の理由**: `@tursodatabase/database` は `.node` ネイティブバインディングを含むため、Web bundle に混入すると Turbopack の `non-ecmascript placeable asset` エラーで落ちる。root エントリには serverless/compat 系のみを置き、database 系は `./database` サブパスに分離している
+- **対応ドライバー**: `@tursodatabase/database`（in-memory + ローカルファイル）/ `@tursodatabase/serverless/compat`（HTTP）。Phase 4 で `@tursodatabase/sync-react-native` 追加予定
+- **`PRAGMA foreign_keys`**: `applyMigrations` / `applyMigrationsToTursoServerless` の中で明示的に `ON` にしている（接続時のデフォルトは将来変わるリスクがあるため、ADR-026）
 - **トランザクション境界**: `proxy-transaction.ts` がネスト時の SAVEPOINT も含めて翻訳。drizzle 経由のトランザクションは drizzle 自身が SQL を発行するため `proxyExecute` を通る。`proxyTransaction` は drizzle 非経由でトランザクションを扱う場面用（`applyMigrations` 等）
 - 関連ADR: [ADR-029](../../docs/architecture-decision-record/029-tursodatabase-suite-migration.md)

@@ -4,7 +4,7 @@ import {
 	applyMigrations,
 	createDrizzleFromTursoDatabase,
 	createTursoDatabaseHandle,
-} from "@next-lift/turso-drizzle-adapter";
+} from "@next-lift/turso-drizzle-adapter/database";
 import { generateId } from "@next-lift/utilities/generate-id";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";

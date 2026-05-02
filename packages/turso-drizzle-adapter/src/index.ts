@@ -1,8 +1,6 @@
-export { applyMigrations } from "./apply-migrations";
+// Web（Vercel Serverless）から import される root エントリ。`@tursodatabase/database` のネイティブバインディングに依存するエントリは `./database` サブパスに分離している
 export { applyMigrationsToTursoServerless } from "./apply-migrations-to-turso-serverless";
-export { createDrizzleFromTursoDatabase } from "./create-drizzle-from-turso-database";
 export { createDrizzleFromTursoServerless } from "./create-drizzle-from-turso-serverless";
-export { createTursoDatabaseHandle } from "./create-turso-database-handle";
 export {
 	createTursoServerlessClient,
 	type TursoServerlessClientConfig,
