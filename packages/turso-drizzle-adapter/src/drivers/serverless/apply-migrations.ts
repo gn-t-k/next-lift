@@ -1,8 +1,8 @@
 import type { Client } from "@tursodatabase/serverless/compat";
 import { migrate } from "drizzle-orm/sqlite-proxy/migrator";
-import { createDrizzleFromTursoServerless } from "./create-drizzle-from-turso-serverless";
-import { createServerlessExecutor } from "./sqlite-proxy/create-serverless-executor";
-import { proxyTransaction } from "./sqlite-proxy/proxy-transaction";
+import { createServerlessExecutor } from "../../sqlite-proxy/create-serverless-executor";
+import { proxyTransaction } from "../../sqlite-proxy/proxy-transaction";
+import { createDrizzleFromTursoServerless } from "./create-drizzle";
 
 export const applyMigrationsToTursoServerless = async (
 	client: Client,

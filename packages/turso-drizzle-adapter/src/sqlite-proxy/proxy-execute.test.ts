@@ -1,6 +1,6 @@
 import type { Database } from "@tursodatabase/database";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
-import { createTursoDatabaseHandle } from "../create-turso-database-handle";
+import { createTursoDatabaseHandle } from "../drivers/database/create-handle";
 import { createDatabaseExecutor } from "./create-database-executor";
 import type { SqliteExecutor } from "./executor";
 import { proxyExecute } from "./proxy-execute";

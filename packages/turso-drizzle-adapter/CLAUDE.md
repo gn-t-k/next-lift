@@ -85,25 +85,28 @@ type DatabaseContext = BaseSQLiteDatabase<"async", SqliteRunResult, typeof schem
 
 ```text
 src/
-  index.ts                                 # 公開: root エントリ（共通型のみ）
-  serverless.ts                            # 公開: ./serverless エントリ（@tursodatabase/serverless/compat 系）
-  database.ts                              # 公開: ./database エントリ（@tursodatabase/database 系）
-  apply-migrations.ts                      # 公開: database 用マイグレーション適用
-  apply-migrations-to-turso-serverless.ts  # 公開: serverless 用マイグレーション適用
-  create-drizzle-from-turso-database.ts    # 公開: database 用 drizzle 生成
-  create-drizzle-from-turso-serverless.ts  # 公開: serverless 用 drizzle 生成
-  create-turso-database-handle.ts          # 公開: Database ハンドル生成
-  create-turso-serverless-client.ts        # 公開: compat Client 生成
-  sqlite-run-result.ts                     # 公開: 共通契約型
-  sqlite-proxy/                            # 内部: drizzle-orm/sqlite-proxy への翻訳層
-    executor.ts                            # 共通 SqliteExecutor 契約
-    create-database-executor.ts            # database → executor wrapper
-    create-serverless-executor.ts          # serverless/compat → executor wrapper
-    proxy-execute.ts                       # SQL 実行 → sqlite-proxy 形式の結果へ変換
-    proxy-transaction.ts                   # トランザクション境界 → BEGIN/COMMIT/ROLLBACK + SAVEPOINT へ変換
+  sqlite-run-result.ts          # 公開: root エントリ（SqliteRunResult の定義）
+  drivers/                      # 公開: ドライバ別ファサード
+    serverless/
+      index.ts                  # ./serverless エントリ
+      create-client.ts          # compat Client 生成
+      create-drizzle.ts         # serverless 用 drizzle 生成
+      apply-migrations.ts       # serverless 用マイグレーション適用
+    database/
+      index.ts                  # ./database エントリ
+      create-handle.ts          # Database ハンドル生成
+      create-handle.test.ts
+      create-drizzle.ts         # database 用 drizzle 生成
+      apply-migrations.ts       # database 用マイグレーション適用
+  sqlite-proxy/                 # 内部: drizzle-orm/sqlite-proxy への翻訳層
+    executor.ts                 # 共通 SqliteExecutor 契約
+    create-database-executor.ts # database → executor wrapper
+    create-serverless-executor.ts # serverless/compat → executor wrapper
+    proxy-execute.ts            # SQL 実行 → sqlite-proxy 形式の結果へ変換
+    proxy-transaction.ts        # トランザクション境界 → BEGIN/COMMIT/ROLLBACK + SAVEPOINT へ変換
 ```
 
-`src/` 直下が公開 API、`sqlite-proxy/` は本パッケージ内部からのみ呼ばれる翻訳層。
+`drivers/` がドライバ別の公開ファサード、`sqlite-proxy/` は本パッケージ内部からのみ呼ばれる翻訳層。
 
 ## 制約と注意事項
 
