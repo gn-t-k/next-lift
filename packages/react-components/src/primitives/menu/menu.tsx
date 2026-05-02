@@ -18,6 +18,16 @@ import { cn } from "../../libs/utils";
 
 export const MenuTrigger = MenuTriggerPrimitive;
 
+const popoverClass = [
+	"min-w-(--trigger-width) max-w-xs origin-(--trigger-anchor-point)",
+	"rounded-lg border border-border bg-overlay text-overlay-fg shadow-lg outline-hidden",
+	"entering:fade-in entering:animate-in entering:duration-150",
+	"exiting:fade-out exiting:animate-out exiting:duration-100",
+].join(" ");
+
+const menuClass =
+	"flex max-h-[inherit] flex-col gap-px overflow-y-auto overscroll-contain p-1 outline-hidden";
+
 type MenuProps<T> = MenuPrimitiveProps<T> &
 	Pick<PopoverProps, "placement" | "offset">;
 
@@ -28,53 +38,13 @@ export const Menu = <T extends object>({
 	...props
 }: MenuProps<T>) => (
 	<Popover
-		className={cx(popoverStyles())}
+		className={cx(popoverClass)}
 		offset={offset}
 		{...(placement !== undefined ? { placement } : {})}
 	>
-		<MenuPrimitive className={cx(menuStyles(), className)} {...props} />
+		<MenuPrimitive className={cx(menuClass, className)} {...props} />
 	</Popover>
 );
-
-type MenuItemProps = MenuItemPrimitiveProps &
-	VariantProps<typeof menuItemStyles>;
-
-export const MenuItem: FC<MenuItemProps> = ({
-	className,
-	intent,
-	...props
-}) => (
-	<MenuItemPrimitive
-		className={cx(menuItemStyles({ intent }), className)}
-		{...props}
-	/>
-);
-
-export const MenuSeparator: FC<Omit<SeparatorProps, "orientation">> = ({
-	className,
-	...props
-}) => (
-	<Separator
-		orientation="horizontal"
-		className={cn(menuSeparatorStyles(), className)}
-		{...props}
-	/>
-);
-
-const popoverStyles = tv({
-	base: [
-		"min-w-(--trigger-width) max-w-xs origin-(--trigger-anchor-point)",
-		"rounded-lg border border-border bg-overlay text-overlay-fg shadow-lg outline-hidden",
-		"entering:fade-in entering:animate-in entering:duration-150",
-		"exiting:fade-out exiting:animate-out exiting:duration-100",
-	],
-});
-
-const menuStyles = tv({
-	base: [
-		"flex max-h-[inherit] flex-col gap-px overflow-y-auto overscroll-contain p-1 outline-hidden",
-	],
-});
 
 const menuItemStyles = tv({
 	base: [
@@ -97,6 +67,29 @@ const menuItemStyles = tv({
 	},
 });
 
-const menuSeparatorStyles = tv({
-	base: "-mx-1 my-1 h-px bg-border",
-});
+type MenuItemProps = MenuItemPrimitiveProps &
+	VariantProps<typeof menuItemStyles>;
+
+export const MenuItem: FC<MenuItemProps> = ({
+	className,
+	intent,
+	...props
+}) => (
+	<MenuItemPrimitive
+		className={cx(menuItemStyles({ intent }), className)}
+		{...props}
+	/>
+);
+
+const menuSeparatorClass = "-mx-1 my-1 h-px bg-border";
+
+export const MenuSeparator: FC<Omit<SeparatorProps, "orientation">> = ({
+	className,
+	...props
+}) => (
+	<Separator
+		orientation="horizontal"
+		className={cn(menuSeparatorClass, className)}
+		{...props}
+	/>
+);
