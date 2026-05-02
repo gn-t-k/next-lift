@@ -3,6 +3,7 @@ export * from "./drawer";
 export * from "./error-alert";
 export * from "./gym-context";
 export * from "./link";
+export * from "./menu";
 export * from "./modal";
 export * from "./number-field";
 export * from "./page-heading";
