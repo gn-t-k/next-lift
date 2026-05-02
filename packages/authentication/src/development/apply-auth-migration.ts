@@ -1,11 +1,11 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { createClient } from "@libsql/client";
+import {
+	applyMigrationsToTursoServerless,
+	createTursoServerlessClient,
+} from "@next-lift/turso-drizzle-adapter";
 import { R } from "@praha/byethrow";
 import { ErrorFactory } from "@praha/error-factory";
-import { drizzle } from "drizzle-orm/libsql";
-import { migrate } from "drizzle-orm/libsql/migrator";
-import * as schema from "../database-schemas";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const migrationsFolder = path.join(__dirname, "../../drizzle");
@@ -21,12 +21,11 @@ export const applyAuthMigration = (config: {
 }): R.ResultAsync<void, ApplyAuthMigrationError> =>
 	R.try({
 		try: async () => {
-			const client = createClient({
+			const client = createTursoServerlessClient({
 				url: config.url,
 				authToken: config.authToken,
 			});
-			const db = drizzle(client, { schema });
-			await migrate(db, { migrationsFolder });
+			await applyMigrationsToTursoServerless(client, migrationsFolder);
 		},
 		catch: (e) => new ApplyAuthMigrationError({ cause: e }),
 	});
