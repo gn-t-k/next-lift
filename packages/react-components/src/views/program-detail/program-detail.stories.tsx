@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps } from "react";
+import { fn } from "storybook/test";
 import { PageSection } from "../../primitives/page-section";
 import { ProgramDetail } from "./program-detail";
 
@@ -29,6 +30,7 @@ const meta = {
 	tags: ["autodocs"],
 	args: {
 		defaultSelectedDayId: "d1",
+		onAddDay: fn(),
 	},
 	decorators: [
 		(Story) => (
@@ -82,6 +84,36 @@ export const Desktop: Story = {
 		name: "5/3/1 BBB",
 		meta: "メインリフトは 5/3/1 で、補助は BBB（Boring But Big）。\nDeload week は 4 週ごとに挿入する。",
 		days: SAMPLE_DAYS,
+	},
+	globals: {
+		viewport: { value: "desktop" },
+	},
+};
+
+export const NoDays: Story = {
+	args: {
+		name: "新しいプログラム",
+		meta: null,
+		days: [],
+	},
+};
+
+export const NoDaysMobile: Story = {
+	args: {
+		name: "新しいプログラム",
+		meta: null,
+		days: [],
+	},
+	globals: {
+		viewport: { value: "mobile" },
+	},
+};
+
+export const NoDaysDesktop: Story = {
+	args: {
+		name: "新しいプログラム",
+		meta: null,
+		days: [],
 	},
 	globals: {
 		viewport: { value: "desktop" },
