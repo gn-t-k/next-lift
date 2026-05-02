@@ -11,9 +11,9 @@ export const runInPerUserDatabaseScope = <T>(
 ): R.ResultAsync<Awaited<T>, ApplyMigrationError> => {
 	return R.try({
 		try: async () => {
-			const client = await createPerUserDatabaseClient(credentials);
+			const { db, client } = await createPerUserDatabaseClient(credentials);
 			await migrateDatabase(client);
-			return await withPerUserDatabase(() => client, fn);
+			return await withPerUserDatabase(() => db, fn);
 		},
 		catch: (e) => new ApplyMigrationError({ cause: e }),
 	});
