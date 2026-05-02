@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useMemo, useState } from "react";
 import type { Key } from "react-aria-components";
+import { expect, userEvent, waitFor, within } from "storybook/test";
 import {
 	ComboBox,
 	ComboBoxDescription,
@@ -230,4 +231,45 @@ const CreateNewOptionDemo = () => {
 export const CreateNewOption: Story = {
 	name: "未登録項目をその場で登録 (拡張性確認)",
 	render: () => <CreateNewOptionDemo />,
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const input = canvas.getByRole("combobox");
+
+		// 「懸垂」と入力 (登録済みに存在しない)
+		await userEvent.click(input);
+		await userEvent.type(input, "懸垂");
+
+		// portal に出る popover から「「懸垂」を登録する」候補を待つ
+		const createOption = await waitFor(() => {
+			const options = Array.from(
+				document.querySelectorAll<HTMLElement>('[role="option"]'),
+			);
+			const found = options.find((el) =>
+				el.textContent?.includes("「懸垂」を登録する"),
+			);
+			expect(found).toBeDefined();
+			return found as HTMLElement;
+		});
+
+		// 候補をクリックすると、input が「懸垂」に置き換わる
+		await userEvent.click(createOption);
+		await waitFor(() => {
+			expect(input).toHaveValue("懸垂");
+		});
+
+		// 同じ「懸垂」を入力し直しても登録済みになっているので
+		// CREATE option は出ず、登録済みの項目が選択候補に出る
+		await userEvent.clear(input);
+		await userEvent.type(input, "懸垂");
+		await waitFor(() => {
+			const options = Array.from(
+				document.querySelectorAll<HTMLElement>('[role="option"]'),
+			);
+			const labels = options.map((el) => el.textContent ?? "");
+			// 「懸垂」を登録する」候補が消えていること
+			expect(labels.some((l) => l.includes("「懸垂」を登録する"))).toBe(false);
+			// 登録済みの「懸垂」が候補に出ていること
+			expect(labels.some((l) => l.trim() === "懸垂")).toBe(true);
+		});
+	},
 };
