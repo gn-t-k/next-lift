@@ -56,21 +56,22 @@
 
 ### 1. exercises スキーマへの weight_step 追加
 
-- [ ] 1.1. Drizzle スキーマに `weightStep` カラムと CHECK 制約を追加
+- [x] 1.1. Drizzle スキーマに `weightStep` カラムと CHECK 制約を追加
   - 説明: `packages/per-user-database/src/database-schemas/exercises.ts` に `weightStep: real("weight_step").notNull().default(2.5)` を追加し、`check("exercises_weight_step_check", sql\`${table.weightStep} > 0\`)` を `(table) => [...]` の配列に追加する
   - 完了条件:
     - 型: `pnpm type-check` が通ること
     - 確認: `exercises.ts` に `weight_step` カラム定義と CHECK 制約が記述されている
-- [ ] 1.2. exercisesFactory に `weightStep: 2.5` を追加
+- [x] 1.2. exercisesFactory に `weightStep: 2.5` を追加
   - 説明: `packages/per-user-database/src/testing/factories/exercises-factory.ts` の resolver の戻り値に `weightStep: 2.5` を追加する
   - 完了条件:
     - 型: `pnpm type-check` が通ること（factory の型がスキーマ型と整合）
-- [ ] 1.3. マイグレーションを生成
+- [x] 1.3. マイグレーションを生成
   - 説明: `packages/per-user-database` で `pnpm migration:generate` を実行し、`drizzle/0003_*.sql` を生成する
   - 完了条件:
     - 確認: `drizzle/0003_*.sql` が生成され、`exercises` への `weight_step real NOT NULL DEFAULT 2.5` 追加と CHECK 制約が含まれている
     - 確認: 既存行に対して DEFAULT 2.5 が適用される SQL になっている（SQLite の制約上 `__new_exercises` テーブル経由の再構築になる想定）
-- [ ] 1.4. 既存テストでマイグレーション適用と既定値挙動を回帰検証
+  - 補足: drizzle-kit が生成した `__new_exercises` 経由の再作成 SQL は libsql/turso 環境で `sqlite_autoindex___new_exercises_1 already exists` の名前衝突エラーになるため、`ALTER TABLE exercises ADD COLUMN weight_step real NOT NULL DEFAULT 2.5 CONSTRAINT exercises_weight_step_check CHECK (weight_step > 0)` の単一 ALTER 文に手動で書き換えた。CHECK 制約のインライン指定で table-recreation を回避
+- [x] 1.4. 既存テストでマイグレーション適用と既定値挙動を回帰検証
   - 説明: `pnpm test` を `packages/per-user-database` で実行し、マイグレーション適用が成功し、ファクトリ経由 / 直接 INSERT で既定値 2.5 が反映されることを確認する。既存テストでカバーされない場合のみ統合テストを1件追加（`weight_step` 未指定時に 2.5 / `weight_step = 0` で CHECK 違反）
   - 完了条件:
     - テスト: `pnpm test` が pass すること
@@ -78,18 +79,18 @@
 
 ### 2. ERD ドキュメントの更新
 
-- [ ] 2.1. `schema.md` の Mermaid ERD に `weight_step` を追記
+- [x] 2.1. `schema.md` の Mermaid ERD に `weight_step` を追記
   - 説明: `docs/project/erd-design/schema.md` の `exercises { ... }` ブロック（69〜73行目）に `weight_step real "NOT NULL DEFAULT 2.5"` を追加する
   - 完了条件:
     - 確認: Mermaid ERD の `exercises` テーブルに `weight_step` 行が含まれている
-- [ ] 2.2. `schema.md` 「重量関連」補足に `weight_step` の説明を追記
+- [x] 2.2. `schema.md` 「重量関連」補足に `weight_step` の説明を追記
   - 説明: `## カラム設計の補足` の `### 重量関連` セクション（155行目以降）に `weight_step` の説明（kg基準・種目ごとに調整可能・DEFAULT 2.5 の根拠）を追加する
   - 完了条件:
     - 確認: `weight_step` の意図と DEFAULT 値の根拠が記述され、`default_weight_input_unit` と並ぶ「種目ごとの設定」として整理されている
 
 ### 3. ER 設計判断ログへの記録
 
-- [ ] 3.1. `design-decisions.md` に判断 #33 を追記
+- [x] 3.1. `design-decisions.md` に判断 #33 を追記
   - 説明: `docs/project/erd-design/design-decisions.md` の表に #33 を追加する。判断内容は「`exercises.weight_step` を新設し、UI ハードコードでなく種目スキーマで重量微調整刻みを持つ」。理由には Pros / Cons を併記し、ui-design 設計判断 #59 と ADR-027（同じ「種目ごとの設定」位置づけ）への参照を含める。フェーズ列は `post-5`
   - 完了条件:
     - 確認: 表に #33 行が追加され、判断内容・Pros/Cons・参照（#59 / ADR-027）が記述されている

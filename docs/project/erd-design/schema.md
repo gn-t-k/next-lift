@@ -70,6 +70,7 @@ erDiagram
         id text PK
         name text
         default_weight_input_unit text "NOT NULL"
+        weight_step real "NOT NULL DEFAULT 2.5"
     }
     one_rep_maxes {
         id text PK
@@ -159,6 +160,7 @@ erDiagram
 - **default_weight_input_unit**: 種目ごとの入力単位プリセット（"kg" / "lbs"）。`exercises` のみに存在し、新規入力フォームの初期値として使用。NOT NULL DEFAULT `'kg'`。詳細はADR-027
 - **weight_value**: セット計画の重量指定値。weight_typeが"kg"ならkg値、"percent_1rm"なら%値
 - **weight_type**: 重量指定の種類。"kg"=絶対重量、"percent_1rm"=1RMに対する相対指定。「単位」ではなく「種類」の区分
+- **weight_step**: 種目ごとの重量微調整UIの刻み量（kg基準）。`exercises` のみに存在。バーベル系=2.5kg/ダンベル系=1kg or 0.5kg/ケトルベル=4kg と種目ごとに異なるためスキーマで保持。NOT NULL DEFAULT `2.5`（バーベル系の標準刻み）。CHECK `> 0`。詳細はER設計判断 #33
 
 ### タイムスタンプ
 
