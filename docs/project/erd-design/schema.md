@@ -7,9 +7,9 @@ erDiagram
     programs ||--o{ days : "has"
     days ||--o{ exercise_plans : "has"
     exercise_plans ||--o{ set_plans : "has"
-    set_plans ||--|| weight_reps_params : "params"
-    set_plans ||--|| weight_rpe_params : "params"
-    set_plans ||--|| reps_rpe_params : "params"
+    set_plans ||--o| weight_reps_params : "params"
+    set_plans ||--o| weight_rpe_params : "params"
+    set_plans ||--o| reps_rpe_params : "params"
     exercises ||--o{ exercise_plan_exercises : "target"
     exercise_plan_exercises ||--|| exercise_plans : "linked to"
     exercises ||--o{ exercise_logs : "target"
@@ -70,6 +70,7 @@ erDiagram
         id text PK
         name text
         default_weight_input_unit text "NOT NULL"
+        weight_step real "NOT NULL DEFAULT 2.5"
     }
     one_rep_maxes {
         id text PK
@@ -139,7 +140,7 @@ erDiagram
 | programs → days | 1:0..n | 0はプログラム作成途中の状態 |
 | days → exercise_plans | 1:0..n | 種目未配置のDayは作成途中で正当 |
 | exercise_plans → set_plans | 1:0..n | セット設定前の途中保存を許容 |
-| set_plans → パラメータテーブル | 1:1（排他） | plan_typeに応じて3テーブルのうち1つに行が存在 |
+| set_plans → パラメータテーブル | 1:0..1（排他） | plan_typeに応じて3テーブルのうち0または1行存在。0行=値未入力状態（新規作成直後など）。1行存在する場合はplan_typeに対応するテーブルのみ |
 | exercise_plans → exercise_plan_exercises | 1:0..1 | 行なし=プレースホルダー枠 |
 | exercises → exercise_plan_exercises | 1:0..n | 同一種目が複数の計画枠に使用可 |
 | exercises → exercise_logs | 1:0..n | 記録のない種目が正当 |
@@ -159,6 +160,7 @@ erDiagram
 - **default_weight_input_unit**: 種目ごとの入力単位プリセット（"kg" / "lbs"）。`exercises` のみに存在し、新規入力フォームの初期値として使用。NOT NULL DEFAULT `'kg'`。詳細はADR-027
 - **weight_value**: セット計画の重量指定値。weight_typeが"kg"ならkg値、"percent_1rm"なら%値
 - **weight_type**: 重量指定の種類。"kg"=絶対重量、"percent_1rm"=1RMに対する相対指定。「単位」ではなく「種類」の区分
+- **weight_step**: 種目ごとの重量微調整UIの刻み量（kg基準）。`exercises` のみに存在。バーベル系=2.5kg/ダンベル系=1kg or 0.5kg/ケトルベル=4kg と種目ごとに異なるためスキーマで保持。NOT NULL DEFAULT `2.5`（バーベル系の標準刻み）。CHECK `> 0`。詳細はER設計判断 #33
 
 ### タイムスタンプ
 
@@ -171,7 +173,12 @@ erDiagram
 
 ### plan_type
 
-set_plansのplan_typeは3値: "weight_reps" / "weight_rpe" / "reps_rpe"。対応するパラメータテーブルに1行存在する。排他制御はアプリ側。
+set_plansのplan_typeは3値: "weight_reps" / "weight_rpe" / "reps_rpe"。対応するパラメータテーブルに**0または1行**存在する（設計判断#32）。
+
+- params行あり: plan_typeに対応するテーブルに1行存在し、値が入力済み
+- params行なし: 値未入力状態（新規作成直後にアプリ層が`set_plans`行のみ生成するシナリオ）。この場合plan_typeの解釈は保留（ユーザーが値を入力したタイミングで対応するparamsテーブルに行を作成）
+
+排他制御はアプリ側。
 
 ### nullable カラム（7件）
 

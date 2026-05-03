@@ -134,22 +134,79 @@ src/
 
 ### クラス名ユーティリティの使い分け
 
-#### `cn` - 通常のHTML要素用
+#### ルール 1: consumer の `className` 上書きには `cn` / `cx` が必須
+
+consumer が渡す `className` で tailwind-merge を効かせて安全な上書きを保証するために、`cn` / `cx` を必ず経由する。静的 class が 1 つだけでも必要。
+
+```tsx
+// ❌ 単純連結: p-2 と p-4 が両方 class に入り、CSS 適用順が build 順依存になる
+<Label className={`block p-2 ${className}`} />
+
+// ✅ cn 経由: tailwind-merge が p-4 を p-2 より優先させる
+<Label className={cn("block p-2", className)} />
+```
+
+#### ルール 2: `className` の型で `cn` と `cx` を使い分ける
+
+| 種別 | `className` の型 | 使うヘルパー |
+| --- | --- | --- |
+| 通常の HTML 要素（`div`, `span` 等） | `string \| undefined` | `cn` |
+| React Aria の string-only className（`Label`, `Text`, `Separator` 等） | `string \| undefined` | `cn` |
+| React Aria の render-prop className（`Button`, `Input`, `Group`, `ListBoxItem`, `MenuItem`, `Popover`, `ListBox`, `ComboBox`, `NumberField`, `TextField`, `FieldError`, `Tab`, `TabList`, `TabPanel`, `Tabs` 等） | `string \| ((v: RenderProps) => string) \| undefined` | `cx` |
+
+`cx`（`libs/primitive.ts`）は `composeRenderProps` を内部で使い、render-prop を関数のまま受けて最終的に `twMerge` する。`cn` を render-prop 対応の `className` に渡すと型エラーになる。逆に string-only の `className` に `cx` の戻り値（関数型）を渡してもエラーになる。
 
 ```typescript
 import { cn } from "@next-lift/react-components/libs";
 
-// 通常のHTML要素（div, pre, span等）に使用
+// HTML 要素 / React Aria の string-only className に使用
 <div className={cn("bg-primary", "text-white", className)} />
+<Label className={cn("block font-medium", className)} />
 ```
-
-#### `cx` - React Aria Components用
 
 ```typescript
 import { cx } from "@next-lift/react-components/libs";
 
-// React Aria Componentsに使用。classNameが関数（レンダープロップ）の場合もマージ可能
+// React Aria の render-prop 対応 className に使用
 <Button className={cx("bg-primary", className)} />
+<Tab className={cx("rounded-md font-medium", className)} />
+```
+
+#### ルール 3: static class は inline（`cn` / `cx` 可変引数）を default にする
+
+| 書き方 | 評価 |
+| --- | --- |
+| `cn("block p-2 text-fg", className)` | ✅ 推奨。一度しか参照しない static class は最も素直 |
+| `const labelClass = "block p-2 text-fg"; cn(labelClass, className)` | △ 同じ static class が **2 箇所以上** から参照される時のみ |
+| `tv({ base: ["block", "p-2"] })` — variants なし | ❌ 禁止。`tv` の利点（variant 拡張・twMerge）を使わない文字列定数と等価 |
+| `["block", "p-2"].join(" ")` | ❌ 禁止。可変引数で `cn` / `cx` に直接渡せばよい |
+| `tv({ base, variants: { ... } })` | ✅ variants / slots を使う場合のみ `tv` を使う |
+
+```tsx
+// ✅ 推奨: inline 可変引数
+<Label className={cn("block font-medium text-base/6 text-fg sm:text-sm/6", className)} />
+
+// ❌ 禁止: variants なしの tv
+const labelStyles = tv({ base: ["block", "font-medium"] });
+<Label className={cn(labelStyles(), className)} />
+
+// ❌ 禁止: .join(" ")
+const labelClass = ["block", "font-medium"].join(" ");
+```
+
+#### ルール 4: 配列 + `.join(" ")` は使わない
+
+`cn` / `cx` の可変引数（内部で `clsx` を使用）に直接渡す。
+
+```tsx
+// ❌
+const classes = ["flex", "flex-col", "gap-4"].join(" ");
+<div className={cn(classes, className)} />
+
+// ✅
+<div className={cn("flex", "flex-col", "gap-4", className)} />
+// または長い場合は一文字列で
+<div className={cn("flex flex-col gap-4", className)} />
 ```
 
 ### コンポーネントの利用
