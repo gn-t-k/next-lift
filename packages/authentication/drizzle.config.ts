@@ -13,7 +13,7 @@ const dbCredentials =
 
 export default defineConfig({
 	out: "./drizzle",
-	schema: "./src/database-schemas/*.ts",
+	schema: "./src/database-schemas/index.ts",
 	dialect: "turso",
 	dbCredentials,
 });
