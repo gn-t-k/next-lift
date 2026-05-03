@@ -1,13 +1,17 @@
 import type { Database } from "@tursodatabase/database";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
-import { createTursoDatabaseHandle } from "../create-turso-database-handle";
+import { createTursoDatabaseHandle } from "../drivers/database/create-handle";
+import { createDatabaseExecutor } from "./create-database-executor";
+import type { SqliteExecutor } from "./executor";
 import { proxyTransaction } from "./proxy-transaction";
 
 describe("proxyTransaction", () => {
 	let db: Database;
+	let executor: SqliteExecutor;
 
 	beforeEach(async () => {
 		db = await createTursoDatabaseHandle(":memory:");
+		executor = createDatabaseExecutor(db);
 		await db.exec(
 			"CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL)",
 		);
@@ -19,7 +23,7 @@ describe("proxyTransaction", () => {
 
 	describe("正常終了したとき", () => {
 		test("COMMIT され副作用が確定すること", async () => {
-			await proxyTransaction(db, async () => {
+			await proxyTransaction(executor, async () => {
 				await db
 					.prepare("INSERT INTO users (id, name) VALUES (?, ?)")
 					.run(1, "Alice");
@@ -33,7 +37,7 @@ describe("proxyTransaction", () => {
 	describe("途中でエラーが発生したとき", () => {
 		test("ROLLBACK され副作用が残らないこと", async () => {
 			await expect(
-				proxyTransaction(db, async () => {
+				proxyTransaction(executor, async () => {
 					await db
 						.prepare("INSERT INTO users (id, name) VALUES (?, ?)")
 						.run(1, "Alice");
@@ -48,14 +52,14 @@ describe("proxyTransaction", () => {
 
 	describe("ネストトランザクションで内側がエラーになったとき", () => {
 		test("内側のみ巻き戻り、外側は継続できること", async () => {
-			await proxyTransaction(db, async () => {
+			await proxyTransaction(executor, async () => {
 				await db
 					.prepare("INSERT INTO users (id, name) VALUES (?, ?)")
 					.run(1, "Outer");
 
 				await expect(
 					proxyTransaction(
-						db,
+						executor,
 						async () => {
 							await db
 								.prepare("INSERT INTO users (id, name) VALUES (?, ?)")

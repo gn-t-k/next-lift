@@ -4,7 +4,9 @@
 	"private": true,
 	"type": "module",
 	"exports": {
-		".": "./src/index.ts"
+		".": "./src/sqlite-run-result.ts",
+		"./serverless": "./src/drivers/serverless/index.ts",
+		"./database": "./src/drivers/database/index.ts"
 	},
 	"scripts": {
 		"lint": "biome check .",
@@ -15,6 +17,7 @@
 	},
 	"dependencies": {
 		"@tursodatabase/database": "0.5.3",
+		"@tursodatabase/serverless": "1.1.2",
 		"drizzle-orm": "0.45.2"
 	},
 	"devDependencies": {

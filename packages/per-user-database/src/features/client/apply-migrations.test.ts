@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import {
 	applyMigrations,
 	createTursoDatabaseHandle,
-} from "@next-lift/turso-drizzle-adapter";
+} from "@next-lift/turso-drizzle-adapter/database";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 const migrationsFolder = path.join(

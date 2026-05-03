@@ -4,7 +4,7 @@ import {
 	applyMigrations,
 	createDrizzleFromTursoDatabase,
 	createTursoDatabaseHandle,
-} from "@next-lift/turso-drizzle-adapter";
+} from "@next-lift/turso-drizzle-adapter/database";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { programs, schema } from "../../database-schemas";
 
