@@ -1,5 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { useMemo, useState } from "react";
+import {
+	type FC,
+	useMemo,
+	useOptimistic,
+	useState,
+	useTransition,
+} from "react";
 import type { Key } from "react-aria-components";
 import { expect, userEvent, waitFor, within } from "storybook/test";
 import {
@@ -12,7 +18,9 @@ import {
 	ComboBoxList,
 } from "./combo-box";
 
-const exercises = [
+type Exercise = { id: string; name: string };
+
+const exercises: Exercise[] = [
 	{ id: "bench-press", name: "ベンチプレス" },
 	{ id: "incline-bench-press", name: "インクラインベンチプレス" },
 	{ id: "dumbbell-press", name: "ダンベルプレス" },
@@ -163,37 +171,78 @@ export const Disabled: Story = {
 
 const CREATE_OPTION_ID = "__create__";
 
-const CreateNewOptionDemo = () => {
-	const [registered, setRegistered] = useState(exercises);
+// 実アプリでは apps/web/.../_mutations/add-exercise.ts に "use server" で配置する。
+// 戻り値は @praha/byethrow の R.Result<Exercise, AddExerciseError> となり、
+// 成功時は server action 内で revalidatePath を呼んで RSC を再評価し、
+// 親 Server Component から流れてくる exercises props が新しい一覧で再流入する。
+// このストーリーではネットワーク遅延だけを模倣している。
+type AddExerciseAction = (name: string) => Promise<Exercise>;
+
+const simulateAddExerciseAction: AddExerciseAction = async (name) => {
+	await new Promise((resolve) => setTimeout(resolve, 300));
+	return { id: `srv-${Date.now()}`, name };
+};
+
+// 実アプリで apps/web 側に置く Client Component の想定。
+// - exercises は親の Server Component で取得した一覧を props で受け取る
+// - addExercise は server action (直接 import するか props 経由で受け取る)
+type ExerciseComboBoxProps = {
+	exercises: Exercise[];
+	addExercise: AddExerciseAction;
+};
+
+const ExerciseComboBox: FC<ExerciseComboBoxProps> = ({
+	exercises,
+	addExercise,
+}) => {
+	// useOptimistic は server action 完了 (= props の exercises 再流入) を
+	// 待たずに新規種目を一覧へ反映する。props が更新された時点で
+	// optimistic state は破棄され、サーバー由来の値に置き換わる。
+	const [optimisticExercises, addOptimisticExercise] = useOptimistic(
+		exercises,
+		(current, draft: Exercise) => [...current, draft],
+	);
+
+	const [, startTransition] = useTransition();
 	const [inputValue, setInputValue] = useState("");
 	const [selectedKey, setSelectedKey] = useState<Key | null>(null);
 
 	const items = useMemo(() => {
 		const trimmed = inputValue.trim();
-		if (trimmed === "") return registered;
+		if (trimmed === "") return optimisticExercises;
 		// React Aria の ComboBox は controlled inputValue では自動フィルタしないので
 		// 自前で contains フィルタ + 一致なし時の CREATE 候補挿入を行う
 		const lower = trimmed.toLowerCase();
-		const filtered = registered.filter((e) =>
+		const filtered = optimisticExercises.filter((e) =>
 			e.name.toLowerCase().includes(lower),
 		);
 		if (filtered.length === 0) {
 			return [{ id: CREATE_OPTION_ID, name: `「${trimmed}」を登録する` }];
 		}
 		return filtered;
-	}, [inputValue, registered]);
+	}, [inputValue, optimisticExercises]);
 
 	const onSelectionChange = (key: Key | null) => {
 		if (key === CREATE_OPTION_ID) {
 			const trimmed = inputValue.trim();
-			const newId = `custom-${Date.now()}`;
-			setRegistered((prev) => [...prev, { id: newId, name: trimmed }]);
-			setSelectedKey(newId);
-			setInputValue(trimmed);
+			const optimisticId = `optimistic-${Date.now()}`;
+			// useOptimistic と server action は transition 内で呼ぶ必要がある
+			startTransition(async () => {
+				addOptimisticExercise({ id: optimisticId, name: trimmed });
+				setSelectedKey(optimisticId);
+				setInputValue(trimmed);
+
+				const created = await addExercise(trimmed);
+				// 実アプリでは server action 内の revalidatePath で
+				// 親 RSC が再評価され exercises props が新しい値で再流入し、
+				// optimistic state はその時点で捨てられる。
+				// 選択キーは server 採番の id に切り替える。
+				setSelectedKey(created.id);
+			});
 			return;
 		}
 		setSelectedKey(key);
-		const matched = registered.find((e) => e.id === key);
+		const matched = optimisticExercises.find((e) => e.id === key);
 		if (matched !== undefined) {
 			setInputValue(matched.name);
 		}
@@ -213,7 +262,7 @@ const CreateNewOptionDemo = () => {
 			<ComboBoxDescription>
 				一致する種目がなければ「<strong>○○を登録する</strong>」が候補に出ます
 			</ComboBoxDescription>
-			<ComboBoxList<{ id: string; name: string }>>
+			<ComboBoxList<Exercise>>
 				{(item) =>
 					item.id === CREATE_OPTION_ID ? (
 						<ComboBoxItem
@@ -229,6 +278,19 @@ const CreateNewOptionDemo = () => {
 			</ComboBoxList>
 		</ComboBox>
 	);
+};
+
+// ストーリー専用ラッパ。実アプリでは Server Component が exercises を取得し、
+// server action 内の revalidatePath が再取得を起こす。
+// ストーリーでは local state でその挙動を模倣する。
+const CreateNewOptionDemo: FC = () => {
+	const [registered, setRegistered] = useState(exercises);
+	const addExercise: AddExerciseAction = async (name) => {
+		const created = await simulateAddExerciseAction(name);
+		setRegistered((prev) => [...prev, created]);
+		return created;
+	};
+	return <ExerciseComboBox exercises={registered} addExercise={addExercise} />;
 };
 
 export const CreateNewOption: Story = {
