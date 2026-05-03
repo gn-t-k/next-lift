@@ -7,11 +7,16 @@ import {
 	Tabs,
 } from "../../primitives/tabs";
 import { CreateDayCard } from "./create-day-card";
+import {
+	type ExercisePlan,
+	ExercisePlanSection,
+} from "./exercise-plan-section";
 
 type Day = {
 	id: string;
 	label: string;
 	detailHref: string;
+	exercisePlans: ExercisePlan[];
 };
 
 type Props = {
@@ -55,8 +60,9 @@ export const ProgramDetail: FC<Props> = ({
 						</TabList>
 					</TabScrollArea>
 					{days.map((day) => (
-						// Day の中身 (種目計画等) は別タスクで実装予定のため、骨格段階では空
-						<TabPanel key={day.id} id={day.id} />
+						<TabPanel key={day.id} id={day.id} className="pt-4">
+							<ExercisePlanSection exercisePlans={day.exercisePlans} />
+						</TabPanel>
 					))}
 				</Tabs>
 			)}
