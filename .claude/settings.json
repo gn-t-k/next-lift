@@ -21,6 +21,10 @@
           {
             "type": "command",
             "command": "bash .claude/scripts/validate-gh-template.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/scripts/validate-branch-name.sh"
           }
         ]
       }
