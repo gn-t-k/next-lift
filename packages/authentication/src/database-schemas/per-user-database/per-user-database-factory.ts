@@ -1,0 +1,22 @@
+import { generateId } from "@next-lift/utilities/generate-id";
+import { defineFactory } from "@praha/drizzle-factory";
+import { schema } from "../index";
+import { userFactory } from "../user/user-factory";
+
+export const perUserDatabaseFactory = defineFactory({
+	schema,
+	table: "perUserDatabase",
+	resolver: ({ sequence, use }) => ({
+		id: generateId(),
+		userId: () =>
+			use(userFactory)
+				.create()
+				.then((u) => u.id),
+		databaseName: `next-lift-test-user-${sequence}`,
+		databaseUrl: `libsql://next-lift-test-user-${sequence}.turso.io`,
+		encryptedToken: `encrypted-token-${sequence}`,
+		tokenExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+		createdAt: new Date(),
+		updatedAt: new Date(),
+	}),
+});
