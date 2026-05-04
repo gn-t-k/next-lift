@@ -38,6 +38,9 @@ importers:
       '@react-native-google-signin/google-signin':
         specifier: 16.1.2
         version: 16.1.2(expo@54.0.34(@babel/core@7.29.0)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.5))(react@19.2.5)(typescript@6.0.3))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.5))(react@19.2.5)
+      '@tursodatabase/sync-react-native':
+        specifier: 0.5.3
+        version: 0.5.3(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.5))(react@19.2.5)
       better-auth:
         specifier: 1.6.9
         version: 1.6.9(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@libsql/client@0.17.3)(@op-engineering/op-sqlite@15.2.12(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.5))(react@19.2.5))(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(kysely@0.28.17))(next@16.2.4(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@4.1.4)
@@ -513,6 +516,9 @@ importers:
       '@tursodatabase/serverless':
         specifier: 1.1.2
         version: 1.1.2
+      '@tursodatabase/sync-react-native':
+        specifier: 0.5.3
+        version: 0.5.3(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.5))(react@19.2.5)
       drizzle-orm:
         specifier: 0.45.2
         version: 0.45.2(@libsql/client@0.17.3)(@op-engineering/op-sqlite@15.2.12(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.5))(react@19.2.5))(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(kysely@0.28.17)
@@ -3656,6 +3662,13 @@ packages:
 
   '@tursodatabase/serverless@1.1.2':
     resolution: {integrity: sha512-4nN4a0diq4rurNJ/JZypfWJugzZtZeydxxOzzJinSZjyOg+YBt9xtBqPsILfFDMiWRBKSHLH+7WLL6tV64nm4Q==}
+
+  '@tursodatabase/sync-react-native@0.5.3':
+    resolution: {integrity: sha512-jGrMv9eHgg8QXZvbKWMvORvAnOayl9U3GKETalWZCJSDbTWzw7tuVTyv7/COm1MgyiS4OmHphtzXImyBUxKD/g==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      react: '>=18.0.0'
+      react-native: '>=0.76.0'
 
   '@tybys/wasm-util@0.10.1':
     resolution: {integrity: sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==}
@@ -10429,6 +10442,12 @@ snapshots:
       '@tursodatabase/database-win32-x64-msvc': 0.5.3
 
   '@tursodatabase/serverless@1.1.2': {}
+
+  '@tursodatabase/sync-react-native@0.5.3(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.5))(react@19.2.5)':
+    dependencies:
+      '@babel/runtime': 7.29.2
+      react: 19.2.5
+      react-native: 0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.5)
 
   '@tybys/wasm-util@0.10.1':
     dependencies:
