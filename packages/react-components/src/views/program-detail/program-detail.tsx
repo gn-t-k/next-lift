@@ -11,7 +11,6 @@ import {
 	type ExercisePlan,
 	ExercisePlanSection,
 } from "./exercise-plan-section";
-import type { SelectableExercise } from "./exercise-selector";
 
 type Day = {
 	id: string;
@@ -25,12 +24,7 @@ type Props = {
 	meta: string | null;
 	days: Day[];
 	defaultSelectedDayId?: string;
-	availableExercises: SelectableExercise[];
 	onAddDay: () => void;
-	onSelectExercise: (params: {
-		exercisePlanId: string;
-		exerciseId: string;
-	}) => void;
 };
 
 export const ProgramDetail: FC<Props> = ({
@@ -38,9 +32,7 @@ export const ProgramDetail: FC<Props> = ({
 	meta,
 	days,
 	defaultSelectedDayId,
-	availableExercises,
 	onAddDay,
-	onSelectExercise,
 }) => {
 	const tabsProps =
 		defaultSelectedDayId !== undefined
@@ -69,11 +61,7 @@ export const ProgramDetail: FC<Props> = ({
 					</TabScrollArea>
 					{days.map((day) => (
 						<TabPanel key={day.id} id={day.id} className="pt-4">
-							<ExercisePlanSection
-								exercisePlans={day.exercisePlans}
-								availableExercises={availableExercises}
-								onSelectExercise={onSelectExercise}
-							/>
+							<ExercisePlanSection exercisePlans={day.exercisePlans} />
 						</TabPanel>
 					))}
 				</Tabs>

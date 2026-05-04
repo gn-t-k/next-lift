@@ -31,21 +31,6 @@ const squat: ExercisePlan["exercise"] = {
 	weightUnit: "kg",
 };
 
-const AVAILABLE_EXERCISES: ComponentProps<
-	typeof ProgramDetail
->["availableExercises"] = [
-	{ id: "ex-bench", name: "ベンチプレス" },
-	{ id: "ex-incline-db", name: "インクラインダンベルプレス" },
-	{ id: "ex-pushdown", name: "トライセプスプッシュダウン" },
-	{ id: "ex-squat", name: "バックスクワット" },
-	{ id: "ex-deadlift", name: "デッドリフト" },
-	{ id: "ex-row", name: "ベントオーバーロウ" },
-	{ id: "ex-pulldown", name: "ラットプルダウン" },
-	{ id: "ex-shoulder-press", name: "ショルダープレス" },
-	{ id: "ex-leg-press", name: "レッグプレス" },
-	{ id: "ex-leg-curl", name: "レッグカール" },
-];
-
 const SAMPLE_DAYS: Day[] = [
 	{
 		id: "d1",
@@ -148,9 +133,7 @@ const meta = {
 	tags: ["autodocs"],
 	args: {
 		defaultSelectedDayId: "d1",
-		availableExercises: AVAILABLE_EXERCISES,
 		onAddDay: fn(),
-		onSelectExercise: fn(),
 	},
 	decorators: [
 		(Story) => (
@@ -189,7 +172,8 @@ export const LongProgramName: Story = {
 };
 
 // 設計判断 #58 によりアプリ層が初期構造（Day×1 + 種目計画×1（種目未確定） + セット計画×1（params: null））を渡す。
-// V16 → V17 → V2 のフロー直後に V2 が表示する想定の状態。
+// プログラム新規作成 → Day新規作成 → プログラム詳細 のフロー直後を表示する想定の状態。
+// 種目選択 picker は本ビューには持たず、種目選択 UI 自体はプログラム新規作成・Day 新規作成・種目計画追加タスクで導入する想定。
 export const InitialStateAfterCreation: Story = {
 	args: {
 		name: "新しいプログラム",
@@ -208,76 +192,6 @@ export const InitialStateAfterCreation: Story = {
 				],
 			},
 		],
-	},
-};
-
-// 既存の Day に種目未選択の行を追加した中間状態。
-// 設計判断 #57 に基づき、種目未選択時は ExerciseSelector で picker を表示する。
-const DAYS_WITH_UNSELECTED: Day[] = [
-	{
-		id: "d1",
-		label: "Day 1: 上半身プッシュ",
-		detailHref: "/programs/p1/days/d1",
-		exercisePlans: [
-			{
-				id: "ep-d1-bench",
-				exercise: benchPress,
-				setPlans: [
-					{
-						id: "sp-d1-bench-1",
-						params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
-					},
-					{
-						id: "sp-d1-bench-2",
-						params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
-					},
-				],
-			},
-			{
-				id: "ep-d1-new",
-				exercise: null,
-				setPlans: [
-					{ id: "sp-d1-new-1", params: null },
-					{ id: "sp-d1-new-2", params: null },
-				],
-			},
-		],
-	},
-];
-
-export const ExerciseSelectorVisible: Story = {
-	name: "種目未選択（picker 表示）",
-	args: {
-		name: "5/3/1 BBB",
-		meta: null,
-		days: DAYS_WITH_UNSELECTED,
-		defaultSelectedDayId: "d1",
-	},
-};
-
-export const ExerciseSelectorVisibleMobile: Story = {
-	name: "種目未選択 (Mobile / Drawer)",
-	args: {
-		name: "5/3/1 BBB",
-		meta: null,
-		days: DAYS_WITH_UNSELECTED,
-		defaultSelectedDayId: "d1",
-	},
-	globals: {
-		viewport: { value: "mobile" },
-	},
-};
-
-export const ExerciseSelectorVisibleDesktop: Story = {
-	name: "種目未選択 (Desktop / Popover)",
-	args: {
-		name: "5/3/1 BBB",
-		meta: null,
-		days: DAYS_WITH_UNSELECTED,
-		defaultSelectedDayId: "d1",
-	},
-	globals: {
-		viewport: { value: "desktop" },
 	},
 };
 

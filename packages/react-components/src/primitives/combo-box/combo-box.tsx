@@ -107,6 +107,7 @@ export const ComboBoxList = <T extends object>({
 	<Popover
 		className={cx(
 			"min-w-(--trigger-width) origin-(--trigger-anchor-point)",
+			"max-h-72 overflow-hidden",
 			"rounded-lg border border-border bg-overlay text-overlay-fg shadow-lg outline-hidden",
 			"entering:fade-in entering:animate-in entering:duration-150",
 			"exiting:fade-out exiting:animate-out exiting:duration-100",
@@ -116,7 +117,7 @@ export const ComboBoxList = <T extends object>({
 	>
 		<ListBox
 			className={cx(
-				"flex max-h-72 flex-col gap-px overflow-y-auto overscroll-contain p-1 outline-hidden",
+				"flex h-full flex-col gap-px overflow-y-auto overscroll-contain p-1 outline-hidden",
 				className,
 			)}
 			{...props}
