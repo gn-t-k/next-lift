@@ -15,6 +15,7 @@
 	"dependencies": {
 		"@better-auth/expo": "1.6.9",
 		"@next-lift/per-user-database": "workspace:*",
+		"@next-lift/turso-drizzle-adapter": "workspace:*",
 		"@next-lift/utilities": "workspace:*",
 		"@op-engineering/op-sqlite": "15.2.12",
 		"@react-native-google-signin/google-signin": "16.1.2",

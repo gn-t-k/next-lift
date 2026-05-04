@@ -29,6 +29,9 @@ importers:
       '@next-lift/per-user-database':
         specifier: workspace:*
         version: link:../../packages/per-user-database
+      '@next-lift/turso-drizzle-adapter':
+        specifier: workspace:*
+        version: link:../../packages/turso-drizzle-adapter
       '@next-lift/utilities':
         specifier: workspace:*
         version: link:../../packages/utilities
