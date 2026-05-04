@@ -1,4 +1,5 @@
 import type { FC } from "react";
+import { ExerciseSelector, type SelectableExercise } from "./exercise-selector";
 import { type SetPlanParams, SetPlanRow } from "./set-plan-row";
 
 export type ExercisePlanRowSetPlan = {
@@ -15,19 +16,28 @@ export type ExercisePlanRowExercise = {
 type Props = {
 	exercise: ExercisePlanRowExercise | null;
 	setPlans: ExercisePlanRowSetPlan[];
+	availableExercises: SelectableExercise[];
+	onSelectExercise: (exerciseId: string) => void;
 };
 
-export const ExercisePlanRow: FC<Props> = ({ exercise, setPlans }) => {
+export const ExercisePlanRow: FC<Props> = ({
+	exercise,
+	setPlans,
+	availableExercises,
+	onSelectExercise,
+}) => {
 	return (
 		<section className="flex flex-col gap-2 rounded-lg bg-overlay p-3 text-overlay-fg shadow-sm">
-			<header className="flex items-baseline justify-between gap-2 px-1">
-				{exercise === null ? (
-					// 種目未選択時の ComboBox 切替は 2-3-8 で実装。骨格段階ではプレースホルダ表示
-					<span className="text-muted-fg text-sm">種目を選択</span>
-				) : (
+			{exercise === null ? (
+				<ExerciseSelector
+					availableExercises={availableExercises}
+					onSelect={onSelectExercise}
+				/>
+			) : (
+				<header className="flex items-baseline justify-between gap-2 px-1">
 					<h3 className="font-medium text-base text-fg">{exercise.name}</h3>
-				)}
-			</header>
+				</header>
+			)}
 			{setPlans.length > 0 && (
 				<ol className="flex flex-col">
 					{setPlans.map((setPlan, index) => (

@@ -31,6 +31,21 @@ const squat: ExercisePlan["exercise"] = {
 	weightUnit: "kg",
 };
 
+const AVAILABLE_EXERCISES: ComponentProps<
+	typeof ProgramDetail
+>["availableExercises"] = [
+	{ id: "ex-bench", name: "ベンチプレス" },
+	{ id: "ex-incline-db", name: "インクラインダンベルプレス" },
+	{ id: "ex-pushdown", name: "トライセプスプッシュダウン" },
+	{ id: "ex-squat", name: "バックスクワット" },
+	{ id: "ex-deadlift", name: "デッドリフト" },
+	{ id: "ex-row", name: "ベントオーバーロウ" },
+	{ id: "ex-pulldown", name: "ラットプルダウン" },
+	{ id: "ex-shoulder-press", name: "ショルダープレス" },
+	{ id: "ex-leg-press", name: "レッグプレス" },
+	{ id: "ex-leg-curl", name: "レッグカール" },
+];
+
 const SAMPLE_DAYS: Day[] = [
 	{
 		id: "d1",
@@ -133,7 +148,9 @@ const meta = {
 	tags: ["autodocs"],
 	args: {
 		defaultSelectedDayId: "d1",
+		availableExercises: AVAILABLE_EXERCISES,
 		onAddDay: fn(),
+		onSelectExercise: fn(),
 	},
 	decorators: [
 		(Story) => (
@@ -191,6 +208,76 @@ export const InitialStateAfterCreation: Story = {
 				],
 			},
 		],
+	},
+};
+
+// 既存の Day に種目未選択の行を追加した中間状態。
+// 設計判断 #57 に基づき、種目未選択時は ExerciseSelector で picker を表示する。
+const DAYS_WITH_UNSELECTED: Day[] = [
+	{
+		id: "d1",
+		label: "Day 1: 上半身プッシュ",
+		detailHref: "/programs/p1/days/d1",
+		exercisePlans: [
+			{
+				id: "ep-d1-bench",
+				exercise: benchPress,
+				setPlans: [
+					{
+						id: "sp-d1-bench-1",
+						params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
+					},
+					{
+						id: "sp-d1-bench-2",
+						params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
+					},
+				],
+			},
+			{
+				id: "ep-d1-new",
+				exercise: null,
+				setPlans: [
+					{ id: "sp-d1-new-1", params: null },
+					{ id: "sp-d1-new-2", params: null },
+				],
+			},
+		],
+	},
+];
+
+export const ExerciseSelectorVisible: Story = {
+	name: "種目未選択（picker 表示）",
+	args: {
+		name: "5/3/1 BBB",
+		meta: null,
+		days: DAYS_WITH_UNSELECTED,
+		defaultSelectedDayId: "d1",
+	},
+};
+
+export const ExerciseSelectorVisibleMobile: Story = {
+	name: "種目未選択 (Mobile / Drawer)",
+	args: {
+		name: "5/3/1 BBB",
+		meta: null,
+		days: DAYS_WITH_UNSELECTED,
+		defaultSelectedDayId: "d1",
+	},
+	globals: {
+		viewport: { value: "mobile" },
+	},
+};
+
+export const ExerciseSelectorVisibleDesktop: Story = {
+	name: "種目未選択 (Desktop / Popover)",
+	args: {
+		name: "5/3/1 BBB",
+		meta: null,
+		days: DAYS_WITH_UNSELECTED,
+		defaultSelectedDayId: "d1",
+	},
+	globals: {
+		viewport: { value: "desktop" },
 	},
 };
 

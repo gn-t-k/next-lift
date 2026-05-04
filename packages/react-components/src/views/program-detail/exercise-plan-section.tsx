@@ -4,6 +4,7 @@ import {
 	type ExercisePlanRowExercise,
 	type ExercisePlanRowSetPlan,
 } from "./exercise-plan-row";
+import type { SelectableExercise } from "./exercise-selector";
 
 export type ExercisePlan = {
 	id: string;
@@ -13,9 +14,18 @@ export type ExercisePlan = {
 
 type Props = {
 	exercisePlans: ExercisePlan[];
+	availableExercises: SelectableExercise[];
+	onSelectExercise: (params: {
+		exercisePlanId: string;
+		exerciseId: string;
+	}) => void;
 };
 
-export const ExercisePlanSection: FC<Props> = ({ exercisePlans }) => {
+export const ExercisePlanSection: FC<Props> = ({
+	exercisePlans,
+	availableExercises,
+	onSelectExercise,
+}) => {
 	return (
 		<ol className="flex flex-col gap-3">
 			{exercisePlans.map((exercisePlan) => (
@@ -23,6 +33,13 @@ export const ExercisePlanSection: FC<Props> = ({ exercisePlans }) => {
 					<ExercisePlanRow
 						exercise={exercisePlan.exercise}
 						setPlans={exercisePlan.setPlans}
+						availableExercises={availableExercises}
+						onSelectExercise={(exerciseId) =>
+							onSelectExercise({
+								exercisePlanId: exercisePlan.id,
+								exerciseId,
+							})
+						}
 					/>
 				</li>
 			))}
