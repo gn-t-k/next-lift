@@ -1,32 +1,34 @@
 import { schema } from "@next-lift/per-user-database/database-schemas";
 import migrations from "@next-lift/per-user-database/migrations";
-import { openSync } from "@op-engineering/op-sqlite";
-import { sql } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/op-sqlite";
-import { migrate } from "drizzle-orm/op-sqlite/migrator";
+import {
+	applyMigrationsToSyncReactNative,
+	connectSyncDatabase,
+	createDrizzleFromSyncReactNative,
+} from "@next-lift/turso-drizzle-adapter/sync-react-native";
 import { resolveCredentials } from "./credentials";
-
-const SYNC_INTERVAL_SECONDS = 60;
 
 export const initializeDatabase = async () => {
 	const credentials = await resolveCredentials();
 
-	const sqlite = openSync({
-		name: "per-user.sqlite",
+	const database = await connectSyncDatabase({
+		path: "per-user.db",
 		url: credentials.url,
 		authToken: credentials.authToken,
-		libsqlSyncInterval: SYNC_INTERVAL_SECONDS,
 	});
 
-	// リモートDBの状態をローカルに同期してからマイグレーションを実行する
-	sqlite.sync();
+	await applyMigrationsToSyncReactNative(database, migrations);
 
-	const db = drizzle(sqlite, { schema });
-	// op-sqliteのlibsqlバックエンドにおけるFKデフォルト挙動が未文書化のため、明示的に有効化する（ADR-026）
-	await db.run(sql`PRAGMA foreign_keys = ON`);
-	await migrate(db, migrations);
+	const db = createDrizzleFromSyncReactNative(database, schema);
 
-	return { db, sync: () => sqlite.sync() };
+	return {
+		db,
+		pull: async (): Promise<void> => {
+			await database.pull();
+		},
+		push: async (): Promise<void> => {
+			await database.push();
+		},
+	};
 };
 
 export type InitializedDatabase = Awaited<

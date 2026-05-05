@@ -6,7 +6,8 @@
 	"exports": {
 		".": "./src/sqlite-run-result.ts",
 		"./serverless": "./src/drivers/serverless/index.ts",
-		"./database": "./src/drivers/database/index.ts"
+		"./database": "./src/drivers/database/index.ts",
+		"./sync-react-native": "./src/drivers/sync-react-native/index.ts"
 	},
 	"scripts": {
 		"lint": "biome check .",
@@ -19,6 +20,14 @@
 		"@tursodatabase/database": "0.5.3",
 		"@tursodatabase/serverless": "1.1.2",
 		"drizzle-orm": "0.45.2"
+	},
+	"peerDependencies": {
+		"@tursodatabase/sync-react-native": "0.5.3"
+	},
+	"peerDependenciesMeta": {
+		"@tursodatabase/sync-react-native": {
+			"optional": true
+		}
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.14",

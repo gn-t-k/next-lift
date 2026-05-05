@@ -27,7 +27,7 @@ export const HomeScreen: FC = () => {
 	const { data: session } = useSession();
 	const [isPending, startTransition] = useTransition();
 	const [isDeleting, setIsDeleting] = useState(false);
-	const { db, sync } = useDatabase();
+	const { db, pull, push } = useDatabase();
 	const [items, setItems] = useState<TestItem[]>([]);
 	const [syncStatus, setSyncStatus] = useState<string>("");
 
@@ -49,6 +49,10 @@ export const HomeScreen: FC = () => {
 				metaInfo: null,
 			});
 			await loadItems();
+			// 書き込み後の push は失敗しても次の書き込みやライフサイクル復帰で再送される（ADR-029）
+			push().catch((e: unknown) => {
+				console.warn("追加後の push に失敗しました", e);
+			});
 		} catch (e) {
 			console.error("追加エラー:", e);
 			Alert.alert("エラー", String(e));
@@ -59,17 +63,20 @@ export const HomeScreen: FC = () => {
 		try {
 			await db.delete(programs).where(eq(programs.id, id));
 			await loadItems();
+			push().catch((e: unknown) => {
+				console.warn("削除後の push に失敗しました", e);
+			});
 		} catch (e) {
 			console.error("削除エラー:", e);
 		}
 	};
 
-	const handleSync = () => {
+	const handlePull = async () => {
 		try {
 			setSyncStatus("同期中...");
-			sync();
+			await pull();
 			setSyncStatus(`同期完了 ${new Date().toLocaleTimeString("ja-JP")}`);
-			loadItems().catch(console.error);
+			await loadItems();
 		} catch (e) {
 			const message = e instanceof Error ? e.message : String(e);
 			setSyncStatus(`同期エラー: ${message}`);
@@ -138,8 +145,8 @@ export const HomeScreen: FC = () => {
 					<Pressable style={styles.addButton} onPress={handleAddItem}>
 						<Text style={styles.addButtonText}>追加</Text>
 					</Pressable>
-					<Pressable style={styles.syncButton} onPress={handleSync}>
-						<Text style={styles.syncButtonText}>Sync</Text>
+					<Pressable style={styles.syncButton} onPress={handlePull}>
+						<Text style={styles.syncButtonText}>Pull</Text>
 					</Pressable>
 					<Pressable
 						style={styles.reloadButton}

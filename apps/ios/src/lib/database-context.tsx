@@ -7,7 +7,7 @@ import {
 	useEffect,
 	useState,
 } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, AppState, StyleSheet, View } from "react-native";
 import {
 	type InitializedDatabase,
 	initializeDatabase,
@@ -16,7 +16,8 @@ import {
 
 type DatabaseContextValue = {
 	db: PerUserDatabase;
-	sync: InitializedDatabase["sync"];
+	pull: InitializedDatabase["pull"];
+	push: InitializedDatabase["push"];
 };
 
 const DatabaseContext = createContext<DatabaseContextValue | null>(null);
@@ -32,9 +33,14 @@ export const DatabaseProvider: FC<PropsWithChildren> = ({ children }) => {
 			backoff: exponentialBackoff(1000),
 		})
 			.then((result) => {
-				if (!cancelled) {
-					setValue({ db: result.db, sync: result.sync });
-				}
+				if (cancelled) return;
+
+				setValue({ db: result.db, pull: result.pull, push: result.push });
+
+				// 初回 pull はバックグラウンドで走らせる。失敗してもローカル読みは可能なため握りつぶす
+				result.pull().catch((e: unknown) => {
+					console.warn("初回 pull に失敗しました", e);
+				});
 			})
 			.catch((e: unknown) => {
 				if (!cancelled) {
@@ -46,6 +52,19 @@ export const DatabaseProvider: FC<PropsWithChildren> = ({ children }) => {
 			cancelled = true;
 		};
 	}, []);
+
+	useEffect(() => {
+		if (value == null) return;
+
+		const subscription = AppState.addEventListener("change", (nextState) => {
+			if (nextState !== "active") return;
+			value.pull().catch((e: unknown) => {
+				console.warn("AppState 'active' での pull に失敗しました", e);
+			});
+		});
+
+		return () => subscription.remove();
+	}, [value]);
 
 	if (error != null) {
 		throw error;
