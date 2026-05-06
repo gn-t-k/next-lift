@@ -17,8 +17,8 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.14",
-		"@turbo/gen": "2.9.7",
-		"turbo": "2.9.7",
+		"@turbo/gen": "2.9.8",
+		"turbo": "2.9.8",
 		"vercel": "50.44.0"
 	},
 	"packageManager": "pnpm@10.33.2",
