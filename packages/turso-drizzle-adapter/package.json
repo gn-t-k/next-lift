@@ -17,7 +17,7 @@
 	},
 	"dependencies": {
 		"@tursodatabase/database": "0.5.3",
-		"@tursodatabase/serverless": "1.1.2",
+		"@tursodatabase/serverless": "1.1.3",
 		"drizzle-orm": "0.45.2"
 	},
 	"devDependencies": {
