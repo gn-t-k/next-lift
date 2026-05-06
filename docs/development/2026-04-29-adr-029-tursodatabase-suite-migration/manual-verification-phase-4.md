@@ -7,7 +7,9 @@ ADR-029 Phase 4（iOS の `@op-engineering/op-sqlite` → `@tursodatabase/sync-r
 ## 前提
 
 - Mac + Xcode 15.x 以降がインストール済み
-- iPhone 実機（または iOS Simulator）が利用可能
+- iOS Simulator が利用可能（STEP 1〜2, 4〜7 用）
+- iPhone 実機 + USB ケーブル（STEP 3 機内モード, STEP 8 用 / **推奨**）
+  - Apple Developer Program 登録は不要。無料 Apple ID + Personal Team で 7日間有効の Dev Build を作れる（手順は STEP 1-B）
 - CocoaPods が利用可能（`pod --version` で確認）
 - worktree `/Users/gntk/repository/next-lift/.claude/worktrees/turso/` が PR ブランチ `feature/adr-029-phase-4-ios-replace` に存在
 - Web 側のクラウド DB（Turso Hosted）にアクセス可能。同じユーザーで Web と iOS 両方からアクセスする想定
@@ -18,7 +20,9 @@ ADR-029 Phase 4（iOS の `@op-engineering/op-sqlite` → `@tursodatabase/sync-r
 ```
 [STEP 0] ブランチ・依存確認
   ↓
-[STEP 1] Expo prebuild & ネイティブビルド ─→ 4.1.2 完了
+[STEP 1] Expo prebuild & シミュレータビルド ─→ 4.1.2 完了
+  ↓
+[STEP 1-B] 実機ビルド（機内モードテスト用、推奨）
   ↓
 [STEP 2] アプリ起動 + ログイン ─→ 4.1.3（connect 部分）+ 4.4.2（初回 pull）
   ↓
@@ -32,12 +36,22 @@ ADR-029 Phase 4（iOS の `@op-engineering/op-sqlite` → `@tursodatabase/sync-r
   ↓
 [STEP 7] トランザクション ROLLBACK ─→ 4.2.2（要 一時デバッグコード）
   ↓
-[STEP 8] E2E + コンフリクト ─→ 4.8.1 + 4.8.2
+[STEP 8] E2E + コンフリクト ─→ 4.8.1 + 4.8.2（機内モード = 実機）
   ↓
 [完了] PR を Ready for review に
 ```
 
-各 STEP の所要時間目安: STEP 1 が 10〜20 分（ビルド時間に依存）、それ以外は各 5〜10 分。STEP 5〜7 は手早く済ませれば 15 分程度で全部回せる。
+各 STEP の所要時間目安: STEP 1 が 10〜20 分、STEP 1-B が 5〜10 分、それ以外は各 5〜10 分。STEP 5〜7 は手早く済ませれば 15 分程度で全部回せる。
+
+### シミュレータと実機の使い分け
+
+| STEP | シミュレータ | 実機 | 備考 |
+|---|---|---|---|
+| 1〜2, 4〜7 | ✅ OK | ✅ OK | どちらでも検証可能 |
+| 3 の機内モード確認 | ❌ | ✅ 必須 | iOS Simulator は機内モード UI 自体を持たない |
+| 8（E2E + コンフリクト） | △ | ✅ 推奨 | バックグラウンド遷移などライフサイクルは実機の挙動が正確 |
+
+シミュレータの「設定」アプリには機内モードのトグルが存在しない。代替として `Network Link Conditioner`（Apple Additional Tools）の 100% Loss プロファイルや Mac の Wi-Fi 切断があるが、Metro bundler との接続も切れて Hot Reload が死ぬので扱いづらい。**機内モードを伴う検証は実機で実施すること**。
 
 ---
 
@@ -70,7 +84,7 @@ grep -E "tursodatabase/sync-react-native|turso-drizzle-adapter" apps/ios/package
 
 ---
 
-## STEP 1: Expo prebuild + iOS ネイティブビルド（4.1.2）
+## STEP 1: Expo prebuild + シミュレータビルド（4.1.2）
 
 旧 `ios/` ディレクトリが残っている可能性があるため、クリーン prebuild する。
 
@@ -94,23 +108,85 @@ ls ios/Pods/ | grep -i turso
 grep -i "turso\|sync-react-native" ios/Podfile.lock | head -5
 ```
 
+シミュレータでビルド・起動:
+
+```bash
+pnpm expo run:ios
+# デフォルトのシミュレータでビルド + 起動
+```
+
 確認:
 - [ ] `pnpm expo prebuild --platform ios --clean` が成功し、`ios/` ディレクトリが生成されること
 - [ ] `ios/Pods/` に Turso 関連ネイティブモジュールがリンクされていること
-- [ ] `pnpm expo run:ios` または Xcode 経由で Dev Build がビルドされ、シミュレータ／実機で起動できること
-
-ビルド・起動コマンド（シミュレータの例）:
-
-```bash
-pnpm expo run:ios --device  # 実機選択ダイアログが出る
-# あるいは
-pnpm expo run:ios            # デフォルトのシミュレータで起動
-```
+- [ ] `pnpm expo run:ios` でシミュレータ上で Dev Build が起動できること
 
 ビルド失敗のよくある原因:
 - CocoaPods キャッシュが古い: `cd ios && pod deintegrate && pod install`
 - Hermes 関連エラー: `app.json` の `jsEngine` を確認（既存設定を変えない）
 - New Architecture 未有効: `@tursodatabase/sync-react-native` は New Architecture 必須。`app.json` の `newArchEnabled: true` を確認
+
+---
+
+## STEP 1-B: 実機ビルド（機内モード検証用、推奨）
+
+STEP 3 の機内モード確認と STEP 8 の E2E は実機で実施するのが確実。**Apple Developer Program に未登録でも、無料 Apple ID で 7日間有効の Dev Build を作って実機で動かせる**。
+
+### 1-B-1. 事前準備
+
+iPhone 側:
+- iOS 16 以降の場合: 「設定」→「プライバシーとセキュリティ」→「デベロッパモード」→ オン → 再起動
+- iPhone と Mac を USB ケーブルで接続
+- iPhone に「このコンピュータを信頼しますか？」と出たら「信頼」
+
+Mac 側（Xcode に Apple ID を登録）:
+1. Xcode を起動
+2. メニューから `Xcode` → `Settings...` → `Accounts` タブ
+3. 左下の `+` → `Apple ID` → 自分の Apple ID でログイン（無料アカウントで可）
+
+### 1-B-2. ビルド & インストール
+
+```bash
+cd /Users/gntk/repository/next-lift/.claude/worktrees/turso/apps/ios
+pnpm expo run:ios --device
+```
+
+接続済みデバイスのリストが表示されるので自分の iPhone を選択。
+
+初回は signing エラー（`No signing team selected` 等）が出ることがあるので、その場合は Xcode で workspace を開いて Team を設定する:
+
+```bash
+open ios/*.xcworkspace
+```
+
+Xcode で:
+1. 左の Project Navigator で **プロジェクト名** をクリック → `Signing & Capabilities` タブ
+2. `Team` のドロップダウンで自分の Apple ID（Personal Team）を選択
+3. Bundle Identifier がユニークでないと言われた場合は変更（例: `com.<yourname>.nextlift.dev`）
+4. Xcode を閉じて再度 `pnpm expo run:ios --device`
+
+### 1-B-3. 初回起動時の信頼設定
+
+iPhone 側でアプリを起動しようとすると「信頼されていない開発元」エラーが出る:
+
+1. iPhone 設定 → 「一般」 → 「VPN とデバイス管理」
+2. 自分の Apple ID（デベロッパ App セクション）をタップ
+3. 「<Apple ID> を信頼」をタップ → 確認
+
+これでアプリが起動できるようになる。
+
+### 確認
+
+- [ ] `pnpm expo run:ios --device` で実機にビルド & インストールできること
+- [ ] iPhone 上でアプリが起動し、サインイン画面が表示されること
+- [ ] Metro bundler のコンソールが iPhone と接続されていること（実機が Mac と同じ Wi-Fi にいる必要あり）
+
+### 制限（無料 Apple ID の場合）
+
+- 証明書が **7日で失効** → 1週間ごとに `pnpm expo run:ios --device` で再ビルド & 再インストール
+- Push 通知 / In-App Purchase など一部機能は使えない（Phase 4 検証では問題なし）
+- 端末あたり同時に入れられる開発アプリは 10個まで
+
+Phase 4 検証は数時間〜1日で終わるので 7日制限は気にならないはず。
 
 ---
 
@@ -150,9 +226,11 @@ pnpm expo run:ios            # デフォルトのシミュレータで起動
 SELECT id, name, created_at FROM programs ORDER BY created_at DESC LIMIT 5;
 ```
 
-オプション: 圏外でも書き込みは可能であることの確認（4.5.1 の追加完了条件）:
-- [ ] iPhone を機内モードに → 「追加」 → ローカル一覧には反映される（push は失敗するが警告のみ）
+オプション: 圏外でも書き込みは可能であることの確認（4.5.1 の追加完了条件、**実機必須**）:
+- [ ] iPhone のコントロールセンターで機内モード ON → 「追加」 → ローカル一覧には反映される（push は失敗するが警告のみ）
 - [ ] 機内モード解除 → 「Pull」ボタン または アプリをバックグラウンド → 復帰 → 自動 push が走る → Web 側で反映確認
+
+> シミュレータの場合: iOS Simulator は機内モードを持たないため、この検証はスキップして実機で別途実施する。代替として `Network Link Conditioner` の 100% Loss プロファイルが使えるが、Metro 接続も切れて Hot Reload が止まる点に注意。
 
 ---
 
@@ -398,13 +476,13 @@ const handleTxRollbackTest = async () => {
 - [ ] 上記シナリオが成功すること
 - [ ] アプリ再起動時のローディング → ホーム画面で Web の更新が見えること
 
-### 8-B: コンフリクト動作（last push wins, 4.8.2）
+### 8-B: コンフリクト動作（last push wins, 4.8.2、**実機必須**）
 
-同一レコードを Web と iOS で同時編集 → 両方 push → 後勝ち。
+同一レコードを Web と iOS で同時編集 → 両方 push → 後勝ち。機内モードを使うため実機で実施する。
 
 1. iOS で 1 件追加（id を控える、例: `conflict-test-1`、name: `iOS 初期`）
 2. iOS の状態で Web 側に push が反映されたことを確認
-3. **iOS をオフライン（機内モード）**にする
+3. **iOS をオフライン（コントロールセンターで機内モード ON）**にする
 4. iOS で同レコードに対して何か書き込み（例: 削除 → 同 id で再追加 with `name: "iOS 後発"`）
 5. Web 側で同 id の name を `Web 後発` に UPDATE → push（Web は即座にクラウド反映）
 6. iOS の機内モード解除 → AppState 復帰 → iOS の push が走る
