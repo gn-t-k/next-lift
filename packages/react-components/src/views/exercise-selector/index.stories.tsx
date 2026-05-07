@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import type { ComponentProps } from "react";
+import type { ComponentProps, FC } from "react";
 import { useState } from "react";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import { ExerciseSelector } from ".";
@@ -14,6 +14,37 @@ const SAMPLE_EXERCISES: Exercise[] = [
 	{ id: "ex-deadlift", name: "デッドリフト" },
 ];
 
+const StatefulSelector: FC<ComponentProps<typeof ExerciseSelector>> = ({
+	exercises: initialExercises,
+	selectedExerciseId: initialSelectedId,
+	onSelect,
+	onCreateExercise,
+}) => {
+	const [exercises, setExercises] = useState(initialExercises);
+	const [selectedId, setSelectedId] = useState(initialSelectedId);
+
+	const handleSelect = (id: string) => {
+		setSelectedId(id);
+		onSelect(id);
+	};
+
+	const handleCreate = (name: string) => {
+		const id = `ex-new-${Date.now()}`;
+		setExercises((prev) => [...prev, { id, name }]);
+		setSelectedId(id);
+		onCreateExercise(name);
+	};
+
+	return (
+		<ExerciseSelector
+			exercises={exercises}
+			{...(selectedId !== undefined ? { selectedExerciseId: selectedId } : {})}
+			onSelect={handleSelect}
+			onCreateExercise={handleCreate}
+		/>
+	);
+};
+
 const meta = {
 	title: "View/ExerciseSelector",
 	component: ExerciseSelector,
@@ -26,6 +57,7 @@ const meta = {
 		onSelect: fn(),
 		onCreateExercise: fn(),
 	},
+	render: (args) => <StatefulSelector {...args} />,
 	decorators: [
 		(Story) => (
 			<div className="w-80">
@@ -100,7 +132,7 @@ export const DesktopSelectAfterSearch: Story = {
 
 		await waitFor(() => {
 			expect(args.onSelect).toHaveBeenCalledWith("ex-bench");
-			expect(input.value).toBe("");
+			expect(input.value).toBe("ベンチプレス");
 		});
 	},
 };
@@ -125,7 +157,7 @@ export const DesktopCreateAfterSearch: Story = {
 
 		await waitFor(() => {
 			expect(args.onCreateExercise).toHaveBeenCalledWith("新しい種目");
-			expect(input.value).toBe("");
+			expect(input.value).toBe("新しい種目");
 		});
 	},
 };
@@ -143,7 +175,6 @@ export const DesktopSelectedDisplay: Story = {
 		});
 
 		await userEvent.click(input);
-		await userEvent.clear(input);
 
 		await waitFor(() => {
 			const benchOption = findOptionByName("ベンチプレス");

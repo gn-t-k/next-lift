@@ -26,21 +26,39 @@ export const ExerciseSelectorComboBox: FC<
 		"";
 
 	const [draftInputValue, setDraftInputValue] = useState<string | null>(null);
+	const [showAllItems, setShowAllItems] = useState(false);
 	const inputValue = draftInputValue ?? selectedName;
 
-	const items = buildComboBoxItems({ options: exercises, query: inputValue });
+	const items = buildComboBoxItems({
+		options: exercises,
+		query: showAllItems ? "" : inputValue,
+	});
 
 	const handleChange = (key: Key | null) => {
+		setDraftInputValue(null);
+		setShowAllItems(false);
 		if (key === null) return;
 		const id = String(key);
 		if (id === PLACEHOLDER_ID) return;
 		if (id === CREATE_ID) {
 			onCreateExercise(inputValue.trim());
-			setDraftInputValue(null);
 			return;
 		}
 		onSelect(id);
-		setDraftInputValue(null);
+	};
+
+	const handleInputChange = (value: string) => {
+		setDraftInputValue(value);
+		setShowAllItems(false);
+	};
+
+	const handleOpenChange: ComponentProps<typeof ComboBox>["onOpenChange"] = (
+		isOpen,
+		trigger,
+	) => {
+		if (isOpen && (trigger === "focus" || trigger === "manual")) {
+			setShowAllItems(true);
+		}
 	};
 
 	return (
@@ -49,10 +67,10 @@ export const ExerciseSelectorComboBox: FC<
 			menuTrigger="focus"
 			items={items}
 			inputValue={inputValue}
-			onInputChange={setDraftInputValue}
+			onInputChange={handleInputChange}
+			onOpenChange={handleOpenChange}
 			value={selectedExerciseId ?? null}
 			onChange={handleChange}
-			allowsCustomValue
 		>
 			<ComboBoxInput placeholder="種目を選択" />
 			<ComboBoxList<ListItem>>
