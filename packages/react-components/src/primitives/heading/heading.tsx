@@ -38,8 +38,10 @@ type Props = {
 // className を渡すと既定スタイルに上書き merge される。
 export const Heading: FC<Props> = ({ className, children }) => {
 	const level = useContext(HeadingContext);
-	const headingLevel = (level + 1) as 1 | 2 | 3 | 4 | 5 | 6;
-	const As = headings[level];
+	// Section 側で 0〜5 にクランプ済みだが、context API 経由なので TS の型は number。実行時の安全網としてここでも clamp する
+	const idx = Math.min(Math.max(level, 0), 5) as 0 | 1 | 2 | 3 | 4 | 5;
+	const As = headings[idx];
+	const headingLevel = (idx + 1) as 1 | 2 | 3 | 4 | 5 | 6;
 	return (
 		<As className={cn(headingStyles[headingLevel], className)}>{children}</As>
 	);
