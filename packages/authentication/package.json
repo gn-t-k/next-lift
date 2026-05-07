@@ -30,7 +30,7 @@
 		"@praha/byethrow": "0.11.1",
 		"@praha/diva": "1.0.2",
 		"@praha/error-factory": "1.4.1",
-		"@tursodatabase/serverless": "1.1.2",
+		"@tursodatabase/serverless": "1.1.3",
 		"better-auth": "1.6.9",
 		"drizzle-orm": "0.45.2"
 	},
