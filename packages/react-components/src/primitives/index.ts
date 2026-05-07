@@ -3,6 +3,7 @@ export * from "./combo-box";
 export * from "./drawer";
 export * from "./error-alert";
 export * from "./gym-context";
+export * from "./heading";
 export * from "./link";
 export * from "./menu";
 export * from "./modal";

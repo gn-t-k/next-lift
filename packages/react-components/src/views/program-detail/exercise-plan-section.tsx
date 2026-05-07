@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
+import { Heading } from "../../primitives/heading";
 
-// T で caller 側の追加フィールド（setPlans 等）を保持し、children 関数に渡せるようにする
 type Props<T extends ExercisePlan> = {
 	exercisePlans: T[];
 	children: (exercisePlan: T) => ReactNode;
@@ -26,10 +26,9 @@ export const ExercisePlanSection = <T extends ExercisePlan>({
 							{exercisePlan.exercise === null ? (
 								<span className="text-muted-fg text-sm">種目を選択</span>
 							) : (
-								// 親ビュー（ProgramDetail）の h1 直下に置かれる前提で h2 を使用。Heading の自動採番が入ったら置き換える
-								<h2 className="font-medium text-base text-fg">
+								<Heading className="font-medium text-base text-fg">
 									{exercisePlan.exercise.name}
-								</h2>
+								</Heading>
 							)}
 						</header>
 						{children(exercisePlan)}
