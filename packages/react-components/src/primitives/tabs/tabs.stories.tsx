@@ -276,3 +276,40 @@ export const WithScrollableTabs: Story = {
 		</Tabs>
 	),
 };
+
+const mobileDays = Array.from({ length: 12 }, (_, i) => ({
+	id: `day-${i + 1}`,
+	label: `Day ${i + 1}`,
+}));
+
+export const MobileScrollable: Story = {
+	parameters: {
+		layout: "fullscreen",
+		viewport: { defaultViewport: "mobile" },
+	},
+	decorators: [
+		(Story) => (
+			<div className="p-4">
+				<Story />
+			</div>
+		),
+	],
+	render: () => (
+		<Tabs>
+			<TabScrollArea>
+				<TabList aria-label="Day">
+					{mobileDays.map((day) => (
+						<Tab key={day.id} id={day.id}>
+							{day.label}
+						</Tab>
+					))}
+				</TabList>
+			</TabScrollArea>
+			{mobileDays.map((day) => (
+				<TabPanel key={day.id} id={day.id}>
+					<p>{day.label} の内容</p>
+				</TabPanel>
+			))}
+		</Tabs>
+	),
+};
