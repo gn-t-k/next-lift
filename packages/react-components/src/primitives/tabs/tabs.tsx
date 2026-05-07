@@ -1,6 +1,12 @@
 "use client";
 
-import { type FC, type PropsWithChildren, useEffect, useRef, useState } from "react";
+import {
+	type FC,
+	type PropsWithChildren,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 import {
 	TabList as TabListPrimitive,
 	type TabListProps as TabListPrimitiveProps,
@@ -84,7 +90,10 @@ export const TabScrollArea: FC<PropsWithChildren> = ({ children }) => {
 	};
 
 	useEffect(() => {
-		updateScrollState();
+		const el = scrollRef.current;
+		if (!el) return;
+		setCanScrollLeft(el.scrollLeft > 0);
+		setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
 	}, []);
 
 	return (
