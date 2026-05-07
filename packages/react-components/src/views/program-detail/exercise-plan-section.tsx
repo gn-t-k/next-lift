@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Heading } from "../../primitives/heading";
 
+// T で caller 側の追加フィールド（setPlans 等）を保持し、children 関数に渡せるようにする
 type Props<T extends ExercisePlan> = {
 	exercisePlans: T[];
 	children: (exercisePlan: T) => ReactNode;

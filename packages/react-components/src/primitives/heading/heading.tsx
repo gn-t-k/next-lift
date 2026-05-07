@@ -1,5 +1,7 @@
-import { createContext, useContext } from "react";
+"use client";
+
 import type { FC, PropsWithChildren, ReactNode } from "react";
+import { createContext, useContext } from "react";
 
 const HeadingContext = createContext(0);
 
