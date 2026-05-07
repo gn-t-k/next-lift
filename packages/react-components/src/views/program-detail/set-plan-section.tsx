@@ -1,18 +1,38 @@
 import type { FC } from "react";
 import { cn } from "../../libs/utils";
 
-export type SetPlanParams =
+type Params =
 	| { pattern: "weight-x-reps"; weight: number; reps: number }
 	| { pattern: "weight-x-rpe"; weight: number; rpe: number }
 	| { pattern: "reps-x-rpe"; reps: number; rpe: number };
 
 type Props = {
-	index: number;
-	params: SetPlanParams | null;
+	setPlans: { id: string; params: Params | null }[];
 	weightUnit: "kg" | "lbs";
 };
 
-export const SetPlanRow: FC<Props> = ({ index, params, weightUnit }) => {
+export const SetPlanSection: FC<Props> = ({ setPlans, weightUnit }) => {
+	if (setPlans.length === 0) return null;
+	return (
+		<ol className="flex flex-col">
+			{setPlans.map((setPlan, index) => (
+				<li key={setPlan.id}>
+					<SetPlanRow
+						index={index}
+						params={setPlan.params}
+						weightUnit={weightUnit}
+					/>
+				</li>
+			))}
+		</ol>
+	);
+};
+
+const SetPlanRow: FC<{
+	index: number;
+	params: Params | null;
+	weightUnit: "kg" | "lbs";
+}> = ({ index, params, weightUnit }) => {
 	const isEmpty = params === null;
 	return (
 		<div className="flex items-baseline gap-3 px-3 py-2 text-sm">
@@ -38,10 +58,7 @@ const formatReps = (reps: number): string => `${reps}回`;
 
 const formatRpe = (rpe: number): string => `RPE ${rpe}`;
 
-const formatParams = (
-	params: SetPlanParams | null,
-	unit: "kg" | "lbs",
-): string => {
+const formatParams = (params: Params | null, unit: "kg" | "lbs"): string => {
 	if (params === null) {
 		return "値未入力";
 	}

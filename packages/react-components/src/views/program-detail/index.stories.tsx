@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps } from "react";
 import { fn } from "storybook/test";
 import { PageSection } from "../../primitives/page-section";
-import { ProgramDetail } from "./program-detail";
+import { ProgramDetail } from ".";
 
 type Day = ComponentProps<typeof ProgramDetail>["days"][number];
 type ExercisePlan = Day["exercisePlans"][number];
