@@ -64,8 +64,8 @@ export const ComboBoxInput: FC<InputProps> = ({ className, ...props }) => (
 		className={cx(
 			"flex w-full overflow-hidden rounded-lg border border-border bg-overlay",
 			"focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-bg",
-			"data-[invalid]:border-danger",
-			"data-[disabled]:opacity-50",
+			"data-invalid:border-danger",
+			"data-disabled:opacity-50",
 		)}
 	>
 		<InputPrimitive
@@ -132,10 +132,10 @@ export const ComboBoxItem = <T extends object>({
 	<ListBoxItemPrimitive
 		className={cx(
 			"relative flex cursor-default select-none items-center gap-2 rounded-md px-3 py-2 text-base/6 text-fg outline-none",
-			"data-[hovered]:bg-accent data-[hovered]:text-accent-fg",
-			"data-[focused]:bg-accent data-[focused]:text-accent-fg",
-			"data-[selected]:bg-accent/60 data-[selected]:text-accent-fg",
-			"data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+			"data-hovered:bg-accent data-hovered:text-accent-fg",
+			"data-focused:bg-accent data-focused:text-accent-fg",
+			"data-selected:bg-accent/60 data-selected:text-accent-fg",
+			"data-disabled:pointer-events-none data-disabled:opacity-50",
 			"sm:px-2.5 sm:py-1.5 sm:text-sm/6",
 			className,
 		)}

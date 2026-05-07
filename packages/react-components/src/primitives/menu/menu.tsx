@@ -50,19 +50,19 @@ export const Menu = <T extends object>({
 const menuItemStyles = tv({
 	base: [
 		"relative flex cursor-default select-none items-center gap-2 rounded-md px-3 py-2 text-base/6 text-fg outline-none",
-		"data-[hovered]:bg-accent data-[hovered]:text-accent-fg",
-		"data-[focused]:bg-accent data-[focused]:text-accent-fg",
-		"data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+		"data-hovered:bg-accent data-hovered:text-accent-fg",
+		"data-focused:bg-accent data-focused:text-accent-fg",
+		"data-disabled:pointer-events-none data-disabled:opacity-50",
 		"sm:px-2.5 sm:py-1.5 sm:text-sm/6",
-		"forced-colors:data-[focused]:bg-[Highlight] forced-colors:data-[focused]:text-[HighlightText]",
+		"forced-colors:data-focused:bg-[Highlight] forced-colors:data-focused:text-[HighlightText]",
 	],
 	variants: {
 		intent: {
 			danger: [
 				"text-danger-subtle-fg",
-				"data-[hovered]:bg-danger-subtle data-[hovered]:text-danger-subtle-fg",
-				"data-[focused]:bg-danger-subtle data-[focused]:text-danger-subtle-fg",
-				"forced-colors:data-[focused]:text-[Mark]",
+				"data-hovered:bg-danger-subtle data-hovered:text-danger-subtle-fg",
+				"data-focused:bg-danger-subtle data-focused:text-danger-subtle-fg",
+				"forced-colors:data-focused:text-[Mark]",
 			],
 		},
 	},
