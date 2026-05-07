@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import type { ComponentProps, FC } from "react";
 import {
 	Tab,
 	TabList,
@@ -7,17 +7,8 @@ import {
 	Tabs,
 } from "../../primitives/tabs";
 import { CreateDayCard } from "./create-day-card";
-import {
-	type ExercisePlan,
-	ExercisePlanSection,
-} from "./exercise-plan-section";
-
-type Day = {
-	id: string;
-	label: string;
-	detailHref: string;
-	exercisePlans: ExercisePlan[];
-};
+import { ExercisePlanSection } from "./exercise-plan-section";
+import { SetPlanSection } from "./set-plan-section";
 
 type Props = {
 	name: string;
@@ -26,6 +17,21 @@ type Props = {
 	defaultSelectedDayId?: string;
 	onAddDay: () => void;
 };
+
+type Day = {
+	id: string;
+	label: string;
+	detailHref: string;
+	exercisePlans: (ExercisePlan & {
+		setPlans: SetPlan[];
+	})[];
+};
+
+type ExercisePlan = ComponentProps<
+	typeof ExercisePlanSection
+>["exercisePlans"][number];
+
+type SetPlan = ComponentProps<typeof SetPlanSection>["setPlans"][number];
 
 export const ProgramDetail: FC<Props> = ({
 	name,
@@ -61,7 +67,14 @@ export const ProgramDetail: FC<Props> = ({
 					</TabScrollArea>
 					{days.map((day) => (
 						<TabPanel key={day.id} id={day.id} className="pt-4">
-							<ExercisePlanSection exercisePlans={day.exercisePlans} />
+							<ExercisePlanSection exercisePlans={day.exercisePlans}>
+								{(exercisePlan) => (
+									<SetPlanSection
+										setPlans={exercisePlan.setPlans}
+										weightUnit={exercisePlan.exercise?.weightUnit ?? "kg"}
+									/>
+								)}
+							</ExercisePlanSection>
 						</TabPanel>
 					))}
 				</Tabs>

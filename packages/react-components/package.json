@@ -53,6 +53,8 @@
 	"scripts": {
 		"lint": "biome check .",
 		"type-check": "tsc --noEmit",
+		"test": "vitest run --project unit",
+		"test:watch": "vitest --project unit",
 		"storybook": "storybook dev --ci -p ${STORYBOOK_PORT:-6006} --exact-port",
 		"build-storybook": "storybook build",
 		"chromatic": "chromatic --exit-zero-on-changes --only-changed",

@@ -1,29 +1,39 @@
-import type { FC } from "react";
-import {
-	ExercisePlanRow,
-	type ExercisePlanRowExercise,
-	type ExercisePlanRowSetPlan,
-} from "./exercise-plan-row";
+import type { ReactNode } from "react";
 
-export type ExercisePlan = {
+// T で caller 側の追加フィールド（setPlans 等）を保持し、children 関数に渡せるようにする
+type Props<T extends ExercisePlan> = {
+	exercisePlans: T[];
+	children: (exercisePlan: T) => ReactNode;
+};
+
+type ExercisePlan = {
 	id: string;
-	exercise: ExercisePlanRowExercise | null;
-	setPlans: ExercisePlanRowSetPlan[];
+	exercise: Exercise | null;
 };
 
-type Props = {
-	exercisePlans: ExercisePlan[];
-};
+type Exercise = { id: string; name: string; weightUnit: "kg" | "lbs" };
 
-export const ExercisePlanSection: FC<Props> = ({ exercisePlans }) => {
+export const ExercisePlanSection = <T extends ExercisePlan>({
+	exercisePlans,
+	children,
+}: Props<T>): ReactNode => {
 	return (
 		<ol className="flex flex-col gap-3">
 			{exercisePlans.map((exercisePlan) => (
 				<li key={exercisePlan.id}>
-					<ExercisePlanRow
-						exercise={exercisePlan.exercise}
-						setPlans={exercisePlan.setPlans}
-					/>
+					<section className="flex flex-col gap-2 rounded-lg bg-overlay p-3 text-overlay-fg shadow-sm">
+						<header className="flex items-baseline justify-between gap-2 px-1">
+							{exercisePlan.exercise === null ? (
+								<span className="text-muted-fg text-sm">種目を選択</span>
+							) : (
+								// 親ビュー（ProgramDetail）の h1 直下に置かれる前提で h2 を使用。Heading の自動採番が入ったら置き換える
+								<h2 className="font-medium text-base text-fg">
+									{exercisePlan.exercise.name}
+								</h2>
+							)}
+						</header>
+						{children(exercisePlan)}
+					</section>
 				</li>
 			))}
 		</ol>

@@ -28,7 +28,13 @@ export default defineConfig({
 						provider: playwright({}),
 						instances: [{ browser: "chromium" }],
 					},
-					setupFiles: [".storybook/vitest.setup.ts"],
+				},
+			},
+			{
+				extends: true,
+				test: {
+					name: "unit",
+					include: ["src/**/*.test.ts"],
 				},
 			},
 		],

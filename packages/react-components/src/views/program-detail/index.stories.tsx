@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps } from "react";
 import { fn } from "storybook/test";
 import { PageSection } from "../../primitives/page-section";
-import { ProgramDetail } from "./program-detail";
+import { ProgramDetail } from ".";
 
 type Day = ComponentProps<typeof ProgramDetail>["days"][number];
 type ExercisePlan = Day["exercisePlans"][number];
@@ -172,7 +172,8 @@ export const LongProgramName: Story = {
 };
 
 // 設計判断 #58 によりアプリ層が初期構造（Day×1 + 種目計画×1（種目未確定） + セット計画×1（params: null））を渡す。
-// V16 → V17 → V2 のフロー直後に V2 が表示する想定の状態。
+// プログラム新規作成 → Day新規作成 → プログラム詳細 のフロー直後を表示する想定の状態。
+// 種目選択 picker は本ビューには持たず、種目選択 UI 自体はプログラム新規作成・Day 新規作成・種目計画追加タスクで導入する想定。
 export const InitialStateAfterCreation: Story = {
 	args: {
 		name: "新しいプログラム",
