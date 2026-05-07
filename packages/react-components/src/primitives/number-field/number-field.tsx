@@ -59,8 +59,8 @@ export const NumberFieldInput: FC<InputProps> = ({ className, ...props }) => (
 		className={cx(
 			"flex w-full overflow-hidden rounded-lg border border-border bg-overlay",
 			"focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-bg",
-			"data-[invalid]:border-danger",
-			"data-[disabled]:opacity-50",
+			"data-invalid:border-danger",
+			"data-disabled:opacity-50",
 		)}
 	>
 		<NumberFieldStepperButton slot="decrement" aria-label="減らす">

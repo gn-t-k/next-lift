@@ -42,7 +42,7 @@ export const ProgramDetail: FC<Props> = ({
 }) => {
 	const tabsProps =
 		defaultSelectedDayId !== undefined
-			? { defaultSelectedKey: defaultSelectedDayId }
+			? { defaultValue: defaultSelectedDayId }
 			: {};
 	return (
 		<div className="flex flex-col gap-6">

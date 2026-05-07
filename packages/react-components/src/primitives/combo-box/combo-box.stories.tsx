@@ -74,7 +74,7 @@ export const WithDescription: Story = {
 export const WithDefaultSelection: Story = {
 	name: "選択済み",
 	render: () => (
-		<ComboBox defaultSelectedKey="squat">
+		<ComboBox defaultValue="squat">
 			<ComboBoxLabel>種目</ComboBoxLabel>
 			<ComboBoxInput placeholder="種目名で検索" />
 			<ComboBoxList items={exercises}>
@@ -166,7 +166,7 @@ const CREATE_OPTION_ID = "__create__";
 const CreateNewOptionDemo = () => {
 	const [registered, setRegistered] = useState(exercises);
 	const [inputValue, setInputValue] = useState("");
-	const [selectedKey, setSelectedKey] = useState<Key | null>(null);
+	const [value, setValue] = useState<Key | null>(null);
 
 	const items = useMemo(() => {
 		const trimmed = inputValue.trim();
@@ -183,16 +183,16 @@ const CreateNewOptionDemo = () => {
 		return filtered;
 	}, [inputValue, registered]);
 
-	const onSelectionChange = (key: Key | null) => {
+	const onChange = (key: Key | null) => {
 		if (key === CREATE_OPTION_ID) {
 			const trimmed = inputValue.trim();
 			const newId = `custom-${Date.now()}`;
 			setRegistered((prev) => [...prev, { id: newId, name: trimmed }]);
-			setSelectedKey(newId);
+			setValue(newId);
 			setInputValue(trimmed);
 			return;
 		}
-		setSelectedKey(key);
+		setValue(key);
 		const matched = registered.find((e) => e.id === key);
 		if (matched !== undefined) {
 			setInputValue(matched.name);
@@ -204,8 +204,8 @@ const CreateNewOptionDemo = () => {
 			items={items}
 			inputValue={inputValue}
 			onInputChange={setInputValue}
-			selectedKey={selectedKey}
-			onSelectionChange={onSelectionChange}
+			value={value}
+			onChange={onChange}
 			allowsCustomValue
 		>
 			<ComboBoxLabel>種目</ComboBoxLabel>
@@ -218,7 +218,7 @@ const CreateNewOptionDemo = () => {
 					item.id === CREATE_OPTION_ID ? (
 						<ComboBoxItem
 							id={item.id}
-							className="text-primary data-[focused]:bg-primary/10 data-[focused]:text-primary"
+							className="text-primary data-focused:bg-primary/10 data-focused:text-primary"
 						>
 							{item.name}
 						</ComboBoxItem>
