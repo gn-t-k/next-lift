@@ -1,6 +1,6 @@
 "use client";
 
-import type { FC, PropsWithChildren } from "react";
+import { type FC, type PropsWithChildren, useEffect, useRef, useState } from "react";
 import {
 	TabList as TabListPrimitive,
 	type TabListProps as TabListPrimitiveProps,
@@ -71,11 +71,37 @@ export const TabPanel: FC<TabPanelPrimitiveProps> = ({
 	/>
 );
 
-export const TabScrollArea: FC<PropsWithChildren> = ({ children }) => (
-	<div
-		data-slot="tab-scroll-area"
-		className="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-	>
-		{children}
-	</div>
-);
+export const TabScrollArea: FC<PropsWithChildren> = ({ children }) => {
+	const scrollRef = useRef<HTMLDivElement>(null);
+	const [canScrollLeft, setCanScrollLeft] = useState(false);
+	const [canScrollRight, setCanScrollRight] = useState(false);
+
+	const updateScrollState = () => {
+		const el = scrollRef.current;
+		if (!el) return;
+		setCanScrollLeft(el.scrollLeft > 0);
+		setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+	};
+
+	useEffect(() => {
+		updateScrollState();
+	}, []);
+
+	return (
+		<div data-slot="tab-scroll-area" className="relative">
+			<div
+				ref={scrollRef}
+				className="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+				onScroll={updateScrollState}
+			>
+				{children}
+			</div>
+			{canScrollLeft && (
+				<div className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-overlay to-transparent" />
+			)}
+			{canScrollRight && (
+				<div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-overlay to-transparent" />
+			)}
+		</div>
+	);
+};
