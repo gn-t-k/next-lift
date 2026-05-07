@@ -60,7 +60,7 @@ export const Invalid: Story = {
 	render: () => (
 		<TextField isInvalid>
 			<TextFieldLabel>プログラム名</TextFieldLabel>
-			<TextFieldInput defaultValue="" />
+			<TextFieldInput />
 			<TextFieldError>プログラム名を入力してください</TextFieldError>
 		</TextField>
 	),
