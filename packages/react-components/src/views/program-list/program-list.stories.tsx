@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps } from "react";
-import { PageHeading } from "../../primitives/page-heading";
+import { Heading } from "../../primitives/heading";
 import { PageSection } from "../../primitives/page-section";
 import { ProgramList } from "./program-list";
 
@@ -52,7 +52,7 @@ const meta = {
 	decorators: [
 		(Story) => (
 			<PageSection width="wide">
-				<PageHeading as="h1">プログラム</PageHeading>
+				<Heading>プログラム</Heading>
 				<Story />
 			</PageSection>
 		),

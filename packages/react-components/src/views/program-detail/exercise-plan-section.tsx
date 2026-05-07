@@ -27,7 +27,7 @@ export const ExercisePlanSection = <T extends ExercisePlan>({
 							{exercisePlan.exercise === null ? (
 								<span className="text-muted-fg text-sm">種目を選択</span>
 							) : (
-								<Heading className="font-medium text-base text-fg">
+								<Heading className="font-medium text-base">
 									{exercisePlan.exercise.name}
 								</Heading>
 							)}

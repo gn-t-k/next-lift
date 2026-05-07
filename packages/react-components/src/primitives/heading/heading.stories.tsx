@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Heading, HeadingLevel } from "./heading";
+import { Heading, Section } from "./heading";
 
 const meta = {
 	title: "UI/Heading",
@@ -8,13 +8,6 @@ const meta = {
 		layout: "centered",
 	},
 	tags: ["autodocs"],
-	decorators: [
-		(Story) => (
-			<HeadingLevel>
-				<Story />
-			</HeadingLevel>
-		),
-	],
 } satisfies Meta<typeof Heading>;
 
 export default meta;
@@ -23,23 +16,29 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
 	args: {
 		children: "プログラム名",
-		className: "font-semibold text-2xl",
 	},
 };
 
 export const Nested: Story = {
 	args: { children: "" },
 	render: () => (
-		<HeadingLevel>
-			<div className="flex flex-col gap-2">
-				<Heading className="font-semibold text-2xl">h1: プログラム名</Heading>
-				<HeadingLevel>
-					<Heading className="font-medium text-base">h2: 種目名</Heading>
-					<HeadingLevel>
-						<Heading className="font-medium text-sm">h3: サブ見出し</Heading>
-					</HeadingLevel>
-				</HeadingLevel>
-			</div>
-		</HeadingLevel>
+		<div className="flex flex-col gap-4">
+			<Heading>h1: ページタイトル</Heading>
+			<Section>
+				<Heading>h2: セクションタイトル</Heading>
+				<Section>
+					<Heading>h3: サブセクション</Heading>
+					<Section>
+						<Heading>h4: 小見出し</Heading>
+						<Section>
+							<Heading>h5: より小さい見出し</Heading>
+							<Section>
+								<Heading>h6: 最小の見出し</Heading>
+							</Section>
+						</Section>
+					</Section>
+				</Section>
+			</Section>
+		</div>
 	),
 };

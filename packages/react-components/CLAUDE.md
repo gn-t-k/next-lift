@@ -59,7 +59,7 @@ src/
 ```tsx
 // 利用例（V1 はリスト見出しをビューが持たないため、ページタイトルは consumer が組む）
 <PageSection>
-  <PageHeading as="h1">プログラム</PageHeading>
+  <Heading>プログラム</Heading>
   <ProgramList programs={...} createHref="..." />
 </PageSection>
 ```
@@ -67,9 +67,9 @@ src/
 理由:
 - ビューがコンテナ要素（main / section）を固定できない（呼び出し元のドキュメントアウトラインに依存）
 
-見出し（`<h1>`〜`<h6>`）の扱いはビューごとに判断する。リスト系のようにビュー自身が見出しを持たないものは consumer が組む。詳細系（V2 のプログラム名など、ビューのオブジェクト名そのものが見出しになるもの）はビュー内部で見出しを描画してよい。
+見出し（`<h1>`〜`<h6>`）はビュー内で直書きせず、`Heading` プリミティブを使う。レベルは `Section` のネスト深度から自動採番されるため、ビューを別の文脈に置いても見出しレベルが破綻しない（詳細は `.claude/rules/react.md` の「見出しは Heading primitive を使う」）。リスト系のようにビュー自身が見出しを持たないものは consumer が組む。詳細系（V2 のプログラム名など、ビューのオブジェクト名そのものが見出しになるもの）はビュー内部で `Heading` を描画してよい。
 
-`PageSection` / `PageHeading` プリミティブは `primitives/` に配置し、すべてのビューが共通で使える。
+`PageSection` / `Heading` / `Section` プリミティブは `primitives/` に配置し、すべてのビューが共通で使える。
 
 ### 配置基準（上から順に判定）
 

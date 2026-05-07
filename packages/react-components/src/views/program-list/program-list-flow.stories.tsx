@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { type ComponentProps, type FC, Suspense, use, useMemo } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { PageHeading } from "../../primitives/page-heading";
+import { Heading } from "../../primitives/heading";
 import { PageSection } from "../../primitives/page-section";
 import { ProgramList } from "./program-list";
 import { ProgramListError } from "./program-list-error";
@@ -25,7 +25,7 @@ const FlowDemo: FC<Props> = ({ delayMs, outcome }) => {
 
 	return (
 		<PageSection width="wide">
-			<PageHeading as="h1">プログラム</PageHeading>
+			<Heading>プログラム</Heading>
 			<ErrorBoundary
 				key={outcome} // outcome が変わるたびにエラーバウンダリーをリセット
 				fallback={

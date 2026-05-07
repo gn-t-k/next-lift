@@ -8,7 +8,6 @@ export * from "./link";
 export * from "./menu";
 export * from "./modal";
 export * from "./number-field";
-export * from "./page-heading";
 export * from "./page-section";
 export * from "./tabs";
 export * from "./text-field";
