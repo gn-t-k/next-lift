@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { type ComponentProps, type FC, Suspense, use, useMemo } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Heading } from "../../primitives/heading";
-import { PageSection } from "../../primitives/page-section";
+import { Main } from "../../primitives/main";
 import { ProgramList } from "./program-list";
 import { ProgramListError } from "./program-list-error";
 import { ProgramListLoading } from "./program-list-loading";
@@ -24,7 +24,7 @@ const FlowDemo: FC<Props> = ({ delayMs, outcome }) => {
 	);
 
 	return (
-		<PageSection width="wide">
+		<Main width="wide">
 			<Heading>プログラム</Heading>
 			<ErrorBoundary
 				key={outcome} // outcome が変わるたびにエラーバウンダリーをリセット
@@ -39,7 +39,7 @@ const FlowDemo: FC<Props> = ({ delayMs, outcome }) => {
 					<ProgramListContainer promise={promise} />
 				</Suspense>
 			</ErrorBoundary>
-		</PageSection>
+		</Main>
 	);
 };
 

@@ -32,7 +32,7 @@ src/
 │   │   ├── modal.tsx
 │   │   ├── modal.stories.tsx
 │   │   └── dialog.tsx                  # Modal の内部実装（再エクスポートしない、internal）
-│   ├── page-section/                   # ページのコンテナ（main/section 切替）
+│   ├── main/                           # ページのコンテナ（`<main>` 要素 + width 制御）
 │   ├── page-heading/                   # ページの見出し（h1〜h6 切替）
 │   └── ...
 └── views/                              # ビュー層（V1〜V15の単位ビュー）
@@ -58,10 +58,10 @@ src/
 
 ```tsx
 // 利用例（V1 はリスト見出しをビューが持たないため、ページタイトルは consumer が組む）
-<PageSection>
+<Main>
   <Heading>プログラム</Heading>
   <ProgramList programs={...} createHref="..." />
-</PageSection>
+</Main>
 ```
 
 理由:
@@ -69,7 +69,7 @@ src/
 
 見出し（`<h1>`〜`<h6>`）はビュー内で直書きせず、`Heading` プリミティブを使う。レベルは `Section` のネスト深度から自動採番されるため、ビューを別の文脈に置いても見出しレベルが破綻しない（詳細は `.claude/rules/react.md` の「見出しは Heading primitive を使う」）。リスト系のようにビュー自身が見出しを持たないものは consumer が組む。詳細系（V2 のプログラム名など、ビューのオブジェクト名そのものが見出しになるもの）はビュー内部で `Heading` を描画してよい。
 
-`PageSection` / `Heading` / `Section` プリミティブは `primitives/` に配置し、すべてのビューが共通で使える。
+`Main` / `Section` / `Heading` プリミティブは `primitives/` に配置し、すべてのビューが共通で使える。3つは HTML 要素（`<main>` / `<section>` / `<hN>`）と1対1対応するメンタルモデルで使う。
 
 ### 配置基準（上から順に判定）
 

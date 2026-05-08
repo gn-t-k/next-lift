@@ -2,7 +2,6 @@ import type { FC, PropsWithChildren } from "react";
 import { cn } from "../../libs";
 
 type Props = {
-	as?: "main" | "section";
 	width?: "narrow" | "wide";
 };
 
@@ -11,14 +10,13 @@ const widthClasses = {
 	wide: "max-w-screen-xl",
 } satisfies Record<NonNullable<Props["width"]>, string>;
 
-export const PageSection: FC<PropsWithChildren<Props>> = ({
-	as: As = "main",
+export const Main: FC<PropsWithChildren<Props>> = ({
 	width = "narrow",
 	children,
 }) => {
 	return (
-		<As className={cn("mx-auto w-full p-4", widthClasses[width])}>
+		<main className={cn("mx-auto w-full p-4", widthClasses[width])}>
 			{children}
-		</As>
+		</main>
 	);
 };

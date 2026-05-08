@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps } from "react";
 import { fn } from "storybook/test";
-import { PageSection } from "../../primitives/page-section";
+import { Main } from "../../primitives/main";
 import { ProgramDetail } from ".";
 
 type Day = ComponentProps<typeof ProgramDetail>["days"][number];
@@ -137,9 +137,9 @@ const meta = {
 	},
 	decorators: [
 		(Story) => (
-			<PageSection width="wide">
+			<Main width="wide">
 				<Story />
-			</PageSection>
+			</Main>
 		),
 	],
 } satisfies Meta<typeof ProgramDetail>;

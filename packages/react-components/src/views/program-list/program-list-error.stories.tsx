@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Heading } from "../../primitives/heading";
-import { PageSection } from "../../primitives/page-section";
+import { Main } from "../../primitives/main";
 import { ProgramListError } from "./program-list-error";
 
 const meta = {
@@ -15,10 +15,10 @@ const meta = {
 	},
 	decorators: [
 		(Story) => (
-			<PageSection width="wide">
+			<Main width="wide">
 				<Heading>プログラム</Heading>
 				<Story />
-			</PageSection>
+			</Main>
 		),
 	],
 } satisfies Meta<typeof ProgramListError>;

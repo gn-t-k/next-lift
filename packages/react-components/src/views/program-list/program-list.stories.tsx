@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps } from "react";
 import { Heading } from "../../primitives/heading";
-import { PageSection } from "../../primitives/page-section";
+import { Main } from "../../primitives/main";
 import { ProgramList } from "./program-list";
 
 type Program = ComponentProps<typeof ProgramList>["programs"][number];
@@ -51,10 +51,10 @@ const meta = {
 	},
 	decorators: [
 		(Story) => (
-			<PageSection width="wide">
+			<Main width="wide">
 				<Heading>プログラム</Heading>
 				<Story />
-			</PageSection>
+			</Main>
 		),
 	],
 } satisfies Meta<typeof ProgramList>;

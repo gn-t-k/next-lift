@@ -1,32 +1,27 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Heading, Section } from "../heading";
-import { PageSection } from "./page-section";
+import { Main } from "./main";
 
 const meta = {
-	title: "UI/PageSection",
-	component: PageSection,
+	title: "UI/Main",
+	component: Main,
 	parameters: {
 		layout: "fullscreen",
 	},
 	tags: ["autodocs"],
 	argTypes: {
-		as: {
-			control: "select",
-			options: ["main", "section"],
-		},
 		width: {
 			control: "select",
 			options: ["narrow", "wide"],
 		},
 	},
-} satisfies Meta<typeof PageSection>;
+} satisfies Meta<typeof Main>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Narrow: Story = {
 	args: {
-		as: "main",
 		width: "narrow",
 		children: (
 			<>
@@ -41,7 +36,6 @@ export const Narrow: Story = {
 
 export const Wide: Story = {
 	args: {
-		as: "main",
 		width: "wide",
 		children: (
 			<>
@@ -58,13 +52,13 @@ export const Wide: Story = {
 export const NestedSection: Story = {
 	args: { children: null },
 	render: () => (
-		<PageSection as="main" width="wide">
+		<Main width="wide">
 			<Heading>メインタイトル</Heading>
-			<p>main コンテナ。配下に section をネストできる。</p>
+			<p>main コンテナ。配下に Section をネストできる。</p>
 			<Section>
 				<Heading>サブセクション</Heading>
-				<p>section コンテナとして使う例。</p>
+				<p>section + heading scope の例。</p>
 			</Section>
-		</PageSection>
+		</Main>
 	),
 };
