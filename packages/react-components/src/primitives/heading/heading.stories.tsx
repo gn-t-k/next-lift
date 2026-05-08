@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { Main } from "../main";
 import { Heading, Section } from "./heading";
 
 const meta = {
@@ -8,6 +9,13 @@ const meta = {
 		layout: "centered",
 	},
 	tags: ["autodocs"],
+	decorators: [
+		(Story) => (
+			<Main>
+				<Story />
+			</Main>
+		),
+	],
 } satisfies Meta<typeof Heading>;
 
 export default meta;

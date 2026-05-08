@@ -1,30 +1,40 @@
 "use client";
 
 import type { FC, PropsWithChildren, ReactNode } from "react";
-import { createContext, useContext } from "react";
+import { createContext, use } from "react";
 import { cn } from "../../libs";
 
-const HeadingContext = createContext(0);
+const Uninitialized = Symbol("Uninitialized");
+type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
+export const HeadingContext = createContext<
+	HeadingLevel | typeof Uninitialized
+>(Uninitialized);
 
-const headings = ["h1", "h2", "h3", "h4", "h5", "h6"] as const;
-
-const headingStyles = {
-	1: "font-semibold text-fg text-3xl",
-	2: "font-semibold text-fg text-2xl",
-	3: "font-medium text-fg text-xl",
-	4: "font-medium text-fg text-lg",
-	5: "font-medium text-fg text-base",
-	6: "font-medium text-fg text-sm",
-} as const;
-
-// `<section>` 要素を出しつつ、配下の Heading の level を 1 段深くする境界。
-// HTML5 outline algorithm の精神（section の中の h1 は h2 扱い）を React Context で再現する。
 export const Section: FC<PropsWithChildren> = ({ children }) => {
-	const level = useContext(HeadingContext);
+	const level = (() => {
+		const context = use(HeadingContext);
+		switch (context) {
+			case Uninitialized:
+				return 1;
+			case 1:
+				return 2;
+			case 2:
+				return 3;
+			case 3:
+				return 4;
+			case 4:
+				return 5;
+			case 5:
+				return 6;
+			case 6:
+				return 6;
+		}
+	})();
+
 	return (
-		<HeadingContext.Provider value={Math.min(level + 1, 5)}>
+		<HeadingContext value={level}>
 			<section>{children}</section>
-		</HeadingContext.Provider>
+		</HeadingContext>
 	);
 };
 
@@ -33,16 +43,49 @@ type Props = {
 	children: ReactNode;
 };
 
-// 現在の HeadingContext の level に応じた h1〜h6 を出力する見出し。
-// レベルは Section のネスト深度で決まる（Section 0個 = h1、1個 = h2、…、5個以上 = h6）。
-// className を渡すと既定スタイルに上書き merge される。
 export const Heading: FC<Props> = ({ className, children }) => {
-	const level = useContext(HeadingContext);
-	// Section 側で 0〜5 にクランプ済みだが、context API 経由なので TS の型は number。実行時の安全網としてここでも clamp する
-	const idx = Math.min(Math.max(level, 0), 5) as 0 | 1 | 2 | 3 | 4 | 5;
-	const As = headings[idx];
-	const headingLevel = (idx + 1) as 1 | 2 | 3 | 4 | 5 | 6;
-	return (
-		<As className={cn(headingStyles[headingLevel], className)}>{children}</As>
-	);
+	const level = use(HeadingContext);
+	if (level === Uninitialized) {
+		throw new Error(
+			"Heading コンポーネントは Main または Section の配下で使用してください",
+		);
+	}
+	switch (level) {
+		case 1:
+			return (
+				<h1 className={cn("font-semibold text-3xl text-fg", className)}>
+					{children}
+				</h1>
+			);
+		case 2:
+			return (
+				<h2 className={cn("font-semibold text-2xl text-fg", className)}>
+					{children}
+				</h2>
+			);
+		case 3:
+			return (
+				<h3 className={cn("font-medium text-fg text-xl", className)}>
+					{children}
+				</h3>
+			);
+		case 4:
+			return (
+				<h4 className={cn("font-medium text-fg text-lg", className)}>
+					{children}
+				</h4>
+			);
+		case 5:
+			return (
+				<h5 className={cn("font-medium text-base text-fg", className)}>
+					{children}
+				</h5>
+			);
+		case 6:
+			return (
+				<h6 className={cn("font-medium text-fg text-sm", className)}>
+					{children}
+				</h6>
+			);
+	}
 };
