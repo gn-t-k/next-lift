@@ -32,7 +32,7 @@ src/
 │   │   ├── modal.tsx
 │   │   ├── modal.stories.tsx
 │   │   └── dialog.tsx                  # Modal の内部実装（再エクスポートしない、internal）
-│   ├── page-section/                   # ページのコンテナ（main/section 切替）
+│   ├── main/                           # ページのコンテナ（`<main>` 要素 + width 制御）
 │   ├── page-heading/                   # ページの見出し（h1〜h6 切替）
 │   └── ...
 └── views/                              # ビュー層（V1〜V15の単位ビュー）
@@ -58,18 +58,18 @@ src/
 
 ```tsx
 // 利用例（V1 はリスト見出しをビューが持たないため、ページタイトルは consumer が組む）
-<PageSection>
-  <PageHeading as="h1">プログラム</PageHeading>
+<Main>
+  <Heading>プログラム</Heading>
   <ProgramList programs={...} createHref="..." />
-</PageSection>
+</Main>
 ```
 
 理由:
 - ビューがコンテナ要素（main / section）を固定できない（呼び出し元のドキュメントアウトラインに依存）
 
-見出し（`<h1>`〜`<h6>`）の扱いはビューごとに判断する。リスト系のようにビュー自身が見出しを持たないものは consumer が組む。詳細系（V2 のプログラム名など、ビューのオブジェクト名そのものが見出しになるもの）はビュー内部で見出しを描画してよい。
+見出し（`<h1>`〜`<h6>`）はビュー内で直書きせず、`Heading` プリミティブを使う。レベルは `Section` のネスト深度から自動採番されるため、ビューを別の文脈に置いても見出しレベルが破綻しない（詳細は `.claude/rules/react.md` の「見出しは Heading primitive を使う」）。リスト系のようにビュー自身が見出しを持たないものは consumer が組む。詳細系（V2 のプログラム名など、ビューのオブジェクト名そのものが見出しになるもの）はビュー内部で `Heading` を描画してよい。
 
-`PageSection` / `PageHeading` プリミティブは `primitives/` に配置し、すべてのビューが共通で使える。
+`Main` / `Section` / `Heading` プリミティブは `primitives/` に配置し、すべてのビューが共通で使える。3つは HTML 要素（`<main>` / `<section>` / `<hN>`）と1対1対応するメンタルモデルで使う。
 
 ### 配置基準（上から順に判定）
 
@@ -208,6 +208,51 @@ const classes = ["flex", "flex-col", "gap-4"].join(" ");
 // または長い場合は一文字列で
 <div className={cn("flex flex-col gap-4", className)} />
 ```
+
+#### ルール 5: prop で class を切り替えるなら object lookup ではなく `tv` を使う
+
+prop の値で複数のクラスを切り替える場面は object lookup（`Record<Variant, string>`）で書かず、`tv` の variants として宣言する。
+
+| 書き方 | 評価 |
+| --- | --- |
+| object lookup（`const widthClasses = { narrow: "...", wide: "..." }` を `cn` に渡す） | ❌ 禁止。variant 名・型・classが分散し、`tv` の利点（variants/compoundVariants/型派生）を使わない |
+| `tv({ variants: { width: { narrow, wide } } })` + `VariantProps` | ✅ 推奨。`Props` の型は `VariantProps<typeof xxxStyles>` で派生させる |
+
+```tsx
+// ❌ 禁止: object lookup でクラス切替
+const widthClasses = {
+  narrow: "max-w-2xl",
+  wide: "max-w-screen-xl",
+} satisfies Record<NonNullable<Props["width"]>, string>;
+
+type Props = { width?: "narrow" | "wide" };
+
+export const Main: FC<PropsWithChildren<Props>> = ({ width = "narrow", children }) => (
+  <main className={cn("mx-auto w-full p-4", widthClasses[width])}>{children}</main>
+);
+
+// ✅ 推奨: tv の variants として宣言、Props は VariantProps で派生
+type Props = VariantProps<typeof styles>;
+
+export const Main: FC<PropsWithChildren<Props>> = ({ width, children }) => (
+  <main className={styles({ width })}>{children}</main>
+);
+
+const styles = tv({
+  base: "mx-auto w-full p-4",
+  variants: {
+    width: {
+      narrow: "max-w-2xl",
+      wide: "max-w-screen-xl",
+    },
+  },
+  defaultVariants: { width: "narrow" },
+});
+```
+
+`styles` は internal helper なのでファイル下部にまとめる（`coding-style.md` の「ファイル先頭に近い位置に export を置く」原則）。コンポーネント本体は遅延評価なので後方参照で問題ない。
+
+**Why:** variants が増えたとき（`size` 追加、`compoundVariants` 等）に `tv` なら自然に拡張できる。object lookup は variant ごとに新しい lookup table を増やすことになり、二重管理になる。また `VariantProps` で型を派生できるので、`Props["width"]` を別途定義する必要がない。
 
 ### コンポーネントの利用
 

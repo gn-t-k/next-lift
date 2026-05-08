@@ -1,4 +1,5 @@
 import type { ComponentProps, FC } from "react";
+import { Heading, Section } from "../../primitives/heading";
 import {
 	Tab,
 	TabList,
@@ -47,7 +48,7 @@ export const ProgramDetail: FC<Props> = ({
 	return (
 		<div className="flex flex-col gap-6">
 			<header className="flex flex-col gap-2">
-				<h1 className="font-semibold text-2xl text-fg">{name}</h1>
+				<Heading>{name}</Heading>
 				{meta !== null && meta !== "" && (
 					<p className="whitespace-pre-wrap text-muted-fg text-sm">{meta}</p>
 				)}
@@ -55,29 +56,31 @@ export const ProgramDetail: FC<Props> = ({
 			{days.length === 0 ? (
 				<CreateDayCard onAddDay={onAddDay} />
 			) : (
-				<Tabs {...tabsProps}>
-					<TabScrollArea>
-						<TabList aria-label="Day">
-							{days.map((day) => (
-								<Tab key={day.id} id={day.id}>
-									{day.label}
-								</Tab>
-							))}
-						</TabList>
-					</TabScrollArea>
-					{days.map((day) => (
-						<TabPanel key={day.id} id={day.id} className="pt-4">
-							<ExercisePlanSection exercisePlans={day.exercisePlans}>
-								{(exercisePlan) => (
-									<SetPlanSection
-										setPlans={exercisePlan.setPlans}
-										weightUnit={exercisePlan.exercise?.weightUnit ?? "kg"}
-									/>
-								)}
-							</ExercisePlanSection>
-						</TabPanel>
-					))}
-				</Tabs>
+				<Section>
+					<Tabs {...tabsProps}>
+						<TabScrollArea>
+							<TabList aria-label="Day">
+								{days.map((day) => (
+									<Tab key={day.id} id={day.id}>
+										{day.label}
+									</Tab>
+								))}
+							</TabList>
+						</TabScrollArea>
+						{days.map((day) => (
+							<TabPanel key={day.id} id={day.id} className="pt-4">
+								<ExercisePlanSection exercisePlans={day.exercisePlans}>
+									{(exercisePlan) => (
+										<SetPlanSection
+											setPlans={exercisePlan.setPlans}
+											weightUnit={exercisePlan.exercise?.weightUnit ?? "kg"}
+										/>
+									)}
+								</ExercisePlanSection>
+							</TabPanel>
+						))}
+					</Tabs>
+				</Section>
 			)}
 		</div>
 	);

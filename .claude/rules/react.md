@@ -117,11 +117,40 @@ const AwaitedChild: FC<{ promise: Promise<T> }> = ({ promise }) => {
 
 「中間層が冗長に見える」と畳まない。replay UX が必要なら親 `Boundary` 自体に `key={remountKey}` を渡してまるごと remount する。
 
+## 見出しは Heading primitive を使う
+
+- `<h1>` 〜 `<h6>` を直書きしない。`@next-lift/react-components` の `Heading` を使う
+- 見出しレベルを 1 段深くしたいときは `Section` で囲む（`<section>` 要素 + heading scope を提供）
+- `Heading` はネスト深度から自動的に `h1`〜`h6` を解決する。consumer が level を明示指定する API は持たない
+
+```tsx
+import { Heading, Section } from "@next-lift/react-components";
+
+// ページタイトル（h1）
+<Heading>プログラム</Heading>
+
+// 1段ネスト → h2 になる
+<Section>
+  <Heading>セクションタイトル</Heading>
+</Section>
+
+// 2段ネスト → h3
+<Section>
+  <Section>
+    <Heading>サブセクション</Heading>
+  </Section>
+</Section>
+```
+
+**Why:** ビューが見出しレベルをハードコードすると、ビューを別の文脈に置いたときにアウトラインが破綻する（h1 を 2 つ含むページ、h2 を飛ばして h3 が出る等）。`Section` のネスト深度から自動採番すれば、ビューの再配置で見出しレベルが自然に追従する。
+
+**How to apply:** 新規ビュー/プリミティブ実装時、または既存コードから `<h*>` 直書きを見つけた時。Heading は level に応じたデフォルトスタイル（font-weight + text-size）を持つので、特殊な見た目が必要な場合のみ `className` で上書きする。
+
 ## Storybook ストーリーは実アプリ構成を示す
 
 ストーリーは見た目の確認だけでなく、**利用側（apps/web 等）が実際にどう組み立てるかのドキュメント** として書く。
 
 - 状態遷移系: 手動 state ではなく React 19 の `use()` API + `Suspense` + `ErrorBoundary`（`react-error-boundary` 推奨）で本物の構成を再現
-- ページ全体: `PageSection` + `PageHeading` 等のクロムを decorator や FlowDemo に含めて、利用側の組み立てそのものを見せる
+- ページ全体: `PageSection` + `Heading` 等のクロムを decorator や FlowDemo に含めて、利用側の組み立てそのものを見せる
 - データ取得: `setTimeout` で resolve/reject する Promise をモックとして使い、実アプリの `useSuspenseQuery` や Server Component await の代わりに据える
 - 「このストーリー専用のアダプター」（例: `SuspendedProgramList`）として use() を呼ぶラッパーを置き、純プレゼンテーショナルな本体と利用層を分離する
