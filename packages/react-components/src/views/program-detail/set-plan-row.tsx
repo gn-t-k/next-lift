@@ -214,6 +214,9 @@ type DraftFieldsProps = {
 	onUpdate: (draft: Draft) => void;
 };
 
+const fieldLayout =
+	"grid grid-cols-[5rem_1fr] items-center gap-3 [&>[data-slot=label]+[data-slot=control]]:mt-0";
+
 const DraftFields: FC<DraftFieldsProps> = ({
 	draft,
 	weightUnit,
@@ -232,6 +235,7 @@ const DraftFields: FC<DraftFieldsProps> = ({
 						}
 						step={weightStep}
 						minValue={0}
+						className={fieldLayout}
 					>
 						<NumberFieldLabel>{`重量 (${weightUnit})`}</NumberFieldLabel>
 						<NumberFieldInput placeholder="未入力" />
@@ -243,6 +247,7 @@ const DraftFields: FC<DraftFieldsProps> = ({
 						}
 						step={repsStep}
 						minValue={0}
+						className={fieldLayout}
 					>
 						<NumberFieldLabel>回数</NumberFieldLabel>
 						<NumberFieldInput placeholder="未入力" />
@@ -259,6 +264,7 @@ const DraftFields: FC<DraftFieldsProps> = ({
 						}
 						step={weightStep}
 						minValue={0}
+						className={fieldLayout}
 					>
 						<NumberFieldLabel>{`重量 (${weightUnit})`}</NumberFieldLabel>
 						<NumberFieldInput placeholder="未入力" />
@@ -271,6 +277,7 @@ const DraftFields: FC<DraftFieldsProps> = ({
 						step={0.5}
 						minValue={5}
 						maxValue={10}
+						className={fieldLayout}
 					>
 						<NumberFieldLabel>RPE</NumberFieldLabel>
 						<NumberFieldInput placeholder="未入力" />
@@ -287,6 +294,7 @@ const DraftFields: FC<DraftFieldsProps> = ({
 						}
 						step={repsStep}
 						minValue={0}
+						className={fieldLayout}
 					>
 						<NumberFieldLabel>回数</NumberFieldLabel>
 						<NumberFieldInput placeholder="未入力" />
@@ -299,6 +307,7 @@ const DraftFields: FC<DraftFieldsProps> = ({
 						step={0.5}
 						minValue={5}
 						maxValue={10}
+						className={fieldLayout}
 					>
 						<NumberFieldLabel>RPE</NumberFieldLabel>
 						<NumberFieldInput placeholder="未入力" />
