@@ -209,6 +209,51 @@ const classes = ["flex", "flex-col", "gap-4"].join(" ");
 <div className={cn("flex flex-col gap-4", className)} />
 ```
 
+#### ルール 5: prop で class を切り替えるなら object lookup ではなく `tv` を使う
+
+prop の値で複数のクラスを切り替える場面は object lookup（`Record<Variant, string>`）で書かず、`tv` の variants として宣言する。
+
+| 書き方 | 評価 |
+| --- | --- |
+| object lookup（`const widthClasses = { narrow: "...", wide: "..." }` を `cn` に渡す） | ❌ 禁止。variant 名・型・classが分散し、`tv` の利点（variants/compoundVariants/型派生）を使わない |
+| `tv({ variants: { width: { narrow, wide } } })` + `VariantProps` | ✅ 推奨。`Props` の型は `VariantProps<typeof xxxStyles>` で派生させる |
+
+```tsx
+// ❌ 禁止: object lookup でクラス切替
+const widthClasses = {
+  narrow: "max-w-2xl",
+  wide: "max-w-screen-xl",
+} satisfies Record<NonNullable<Props["width"]>, string>;
+
+type Props = { width?: "narrow" | "wide" };
+
+export const Main: FC<PropsWithChildren<Props>> = ({ width = "narrow", children }) => (
+  <main className={cn("mx-auto w-full p-4", widthClasses[width])}>{children}</main>
+);
+
+// ✅ 推奨: tv の variants として宣言、Props は VariantProps で派生
+type Props = VariantProps<typeof styles>;
+
+export const Main: FC<PropsWithChildren<Props>> = ({ width, children }) => (
+  <main className={styles({ width })}>{children}</main>
+);
+
+const styles = tv({
+  base: "mx-auto w-full p-4",
+  variants: {
+    width: {
+      narrow: "max-w-2xl",
+      wide: "max-w-screen-xl",
+    },
+  },
+  defaultVariants: { width: "narrow" },
+});
+```
+
+`styles` は internal helper なのでファイル下部にまとめる（`coding-style.md` の「ファイル先頭に近い位置に export を置く」原則）。コンポーネント本体は遅延評価なので後方参照で問題ない。
+
+**Why:** variants が増えたとき（`size` 追加、`compoundVariants` 等）に `tv` なら自然に拡張できる。object lookup は variant ごとに新しい lookup table を増やすことになり、二重管理になる。また `VariantProps` で型を派生できるので、`Props["width"]` を別途定義する必要がない。
+
 ### コンポーネントの利用
 
 ```typescript
