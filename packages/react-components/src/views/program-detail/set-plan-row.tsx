@@ -1,12 +1,14 @@
 "use client";
 
 import {
+	ArrowsRightLeftIcon,
 	CheckIcon,
 	PencilSquareIcon,
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { ChevronDownIcon } from "@heroicons/react/24/solid";
-import { type FC, type FormEvent, type KeyboardEvent, useState } from "react";
+import { type FC, type FormEvent, useState } from "react";
+import { Dialog, DialogTrigger, Popover } from "react-aria-components";
+import { cx } from "../../libs/primitive";
 import { cn } from "../../libs/utils";
 import { Button } from "../../primitives/button";
 import { Menu, MenuItem, MenuTrigger } from "../../primitives/menu";
@@ -63,84 +65,12 @@ export const SetPlanRow: FC<Props> = ({
 		submitEditing();
 	};
 
-	const handleKeyDown = (event: KeyboardEvent<HTMLFormElement>) => {
-		if (event.key === "Escape") {
-			event.preventDefault();
-			cancelEditing();
-		}
+	const handleOpenChange = (isOpen: boolean) => {
+		if (!isOpen) cancelEditing();
 	};
 
-	if (isEditing) {
-		return (
-			// biome-ignore lint/a11y/noNoninteractiveElementInteractions: Escape キーでキャンセルするため form 要素に onKeyDown が必要
-			<form
-				onSubmit={handleSubmit}
-				onKeyDown={handleKeyDown}
-				className="flex flex-col gap-3 rounded-md border border-border bg-overlay p-3"
-				aria-label={`セット ${index + 1} を編集`}
-			>
-				<div className="flex items-center justify-between gap-2">
-					<span className="text-muted-fg text-xs tabular-nums">
-						{`#${index + 1}`}
-					</span>
-					<MenuTrigger>
-						<Button intent="plain" size="sm" type="button">
-							<span>{patternLabel(draft.pattern)}</span>
-							<ChevronDownIcon
-								data-slot="icon"
-								className="size-4"
-								aria-hidden
-							/>
-						</Button>
-						<Menu aria-label="パターンを切り替え">
-							<MenuItem
-								onAction={() => setDraft(emptyDraftFor("weight-x-reps"))}
-							>
-								重量 × 回数
-							</MenuItem>
-							<MenuItem
-								onAction={() => setDraft(emptyDraftFor("weight-x-rpe"))}
-							>
-								重量 × RPE
-							</MenuItem>
-							<MenuItem onAction={() => setDraft(emptyDraftFor("reps-x-rpe"))}>
-								回数 × RPE
-							</MenuItem>
-						</Menu>
-					</MenuTrigger>
-					<div className="flex items-center gap-1">
-						<Button
-							type="button"
-							intent="plain"
-							size="sq-sm"
-							onPress={cancelEditing}
-							aria-label="キャンセル"
-						>
-							<XMarkIcon data-slot="icon" className="size-5" aria-hidden />
-						</Button>
-						<Button
-							type="submit"
-							intent="primary"
-							size="sq-sm"
-							isDisabled={draftToParams(draft) === null}
-							aria-label="確定"
-						>
-							<CheckIcon data-slot="icon" className="size-5" aria-hidden />
-						</Button>
-					</div>
-				</div>
-				<DraftFields
-					draft={draft}
-					weightUnit={weightUnit}
-					weightStep={weightStep}
-					repsStep={repsStep}
-					onUpdate={setDraft}
-				/>
-			</form>
-		);
-	}
-
 	const isEmpty = params === null;
+
 	return (
 		<div className="flex items-baseline gap-3 px-3 py-2 text-sm">
 			<span className="w-8 shrink-0 text-muted-fg text-xs tabular-nums">
@@ -155,15 +85,115 @@ export const SetPlanRow: FC<Props> = ({
 				{formatParams(params, weightUnit)}
 			</span>
 			{isEditable && (
-				<Button
-					type="button"
-					intent="plain"
-					size="sq-xs"
-					onPress={startEditing}
-					aria-label={`セット ${index + 1} を編集`}
-				>
-					<PencilSquareIcon data-slot="icon" className="size-4" aria-hidden />
-				</Button>
+				<DialogTrigger isOpen={isEditing} onOpenChange={handleOpenChange}>
+					<Button
+						intent="plain"
+						size="sq-xs"
+						onPress={startEditing}
+						aria-label={`セット ${index + 1} を編集`}
+					>
+						<PencilSquareIcon data-slot="icon" className="size-4" aria-hidden />
+					</Button>
+					<Popover
+						placement="bottom end"
+						className={cx(
+							"max-w-[min(20rem,calc(100vw-2rem))]",
+							"rounded-lg border border-border bg-overlay text-overlay-fg shadow-lg outline-hidden",
+							"entering:fade-in entering:animate-in entering:duration-150",
+							"exiting:fade-out exiting:animate-out exiting:duration-100",
+						)}
+					>
+						<Dialog
+							className="outline-hidden"
+							aria-label={`セット ${index + 1} を編集`}
+						>
+							{draft !== null && (
+								<form
+									onSubmit={handleSubmit}
+									className="flex w-72 flex-col gap-3 p-3"
+								>
+									<header className="flex items-center justify-between gap-2">
+										<span className="text-muted-fg text-xs tabular-nums">
+											{`#${index + 1}`}
+										</span>
+										<MenuTrigger>
+											<Button
+												intent="plain"
+												size="sq-sm"
+												type="button"
+												aria-label={`パターンを変更（現在: ${patternLabel(draft.pattern)}）`}
+											>
+												<ArrowsRightLeftIcon
+													data-slot="icon"
+													className="size-4"
+													aria-hidden
+												/>
+											</Button>
+											<Menu aria-label="パターンを切り替え">
+												<MenuItem
+													onAction={() =>
+														setDraft(emptyDraftFor("weight-x-reps"))
+													}
+												>
+													重量 × 回数
+												</MenuItem>
+												<MenuItem
+													onAction={() =>
+														setDraft(emptyDraftFor("weight-x-rpe"))
+													}
+												>
+													重量 × RPE
+												</MenuItem>
+												<MenuItem
+													onAction={() => setDraft(emptyDraftFor("reps-x-rpe"))}
+												>
+													回数 × RPE
+												</MenuItem>
+											</Menu>
+										</MenuTrigger>
+									</header>
+									<DraftFields
+										draft={draft}
+										weightUnit={weightUnit}
+										weightStep={weightStep}
+										repsStep={repsStep}
+										onUpdate={setDraft}
+									/>
+									<footer className="flex items-center justify-end gap-2">
+										<Button
+											type="button"
+											intent="plain"
+											size="sm"
+											onPress={cancelEditing}
+											aria-label="キャンセル"
+										>
+											<XMarkIcon
+												data-slot="icon"
+												className="size-4"
+												aria-hidden
+											/>
+											キャンセル
+										</Button>
+										<Button
+											type="submit"
+											intent="primary"
+											size="sm"
+											isDisabled={draftToParams(draft) === null}
+											aria-label="確定"
+										>
+											<CheckIcon
+												data-slot="icon"
+												className="size-4"
+												aria-hidden
+											/>
+											確定
+										</Button>
+									</footer>
+								</form>
+							)}
+						</Dialog>
+					</Popover>
+				</DialogTrigger>
 			)}
 		</div>
 	);
@@ -194,7 +224,7 @@ const DraftFields: FC<DraftFieldsProps> = ({
 	switch (draft.pattern) {
 		case "weight-x-reps":
 			return (
-				<div className="flex items-end gap-3">
+				<div className="flex flex-col gap-3">
 					<NumberField
 						value={draft.weight ?? Number.NaN}
 						onChange={(value) =>
@@ -206,7 +236,6 @@ const DraftFields: FC<DraftFieldsProps> = ({
 						<NumberFieldLabel>{`重量 (${weightUnit})`}</NumberFieldLabel>
 						<NumberFieldInput placeholder="未入力" />
 					</NumberField>
-					<span className="pb-2 text-fg text-sm">×</span>
 					<NumberField
 						value={draft.reps ?? Number.NaN}
 						onChange={(value) =>
@@ -222,7 +251,7 @@ const DraftFields: FC<DraftFieldsProps> = ({
 			);
 		case "weight-x-rpe":
 			return (
-				<div className="flex items-end gap-3">
+				<div className="flex flex-col gap-3">
 					<NumberField
 						value={draft.weight ?? Number.NaN}
 						onChange={(value) =>
@@ -234,14 +263,13 @@ const DraftFields: FC<DraftFieldsProps> = ({
 						<NumberFieldLabel>{`重量 (${weightUnit})`}</NumberFieldLabel>
 						<NumberFieldInput placeholder="未入力" />
 					</NumberField>
-					<span className="pb-2 text-fg text-sm">@</span>
 					<NumberField
 						value={draft.rpe ?? Number.NaN}
 						onChange={(value) =>
 							onUpdate({ ...draft, rpe: normalizeNumber(value) })
 						}
 						step={0.5}
-						minValue={0}
+						minValue={5}
 						maxValue={10}
 					>
 						<NumberFieldLabel>RPE</NumberFieldLabel>
@@ -251,7 +279,7 @@ const DraftFields: FC<DraftFieldsProps> = ({
 			);
 		case "reps-x-rpe":
 			return (
-				<div className="flex items-end gap-3">
+				<div className="flex flex-col gap-3">
 					<NumberField
 						value={draft.reps ?? Number.NaN}
 						onChange={(value) =>
@@ -263,14 +291,13 @@ const DraftFields: FC<DraftFieldsProps> = ({
 						<NumberFieldLabel>回数</NumberFieldLabel>
 						<NumberFieldInput placeholder="未入力" />
 					</NumberField>
-					<span className="pb-2 text-fg text-sm">@</span>
 					<NumberField
 						value={draft.rpe ?? Number.NaN}
 						onChange={(value) =>
 							onUpdate({ ...draft, rpe: normalizeNumber(value) })
 						}
 						step={0.5}
-						minValue={0}
+						minValue={5}
 						maxValue={10}
 					>
 						<NumberFieldLabel>RPE</NumberFieldLabel>

@@ -19,6 +19,46 @@ const StatefulRow: FC<ComponentProps<typeof SetPlanRow>> = ({
 	return <SetPlanRow {...rest} params={params} onChange={handleChange} />;
 };
 
+const findPopoverDialog = (): HTMLElement | null =>
+	document.querySelector<HTMLElement>('[role="dialog"]');
+
+const requirePopoverDialog = (): HTMLElement => {
+	const dialog = findPopoverDialog();
+	if (dialog === null) throw new Error("popover dialog not found");
+	return dialog;
+};
+
+const findButtonInPopoverByName = (
+	name: string | RegExp,
+): HTMLElement | undefined =>
+	Array.from(
+		requirePopoverDialog().querySelectorAll<HTMLButtonElement>("button"),
+	).find((el) => {
+		const elName =
+			el.getAttribute("aria-label") ?? el.textContent?.trim() ?? "";
+		return typeof name === "string" ? elName === name : name.test(elName);
+	});
+
+const requireButtonInPopoverByName = (name: string | RegExp): HTMLElement => {
+	const el = findButtonInPopoverByName(name);
+	if (el === undefined)
+		throw new Error(`button with name "${name}" not found in popover dialog`);
+	return el;
+};
+
+const findInputByLabel = (label: string): HTMLInputElement => {
+	const dialog = requirePopoverDialog();
+	const labelEl = Array.from(
+		dialog.querySelectorAll<HTMLElement>("label"),
+	).find((l) => l.textContent === label);
+	if (labelEl === undefined) throw new Error(`label "${label}" not found`);
+	const id = labelEl.getAttribute("for");
+	if (id === null) throw new Error(`label "${label}" has no associated input`);
+	const input = dialog.querySelector<HTMLInputElement>(`#${CSS.escape(id)}`);
+	if (input === null) throw new Error(`input for label "${label}" not found`);
+	return input;
+};
+
 const findMenuItemByName = (name: string): HTMLElement | undefined =>
 	Array.from(document.querySelectorAll<HTMLElement>('[role="menuitem"]')).find(
 		(el) => el.textContent?.trim() === name,
@@ -104,9 +144,10 @@ export const EditingSubmitByEnter: Story = {
 		await userEvent.click(
 			canvas.getByRole("button", { name: "セット 1 を編集" }),
 		);
-		const weightInput = await canvas.findByRole("textbox", {
-			name: "重量 (kg)",
+		await waitFor(() => {
+			expect(findPopoverDialog()).not.toBeNull();
 		});
+		const weightInput = findInputByLabel("重量 (kg)");
 		await userEvent.tripleClick(weightInput);
 		await userEvent.keyboard("110{Enter}");
 		await waitFor(() => {
@@ -130,10 +171,13 @@ export const EditingSubmitByCheckIcon: Story = {
 		await userEvent.click(
 			canvas.getByRole("button", { name: "セット 1 を編集" }),
 		);
-		const repsInput = await canvas.findByRole("textbox", { name: "回数" });
+		await waitFor(() => {
+			expect(findPopoverDialog()).not.toBeNull();
+		});
+		const repsInput = findInputByLabel("回数");
 		await userEvent.tripleClick(repsInput);
 		await userEvent.keyboard("8");
-		await userEvent.click(canvas.getByRole("button", { name: "確定" }));
+		await userEvent.click(requireButtonInPopoverByName(/^確定$/));
 		await waitFor(() => {
 			expect(args.onChange).toHaveBeenCalledWith({
 				pattern: "weight-x-reps",
@@ -155,14 +199,14 @@ export const EditingCancelByEscape: Story = {
 		await userEvent.click(
 			canvas.getByRole("button", { name: "セット 1 を編集" }),
 		);
-		const weightInput = await canvas.findByRole("textbox", {
-			name: "重量 (kg)",
-		});
-		await userEvent.tripleClick(weightInput);
-		await userEvent.keyboard("999");
-		await userEvent.keyboard("{Escape}");
 		await waitFor(() => {
-			expect(canvas.queryByRole("form")).not.toBeInTheDocument();
+			expect(findPopoverDialog()).not.toBeNull();
+		});
+		const weightInput = findInputByLabel("重量 (kg)");
+		await userEvent.tripleClick(weightInput);
+		await userEvent.keyboard("999{Escape}");
+		await waitFor(() => {
+			expect(findPopoverDialog()).toBeNull();
 		});
 		expect(args.onChange).not.toHaveBeenCalled();
 	},
@@ -179,47 +223,16 @@ export const EditingCancelByXIcon: Story = {
 		await userEvent.click(
 			canvas.getByRole("button", { name: "セット 1 を編集" }),
 		);
-		const weightInput = await canvas.findByRole("textbox", {
-			name: "重量 (kg)",
+		await waitFor(() => {
+			expect(findPopoverDialog()).not.toBeNull();
 		});
+		const weightInput = findInputByLabel("重量 (kg)");
 		await userEvent.tripleClick(weightInput);
 		await userEvent.keyboard("999");
-		await userEvent.click(canvas.getByRole("button", { name: "キャンセル" }));
+		await userEvent.click(requireButtonInPopoverByName(/^キャンセル$/));
 		await waitFor(() => {
-			expect(canvas.queryByRole("form")).not.toBeInTheDocument();
+			expect(findPopoverDialog()).toBeNull();
 		});
-		expect(args.onChange).not.toHaveBeenCalled();
-	},
-};
-
-export const EditingBlurDoesNothing: Story = {
-	args: {
-		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
-		onChange: fn(),
-	},
-	render: (args) => (
-		<div className="flex flex-col gap-4">
-			<StatefulRow {...args} />
-			<input
-				type="text"
-				placeholder="フォーカス先"
-				aria-label="外部入力"
-				className="rounded border border-border p-2"
-			/>
-		</div>
-	),
-	play: async ({ canvasElement, args }) => {
-		const canvas = within(canvasElement);
-		await userEvent.click(
-			canvas.getByRole("button", { name: "セット 1 を編集" }),
-		);
-		const weightInput = await canvas.findByRole("textbox", {
-			name: "重量 (kg)",
-		});
-		await userEvent.tripleClick(weightInput);
-		await userEvent.keyboard("120");
-		await userEvent.click(canvas.getByRole("textbox", { name: "外部入力" }));
-		expect(canvas.getByRole("form")).toBeInTheDocument();
 		expect(args.onChange).not.toHaveBeenCalled();
 	},
 };
@@ -235,20 +248,23 @@ export const EditingPatternSwitchClearsValues: Story = {
 		await userEvent.click(
 			canvas.getByRole("button", { name: "セット 1 を編集" }),
 		);
-		await userEvent.click(canvas.getByRole("button", { name: /^重量 × 回数/ }));
+		await waitFor(() => {
+			expect(findPopoverDialog()).not.toBeNull();
+		});
+		await userEvent.click(requireButtonInPopoverByName(/^パターンを変更/));
 		await waitFor(() => {
 			expect(findMenuItemByName("重量 × RPE")).toBeDefined();
 		});
 		const menuItem = findMenuItemByName("重量 × RPE");
 		if (menuItem === undefined) throw new Error("menu item not found");
 		await userEvent.click(menuItem);
-		const weightInput = await canvas.findByRole("textbox", {
-			name: "重量 (kg)",
+		await waitFor(() => {
+			const weight = findInputByLabel("重量 (kg)");
+			const rpe = findInputByLabel("RPE");
+			expect(weight).toHaveValue("");
+			expect(rpe).toHaveValue("");
 		});
-		const rpeInput = await canvas.findByRole("textbox", { name: "RPE" });
-		expect(weightInput).toHaveValue("");
-		expect(rpeInput).toHaveValue("");
-		expect(canvas.getByRole("button", { name: "確定" })).toBeDisabled();
+		expect(requireButtonInPopoverByName(/^確定$/)).toBeDisabled();
 	},
 };
 
@@ -263,15 +279,16 @@ export const EditingFromEmpty: Story = {
 		await userEvent.click(
 			canvas.getByRole("button", { name: "セット 1 を編集" }),
 		);
-		const weightInput = await canvas.findByRole("textbox", {
-			name: "重量 (kg)",
+		await waitFor(() => {
+			expect(findPopoverDialog()).not.toBeNull();
 		});
+		const weightInput = findInputByLabel("重量 (kg)");
 		await userEvent.click(weightInput);
 		await userEvent.keyboard("80");
-		const repsInput = await canvas.findByRole("textbox", { name: "回数" });
+		const repsInput = findInputByLabel("回数");
 		await userEvent.click(repsInput);
 		await userEvent.keyboard("10");
-		await userEvent.click(canvas.getByRole("button", { name: "確定" }));
+		await userEvent.click(requireButtonInPopoverByName(/^確定$/));
 		await waitFor(() => {
 			expect(args.onChange).toHaveBeenCalledWith({
 				pattern: "weight-x-reps",
