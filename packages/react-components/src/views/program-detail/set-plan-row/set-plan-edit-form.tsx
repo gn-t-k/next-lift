@@ -10,6 +10,11 @@ import {
 	NumberFieldInput,
 	NumberFieldLabel,
 } from "../../../primitives/number-field";
+import { ScrollArea } from "../../../primitives/scrollable";
+import {
+	SingleToggleButtonGroup,
+	ToggleButton,
+} from "../../../primitives/toggle-button-group";
 import {
 	type Draft,
 	draftToPattern,
@@ -160,19 +165,10 @@ const DraftFields: FC<DraftFieldsProps> = ({
 						<NumberFieldLabel>{`重量 (${weightUnit})`}</NumberFieldLabel>
 						<NumberFieldInput placeholder="未入力" />
 					</NumberField>
-					<NumberField
-						value={draft.rpe ?? Number.NaN}
-						onChange={(value) =>
-							onUpdate({ ...draft, rpe: normalizeNumber(value) })
-						}
-						step={0.5}
-						minValue={5}
-						maxValue={10}
-						className={fieldLayout}
-					>
-						<NumberFieldLabel>RPE</NumberFieldLabel>
-						<NumberFieldInput placeholder="未入力" />
-					</NumberField>
+					<RpeToggleField
+						value={draft.rpe}
+						onChange={(rpe) => onUpdate({ ...draft, rpe })}
+					/>
 				</div>
 			);
 		case "reps-x-rpe":
@@ -190,23 +186,50 @@ const DraftFields: FC<DraftFieldsProps> = ({
 						<NumberFieldLabel>回数</NumberFieldLabel>
 						<NumberFieldInput placeholder="未入力" />
 					</NumberField>
-					<NumberField
-						value={draft.rpe ?? Number.NaN}
-						onChange={(value) =>
-							onUpdate({ ...draft, rpe: normalizeNumber(value) })
-						}
-						step={0.5}
-						minValue={5}
-						maxValue={10}
-						className={fieldLayout}
-					>
-						<NumberFieldLabel>RPE</NumberFieldLabel>
-						<NumberFieldInput placeholder="未入力" />
-					</NumberField>
+					<RpeToggleField
+						value={draft.rpe}
+						onChange={(rpe) => onUpdate({ ...draft, rpe })}
+					/>
 				</div>
 			);
 	}
 };
+
+type RpeToggleFieldProps = {
+	value: number | null;
+	onChange: (value: number | null) => void;
+};
+
+const RpeToggleField: FC<RpeToggleFieldProps> = ({ value, onChange }) => (
+	<div className={fieldLayout}>
+		<span
+			data-slot="label"
+			className="block select-none font-medium text-base/6 text-fg sm:text-sm/6"
+		>
+			RPE
+		</span>
+		<ScrollArea>
+			<SingleToggleButtonGroup
+				aria-label="RPE"
+				selectedKey={value === null ? null : value.toString()}
+				onSelectionChange={(key) => onChange(key === null ? null : Number(key))}
+				className="flex w-fit gap-1"
+			>
+				{RPE_OPTIONS.map((rpe) => (
+					<ToggleButton
+						key={rpe}
+						id={rpe.toString()}
+						data-initial-scroll={value === rpe ? "" : undefined}
+					>
+						{rpe}
+					</ToggleButton>
+				))}
+			</SingleToggleButtonGroup>
+		</ScrollArea>
+	</div>
+);
+
+const RPE_OPTIONS = [5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10] as const;
 
 const PATTERN_KINDS = [
 	"weight-x-reps",

@@ -184,10 +184,10 @@ export const DesktopEditingPatternSwitchClearsValues: Story = {
 		await userEvent.click(menuItem);
 		await waitFor(() => {
 			const weight = findInputByLabel("重量 (kg)");
-			const rpe = findInputByLabel("RPE");
 			expect(weight).toHaveValue("");
-			expect(rpe).toHaveValue("");
 		});
+		const rpe8 = requireButtonInDialogByName("8");
+		expect(rpe8).not.toHaveAttribute("data-selected");
 		expect(requireButtonInDialogByName("確定")).toBeDisabled();
 	},
 };
@@ -305,7 +305,7 @@ export const MobileEditingPatternSwitch: Story = {
 		await userEvent.click(menuItem);
 		await waitFor(() => {
 			expect(findInputByLabel("回数")).toBeDefined();
-			expect(findInputByLabel("RPE")).toBeDefined();
+			expect(findButtonInDialogByName("8")).toBeDefined();
 		});
 	},
 };
