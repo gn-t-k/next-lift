@@ -1,12 +1,16 @@
 "use client";
 
-import { PencilSquareIcon } from "@heroicons/react/24/outline";
-import { CheckIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
+import {
+	ArrowsRightLeftIcon,
+	PencilSquareIcon,
+} from "@heroicons/react/24/outline";
+import { CheckIcon } from "@heroicons/react/24/solid";
 import { type FC, type FormEvent, useState } from "react";
 import { Dialog, DialogTrigger, Popover } from "react-aria-components";
 import { cx } from "../../libs/primitive";
 import { cn } from "../../libs/utils";
 import { Button } from "../../primitives/button";
+import { Drawer, DrawerContent } from "../../primitives/drawer";
 import { Menu, MenuItem, MenuTrigger } from "../../primitives/menu";
 import {
 	NumberField,
@@ -36,37 +40,8 @@ export const SetPlanRow: FC<Props> = ({
 	repsStep = 1,
 	onChange,
 }) => {
-	const [draft, setDraft] = useState<Draft | null>(null);
-	const isEditing = draft !== null;
 	const isEditable = onChange !== undefined;
-
-	const startEditing = () => {
-		setDraft(paramsToDraft(params));
-	};
-
-	const cancelEditing = () => {
-		setDraft(null);
-	};
-
-	const submitEditing = () => {
-		if (draft === null) return;
-		const finalParams = draftToParams(draft);
-		if (finalParams === null) return;
-		onChange?.(finalParams);
-		setDraft(null);
-	};
-
-	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-		submitEditing();
-	};
-
-	const handleOpenChange = (isOpen: boolean) => {
-		if (!isOpen) cancelEditing();
-	};
-
 	const isEmpty = params === null;
-
 	return (
 		<div className="flex items-baseline gap-3 px-3 py-2 text-sm">
 			<span className="w-8 shrink-0 text-muted-fg text-xs tabular-nums">
@@ -81,98 +56,239 @@ export const SetPlanRow: FC<Props> = ({
 				{formatParams(params, weightUnit)}
 			</span>
 			{isEditable && (
-				<DialogTrigger isOpen={isEditing} onOpenChange={handleOpenChange}>
-					<Button
-						intent="plain"
-						size="sq-xs"
-						onPress={startEditing}
-						aria-label={`セット ${index + 1} を編集`}
-					>
-						<PencilSquareIcon data-slot="icon" className="size-4" aria-hidden />
-					</Button>
-					<Popover
-						placement="bottom end"
-						className={cx(
-							"max-w-[min(20rem,calc(100vw-2rem))]",
-							"rounded-lg border border-border bg-overlay text-overlay-fg shadow-lg outline-hidden",
-							"entering:fade-in entering:animate-in entering:duration-150",
-							"exiting:fade-out exiting:animate-out exiting:duration-100",
-						)}
-					>
-						<Dialog
-							className="outline-hidden"
-							aria-label={`セット ${index + 1} を編集`}
-						>
-							{draft !== null && (
-								<form
-									onSubmit={handleSubmit}
-									className="flex w-72 flex-col gap-3 p-3"
-								>
-									<DraftFields
-										draft={draft}
-										weightUnit={weightUnit}
-										weightStep={weightStep}
-										repsStep={repsStep}
-										onUpdate={setDraft}
-									/>
-									<footer className="flex items-center justify-between gap-2">
-										<MenuTrigger>
-											<Button intent="plain" size="sm" type="button">
-												<span>{patternLabel(draft.pattern)}</span>
-												<ChevronDownIcon
-													data-slot="icon"
-													className="size-4"
-													aria-hidden
-												/>
-											</Button>
-											<Menu
-												aria-label="パターンを切り替え"
-												selectionMode="single"
-												selectedKeys={[draft.pattern]}
-											>
-												{PATTERN_OPTIONS.map((option) => (
-													<MenuItem
-														key={option.pattern}
-														id={option.pattern}
-														onAction={() =>
-															setDraft(emptyDraftFor(option.pattern))
-														}
-													>
-														<span className="flex-1">{option.label}</span>
-														<CheckIcon
-															className="size-4 in-data-selected:opacity-100 opacity-0"
-															aria-hidden
-														/>
-													</MenuItem>
-												))}
-											</Menu>
-										</MenuTrigger>
-										<div className="flex items-center gap-2">
-											<Button
-												type="button"
-												intent="plain"
-												size="sm"
-												onPress={cancelEditing}
-											>
-												キャンセル
-											</Button>
-											<Button
-												type="submit"
-												intent="primary"
-												size="sm"
-												isDisabled={draftToParams(draft) === null}
-											>
-												確定
-											</Button>
-										</div>
-									</footer>
-								</form>
-							)}
-						</Dialog>
-					</Popover>
-				</DialogTrigger>
+				<>
+					<div className="md:hidden">
+						<DrawerEditTrigger
+							index={index}
+							params={params}
+							weightUnit={weightUnit}
+							weightStep={weightStep}
+							repsStep={repsStep}
+							onChange={onChange}
+						/>
+					</div>
+					<div className="hidden md:block">
+						<PopoverEditTrigger
+							index={index}
+							params={params}
+							weightUnit={weightUnit}
+							weightStep={weightStep}
+							repsStep={repsStep}
+							onChange={onChange}
+						/>
+					</div>
+				</>
 			)}
 		</div>
+	);
+};
+
+type EditTriggerProps = {
+	index: number;
+	params: Params | null;
+	weightUnit: "kg" | "lbs";
+	weightStep: number;
+	repsStep: number;
+	onChange: (params: Params) => void;
+};
+
+const PopoverEditTrigger: FC<EditTriggerProps> = ({
+	index,
+	params,
+	weightUnit,
+	weightStep,
+	repsStep,
+	onChange,
+}) => {
+	const editing = useEditingState(params, onChange);
+	return (
+		<DialogTrigger
+			isOpen={editing.isOpen}
+			onOpenChange={editing.handleOpenChange}
+		>
+			<EditTriggerButton index={index} onPress={editing.start} />
+			<Popover
+				placement="bottom end"
+				className={cx(
+					"max-w-[min(20rem,calc(100vw-2rem))]",
+					"rounded-lg border border-border bg-overlay text-overlay-fg shadow-lg outline-hidden",
+					"entering:fade-in entering:animate-in entering:duration-150",
+					"exiting:fade-out exiting:animate-out exiting:duration-100",
+				)}
+			>
+				<Dialog
+					className="outline-hidden"
+					aria-label={`セット ${index + 1} を編集`}
+				>
+					{editing.draft !== null && (
+						<EditFormContent
+							draft={editing.draft}
+							weightUnit={weightUnit}
+							weightStep={weightStep}
+							repsStep={repsStep}
+							onUpdate={editing.setDraft}
+							onSubmit={editing.submit}
+							className="w-72 p-3"
+						/>
+					)}
+				</Dialog>
+			</Popover>
+		</DialogTrigger>
+	);
+};
+
+const DrawerEditTrigger: FC<EditTriggerProps> = ({
+	index,
+	params,
+	weightUnit,
+	weightStep,
+	repsStep,
+	onChange,
+}) => {
+	const editing = useEditingState(params, onChange);
+	return (
+		<Drawer isOpen={editing.isOpen} onOpenChange={editing.handleOpenChange}>
+			<EditTriggerButton index={index} onPress={editing.start} />
+			<DrawerContent aria-label={`セット ${index + 1} を編集`}>
+				{editing.draft !== null && (
+					<EditFormContent
+						draft={editing.draft}
+						weightUnit={weightUnit}
+						weightStep={weightStep}
+						repsStep={repsStep}
+						onUpdate={editing.setDraft}
+						onSubmit={editing.submit}
+						className="pt-6"
+					/>
+				)}
+			</DrawerContent>
+		</Drawer>
+	);
+};
+
+type EditTriggerButtonProps = {
+	index: number;
+	onPress: () => void;
+};
+
+const EditTriggerButton: FC<EditTriggerButtonProps> = ({ index, onPress }) => (
+	<Button
+		intent="plain"
+		size="sq-xs"
+		onPress={onPress}
+		aria-label={`セット ${index + 1} を編集`}
+	>
+		<PencilSquareIcon data-slot="icon" className="size-4" aria-hidden />
+	</Button>
+);
+
+const useEditingState = (
+	params: Params | null,
+	onChange: (params: Params) => void,
+) => {
+	const [draft, setDraft] = useState<Draft | null>(null);
+	const start = () => setDraft(paramsToDraft(params));
+	const cancel = () => setDraft(null);
+	const submit = () => {
+		if (draft === null) return;
+		const finalParams = draftToParams(draft);
+		if (finalParams === null) return;
+		onChange(finalParams);
+		setDraft(null);
+	};
+	const handleOpenChange = (isOpen: boolean) => {
+		if (!isOpen) cancel();
+	};
+	return {
+		draft,
+		setDraft,
+		isOpen: draft !== null,
+		start,
+		cancel,
+		submit,
+		handleOpenChange,
+	};
+};
+
+type EditFormContentProps = {
+	draft: Draft;
+	weightUnit: "kg" | "lbs";
+	weightStep: number;
+	repsStep: number;
+	onUpdate: (draft: Draft) => void;
+	onSubmit: () => void;
+	className?: string;
+};
+
+const EditFormContent: FC<EditFormContentProps> = ({
+	draft,
+	weightUnit,
+	weightStep,
+	repsStep,
+	onUpdate,
+	onSubmit,
+	className,
+}) => {
+	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		onSubmit();
+	};
+	return (
+		<form
+			onSubmit={handleSubmit}
+			className={cn("flex flex-col gap-3", className)}
+		>
+			<DraftFields
+				draft={draft}
+				weightUnit={weightUnit}
+				weightStep={weightStep}
+				repsStep={repsStep}
+				onUpdate={onUpdate}
+			/>
+			<footer className="flex items-center justify-between gap-2">
+				<MenuTrigger>
+					<Button
+						intent="plain"
+						size="sq-sm"
+						type="button"
+						aria-label={`パターンを変更（現在: ${patternLabel(draft.pattern)}）`}
+					>
+						<ArrowsRightLeftIcon
+							data-slot="icon"
+							className="size-4"
+							aria-hidden
+						/>
+					</Button>
+					<Menu
+						aria-label="パターンを切り替え"
+						selectionMode="single"
+						selectedKeys={[draft.pattern]}
+					>
+						{PATTERN_OPTIONS.map((option) => (
+							<MenuItem
+								key={option.pattern}
+								id={option.pattern}
+								onAction={() => onUpdate(emptyDraftFor(option.pattern))}
+							>
+								<span className="flex-1">{option.label}</span>
+								<CheckIcon
+									className="size-4 in-data-selected:opacity-100 opacity-0"
+									aria-hidden
+								/>
+							</MenuItem>
+						))}
+					</Menu>
+				</MenuTrigger>
+				<Button
+					type="submit"
+					intent="primary"
+					size="sm"
+					isDisabled={draftToParams(draft) === null}
+				>
+					確定
+				</Button>
+			</footer>
+		</form>
 	);
 };
 
@@ -294,14 +410,14 @@ const DraftFields: FC<DraftFieldsProps> = ({
 	}
 };
 
-const normalizeNumber = (value: number): number | null =>
-	Number.isNaN(value) ? null : value;
-
 const PATTERN_OPTIONS: { pattern: Pattern; label: string }[] = [
 	{ pattern: "weight-x-reps", label: "重量 × 回数" },
 	{ pattern: "weight-x-rpe", label: "重量 × RPE" },
 	{ pattern: "reps-x-rpe", label: "回数 × RPE" },
 ];
+
+const normalizeNumber = (value: number): number | null =>
+	Number.isNaN(value) ? null : value;
 
 const patternLabel = (pattern: Pattern): string => {
 	switch (pattern) {

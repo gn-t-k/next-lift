@@ -19,35 +19,35 @@ const StatefulRow: FC<ComponentProps<typeof SetPlanRow>> = ({
 	return <SetPlanRow {...rest} params={params} onChange={handleChange} />;
 };
 
-const findPopoverDialog = (): HTMLElement | null =>
+const findEditDialog = (): HTMLElement | null =>
 	document.querySelector<HTMLElement>('[role="dialog"]');
 
-const requirePopoverDialog = (): HTMLElement => {
-	const dialog = findPopoverDialog();
-	if (dialog === null) throw new Error("popover dialog not found");
+const requireEditDialog = (): HTMLElement => {
+	const dialog = findEditDialog();
+	if (dialog === null) throw new Error("edit dialog not found");
 	return dialog;
 };
 
-const findButtonInPopoverByName = (
+const findButtonInDialogByName = (
 	name: string | RegExp,
 ): HTMLElement | undefined =>
 	Array.from(
-		requirePopoverDialog().querySelectorAll<HTMLButtonElement>("button"),
+		requireEditDialog().querySelectorAll<HTMLButtonElement>("button"),
 	).find((el) => {
 		const elName =
 			el.getAttribute("aria-label") ?? el.textContent?.trim() ?? "";
 		return typeof name === "string" ? elName === name : name.test(elName);
 	});
 
-const requireButtonInPopoverByName = (name: string | RegExp): HTMLElement => {
-	const el = findButtonInPopoverByName(name);
+const requireButtonInDialogByName = (name: string | RegExp): HTMLElement => {
+	const el = findButtonInDialogByName(name);
 	if (el === undefined)
-		throw new Error(`button with name "${name}" not found in popover dialog`);
+		throw new Error(`button with name "${name}" not found in edit dialog`);
 	return el;
 };
 
 const findInputByLabel = (label: string): HTMLInputElement => {
-	const dialog = requirePopoverDialog();
+	const dialog = requireEditDialog();
 	const labelEl = Array.from(
 		dialog.querySelectorAll<HTMLElement>("label"),
 	).find((l) => l.textContent === label);
@@ -135,7 +135,9 @@ export const Editable: Story = {
 	render: (args) => <StatefulRow {...args} />,
 };
 
-export const EditingSubmitByEnter: Story = {
+export const DesktopEditingSubmitByEnter: Story = {
+	name: "広画面: Enter で確定",
+	globals: { viewport: { value: "desktop" } },
 	args: {
 		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
 		onChange: fn(),
@@ -147,7 +149,7 @@ export const EditingSubmitByEnter: Story = {
 			canvas.getByRole("button", { name: "セット 1 を編集" }),
 		);
 		await waitFor(() => {
-			expect(findPopoverDialog()).not.toBeNull();
+			expect(findEditDialog()).not.toBeNull();
 		});
 		const weightInput = findInputByLabel("重量 (kg)");
 		await userEvent.tripleClick(weightInput);
@@ -162,7 +164,9 @@ export const EditingSubmitByEnter: Story = {
 	},
 };
 
-export const EditingSubmitByCheckIcon: Story = {
+export const DesktopEditingSubmitByConfirmButton: Story = {
+	name: "広画面: 確定ボタンで確定",
+	globals: { viewport: { value: "desktop" } },
 	args: {
 		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
 		onChange: fn(),
@@ -174,12 +178,12 @@ export const EditingSubmitByCheckIcon: Story = {
 			canvas.getByRole("button", { name: "セット 1 を編集" }),
 		);
 		await waitFor(() => {
-			expect(findPopoverDialog()).not.toBeNull();
+			expect(findEditDialog()).not.toBeNull();
 		});
 		const repsInput = findInputByLabel("回数");
 		await userEvent.tripleClick(repsInput);
 		await userEvent.keyboard("8");
-		await userEvent.click(requireButtonInPopoverByName(/^確定$/));
+		await userEvent.click(requireButtonInDialogByName(/^確定$/));
 		await waitFor(() => {
 			expect(args.onChange).toHaveBeenCalledWith({
 				pattern: "weight-x-reps",
@@ -190,7 +194,9 @@ export const EditingSubmitByCheckIcon: Story = {
 	},
 };
 
-export const EditingCancelByEscape: Story = {
+export const DesktopEditingCancelByEscape: Story = {
+	name: "広画面: Escape でキャンセル",
+	globals: { viewport: { value: "desktop" } },
 	args: {
 		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
 		onChange: fn(),
@@ -202,44 +208,21 @@ export const EditingCancelByEscape: Story = {
 			canvas.getByRole("button", { name: "セット 1 を編集" }),
 		);
 		await waitFor(() => {
-			expect(findPopoverDialog()).not.toBeNull();
+			expect(findEditDialog()).not.toBeNull();
 		});
 		const weightInput = findInputByLabel("重量 (kg)");
 		await userEvent.tripleClick(weightInput);
 		await userEvent.keyboard("999{Escape}");
 		await waitFor(() => {
-			expect(findPopoverDialog()).toBeNull();
+			expect(findEditDialog()).toBeNull();
 		});
 		expect(args.onChange).not.toHaveBeenCalled();
 	},
 };
 
-export const EditingCancelByXIcon: Story = {
-	args: {
-		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
-		onChange: fn(),
-	},
-	render: (args) => <StatefulRow {...args} />,
-	play: async ({ canvasElement, args }) => {
-		const canvas = within(canvasElement);
-		await userEvent.click(
-			canvas.getByRole("button", { name: "セット 1 を編集" }),
-		);
-		await waitFor(() => {
-			expect(findPopoverDialog()).not.toBeNull();
-		});
-		const weightInput = findInputByLabel("重量 (kg)");
-		await userEvent.tripleClick(weightInput);
-		await userEvent.keyboard("999");
-		await userEvent.click(requireButtonInPopoverByName(/^キャンセル$/));
-		await waitFor(() => {
-			expect(findPopoverDialog()).toBeNull();
-		});
-		expect(args.onChange).not.toHaveBeenCalled();
-	},
-};
-
-export const EditingPatternSwitchClearsValues: Story = {
+export const DesktopEditingPatternSwitchClearsValues: Story = {
+	name: "広画面: パターン切替で値クリア",
+	globals: { viewport: { value: "desktop" } },
 	args: {
 		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
 		onChange: fn(),
@@ -251,9 +234,9 @@ export const EditingPatternSwitchClearsValues: Story = {
 			canvas.getByRole("button", { name: "セット 1 を編集" }),
 		);
 		await waitFor(() => {
-			expect(findPopoverDialog()).not.toBeNull();
+			expect(findEditDialog()).not.toBeNull();
 		});
-		await userEvent.click(requireButtonInPopoverByName(/^重量 × 回数/));
+		await userEvent.click(requireButtonInDialogByName(/^パターンを変更/));
 		await waitFor(() => {
 			expect(findMenuItemByName("重量 × RPE")).toBeDefined();
 		});
@@ -268,11 +251,13 @@ export const EditingPatternSwitchClearsValues: Story = {
 			expect(weight).toHaveValue("");
 			expect(rpe).toHaveValue("");
 		});
-		expect(requireButtonInPopoverByName(/^確定$/)).toBeDisabled();
+		expect(requireButtonInDialogByName(/^確定$/)).toBeDisabled();
 	},
 };
 
-export const EditingFromEmpty: Story = {
+export const DesktopEditingFromEmpty: Story = {
+	name: "広画面: 値未入力から編集開始",
+	globals: { viewport: { value: "desktop" } },
 	args: {
 		params: null,
 		onChange: fn(),
@@ -284,7 +269,7 @@ export const EditingFromEmpty: Story = {
 			canvas.getByRole("button", { name: "セット 1 を編集" }),
 		);
 		await waitFor(() => {
-			expect(findPopoverDialog()).not.toBeNull();
+			expect(findEditDialog()).not.toBeNull();
 		});
 		const weightInput = findInputByLabel("重量 (kg)");
 		await userEvent.click(weightInput);
@@ -292,13 +277,100 @@ export const EditingFromEmpty: Story = {
 		const repsInput = findInputByLabel("回数");
 		await userEvent.click(repsInput);
 		await userEvent.keyboard("10");
-		await userEvent.click(requireButtonInPopoverByName(/^確定$/));
+		await userEvent.click(requireButtonInDialogByName(/^確定$/));
 		await waitFor(() => {
 			expect(args.onChange).toHaveBeenCalledWith({
 				pattern: "weight-x-reps",
 				weight: 80,
 				reps: 10,
 			});
+		});
+	},
+};
+
+export const MobileEditingSubmitByConfirmButton: Story = {
+	name: "狭画面: Drawer で確定",
+	globals: { viewport: { value: "mobile" } },
+	args: {
+		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
+		onChange: fn(),
+	},
+	render: (args) => <StatefulRow {...args} />,
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			canvas.getByRole("button", { name: "セット 1 を編集" }),
+		);
+		await waitFor(() => {
+			expect(findEditDialog()).not.toBeNull();
+		});
+		const weightInput = findInputByLabel("重量 (kg)");
+		await userEvent.tripleClick(weightInput);
+		await userEvent.keyboard("110");
+		await userEvent.click(requireButtonInDialogByName(/^確定$/));
+		await waitFor(() => {
+			expect(args.onChange).toHaveBeenCalledWith({
+				pattern: "weight-x-reps",
+				weight: 110,
+				reps: 5,
+			});
+		});
+	},
+};
+
+export const MobileEditingCancelByCloseButton: Story = {
+	name: "狭画面: Drawer の × ボタンでキャンセル",
+	globals: { viewport: { value: "mobile" } },
+	args: {
+		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
+		onChange: fn(),
+	},
+	render: (args) => <StatefulRow {...args} />,
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			canvas.getByRole("button", { name: "セット 1 を編集" }),
+		);
+		await waitFor(() => {
+			expect(findEditDialog()).not.toBeNull();
+		});
+		const weightInput = findInputByLabel("重量 (kg)");
+		await userEvent.tripleClick(weightInput);
+		await userEvent.keyboard("999");
+		await userEvent.click(requireButtonInDialogByName("閉じる"));
+		await waitFor(() => {
+			expect(findEditDialog()).toBeNull();
+		});
+		expect(args.onChange).not.toHaveBeenCalled();
+	},
+};
+
+export const MobileEditingPatternSwitch: Story = {
+	name: "狭画面: Drawer でパターン切替",
+	globals: { viewport: { value: "mobile" } },
+	args: {
+		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
+		onChange: fn(),
+	},
+	render: (args) => <StatefulRow {...args} />,
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			canvas.getByRole("button", { name: "セット 1 を編集" }),
+		);
+		await waitFor(() => {
+			expect(findEditDialog()).not.toBeNull();
+		});
+		await userEvent.click(requireButtonInDialogByName(/^パターンを変更/));
+		await waitFor(() => {
+			expect(findMenuItemByName("回数 × RPE")).toBeDefined();
+		});
+		const menuItem = findMenuItemByName("回数 × RPE");
+		if (menuItem === undefined) throw new Error("menu item not found");
+		await userEvent.click(menuItem);
+		await waitFor(() => {
+			expect(findInputByLabel("回数")).toBeDefined();
+			expect(findInputByLabel("RPE")).toBeDefined();
 		});
 	},
 };
