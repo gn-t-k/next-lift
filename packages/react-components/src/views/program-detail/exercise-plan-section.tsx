@@ -12,7 +12,12 @@ type ExercisePlan = {
 	exercise: Exercise | null;
 };
 
-type Exercise = { id: string; name: string; weightUnit: "kg" | "lbs" };
+type Exercise = {
+	id: string;
+	name: string;
+	weightUnit: "kg" | "lbs";
+	weightStep: number;
+};
 
 export const ExercisePlanSection = <T extends ExercisePlan>({
 	exercisePlans,

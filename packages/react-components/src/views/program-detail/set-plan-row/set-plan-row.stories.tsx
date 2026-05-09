@@ -2,27 +2,24 @@ import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps, FC } from "react";
 import { useState } from "react";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
-import { SetPlanRow } from "./set-plan-row";
-
-type Params = NonNullable<ComponentProps<typeof SetPlanRow>["params"]>;
+import { SetPlanRow } from ".";
+import type { SetPlanPattern } from "./use-set-plan-editing";
 
 const StatefulRow: FC<ComponentProps<typeof SetPlanRow>> = ({
-	params: initialParams,
+	pattern: initialPattern,
 	edit,
 	...rest
 }) => {
-	const [params, setParams] = useState<Params | null>(initialParams);
-	const handleChange = (next: Params) => {
-		setParams(next);
-		edit?.onChange(next);
+	const [pattern, setPattern] = useState<SetPlanPattern | null>(initialPattern);
+	const handleChange = (next: SetPlanPattern) => {
+		setPattern(next);
+		edit.onChange(next);
 	};
 	return (
 		<SetPlanRow
 			{...rest}
-			params={params}
-			{...(edit !== undefined
-				? { edit: { ...edit, onChange: handleChange } }
-				: {})}
+			pattern={pattern}
+			edit={{ ...edit, onChange: handleChange }}
 		/>
 	);
 };
@@ -84,6 +81,8 @@ const meta = {
 	args: {
 		index: 0,
 		weightUnit: "kg",
+		weightStep: 2.5,
+		edit: { title: "ベンチプレス 1セット目", onChange: fn() },
 	},
 	decorators: [
 		(Story) => (
@@ -99,46 +98,45 @@ type Story = StoryObj<typeof meta>;
 
 export const WeightXReps: Story = {
 	args: {
-		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
+		pattern: { kind: "weight-x-reps", weight: 100, reps: 5 },
 	},
 };
 
 export const WeightXRepsLbs: Story = {
 	args: {
 		weightUnit: "lbs",
-		params: { pattern: "weight-x-reps", weight: 225, reps: 5 },
+		pattern: { kind: "weight-x-reps", weight: 225, reps: 5 },
 	},
 };
 
 export const WeightXRpe: Story = {
 	args: {
-		params: { pattern: "weight-x-rpe", weight: 100, rpe: 9 },
+		pattern: { kind: "weight-x-rpe", weight: 100, rpe: 9 },
 	},
 };
 
 export const RepsXRpe: Story = {
 	args: {
-		params: { pattern: "reps-x-rpe", reps: 12, rpe: 8 },
+		pattern: { kind: "reps-x-rpe", reps: 12, rpe: 8 },
 	},
 };
 
 export const Empty: Story = {
 	args: {
-		params: null,
+		pattern: null,
 	},
 };
 
 export const HigherIndex: Story = {
 	args: {
 		index: 5,
-		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
+		pattern: { kind: "weight-x-reps", weight: 100, reps: 5 },
 	},
 };
 
 export const Editable: Story = {
 	args: {
-		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
-		edit: { title: "ベンチプレス 1セット目", onChange: fn() },
+		pattern: { kind: "weight-x-reps", weight: 100, reps: 5 },
 	},
 	render: (args) => <StatefulRow {...args} />,
 };
@@ -147,8 +145,7 @@ export const DesktopEditingSubmitByEnter: Story = {
 	name: "広画面: Enter で確定",
 	globals: { viewport: { value: "desktop" } },
 	args: {
-		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
-		edit: { title: "ベンチプレス 1セット目", onChange: fn() },
+		pattern: { kind: "weight-x-reps", weight: 100, reps: 5 },
 	},
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
@@ -163,8 +160,8 @@ export const DesktopEditingSubmitByEnter: Story = {
 		await userEvent.tripleClick(weightInput);
 		await userEvent.keyboard("110{Enter}");
 		await waitFor(() => {
-			expect(args.edit?.onChange).toHaveBeenCalledWith({
-				pattern: "weight-x-reps",
+			expect(args.edit.onChange).toHaveBeenCalledWith({
+				kind: "weight-x-reps",
 				weight: 110,
 				reps: 5,
 			});
@@ -176,8 +173,7 @@ export const DesktopEditingSubmitByConfirmButton: Story = {
 	name: "広画面: 確定ボタンで確定",
 	globals: { viewport: { value: "desktop" } },
 	args: {
-		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
-		edit: { title: "ベンチプレス 1セット目", onChange: fn() },
+		pattern: { kind: "weight-x-reps", weight: 100, reps: 5 },
 	},
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
@@ -193,8 +189,8 @@ export const DesktopEditingSubmitByConfirmButton: Story = {
 		await userEvent.keyboard("8");
 		await userEvent.click(requireButtonInDialogByName("確定"));
 		await waitFor(() => {
-			expect(args.edit?.onChange).toHaveBeenCalledWith({
-				pattern: "weight-x-reps",
+			expect(args.edit.onChange).toHaveBeenCalledWith({
+				kind: "weight-x-reps",
 				weight: 100,
 				reps: 8,
 			});
@@ -206,8 +202,7 @@ export const DesktopEditingCancelByEscape: Story = {
 	name: "広画面: Escape でキャンセル",
 	globals: { viewport: { value: "desktop" } },
 	args: {
-		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
-		edit: { title: "ベンチプレス 1セット目", onChange: fn() },
+		pattern: { kind: "weight-x-reps", weight: 100, reps: 5 },
 	},
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
@@ -224,7 +219,7 @@ export const DesktopEditingCancelByEscape: Story = {
 		await waitFor(() => {
 			expect(findEditDialog()).toBeNull();
 		});
-		expect(args.edit?.onChange).not.toHaveBeenCalled();
+		expect(args.edit.onChange).not.toHaveBeenCalled();
 	},
 };
 
@@ -232,8 +227,7 @@ export const DesktopEditingPatternSwitchClearsValues: Story = {
 	name: "広画面: パターン切替で値クリア",
 	globals: { viewport: { value: "desktop" } },
 	args: {
-		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
-		edit: { title: "ベンチプレス 1セット目", onChange: fn() },
+		pattern: { kind: "weight-x-reps", weight: 100, reps: 5 },
 	},
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement }) => {
@@ -267,8 +261,7 @@ export const DesktopEditingFromEmpty: Story = {
 	name: "広画面: 値未入力から編集開始",
 	globals: { viewport: { value: "desktop" } },
 	args: {
-		params: null,
-		edit: { title: "ベンチプレス 1セット目", onChange: fn() },
+		pattern: null,
 	},
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
@@ -287,8 +280,8 @@ export const DesktopEditingFromEmpty: Story = {
 		await userEvent.keyboard("10");
 		await userEvent.click(requireButtonInDialogByName("確定"));
 		await waitFor(() => {
-			expect(args.edit?.onChange).toHaveBeenCalledWith({
-				pattern: "weight-x-reps",
+			expect(args.edit.onChange).toHaveBeenCalledWith({
+				kind: "weight-x-reps",
 				weight: 80,
 				reps: 10,
 			});
@@ -301,7 +294,7 @@ export const MobileEditingSubmitByConfirmButton: Story = {
 	globals: { viewport: { value: "mobile" } },
 	args: {
 		index: 2,
-		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
+		pattern: { kind: "weight-x-reps", weight: 100, reps: 5 },
 		edit: { title: "ベンチプレス 3セット目", onChange: fn() },
 	},
 	render: (args) => <StatefulRow {...args} />,
@@ -319,8 +312,8 @@ export const MobileEditingSubmitByConfirmButton: Story = {
 		await userEvent.keyboard("110");
 		await userEvent.click(requireButtonInDialogByName("確定"));
 		await waitFor(() => {
-			expect(args.edit?.onChange).toHaveBeenCalledWith({
-				pattern: "weight-x-reps",
+			expect(args.edit.onChange).toHaveBeenCalledWith({
+				kind: "weight-x-reps",
 				weight: 110,
 				reps: 5,
 			});
@@ -332,8 +325,7 @@ export const MobileEditingCancelByCloseButton: Story = {
 	name: "狭画面: Drawer の × ボタンでキャンセル",
 	globals: { viewport: { value: "mobile" } },
 	args: {
-		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
-		edit: { title: "ベンチプレス 1セット目", onChange: fn() },
+		pattern: { kind: "weight-x-reps", weight: 100, reps: 5 },
 	},
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
@@ -351,7 +343,7 @@ export const MobileEditingCancelByCloseButton: Story = {
 		await waitFor(() => {
 			expect(findEditDialog()).toBeNull();
 		});
-		expect(args.edit?.onChange).not.toHaveBeenCalled();
+		expect(args.edit.onChange).not.toHaveBeenCalled();
 	},
 };
 
@@ -359,8 +351,7 @@ export const MobileEditingPatternSwitch: Story = {
 	name: "狭画面: Drawer でパターン切替",
 	globals: { viewport: { value: "mobile" } },
 	args: {
-		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
-		edit: { title: "ベンチプレス 1セット目", onChange: fn() },
+		pattern: { kind: "weight-x-reps", weight: 100, reps: 5 },
 	},
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement }) => {

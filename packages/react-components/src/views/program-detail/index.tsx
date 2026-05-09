@@ -6,12 +6,17 @@ import { CreateDayCard } from "./create-day-card";
 import { ExercisePlanSection } from "./exercise-plan-section";
 import { SetPlanSection } from "./set-plan-section";
 
+type SetPlanPattern = Parameters<
+	ComponentProps<typeof SetPlanSection>["onSetPlanChange"]
+>[1];
+
 type Props = {
 	name: string;
 	meta: string | null;
 	days: Day[];
 	defaultSelectedDayId?: string;
 	onAddDay: () => void;
+	onSetPlanChange: (setPlanId: string, pattern: SetPlanPattern) => void;
 };
 
 type Day = {
@@ -35,6 +40,7 @@ export const ProgramDetail: FC<Props> = ({
 	days,
 	defaultSelectedDayId,
 	onAddDay,
+	onSetPlanChange,
 }) => {
 	const tabsProps =
 		defaultSelectedDayId !== undefined
@@ -65,12 +71,17 @@ export const ProgramDetail: FC<Props> = ({
 						{days.map((day) => (
 							<TabPanel key={day.id} id={day.id} className="pt-4">
 								<ExercisePlanSection exercisePlans={day.exercisePlans}>
-									{(exercisePlan) => (
-										<SetPlanSection
-											setPlans={exercisePlan.setPlans}
-											weightUnit={exercisePlan.exercise?.weightUnit ?? "kg"}
-										/>
-									)}
+									{(exercisePlan) =>
+										exercisePlan.exercise !== null ? (
+											<SetPlanSection
+												setPlans={exercisePlan.setPlans}
+												weightUnit={exercisePlan.exercise.weightUnit}
+												weightStep={exercisePlan.exercise.weightStep}
+												exerciseName={exercisePlan.exercise.name}
+												onSetPlanChange={onSetPlanChange}
+											/>
+										) : null
+									}
 								</ExercisePlanSection>
 							</TabPanel>
 						))}
