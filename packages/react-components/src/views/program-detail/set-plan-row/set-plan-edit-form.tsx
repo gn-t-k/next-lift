@@ -134,7 +134,7 @@ const DraftFields: FC<DraftFieldsProps> = ({
 						className={fieldLayout}
 					>
 						<NumberFieldLabel>{`重量 (${weightUnit})`}</NumberFieldLabel>
-						<NumberFieldInput placeholder="未入力" />
+						<NumberFieldInput />
 					</NumberField>
 					<NumberField
 						value={draft.reps ?? Number.NaN}
@@ -146,7 +146,7 @@ const DraftFields: FC<DraftFieldsProps> = ({
 						className={fieldLayout}
 					>
 						<NumberFieldLabel>回数</NumberFieldLabel>
-						<NumberFieldInput placeholder="未入力" />
+						<NumberFieldInput />
 					</NumberField>
 				</div>
 			);
@@ -163,7 +163,7 @@ const DraftFields: FC<DraftFieldsProps> = ({
 						className={fieldLayout}
 					>
 						<NumberFieldLabel>{`重量 (${weightUnit})`}</NumberFieldLabel>
-						<NumberFieldInput placeholder="未入力" />
+						<NumberFieldInput />
 					</NumberField>
 					<RpeToggleField
 						value={draft.rpe}
@@ -184,7 +184,7 @@ const DraftFields: FC<DraftFieldsProps> = ({
 						className={fieldLayout}
 					>
 						<NumberFieldLabel>回数</NumberFieldLabel>
-						<NumberFieldInput placeholder="未入力" />
+						<NumberFieldInput />
 					</NumberField>
 					<RpeToggleField
 						value={draft.rpe}
