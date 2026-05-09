@@ -285,7 +285,7 @@ body {
 	}
 }
 
-@keyframes tab-scroll-fade-start {
+@keyframes scroll-fade-start {
 	0% {
 		opacity: 0;
 	}
@@ -295,7 +295,7 @@ body {
 	}
 }
 
-@keyframes tab-scroll-fade-end {
+@keyframes scroll-fade-end {
 	0%,
 	99% {
 		opacity: 1;

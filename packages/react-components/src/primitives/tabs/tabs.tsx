@@ -87,13 +87,13 @@ export const TabScrollArea: FC<PropsWithChildren> = ({ children }) => (
 const TabScrollFadeStart: FC = () => (
 	<div
 		aria-hidden="true"
-		className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-overlay to-transparent opacity-0 [animation-fill-mode:both] [animation-name:tab-scroll-fade-start] [animation-timeline:--tab-scroll]"
+		className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-overlay to-transparent opacity-0 [animation-fill-mode:both] [animation-name:scroll-fade-start] [animation-timeline:--tab-scroll]"
 	/>
 );
 
 const TabScrollFadeEnd: FC = () => (
 	<div
 		aria-hidden="true"
-		className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-overlay to-transparent opacity-0 [animation-fill-mode:both] [animation-name:tab-scroll-fade-end] [animation-timeline:--tab-scroll]"
+		className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-overlay to-transparent opacity-0 [animation-fill-mode:both] [animation-name:scroll-fade-end] [animation-timeline:--tab-scroll]"
 	/>
 );
