@@ -1,11 +1,7 @@
 "use client";
 
-import {
-	ArrowsRightLeftIcon,
-	CheckIcon,
-	PencilSquareIcon,
-	XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
+import { CheckIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
 import { type FC, type FormEvent, useState } from "react";
 import { Dialog, DialogTrigger, Popover } from "react-aria-components";
 import { cx } from "../../libs/primitive";
@@ -112,46 +108,6 @@ export const SetPlanRow: FC<Props> = ({
 									onSubmit={handleSubmit}
 									className="flex w-72 flex-col gap-3 p-3"
 								>
-									<header className="flex items-center justify-between gap-2">
-										<span className="text-muted-fg text-xs tabular-nums">
-											{`#${index + 1}`}
-										</span>
-										<MenuTrigger>
-											<Button
-												intent="plain"
-												size="sq-sm"
-												type="button"
-												aria-label={`パターンを変更（現在: ${patternLabel(draft.pattern)}）`}
-											>
-												<ArrowsRightLeftIcon
-													data-slot="icon"
-													className="size-4"
-													aria-hidden
-												/>
-											</Button>
-											<Menu aria-label="パターンを切り替え">
-												<MenuItem
-													onAction={() =>
-														setDraft(emptyDraftFor("weight-x-reps"))
-													}
-												>
-													重量 × 回数
-												</MenuItem>
-												<MenuItem
-													onAction={() =>
-														setDraft(emptyDraftFor("weight-x-rpe"))
-													}
-												>
-													重量 × RPE
-												</MenuItem>
-												<MenuItem
-													onAction={() => setDraft(emptyDraftFor("reps-x-rpe"))}
-												>
-													回数 × RPE
-												</MenuItem>
-											</Menu>
-										</MenuTrigger>
-									</header>
 									<DraftFields
 										draft={draft}
 										weightUnit={weightUnit}
@@ -159,35 +115,56 @@ export const SetPlanRow: FC<Props> = ({
 										repsStep={repsStep}
 										onUpdate={setDraft}
 									/>
-									<footer className="flex items-center justify-end gap-2">
-										<Button
-											type="button"
-											intent="plain"
-											size="sm"
-											onPress={cancelEditing}
-											aria-label="キャンセル"
-										>
-											<XMarkIcon
-												data-slot="icon"
-												className="size-4"
-												aria-hidden
-											/>
-											キャンセル
-										</Button>
-										<Button
-											type="submit"
-											intent="primary"
-											size="sm"
-											isDisabled={draftToParams(draft) === null}
-											aria-label="確定"
-										>
-											<CheckIcon
-												data-slot="icon"
-												className="size-4"
-												aria-hidden
-											/>
-											確定
-										</Button>
+									<footer className="flex items-center justify-between gap-2">
+										<MenuTrigger>
+											<Button intent="plain" size="sm" type="button">
+												<span>{patternLabel(draft.pattern)}</span>
+												<ChevronDownIcon
+													data-slot="icon"
+													className="size-4"
+													aria-hidden
+												/>
+											</Button>
+											<Menu
+												aria-label="パターンを切り替え"
+												selectionMode="single"
+												selectedKeys={[draft.pattern]}
+											>
+												{PATTERN_OPTIONS.map((option) => (
+													<MenuItem
+														key={option.pattern}
+														id={option.pattern}
+														onAction={() =>
+															setDraft(emptyDraftFor(option.pattern))
+														}
+													>
+														<span className="flex-1">{option.label}</span>
+														<CheckIcon
+															className="size-4 in-data-selected:opacity-100 opacity-0"
+															aria-hidden
+														/>
+													</MenuItem>
+												))}
+											</Menu>
+										</MenuTrigger>
+										<div className="flex items-center gap-2">
+											<Button
+												type="button"
+												intent="plain"
+												size="sm"
+												onPress={cancelEditing}
+											>
+												キャンセル
+											</Button>
+											<Button
+												type="submit"
+												intent="primary"
+												size="sm"
+												isDisabled={draftToParams(draft) === null}
+											>
+												確定
+											</Button>
+										</div>
 									</footer>
 								</form>
 							)}
@@ -319,6 +296,12 @@ const DraftFields: FC<DraftFieldsProps> = ({
 
 const normalizeNumber = (value: number): number | null =>
 	Number.isNaN(value) ? null : value;
+
+const PATTERN_OPTIONS: { pattern: Pattern; label: string }[] = [
+	{ pattern: "weight-x-reps", label: "重量 × 回数" },
+	{ pattern: "weight-x-rpe", label: "重量 × RPE" },
+	{ pattern: "reps-x-rpe", label: "回数 × RPE" },
+];
 
 const patternLabel = (pattern: Pattern): string => {
 	switch (pattern) {

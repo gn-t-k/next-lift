@@ -60,9 +60,11 @@ const findInputByLabel = (label: string): HTMLInputElement => {
 };
 
 const findMenuItemByName = (name: string): HTMLElement | undefined =>
-	Array.from(document.querySelectorAll<HTMLElement>('[role="menuitem"]')).find(
-		(el) => el.textContent?.trim() === name,
-	);
+	Array.from(
+		document.querySelectorAll<HTMLElement>(
+			'[role="menuitem"], [role="menuitemradio"]',
+		),
+	).find((el) => (el.textContent ?? "").replace(/\s+/g, " ").trim() === name);
 
 const meta = {
 	title: "View/V2 プログラム詳細/SetPlanRow",
@@ -251,10 +253,12 @@ export const EditingPatternSwitchClearsValues: Story = {
 		await waitFor(() => {
 			expect(findPopoverDialog()).not.toBeNull();
 		});
-		await userEvent.click(requireButtonInPopoverByName(/^パターンを変更/));
+		await userEvent.click(requireButtonInPopoverByName(/^重量 × 回数/));
 		await waitFor(() => {
 			expect(findMenuItemByName("重量 × RPE")).toBeDefined();
 		});
+		const initialItem = findMenuItemByName("重量 × 回数");
+		expect(initialItem?.getAttribute("data-selected")).toBe("true");
 		const menuItem = findMenuItemByName("重量 × RPE");
 		if (menuItem === undefined) throw new Error("menu item not found");
 		await userEvent.click(menuItem);
