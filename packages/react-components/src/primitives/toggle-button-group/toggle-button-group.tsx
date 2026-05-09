@@ -9,14 +9,8 @@ import {
 } from "react-aria-components";
 import { cx } from "../../libs/primitive";
 
-export const ToggleButtonGroup: FC<ToggleButtonGroupProps> = ({
-	className,
-	...props
-}) => (
-	<ToggleButtonGroupPrimitive
-		className={cx("flex flex-wrap gap-1", className)}
-		{...props}
-	/>
+export const ToggleButtonGroup: FC<ToggleButtonGroupProps> = (props) => (
+	<ToggleButtonGroupPrimitive {...props} />
 );
 
 export const ToggleButton: FC<ToggleButtonProps> = ({
