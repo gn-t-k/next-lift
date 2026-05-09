@@ -83,7 +83,7 @@ export const SetPlanEditForm: FC<Props> = ({
 							>
 								<span className="flex-1">{patternLabel(kind)}</span>
 								<CheckIcon
-									className="size-4 in-data-selected:opacity-100 opacity-0"
+									className="size-4 in-selected:opacity-100 opacity-0"
 									aria-hidden
 								/>
 							</MenuItem>
