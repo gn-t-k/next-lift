@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import type { ComponentProps } from "react";
+import { cn } from "../../libs/utils";
 import { Button } from "../button/button";
 import { ScrollArea } from "./scrollable";
 
@@ -115,3 +117,54 @@ export const InitialScrollPosition: Story = {
 		);
 	},
 };
+
+export const FadeFromPatterns: Story = {
+	parameters: {
+		layout: "fullscreen",
+	},
+	decorators: [
+		(Story) => (
+			<div className="bg-bg p-4">
+				<Story />
+			</div>
+		),
+	],
+	render: () => (
+		<div className="flex flex-col gap-6">
+			{fadePatterns.map(({ fadeFrom, containerClassName }) => (
+				<section key={fadeFrom} className="flex flex-col gap-1">
+					<span className="font-mono text-muted-fg text-xs">
+						fadeFrom=&quot;{fadeFrom}&quot;
+					</span>
+					<div
+						className={cn(
+							"w-64 rounded-md border border-border p-2",
+							containerClassName,
+						)}
+					>
+						<ScrollArea fadeFrom={fadeFrom}>
+							<div className="flex gap-1">
+								{rpeValues.map((rpe) => (
+									<Button key={rpe.id} intent="outline" size="sm">
+										{rpe.label}
+									</Button>
+								))}
+							</div>
+						</ScrollArea>
+					</div>
+				</section>
+			))}
+		</div>
+	),
+};
+
+type FadeFromValue = NonNullable<ComponentProps<typeof ScrollArea>["fadeFrom"]>;
+
+const fadePatterns: { fadeFrom: FadeFromValue; containerClassName: string }[] =
+	[
+		{ fadeFrom: "bg", containerClassName: "bg-bg" },
+		{ fadeFrom: "overlay", containerClassName: "bg-overlay" },
+		{ fadeFrom: "navbar", containerClassName: "bg-navbar" },
+		{ fadeFrom: "sidebar", containerClassName: "bg-sidebar" },
+		{ fadeFrom: "secondary", containerClassName: "bg-secondary" },
+	];
