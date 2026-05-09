@@ -6,11 +6,16 @@ import {
 } from "@heroicons/react/24/outline";
 import { CheckIcon } from "@heroicons/react/24/solid";
 import { type FC, type FormEvent, useState } from "react";
-import { Dialog, DialogTrigger, Popover } from "react-aria-components";
+import {
+	Dialog,
+	Heading as DialogHeading,
+	DialogTrigger,
+	Popover,
+} from "react-aria-components";
 import { cx } from "../../libs/primitive";
 import { cn } from "../../libs/utils";
 import { Button } from "../../primitives/button";
-import { Drawer, DrawerContent } from "../../primitives/drawer";
+import { Drawer, DrawerContent, DrawerTitle } from "../../primitives/drawer";
 import { Menu, MenuItem, MenuTrigger } from "../../primitives/menu";
 import {
 	NumberField,
@@ -27,6 +32,7 @@ type Props = {
 	index: number;
 	params: Params | null;
 	weightUnit: "kg" | "lbs";
+	exerciseName?: string;
 	weightStep?: number;
 	repsStep?: number;
 	onChange?: (params: Params) => void;
@@ -36,6 +42,7 @@ export const SetPlanRow: FC<Props> = ({
 	index,
 	params,
 	weightUnit,
+	exerciseName,
 	weightStep = 2.5,
 	repsStep = 1,
 	onChange,
@@ -62,6 +69,7 @@ export const SetPlanRow: FC<Props> = ({
 							index={index}
 							params={params}
 							weightUnit={weightUnit}
+							exerciseName={exerciseName}
 							weightStep={weightStep}
 							repsStep={repsStep}
 							onChange={onChange}
@@ -72,6 +80,7 @@ export const SetPlanRow: FC<Props> = ({
 							index={index}
 							params={params}
 							weightUnit={weightUnit}
+							exerciseName={exerciseName}
 							weightStep={weightStep}
 							repsStep={repsStep}
 							onChange={onChange}
@@ -87,20 +96,28 @@ type EditTriggerProps = {
 	index: number;
 	params: Params | null;
 	weightUnit: "kg" | "lbs";
+	exerciseName: string | undefined;
 	weightStep: number;
 	repsStep: number;
 	onChange: (params: Params) => void;
 };
 
+const editTitle = (index: number, exerciseName: string | undefined): string =>
+	exerciseName !== undefined && exerciseName !== ""
+		? `${exerciseName} #${index + 1} を編集`
+		: `#${index + 1} を編集`;
+
 const PopoverEditTrigger: FC<EditTriggerProps> = ({
 	index,
 	params,
 	weightUnit,
+	exerciseName,
 	weightStep,
 	repsStep,
 	onChange,
 }) => {
 	const editing = useEditingState(params, onChange);
+	const title = editTitle(index, exerciseName);
 	return (
 		<DialogTrigger
 			isOpen={editing.isOpen}
@@ -116,20 +133,24 @@ const PopoverEditTrigger: FC<EditTriggerProps> = ({
 					"exiting:fade-out exiting:animate-out exiting:duration-100",
 				)}
 			>
-				<Dialog
-					className="outline-hidden"
-					aria-label={`セット ${index + 1} を編集`}
-				>
+				<Dialog className="outline-hidden">
 					{editing.draft !== null && (
-						<EditFormContent
-							draft={editing.draft}
-							weightUnit={weightUnit}
-							weightStep={weightStep}
-							repsStep={repsStep}
-							onUpdate={editing.setDraft}
-							onSubmit={editing.submit}
-							className="w-72 p-3"
-						/>
+						<div className="flex w-72 flex-col gap-3 p-3">
+							<DialogHeading
+								slot="title"
+								className="font-semibold text-fg text-sm"
+							>
+								{title}
+							</DialogHeading>
+							<EditFormContent
+								draft={editing.draft}
+								weightUnit={weightUnit}
+								weightStep={weightStep}
+								repsStep={repsStep}
+								onUpdate={editing.setDraft}
+								onSubmit={editing.submit}
+							/>
+						</div>
 					)}
 				</Dialog>
 			</Popover>
@@ -141,25 +162,29 @@ const DrawerEditTrigger: FC<EditTriggerProps> = ({
 	index,
 	params,
 	weightUnit,
+	exerciseName,
 	weightStep,
 	repsStep,
 	onChange,
 }) => {
 	const editing = useEditingState(params, onChange);
+	const title = editTitle(index, exerciseName);
 	return (
 		<Drawer isOpen={editing.isOpen} onOpenChange={editing.handleOpenChange}>
 			<EditTriggerButton index={index} onPress={editing.start} />
-			<DrawerContent aria-label={`セット ${index + 1} を編集`}>
+			<DrawerContent>
 				{editing.draft !== null && (
-					<EditFormContent
-						draft={editing.draft}
-						weightUnit={weightUnit}
-						weightStep={weightStep}
-						repsStep={repsStep}
-						onUpdate={editing.setDraft}
-						onSubmit={editing.submit}
-						className="pt-6"
-					/>
+					<div className="flex flex-col gap-4 pt-2">
+						<DrawerTitle>{title}</DrawerTitle>
+						<EditFormContent
+							draft={editing.draft}
+							weightUnit={weightUnit}
+							weightStep={weightStep}
+							repsStep={repsStep}
+							onUpdate={editing.setDraft}
+							onSubmit={editing.submit}
+						/>
+					</div>
 				)}
 			</DrawerContent>
 		</Drawer>
@@ -217,7 +242,6 @@ type EditFormContentProps = {
 	repsStep: number;
 	onUpdate: (draft: Draft) => void;
 	onSubmit: () => void;
-	className?: string;
 };
 
 const EditFormContent: FC<EditFormContentProps> = ({
@@ -227,17 +251,13 @@ const EditFormContent: FC<EditFormContentProps> = ({
 	repsStep,
 	onUpdate,
 	onSubmit,
-	className,
 }) => {
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		onSubmit();
 	};
 	return (
-		<form
-			onSubmit={handleSubmit}
-			className={cn("flex flex-col gap-3", className)}
-		>
+		<form onSubmit={handleSubmit} className="flex flex-col gap-3">
 			<DraftFields
 				draft={draft}
 				weightUnit={weightUnit}
@@ -261,6 +281,7 @@ const EditFormContent: FC<EditFormContentProps> = ({
 					</Button>
 					<Menu
 						aria-label="パターンを切り替え"
+						placement="top start"
 						selectionMode="single"
 						selectedKeys={[draft.pattern]}
 					>

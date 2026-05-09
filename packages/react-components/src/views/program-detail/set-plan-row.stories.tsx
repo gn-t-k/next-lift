@@ -135,6 +135,16 @@ export const Editable: Story = {
 	render: (args) => <StatefulRow {...args} />,
 };
 
+export const EditableWithExerciseName: Story = {
+	name: "編集ダイアログに種目名を表示",
+	args: {
+		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
+		exerciseName: "ベンチプレス",
+		onChange: fn(),
+	},
+	render: (args) => <StatefulRow {...args} />,
+};
+
 export const DesktopEditingSubmitByEnter: Story = {
 	name: "広画面: Enter で確定",
 	globals: { viewport: { value: "desktop" } },
@@ -292,18 +302,21 @@ export const MobileEditingSubmitByConfirmButton: Story = {
 	name: "狭画面: Drawer で確定",
 	globals: { viewport: { value: "mobile" } },
 	args: {
+		index: 2,
 		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
+		exerciseName: "ベンチプレス",
 		onChange: fn(),
 	},
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
-			canvas.getByRole("button", { name: "セット 1 を編集" }),
+			canvas.getByRole("button", { name: "セット 3 を編集" }),
 		);
 		await waitFor(() => {
 			expect(findEditDialog()).not.toBeNull();
 		});
+		expect(findEditDialog()?.textContent).toContain("ベンチプレス #3 を編集");
 		const weightInput = findInputByLabel("重量 (kg)");
 		await userEvent.tripleClick(weightInput);
 		await userEvent.keyboard("110");
