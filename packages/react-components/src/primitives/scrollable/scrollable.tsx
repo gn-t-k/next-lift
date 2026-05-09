@@ -54,14 +54,14 @@ export const ScrollArea: FC<Props> = ({
 			<div
 				aria-hidden="true"
 				className={cn(
-					"pointer-events-none absolute inset-y-0 left-0 w-8 bg-linear-to-r to-transparent opacity-0 [animation-fill-mode:both] [animation-name:scroll-fade-start] [animation-timeline:--scrollable]",
+					"pointer-events-none absolute inset-y-0 left-0 w-8 bg-linear-to-r to-transparent fill-mode-[both] opacity-0 [animation-name:scroll-fade-start] [animation-timeline:--scrollable]",
 					fadeStyles({ fadeFrom }),
 				)}
 			/>
 			<div
 				aria-hidden="true"
 				className={cn(
-					"pointer-events-none absolute inset-y-0 right-0 w-8 bg-linear-to-l to-transparent opacity-0 [animation-fill-mode:both] [animation-name:scroll-fade-end] [animation-timeline:--scrollable]",
+					"pointer-events-none absolute inset-y-0 right-0 w-8 bg-linear-to-l to-transparent fill-mode-[both] opacity-0 [animation-name:scroll-fade-end] [animation-timeline:--scrollable]",
 					fadeStyles({ fadeFrom }),
 				)}
 			/>
@@ -69,6 +69,7 @@ export const ScrollArea: FC<Props> = ({
 	);
 };
 
+// 親コンテナの背景色トークンに合わせる（フェードを背景に溶け込ませるため）
 const fadeStyles = tv({
 	variants: {
 		fadeFrom: {
