@@ -11,3 +11,4 @@ export * from "./modal";
 export * from "./number-field";
 export * from "./tabs";
 export * from "./text-field";
+export * from "./toggle-button-group";
