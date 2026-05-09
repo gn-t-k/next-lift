@@ -91,3 +91,27 @@ export const ManyItems: Story = {
 		</ScrollArea>
 	),
 };
+
+export const InitialScrollPosition: Story = {
+	render: () => {
+		const initiallySelectedId = "rpe-8";
+		return (
+			<ScrollArea scrollAlign="center">
+				<div className="flex gap-1">
+					{rpeValues.map((rpe) => (
+						<Button
+							key={rpe.id}
+							intent={rpe.id === initiallySelectedId ? "primary" : "outline"}
+							size="sm"
+							data-initial-scroll={
+								rpe.id === initiallySelectedId ? "" : undefined
+							}
+						>
+							{rpe.label}
+						</Button>
+					))}
+				</div>
+			</ScrollArea>
+		);
+	},
+};
