@@ -28,10 +28,8 @@ export const SetPlanSection: FC<Props> = ({
 						pattern={setPlan.pattern}
 						weightUnit={weightUnit}
 						weightStep={weightStep}
-						edit={{
-							title: `${exerciseName} ${index + 1}セット目`,
-							onChange: (pattern) => onSetPlanChange(setPlan.id, pattern),
-						}}
+						exerciseName={exerciseName}
+						onChange={(pattern) => onSetPlanChange(setPlan.id, pattern)}
 					/>
 				</li>
 			))}

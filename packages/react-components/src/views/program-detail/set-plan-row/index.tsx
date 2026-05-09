@@ -4,17 +4,13 @@ import { SetPlanRowDrawer } from "./set-plan-row-drawer";
 import { SetPlanRowPopover } from "./set-plan-row-popover";
 import type { SetPlanPattern } from "./use-set-plan-editing";
 
-type Edit = {
-	title: string;
-	onChange: (pattern: SetPlanPattern) => void;
-};
-
 type Props = {
 	index: number;
 	pattern: SetPlanPattern | null;
 	weightUnit: "kg" | "lbs";
 	weightStep: number;
-	edit: Edit;
+	exerciseName: string;
+	onChange: (pattern: SetPlanPattern) => void;
 };
 
 export const SetPlanRow: FC<Props> = ({
@@ -22,9 +18,11 @@ export const SetPlanRow: FC<Props> = ({
 	pattern,
 	weightUnit,
 	weightStep,
-	edit,
+	exerciseName,
+	onChange,
 }) => {
 	const isEmpty = pattern === null;
+	const title = `${exerciseName} ${index + 1}セット目`;
 	return (
 		<div className="flex items-baseline gap-3 px-3 py-2 text-sm">
 			<span className="w-8 shrink-0 text-muted-fg text-xs tabular-nums">
@@ -43,8 +41,8 @@ export const SetPlanRow: FC<Props> = ({
 					pattern={pattern}
 					weightUnit={weightUnit}
 					weightStep={weightStep}
-					title={edit.title}
-					onChange={edit.onChange}
+					title={title}
+					onChange={onChange}
 				/>
 			</div>
 			<div className="hidden md:block">
@@ -52,20 +50,13 @@ export const SetPlanRow: FC<Props> = ({
 					pattern={pattern}
 					weightUnit={weightUnit}
 					weightStep={weightStep}
-					title={edit.title}
-					onChange={edit.onChange}
+					title={title}
+					onChange={onChange}
 				/>
 			</div>
 		</div>
 	);
 };
-
-const formatWeight = (weight: number, unit: "kg" | "lbs"): string =>
-	`${weight}${unit}`;
-
-const formatReps = (reps: number): string => `${reps}回`;
-
-const formatRpe = (rpe: number): string => `RPE ${rpe}`;
 
 const formatPattern = (
 	pattern: SetPlanPattern | null,
@@ -83,3 +74,10 @@ const formatPattern = (
 			return `${formatReps(pattern.reps)} @ ${formatRpe(pattern.rpe)}`;
 	}
 };
+
+const formatWeight = (weight: number, unit: "kg" | "lbs"): string =>
+	`${weight}${unit}`;
+
+const formatReps = (reps: number): string => `${reps}回`;
+
+const formatRpe = (rpe: number): string => `RPE ${rpe}`;

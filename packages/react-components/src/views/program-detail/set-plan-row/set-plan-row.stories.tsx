@@ -5,72 +5,6 @@ import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import { SetPlanRow } from ".";
 import type { SetPlanPattern } from "./use-set-plan-editing";
 
-const StatefulRow: FC<ComponentProps<typeof SetPlanRow>> = ({
-	pattern: initialPattern,
-	edit,
-	...rest
-}) => {
-	const [pattern, setPattern] = useState<SetPlanPattern | null>(initialPattern);
-	const handleChange = (next: SetPlanPattern) => {
-		setPattern(next);
-		edit.onChange(next);
-	};
-	return (
-		<SetPlanRow
-			{...rest}
-			pattern={pattern}
-			edit={{ ...edit, onChange: handleChange }}
-		/>
-	);
-};
-
-const findEditDialog = (): HTMLElement | null =>
-	document.querySelector<HTMLElement>('[role="dialog"]');
-
-const requireEditDialog = (): HTMLElement => {
-	const dialog = findEditDialog();
-	if (dialog === null) throw new Error("edit dialog not found");
-	return dialog;
-};
-
-const findButtonInDialogByName = (
-	name: string | RegExp,
-): HTMLElement | undefined =>
-	Array.from(
-		requireEditDialog().querySelectorAll<HTMLButtonElement>("button"),
-	).find((el) => {
-		const elName =
-			el.getAttribute("aria-label") ?? el.textContent?.trim() ?? "";
-		return typeof name === "string" ? elName === name : name.test(elName);
-	});
-
-const requireButtonInDialogByName = (name: string | RegExp): HTMLElement => {
-	const el = findButtonInDialogByName(name);
-	if (el === undefined)
-		throw new Error(`button with name "${name}" not found in edit dialog`);
-	return el;
-};
-
-const findInputByLabel = (label: string): HTMLInputElement => {
-	const dialog = requireEditDialog();
-	const labelEl = Array.from(
-		dialog.querySelectorAll<HTMLElement>("label"),
-	).find((l) => l.textContent === label);
-	if (labelEl === undefined) throw new Error(`label "${label}" not found`);
-	const id = labelEl.getAttribute("for");
-	if (id === null) throw new Error(`label "${label}" has no associated input`);
-	const input = dialog.querySelector<HTMLInputElement>(`#${CSS.escape(id)}`);
-	if (input === null) throw new Error(`input for label "${label}" not found`);
-	return input;
-};
-
-const findMenuItemByName = (name: string): HTMLElement | undefined =>
-	Array.from(
-		document.querySelectorAll<HTMLElement>(
-			'[role="menuitem"], [role="menuitemradio"]',
-		),
-	).find((el) => (el.textContent ?? "").replace(/\s+/g, " ").trim() === name);
-
 const meta = {
 	title: "View/V2 プログラム詳細/SetPlanRow",
 	component: SetPlanRow,
@@ -82,7 +16,8 @@ const meta = {
 		index: 0,
 		weightUnit: "kg",
 		weightStep: 2.5,
-		edit: { title: "ベンチプレス 1セット目", onChange: fn() },
+		exerciseName: "ベンチプレス",
+		onChange: fn(),
 	},
 	decorators: [
 		(Story) => (
@@ -160,7 +95,7 @@ export const DesktopEditingSubmitByEnter: Story = {
 		await userEvent.tripleClick(weightInput);
 		await userEvent.keyboard("110{Enter}");
 		await waitFor(() => {
-			expect(args.edit.onChange).toHaveBeenCalledWith({
+			expect(args.onChange).toHaveBeenCalledWith({
 				kind: "weight-x-reps",
 				weight: 110,
 				reps: 5,
@@ -189,7 +124,7 @@ export const DesktopEditingSubmitByConfirmButton: Story = {
 		await userEvent.keyboard("8");
 		await userEvent.click(requireButtonInDialogByName("確定"));
 		await waitFor(() => {
-			expect(args.edit.onChange).toHaveBeenCalledWith({
+			expect(args.onChange).toHaveBeenCalledWith({
 				kind: "weight-x-reps",
 				weight: 100,
 				reps: 8,
@@ -219,7 +154,7 @@ export const DesktopEditingCancelByEscape: Story = {
 		await waitFor(() => {
 			expect(findEditDialog()).toBeNull();
 		});
-		expect(args.edit.onChange).not.toHaveBeenCalled();
+		expect(args.onChange).not.toHaveBeenCalled();
 	},
 };
 
@@ -280,7 +215,7 @@ export const DesktopEditingFromEmpty: Story = {
 		await userEvent.keyboard("10");
 		await userEvent.click(requireButtonInDialogByName("確定"));
 		await waitFor(() => {
-			expect(args.edit.onChange).toHaveBeenCalledWith({
+			expect(args.onChange).toHaveBeenCalledWith({
 				kind: "weight-x-reps",
 				weight: 80,
 				reps: 10,
@@ -295,7 +230,6 @@ export const MobileEditingSubmitByConfirmButton: Story = {
 	args: {
 		index: 2,
 		pattern: { kind: "weight-x-reps", weight: 100, reps: 5 },
-		edit: { title: "ベンチプレス 3セット目", onChange: fn() },
 	},
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
@@ -312,7 +246,7 @@ export const MobileEditingSubmitByConfirmButton: Story = {
 		await userEvent.keyboard("110");
 		await userEvent.click(requireButtonInDialogByName("確定"));
 		await waitFor(() => {
-			expect(args.edit.onChange).toHaveBeenCalledWith({
+			expect(args.onChange).toHaveBeenCalledWith({
 				kind: "weight-x-reps",
 				weight: 110,
 				reps: 5,
@@ -343,7 +277,7 @@ export const MobileEditingCancelByCloseButton: Story = {
 		await waitFor(() => {
 			expect(findEditDialog()).toBeNull();
 		});
-		expect(args.edit.onChange).not.toHaveBeenCalled();
+		expect(args.onChange).not.toHaveBeenCalled();
 	},
 };
 
@@ -375,3 +309,63 @@ export const MobileEditingPatternSwitch: Story = {
 		});
 	},
 };
+
+const StatefulRow: FC<ComponentProps<typeof SetPlanRow>> = ({
+	pattern: initialPattern,
+	onChange,
+	...rest
+}) => {
+	const [pattern, setPattern] = useState<SetPlanPattern | null>(initialPattern);
+	const handleChange = (next: SetPlanPattern) => {
+		setPattern(next);
+		onChange(next);
+	};
+	return <SetPlanRow {...rest} pattern={pattern} onChange={handleChange} />;
+};
+
+const findEditDialog = (): HTMLElement | null =>
+	document.querySelector<HTMLElement>('[role="dialog"]');
+
+const requireEditDialog = (): HTMLElement => {
+	const dialog = findEditDialog();
+	if (dialog === null) throw new Error("edit dialog not found");
+	return dialog;
+};
+
+const findButtonInDialogByName = (
+	name: string | RegExp,
+): HTMLElement | undefined =>
+	Array.from(
+		requireEditDialog().querySelectorAll<HTMLButtonElement>("button"),
+	).find((el) => {
+		const elName =
+			el.getAttribute("aria-label") ?? el.textContent?.trim() ?? "";
+		return typeof name === "string" ? elName === name : name.test(elName);
+	});
+
+const requireButtonInDialogByName = (name: string | RegExp): HTMLElement => {
+	const el = findButtonInDialogByName(name);
+	if (el === undefined)
+		throw new Error(`button with name "${name}" not found in edit dialog`);
+	return el;
+};
+
+const findInputByLabel = (label: string): HTMLInputElement => {
+	const dialog = requireEditDialog();
+	const labelEl = Array.from(
+		dialog.querySelectorAll<HTMLElement>("label"),
+	).find((l) => l.textContent === label);
+	if (labelEl === undefined) throw new Error(`label "${label}" not found`);
+	const id = labelEl.getAttribute("for");
+	if (id === null) throw new Error(`label "${label}" has no associated input`);
+	const input = dialog.querySelector<HTMLInputElement>(`#${CSS.escape(id)}`);
+	if (input === null) throw new Error(`input for label "${label}" not found`);
+	return input;
+};
+
+const findMenuItemByName = (name: string): HTMLElement | undefined =>
+	Array.from(
+		document.querySelectorAll<HTMLElement>(
+			'[role="menuitem"], [role="menuitemradio"]',
+		),
+	).find((el) => (el.textContent ?? "").replace(/\s+/g, " ").trim() === name);
