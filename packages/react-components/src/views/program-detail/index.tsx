@@ -1,12 +1,7 @@
 import type { ComponentProps, FC } from "react";
 import { Heading, Section } from "../../primitives/heading";
-import {
-	Tab,
-	TabList,
-	TabPanel,
-	TabScrollArea,
-	Tabs,
-} from "../../primitives/tabs";
+import { ScrollArea } from "../../primitives/scrollable";
+import { Tab, TabList, TabPanel, Tabs } from "../../primitives/tabs";
 import { CreateDayCard } from "./create-day-card";
 import { ExercisePlanSection } from "./exercise-plan-section";
 import { SetPlanSection } from "./set-plan-section";
@@ -58,7 +53,7 @@ export const ProgramDetail: FC<Props> = ({
 			) : (
 				<Section>
 					<Tabs {...tabsProps}>
-						<TabScrollArea>
+						<ScrollArea>
 							<TabList aria-label="Day">
 								{days.map((day) => (
 									<Tab key={day.id} id={day.id}>
@@ -66,7 +61,7 @@ export const ProgramDetail: FC<Props> = ({
 									</Tab>
 								))}
 							</TabList>
-						</TabScrollArea>
+						</ScrollArea>
 						{days.map((day) => (
 							<TabPanel key={day.id} id={day.id} className="pt-4">
 								<ExercisePlanSection exercisePlans={day.exercisePlans}>

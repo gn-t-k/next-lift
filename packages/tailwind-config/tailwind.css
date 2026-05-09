@@ -285,26 +285,6 @@ body {
 	}
 }
 
-@keyframes tab-scroll-fade-start {
-	0% {
-		opacity: 0;
-	}
-	1%,
-	100% {
-		opacity: 1;
-	}
-}
-
-@keyframes tab-scroll-fade-end {
-	0%,
-	99% {
-		opacity: 1;
-	}
-	100% {
-		opacity: 0;
-	}
-}
-
 @keyframes scroll-fade-start {
 	0% {
 		opacity: 0;
