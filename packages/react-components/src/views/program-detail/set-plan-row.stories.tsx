@@ -8,15 +8,23 @@ type Params = NonNullable<ComponentProps<typeof SetPlanRow>["params"]>;
 
 const StatefulRow: FC<ComponentProps<typeof SetPlanRow>> = ({
 	params: initialParams,
-	onChange,
+	edit,
 	...rest
 }) => {
 	const [params, setParams] = useState<Params | null>(initialParams);
 	const handleChange = (next: Params) => {
 		setParams(next);
-		onChange?.(next);
+		edit?.onChange(next);
 	};
-	return <SetPlanRow {...rest} params={params} onChange={handleChange} />;
+	return (
+		<SetPlanRow
+			{...rest}
+			params={params}
+			{...(edit !== undefined
+				? { edit: { ...edit, onChange: handleChange } }
+				: {})}
+		/>
+	);
 };
 
 const findEditDialog = (): HTMLElement | null =>
@@ -130,17 +138,7 @@ export const HigherIndex: Story = {
 export const Editable: Story = {
 	args: {
 		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
-		onChange: fn(),
-	},
-	render: (args) => <StatefulRow {...args} />,
-};
-
-export const EditableWithExerciseName: Story = {
-	name: "編集ダイアログに種目名を表示",
-	args: {
-		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
-		exerciseName: "ベンチプレス",
-		onChange: fn(),
+		edit: { title: "ベンチプレス 1セット目", onChange: fn() },
 	},
 	render: (args) => <StatefulRow {...args} />,
 };
@@ -150,13 +148,13 @@ export const DesktopEditingSubmitByEnter: Story = {
 	globals: { viewport: { value: "desktop" } },
 	args: {
 		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
-		onChange: fn(),
+		edit: { title: "ベンチプレス 1セット目", onChange: fn() },
 	},
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
-			canvas.getByRole("button", { name: "セット 1 を編集" }),
+			canvas.getByRole("button", { name: "ベンチプレス 1セット目を編集" }),
 		);
 		await waitFor(() => {
 			expect(findEditDialog()).not.toBeNull();
@@ -165,7 +163,7 @@ export const DesktopEditingSubmitByEnter: Story = {
 		await userEvent.tripleClick(weightInput);
 		await userEvent.keyboard("110{Enter}");
 		await waitFor(() => {
-			expect(args.onChange).toHaveBeenCalledWith({
+			expect(args.edit?.onChange).toHaveBeenCalledWith({
 				pattern: "weight-x-reps",
 				weight: 110,
 				reps: 5,
@@ -179,13 +177,13 @@ export const DesktopEditingSubmitByConfirmButton: Story = {
 	globals: { viewport: { value: "desktop" } },
 	args: {
 		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
-		onChange: fn(),
+		edit: { title: "ベンチプレス 1セット目", onChange: fn() },
 	},
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
-			canvas.getByRole("button", { name: "セット 1 を編集" }),
+			canvas.getByRole("button", { name: "ベンチプレス 1セット目を編集" }),
 		);
 		await waitFor(() => {
 			expect(findEditDialog()).not.toBeNull();
@@ -193,9 +191,9 @@ export const DesktopEditingSubmitByConfirmButton: Story = {
 		const repsInput = findInputByLabel("回数");
 		await userEvent.tripleClick(repsInput);
 		await userEvent.keyboard("8");
-		await userEvent.click(requireButtonInDialogByName(/^確定$/));
+		await userEvent.click(requireButtonInDialogByName("確定"));
 		await waitFor(() => {
-			expect(args.onChange).toHaveBeenCalledWith({
+			expect(args.edit?.onChange).toHaveBeenCalledWith({
 				pattern: "weight-x-reps",
 				weight: 100,
 				reps: 8,
@@ -209,13 +207,13 @@ export const DesktopEditingCancelByEscape: Story = {
 	globals: { viewport: { value: "desktop" } },
 	args: {
 		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
-		onChange: fn(),
+		edit: { title: "ベンチプレス 1セット目", onChange: fn() },
 	},
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
-			canvas.getByRole("button", { name: "セット 1 を編集" }),
+			canvas.getByRole("button", { name: "ベンチプレス 1セット目を編集" }),
 		);
 		await waitFor(() => {
 			expect(findEditDialog()).not.toBeNull();
@@ -226,7 +224,7 @@ export const DesktopEditingCancelByEscape: Story = {
 		await waitFor(() => {
 			expect(findEditDialog()).toBeNull();
 		});
-		expect(args.onChange).not.toHaveBeenCalled();
+		expect(args.edit?.onChange).not.toHaveBeenCalled();
 	},
 };
 
@@ -235,13 +233,13 @@ export const DesktopEditingPatternSwitchClearsValues: Story = {
 	globals: { viewport: { value: "desktop" } },
 	args: {
 		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
-		onChange: fn(),
+		edit: { title: "ベンチプレス 1セット目", onChange: fn() },
 	},
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
-			canvas.getByRole("button", { name: "セット 1 を編集" }),
+			canvas.getByRole("button", { name: "ベンチプレス 1セット目を編集" }),
 		);
 		await waitFor(() => {
 			expect(findEditDialog()).not.toBeNull();
@@ -261,7 +259,7 @@ export const DesktopEditingPatternSwitchClearsValues: Story = {
 			expect(weight).toHaveValue("");
 			expect(rpe).toHaveValue("");
 		});
-		expect(requireButtonInDialogByName(/^確定$/)).toBeDisabled();
+		expect(requireButtonInDialogByName("確定")).toBeDisabled();
 	},
 };
 
@@ -270,13 +268,13 @@ export const DesktopEditingFromEmpty: Story = {
 	globals: { viewport: { value: "desktop" } },
 	args: {
 		params: null,
-		onChange: fn(),
+		edit: { title: "ベンチプレス 1セット目", onChange: fn() },
 	},
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
-			canvas.getByRole("button", { name: "セット 1 を編集" }),
+			canvas.getByRole("button", { name: "ベンチプレス 1セット目を編集" }),
 		);
 		await waitFor(() => {
 			expect(findEditDialog()).not.toBeNull();
@@ -287,9 +285,9 @@ export const DesktopEditingFromEmpty: Story = {
 		const repsInput = findInputByLabel("回数");
 		await userEvent.click(repsInput);
 		await userEvent.keyboard("10");
-		await userEvent.click(requireButtonInDialogByName(/^確定$/));
+		await userEvent.click(requireButtonInDialogByName("確定"));
 		await waitFor(() => {
-			expect(args.onChange).toHaveBeenCalledWith({
+			expect(args.edit?.onChange).toHaveBeenCalledWith({
 				pattern: "weight-x-reps",
 				weight: 80,
 				reps: 10,
@@ -304,25 +302,24 @@ export const MobileEditingSubmitByConfirmButton: Story = {
 	args: {
 		index: 2,
 		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
-		exerciseName: "ベンチプレス",
-		onChange: fn(),
+		edit: { title: "ベンチプレス 3セット目", onChange: fn() },
 	},
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
-			canvas.getByRole("button", { name: "セット 3 を編集" }),
+			canvas.getByRole("button", { name: "ベンチプレス 3セット目を編集" }),
 		);
 		await waitFor(() => {
 			expect(findEditDialog()).not.toBeNull();
 		});
-		expect(findEditDialog()?.textContent).toContain("ベンチプレス #3 を編集");
+		expect(findEditDialog()?.textContent).toContain("ベンチプレス 3セット目");
 		const weightInput = findInputByLabel("重量 (kg)");
 		await userEvent.tripleClick(weightInput);
 		await userEvent.keyboard("110");
-		await userEvent.click(requireButtonInDialogByName(/^確定$/));
+		await userEvent.click(requireButtonInDialogByName("確定"));
 		await waitFor(() => {
-			expect(args.onChange).toHaveBeenCalledWith({
+			expect(args.edit?.onChange).toHaveBeenCalledWith({
 				pattern: "weight-x-reps",
 				weight: 110,
 				reps: 5,
@@ -336,13 +333,13 @@ export const MobileEditingCancelByCloseButton: Story = {
 	globals: { viewport: { value: "mobile" } },
 	args: {
 		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
-		onChange: fn(),
+		edit: { title: "ベンチプレス 1セット目", onChange: fn() },
 	},
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
-			canvas.getByRole("button", { name: "セット 1 を編集" }),
+			canvas.getByRole("button", { name: "ベンチプレス 1セット目を編集" }),
 		);
 		await waitFor(() => {
 			expect(findEditDialog()).not.toBeNull();
@@ -354,7 +351,7 @@ export const MobileEditingCancelByCloseButton: Story = {
 		await waitFor(() => {
 			expect(findEditDialog()).toBeNull();
 		});
-		expect(args.onChange).not.toHaveBeenCalled();
+		expect(args.edit?.onChange).not.toHaveBeenCalled();
 	},
 };
 
@@ -363,13 +360,13 @@ export const MobileEditingPatternSwitch: Story = {
 	globals: { viewport: { value: "mobile" } },
 	args: {
 		params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
-		onChange: fn(),
+		edit: { title: "ベンチプレス 1セット目", onChange: fn() },
 	},
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
-			canvas.getByRole("button", { name: "セット 1 を編集" }),
+			canvas.getByRole("button", { name: "ベンチプレス 1セット目を編集" }),
 		);
 		await waitFor(() => {
 			expect(findEditDialog()).not.toBeNull();

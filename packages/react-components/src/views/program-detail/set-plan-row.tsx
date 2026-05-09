@@ -23,26 +23,28 @@ type Params =
 	| { pattern: "weight-x-rpe"; weight: number; rpe: number }
 	| { pattern: "reps-x-rpe"; reps: number; rpe: number };
 
+type Edit = {
+	title: string;
+	onChange: (params: Params) => void;
+};
+
 type Props = {
 	index: number;
 	params: Params | null;
 	weightUnit: "kg" | "lbs";
-	exerciseName?: string;
 	weightStep?: number;
 	repsStep?: number;
-	onChange?: (params: Params) => void;
+	edit?: Edit;
 };
 
 export const SetPlanRow: FC<Props> = ({
 	index,
 	params,
 	weightUnit,
-	exerciseName,
 	weightStep = 2.5,
 	repsStep = 1,
-	onChange,
+	edit,
 }) => {
-	const isEditable = onChange !== undefined;
 	const isEmpty = params === null;
 	return (
 		<div className="flex items-baseline gap-3 px-3 py-2 text-sm">
@@ -57,28 +59,24 @@ export const SetPlanRow: FC<Props> = ({
 			>
 				{formatParams(params, weightUnit)}
 			</span>
-			{isEditable && (
+			{edit !== undefined && (
 				<>
 					<div className="md:hidden">
 						<DrawerEditTrigger
-							index={index}
 							params={params}
 							weightUnit={weightUnit}
-							exerciseName={exerciseName}
 							weightStep={weightStep}
 							repsStep={repsStep}
-							onChange={onChange}
+							edit={edit}
 						/>
 					</div>
 					<div className="hidden md:block">
 						<PopoverEditTrigger
-							index={index}
 							params={params}
 							weightUnit={weightUnit}
-							exerciseName={exerciseName}
 							weightStep={weightStep}
 							repsStep={repsStep}
-							onChange={onChange}
+							edit={edit}
 						/>
 					</div>
 				</>
@@ -88,36 +86,27 @@ export const SetPlanRow: FC<Props> = ({
 };
 
 type EditTriggerProps = {
-	index: number;
 	params: Params | null;
 	weightUnit: "kg" | "lbs";
-	exerciseName: string | undefined;
 	weightStep: number;
 	repsStep: number;
-	onChange: (params: Params) => void;
+	edit: Edit;
 };
 
-const editTitle = (index: number, exerciseName: string | undefined): string =>
-	exerciseName !== undefined && exerciseName !== ""
-		? `${exerciseName} #${index + 1} を編集`
-		: `#${index + 1} を編集`;
-
 const PopoverEditTrigger: FC<EditTriggerProps> = ({
-	index,
 	params,
 	weightUnit,
-	exerciseName,
 	weightStep,
 	repsStep,
-	onChange,
+	edit,
 }) => {
-	const editing = useEditingState(params, onChange);
+	const editing = useEditingState(params, edit.onChange);
 	return (
 		<DialogTrigger
 			isOpen={editing.isOpen}
 			onOpenChange={editing.handleOpenChange}
 		>
-			<EditTriggerButton index={index} onPress={editing.start} />
+			<EditTriggerButton title={edit.title} onPress={editing.start} />
 			<Popover
 				placement="bottom end"
 				className={cx(
@@ -127,10 +116,7 @@ const PopoverEditTrigger: FC<EditTriggerProps> = ({
 					"exiting:fade-out exiting:animate-out exiting:duration-100",
 				)}
 			>
-				<Dialog
-					className="outline-hidden"
-					aria-label={editTitle(index, exerciseName)}
-				>
+				<Dialog className="outline-hidden" aria-label={edit.title}>
 					{editing.draft !== null && (
 						<EditFormContent
 							draft={editing.draft}
@@ -149,23 +135,20 @@ const PopoverEditTrigger: FC<EditTriggerProps> = ({
 };
 
 const DrawerEditTrigger: FC<EditTriggerProps> = ({
-	index,
 	params,
 	weightUnit,
-	exerciseName,
 	weightStep,
 	repsStep,
-	onChange,
+	edit,
 }) => {
-	const editing = useEditingState(params, onChange);
-	const title = editTitle(index, exerciseName);
+	const editing = useEditingState(params, edit.onChange);
 	return (
 		<Drawer isOpen={editing.isOpen} onOpenChange={editing.handleOpenChange}>
-			<EditTriggerButton index={index} onPress={editing.start} />
+			<EditTriggerButton title={edit.title} onPress={editing.start} />
 			<DrawerContent>
 				{editing.draft !== null && (
 					<div className="flex flex-col gap-4 pt-2">
-						<DrawerTitle>{title}</DrawerTitle>
+						<DrawerTitle>{edit.title}</DrawerTitle>
 						<EditFormContent
 							draft={editing.draft}
 							weightUnit={weightUnit}
@@ -182,16 +165,16 @@ const DrawerEditTrigger: FC<EditTriggerProps> = ({
 };
 
 type EditTriggerButtonProps = {
-	index: number;
+	title: string;
 	onPress: () => void;
 };
 
-const EditTriggerButton: FC<EditTriggerButtonProps> = ({ index, onPress }) => (
+const EditTriggerButton: FC<EditTriggerButtonProps> = ({ title, onPress }) => (
 	<Button
 		intent="plain"
 		size="sq-xs"
 		onPress={onPress}
-		aria-label={`セット ${index + 1} を編集`}
+		aria-label={`${title}を編集`}
 	>
 		<PencilSquareIcon data-slot="icon" className="size-4" aria-hidden />
 	</Button>
@@ -298,10 +281,11 @@ const EditFormContent: FC<EditFormContentProps> = ({
 				<Button
 					type="submit"
 					intent="primary"
-					size="sm"
+					size="sq-sm"
 					isDisabled={draftToParams(draft) === null}
+					aria-label="確定"
 				>
-					確定
+					<CheckIcon data-slot="icon" className="size-4" aria-hidden />
 				</Button>
 			</footer>
 		</form>
