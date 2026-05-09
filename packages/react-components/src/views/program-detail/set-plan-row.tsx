@@ -6,12 +6,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { CheckIcon } from "@heroicons/react/24/solid";
 import { type FC, type FormEvent, useState } from "react";
-import {
-	Dialog,
-	Heading as DialogHeading,
-	DialogTrigger,
-	Popover,
-} from "react-aria-components";
+import { Dialog, DialogTrigger, Popover } from "react-aria-components";
 import { cx } from "../../libs/primitive";
 import { cn } from "../../libs/utils";
 import { Button } from "../../primitives/button";
@@ -117,7 +112,6 @@ const PopoverEditTrigger: FC<EditTriggerProps> = ({
 	onChange,
 }) => {
 	const editing = useEditingState(params, onChange);
-	const title = editTitle(index, exerciseName);
 	return (
 		<DialogTrigger
 			isOpen={editing.isOpen}
@@ -133,24 +127,20 @@ const PopoverEditTrigger: FC<EditTriggerProps> = ({
 					"exiting:fade-out exiting:animate-out exiting:duration-100",
 				)}
 			>
-				<Dialog className="outline-hidden">
+				<Dialog
+					className="outline-hidden"
+					aria-label={editTitle(index, exerciseName)}
+				>
 					{editing.draft !== null && (
-						<div className="flex w-72 flex-col gap-3 p-3">
-							<DialogHeading
-								slot="title"
-								className="font-semibold text-fg text-sm"
-							>
-								{title}
-							</DialogHeading>
-							<EditFormContent
-								draft={editing.draft}
-								weightUnit={weightUnit}
-								weightStep={weightStep}
-								repsStep={repsStep}
-								onUpdate={editing.setDraft}
-								onSubmit={editing.submit}
-							/>
-						</div>
+						<EditFormContent
+							draft={editing.draft}
+							weightUnit={weightUnit}
+							weightStep={weightStep}
+							repsStep={repsStep}
+							onUpdate={editing.setDraft}
+							onSubmit={editing.submit}
+							className="w-72 p-3"
+						/>
 					)}
 				</Dialog>
 			</Popover>
@@ -242,6 +232,7 @@ type EditFormContentProps = {
 	repsStep: number;
 	onUpdate: (draft: Draft) => void;
 	onSubmit: () => void;
+	className?: string;
 };
 
 const EditFormContent: FC<EditFormContentProps> = ({
@@ -251,13 +242,17 @@ const EditFormContent: FC<EditFormContentProps> = ({
 	repsStep,
 	onUpdate,
 	onSubmit,
+	className,
 }) => {
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		onSubmit();
 	};
 	return (
-		<form onSubmit={handleSubmit} className="flex flex-col gap-3">
+		<form
+			onSubmit={handleSubmit}
+			className={cn("flex flex-col gap-3", className)}
+		>
 			<DraftFields
 				draft={draft}
 				weightUnit={weightUnit}
