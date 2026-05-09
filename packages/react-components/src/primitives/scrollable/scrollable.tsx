@@ -1,27 +1,28 @@
 "use client";
 
-import { type FC, type PropsWithChildren, useEffect, useRef } from "react";
+import { type FC, type PropsWithChildren, useRef } from "react";
+import { tv, type VariantProps } from "tailwind-variants";
 import { cn } from "../../libs/utils";
 import { computeScrollLeft, type ScrollAlign } from "./compute-scroll-left";
 
-type Props = PropsWithChildren<{
-	className?: string;
-	fadeFrom?: string;
-	scrollAlign?: ScrollAlign;
-}>;
+type Props = PropsWithChildren<
+	VariantProps<typeof fadeStyles> & {
+		className?: string;
+		scrollAlign?: ScrollAlign;
+	}
+>;
 
 export const ScrollArea: FC<Props> = ({
 	children,
 	className,
-	fadeFrom = "from-overlay",
+	fadeFrom,
 	scrollAlign = "nearest",
 }) => {
-	const scrollRef = useRef<HTMLDivElement>(null);
+	const initializedRef = useRef(false);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: 初期表示時のみ scrollLeft を設定する。マウント後の prop 変化には反応しない（uncontrolled の慣習）
-	useEffect(() => {
-		const container = scrollRef.current;
-		if (!container) return;
+	const setContainer = (container: HTMLDivElement | null) => {
+		if (!container || initializedRef.current) return;
+		initializedRef.current = true;
 		const target = container.querySelector<HTMLElement>(
 			"[data-initial-scroll]",
 		);
@@ -37,7 +38,7 @@ export const ScrollArea: FC<Props> = ({
 			},
 			scrollAlign,
 		);
-	}, []);
+	};
 
 	return (
 		<div
@@ -45,7 +46,7 @@ export const ScrollArea: FC<Props> = ({
 			className={cn("relative [timeline-scope:--scrollable]", className)}
 		>
 			<div
-				ref={scrollRef}
+				ref={setContainer}
 				className="overflow-x-auto [scroll-timeline-axis:inline] [scroll-timeline-name:--scrollable] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
 			>
 				{children}
@@ -53,17 +54,32 @@ export const ScrollArea: FC<Props> = ({
 			<div
 				aria-hidden="true"
 				className={cn(
-					"pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r to-transparent opacity-0 [animation-fill-mode:both] [animation-name:scroll-fade-start] [animation-timeline:--scrollable]",
-					fadeFrom,
+					"pointer-events-none absolute inset-y-0 left-0 w-8 bg-linear-to-r to-transparent opacity-0 [animation-fill-mode:both] [animation-name:scroll-fade-start] [animation-timeline:--scrollable]",
+					fadeStyles({ fadeFrom }),
 				)}
 			/>
 			<div
 				aria-hidden="true"
 				className={cn(
-					"pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l to-transparent opacity-0 [animation-fill-mode:both] [animation-name:scroll-fade-end] [animation-timeline:--scrollable]",
-					fadeFrom,
+					"pointer-events-none absolute inset-y-0 right-0 w-8 bg-linear-to-l to-transparent opacity-0 [animation-fill-mode:both] [animation-name:scroll-fade-end] [animation-timeline:--scrollable]",
+					fadeStyles({ fadeFrom }),
 				)}
 			/>
 		</div>
 	);
 };
+
+const fadeStyles = tv({
+	variants: {
+		fadeFrom: {
+			bg: "from-bg",
+			overlay: "from-overlay",
+			navbar: "from-navbar",
+			sidebar: "from-sidebar",
+			secondary: "from-secondary",
+		},
+	},
+	defaultVariants: {
+		fadeFrom: "overlay",
+	},
+});
