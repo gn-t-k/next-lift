@@ -1,6 +1,6 @@
 "use client";
 
-import type { FC, PropsWithChildren } from "react";
+import type { FC } from "react";
 import {
 	TabList as TabListPrimitive,
 	type TabListProps as TabListPrimitiveProps,
@@ -68,32 +68,5 @@ export const TabPanel: FC<TabPanelPrimitiveProps> = ({
 		data-slot="tab-panel"
 		className={cx("flex-1 text-fg outline-hidden", className)}
 		{...props}
-	/>
-);
-
-export const TabScrollArea: FC<PropsWithChildren> = ({ children }) => (
-	<div
-		data-slot="tab-scroll-area"
-		className="relative [timeline-scope:--tab-scroll]"
-	>
-		<div className="overflow-x-auto [scroll-timeline-axis:inline] [scroll-timeline-name:--tab-scroll] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-			{children}
-		</div>
-		<TabScrollFadeStart />
-		<TabScrollFadeEnd />
-	</div>
-);
-
-const TabScrollFadeStart: FC = () => (
-	<div
-		aria-hidden="true"
-		className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-overlay to-transparent opacity-0 [animation-fill-mode:both] [animation-name:tab-scroll-fade-start] [animation-timeline:--tab-scroll]"
-	/>
-);
-
-const TabScrollFadeEnd: FC = () => (
-	<div
-		aria-hidden="true"
-		className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-overlay to-transparent opacity-0 [animation-fill-mode:both] [animation-name:tab-scroll-fade-end] [animation-timeline:--tab-scroll]"
 	/>
 );

@@ -2,12 +2,13 @@ import { PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
 import type { Meta, StoryObj } from "@storybook/react";
 import { type FC, useState } from "react";
 import { Button } from "../button/button";
+import { ScrollArea } from "../scrollable/scrollable";
 import {
 	TextField,
 	TextFieldInput,
 	TextFieldLabel,
 } from "../text-field/text-field";
-import { Tab, TabList, TabPanel, TabScrollArea, Tabs } from "./tabs";
+import { Tab, TabList, TabPanel, Tabs } from "./tabs";
 
 const meta = {
 	title: "UI/Tabs",
@@ -259,7 +260,7 @@ export const WithScrollableTabs: Story = {
 	],
 	render: () => (
 		<Tabs>
-			<TabScrollArea>
+			<ScrollArea>
 				<TabList aria-label="Day">
 					{longLabelTabs.map((day) => (
 						<Tab key={day.id} id={day.id}>
@@ -267,7 +268,7 @@ export const WithScrollableTabs: Story = {
 						</Tab>
 					))}
 				</TabList>
-			</TabScrollArea>
+			</ScrollArea>
 			{longLabelTabs.map((day) => (
 				<TabPanel key={day.id} id={day.id}>
 					<p>{day.label} の内容</p>
@@ -296,7 +297,7 @@ export const MobileScrollable: Story = {
 	],
 	render: () => (
 		<Tabs>
-			<TabScrollArea>
+			<ScrollArea>
 				<TabList aria-label="Day">
 					{mobileDays.map((day) => (
 						<Tab key={day.id} id={day.id}>
@@ -304,7 +305,7 @@ export const MobileScrollable: Story = {
 						</Tab>
 					))}
 				</TabList>
-			</TabScrollArea>
+			</ScrollArea>
 			{mobileDays.map((day) => (
 				<TabPanel key={day.id} id={day.id}>
 					<p>{day.label} の内容</p>
