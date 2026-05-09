@@ -14,7 +14,7 @@ export const ToggleButton: FC<ToggleButtonProps> = ({
 	<ToggleButtonPrimitive
 		className={cx(
 			"inline-flex min-h-9 min-w-9 cursor-default items-center justify-center rounded-md border border-border px-2.5 py-1.5 font-medium text-fg text-sm tabular-nums",
-			"hover:enabled:bg-secondary",
+			"hover:bg-secondary",
 			"selected:border-primary selected:bg-primary selected:text-primary-fg",
 			"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
 			"disabled:opacity-50",
