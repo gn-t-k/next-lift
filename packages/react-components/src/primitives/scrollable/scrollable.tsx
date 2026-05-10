@@ -43,7 +43,10 @@ export const ScrollArea: FC<Props> = ({
 	return (
 		<div
 			data-slot="scroll-area"
-			className={cn("relative [timeline-scope:--scrollable]", className)}
+			className={cn(
+				"relative min-w-0 [timeline-scope:--scrollable]",
+				className,
+			)}
 		>
 			<div
 				ref={setContainer}
