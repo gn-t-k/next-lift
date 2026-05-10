@@ -192,6 +192,33 @@ export const DesktopEditingPatternSwitchClearsValues: Story = {
 	},
 };
 
+export const DesktopEditingRpeCentersOnOpen: Story = {
+	name: "広画面: RPE 既選択時に中央スクロールで開く",
+	globals: { viewport: { value: "desktop" } },
+	args: {
+		pattern: { kind: "weight-x-rpe", weight: 100, rpe: 8 },
+	},
+	render: (args) => <StatefulRow {...args} />,
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			canvas.getByRole("button", { name: "ベンチプレス 1セット目を編集" }),
+		);
+		await waitFor(() => {
+			expect(findEditDialog()).not.toBeNull();
+		});
+		const rpe8 = requireButtonInDialogByName("8");
+		expect(rpe8).toHaveAttribute("data-selected", "true");
+		const inner = rpe8.closest<HTMLElement>(".overflow-x-auto");
+		if (inner === null) throw new Error("scroll container not found");
+		const rpeRect = rpe8.getBoundingClientRect();
+		const innerRect = inner.getBoundingClientRect();
+		const rpeCenter = rpeRect.left + rpeRect.width / 2;
+		const innerCenter = innerRect.left + innerRect.width / 2;
+		expect(Math.abs(rpeCenter - innerCenter)).toBeLessThan(8);
+	},
+};
+
 export const DesktopEditingFromEmpty: Story = {
 	name: "広画面: 値未入力から編集開始",
 	globals: { viewport: { value: "desktop" } },

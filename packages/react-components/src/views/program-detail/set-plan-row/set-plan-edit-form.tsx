@@ -208,7 +208,7 @@ const RpeToggleField: FC<RpeToggleFieldProps> = ({ value, onChange }) => (
 		>
 			RPE
 		</span>
-		<ScrollArea>
+		<ScrollArea scrollAlign="center">
 			<SingleToggleButtonGroup
 				aria-label="RPE"
 				selectedKey={value === null ? null : value.toString()}
