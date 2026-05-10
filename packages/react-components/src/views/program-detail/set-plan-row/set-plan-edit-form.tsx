@@ -112,7 +112,7 @@ type DraftFieldsProps = {
 };
 
 const fieldLayout =
-	"grid grid-cols-[5rem_minmax(0,1fr)] items-center gap-3 [&>[data-slot=label]+[data-slot=control]]:mt-0";
+	"grid grid-cols-[5rem_1fr] items-center gap-3 [&>[data-slot=label]+[data-slot=control]]:mt-0";
 
 const DraftFields: FC<DraftFieldsProps> = ({
 	draft,
