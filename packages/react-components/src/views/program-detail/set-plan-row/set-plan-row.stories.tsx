@@ -31,42 +31,36 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const WeightXReps: Story = {
-	args: {
-		pattern: { kind: "weight-x-reps", weight: 100, reps: 5 },
-	},
-};
-
-export const WeightXRepsLbs: Story = {
-	args: {
-		weightUnit: "lbs",
-		pattern: { kind: "weight-x-reps", weight: 225, reps: 5 },
-	},
-};
-
-export const WeightXRpe: Story = {
-	args: {
-		pattern: { kind: "weight-x-rpe", weight: 100, rpe: 9 },
-	},
-};
-
-export const RepsXRpe: Story = {
-	args: {
-		pattern: { kind: "reps-x-rpe", reps: 12, rpe: 8 },
-	},
-};
-
-export const Empty: Story = {
+export const Patterns: Story = {
 	args: {
 		pattern: null,
 	},
-};
-
-export const HigherIndex: Story = {
-	args: {
-		index: 5,
-		pattern: { kind: "weight-x-reps", weight: 100, reps: 5 },
-	},
+	render: (args) => (
+		<div className="flex flex-col">
+			<SetPlanRow
+				{...args}
+				index={0}
+				pattern={{ kind: "weight-x-reps", weight: 100, reps: 5 }}
+			/>
+			<SetPlanRow
+				{...args}
+				index={1}
+				pattern={{ kind: "weight-x-reps", weight: 225, reps: 5 }}
+				weightUnit="lbs"
+			/>
+			<SetPlanRow
+				{...args}
+				index={2}
+				pattern={{ kind: "weight-x-rpe", weight: 100, rpe: 9 }}
+			/>
+			<SetPlanRow
+				{...args}
+				index={3}
+				pattern={{ kind: "reps-x-rpe", reps: 12, rpe: 8 }}
+			/>
+			<SetPlanRow {...args} index={4} pattern={null} />
+		</div>
+	),
 };
 
 export const Editable: Story = {
