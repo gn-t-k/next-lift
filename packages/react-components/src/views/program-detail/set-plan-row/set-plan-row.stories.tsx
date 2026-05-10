@@ -63,13 +63,6 @@ export const Patterns: Story = {
 	),
 };
 
-export const Editable: Story = {
-	args: {
-		pattern: { kind: "weight-x-reps", weight: 100, reps: 5 },
-	},
-	render: (args) => <StatefulRow {...args} />,
-};
-
 export const DesktopEditingSubmitByEnter: Story = {
 	name: "広画面: Enter で確定",
 	globals: { viewport: { value: "desktop" } },
