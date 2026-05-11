@@ -36,7 +36,27 @@
 			"dependsOn": ["^type-check"]
 		},
 		"test": {
-			"dependsOn": ["^build"]
+			"dependsOn": ["^build"],
+			"passThroughEnv": [
+				"BETTER_AUTH_URL",
+				"BETTER_AUTH_SECRET",
+				"GOOGLE_CLIENT_ID",
+				"GOOGLE_CLIENT_SECRET",
+				"APPLE_CLIENT_ID",
+				"APPLE_TEAM_ID",
+				"APPLE_KEY_ID",
+				"APPLE_PRIVATE_KEY",
+				"SENTRY_ORG",
+				"SENTRY_PROJECT",
+				"SENTRY_AUTH_TOKEN",
+				"NEXT_PUBLIC_SENTRY_DSN",
+				"NEXT_PUBLIC_BETTER_AUTH_URL",
+				"TURSO_PLATFORM_API_TOKEN",
+				"TURSO_ORGANIZATION",
+				"TURSO_TOKEN_ENCRYPTION_KEY",
+				"APP_ENV",
+				"CI"
+			]
 		},
 		"clean": {
 			"cache": false
