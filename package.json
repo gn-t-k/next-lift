@@ -21,7 +21,7 @@
 		"turbo": "2.9.9",
 		"vercel": "50.44.0"
 	},
-	"packageManager": "pnpm@10.33.3",
+	"packageManager": "pnpm@10.33.4",
 	"engines": {
 		"node": ">=18.0.0"
 	}
