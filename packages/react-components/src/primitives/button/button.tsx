@@ -82,6 +82,13 @@ export const buttonStyles = tv({
 			false: "rounded-lg",
 		},
 	},
+	compoundVariants: [
+		{
+			intent: ["primary", "warning", "danger"],
+			size: ["sq-xs", "sq-sm", "sq-md", "sq-lg"],
+			class: "[--btn-icon-active:var(--btn-fg)] [--btn-icon:var(--btn-fg)]",
+		},
+	],
 	defaultVariants: {
 		intent: "primary",
 		size: "md",

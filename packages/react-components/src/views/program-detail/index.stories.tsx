@@ -11,24 +11,28 @@ const benchPress: ExercisePlan["exercise"] = {
 	id: "ex-bench",
 	name: "ベンチプレス",
 	weightUnit: "kg",
+	weightStep: 2.5,
 };
 
 const inclineDumbbell: ExercisePlan["exercise"] = {
 	id: "ex-incline-db",
 	name: "インクラインダンベルプレス",
 	weightUnit: "kg",
+	weightStep: 1,
 };
 
 const tricepsPushdown: ExercisePlan["exercise"] = {
 	id: "ex-pushdown",
 	name: "トライセプスプッシュダウン",
 	weightUnit: "kg",
+	weightStep: 2.5,
 };
 
 const squat: ExercisePlan["exercise"] = {
 	id: "ex-squat",
 	name: "バックスクワット",
 	weightUnit: "kg",
+	weightStep: 2.5,
 };
 
 const SAMPLE_DAYS: Day[] = [
@@ -43,15 +47,21 @@ const SAMPLE_DAYS: Day[] = [
 				setPlans: [
 					{
 						id: "sp-d1-bench-1",
-						params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
+						pattern: "weight-x-reps",
+						weight: 100,
+						reps: 5,
 					},
 					{
 						id: "sp-d1-bench-2",
-						params: { pattern: "weight-x-reps", weight: 100, reps: 5 },
+						pattern: "weight-x-reps",
+						weight: 100,
+						reps: 5,
 					},
 					{
 						id: "sp-d1-bench-3",
-						params: { pattern: "weight-x-rpe", weight: 100, rpe: 9 },
+						pattern: "weight-x-rpe",
+						weight: 100,
+						rpe: 9,
 					},
 				],
 			},
@@ -61,11 +71,15 @@ const SAMPLE_DAYS: Day[] = [
 				setPlans: [
 					{
 						id: "sp-d1-incline-1",
-						params: { pattern: "weight-x-reps", weight: 30, reps: 10 },
+						pattern: "weight-x-reps",
+						weight: 30,
+						reps: 10,
 					},
 					{
 						id: "sp-d1-incline-2",
-						params: { pattern: "weight-x-reps", weight: 30, reps: 10 },
+						pattern: "weight-x-reps",
+						weight: 30,
+						reps: 10,
 					},
 				],
 			},
@@ -75,11 +89,15 @@ const SAMPLE_DAYS: Day[] = [
 				setPlans: [
 					{
 						id: "sp-d1-pushdown-1",
-						params: { pattern: "reps-x-rpe", reps: 12, rpe: 8 },
+						pattern: "reps-x-rpe",
+						reps: 12,
+						rpe: 8,
 					},
 					{
 						id: "sp-d1-pushdown-2",
-						params: { pattern: "reps-x-rpe", reps: 12, rpe: 8 },
+						pattern: "reps-x-rpe",
+						reps: 12,
+						rpe: 8,
 					},
 				],
 			},
@@ -96,15 +114,21 @@ const SAMPLE_DAYS: Day[] = [
 				setPlans: [
 					{
 						id: "sp-d2-squat-1",
-						params: { pattern: "weight-x-reps", weight: 140, reps: 3 },
+						pattern: "weight-x-reps",
+						weight: 140,
+						reps: 3,
 					},
 					{
 						id: "sp-d2-squat-2",
-						params: { pattern: "weight-x-reps", weight: 140, reps: 3 },
+						pattern: "weight-x-reps",
+						weight: 140,
+						reps: 3,
 					},
 					{
 						id: "sp-d2-squat-3",
-						params: { pattern: "weight-x-reps", weight: 140, reps: 3 },
+						pattern: "weight-x-reps",
+						weight: 140,
+						reps: 3,
 					},
 				],
 			},
@@ -134,6 +158,7 @@ const meta = {
 	args: {
 		defaultSelectedDayId: "d1",
 		onAddDay: fn(),
+		onSetPlanChange: fn(),
 	},
 	decorators: [
 		(Story) => (
@@ -171,10 +196,10 @@ export const LongProgramName: Story = {
 	},
 };
 
-// 設計判断 #58 によりアプリ層が初期構造（Day×1 + 種目計画×1（種目未確定） + セット計画×1（params: null））を渡す。
-// プログラム新規作成 → Day新規作成 → プログラム詳細 のフロー直後を表示する想定の状態。
-// 種目選択 picker は本ビューには持たず、種目選択 UI 自体はプログラム新規作成・Day 新規作成・種目計画追加タスクで導入する想定。
-export const InitialStateAfterCreation: Story = {
+// 種目計画追加直後の transient state（exercise: null + pattern: null のセット計画 1 件）。
+// 設計判断 #61 により V2 は保存済みデータのみ表示するが、種目計画追加直後はこの形が一時的に出現する。
+// 種目選択 picker は本ビューには持たず、種目選択 UI 自体は種目計画追加タスク (2-3-12) で導入する想定。
+export const AfterAddingExercisePlan: Story = {
 	args: {
 		name: "新しいプログラム",
 		meta: null,
@@ -187,7 +212,7 @@ export const InitialStateAfterCreation: Story = {
 					{
 						id: "ep-init",
 						exercise: null,
-						setPlans: [{ id: "sp-init", params: null }],
+						setPlans: [{ id: "sp-init", pattern: null }],
 					},
 				],
 			},
