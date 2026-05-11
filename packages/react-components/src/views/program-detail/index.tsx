@@ -6,7 +6,7 @@ import { CreateDayCard } from "./create-day-card";
 import { ExercisePlanSection } from "./exercise-plan-section";
 import { SetPlanSection } from "./set-plan-section";
 
-type SetPlanPattern = Parameters<
+type SetPlanChangePayload = Parameters<
 	ComponentProps<typeof SetPlanSection>["onSetPlanChange"]
 >[1];
 
@@ -16,7 +16,7 @@ type Props = {
 	days: Day[];
 	defaultSelectedDayId?: string;
 	onAddDay: () => void;
-	onSetPlanChange: (setPlanId: string, pattern: SetPlanPattern) => void;
+	onSetPlanChange: (setPlanId: string, payload: SetPlanChangePayload) => void;
 };
 
 type Day = {

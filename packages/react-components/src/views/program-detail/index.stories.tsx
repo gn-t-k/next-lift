@@ -47,15 +47,21 @@ const SAMPLE_DAYS: Day[] = [
 				setPlans: [
 					{
 						id: "sp-d1-bench-1",
-						pattern: { kind: "weight-x-reps", weight: 100, reps: 5 },
+						pattern: "weight-x-reps",
+						weight: 100,
+						reps: 5,
 					},
 					{
 						id: "sp-d1-bench-2",
-						pattern: { kind: "weight-x-reps", weight: 100, reps: 5 },
+						pattern: "weight-x-reps",
+						weight: 100,
+						reps: 5,
 					},
 					{
 						id: "sp-d1-bench-3",
-						pattern: { kind: "weight-x-rpe", weight: 100, rpe: 9 },
+						pattern: "weight-x-rpe",
+						weight: 100,
+						rpe: 9,
 					},
 				],
 			},
@@ -65,11 +71,15 @@ const SAMPLE_DAYS: Day[] = [
 				setPlans: [
 					{
 						id: "sp-d1-incline-1",
-						pattern: { kind: "weight-x-reps", weight: 30, reps: 10 },
+						pattern: "weight-x-reps",
+						weight: 30,
+						reps: 10,
 					},
 					{
 						id: "sp-d1-incline-2",
-						pattern: { kind: "weight-x-reps", weight: 30, reps: 10 },
+						pattern: "weight-x-reps",
+						weight: 30,
+						reps: 10,
 					},
 				],
 			},
@@ -79,11 +89,15 @@ const SAMPLE_DAYS: Day[] = [
 				setPlans: [
 					{
 						id: "sp-d1-pushdown-1",
-						pattern: { kind: "reps-x-rpe", reps: 12, rpe: 8 },
+						pattern: "reps-x-rpe",
+						reps: 12,
+						rpe: 8,
 					},
 					{
 						id: "sp-d1-pushdown-2",
-						pattern: { kind: "reps-x-rpe", reps: 12, rpe: 8 },
+						pattern: "reps-x-rpe",
+						reps: 12,
+						rpe: 8,
 					},
 				],
 			},
@@ -100,15 +114,21 @@ const SAMPLE_DAYS: Day[] = [
 				setPlans: [
 					{
 						id: "sp-d2-squat-1",
-						pattern: { kind: "weight-x-reps", weight: 140, reps: 3 },
+						pattern: "weight-x-reps",
+						weight: 140,
+						reps: 3,
 					},
 					{
 						id: "sp-d2-squat-2",
-						pattern: { kind: "weight-x-reps", weight: 140, reps: 3 },
+						pattern: "weight-x-reps",
+						weight: 140,
+						reps: 3,
 					},
 					{
 						id: "sp-d2-squat-3",
-						pattern: { kind: "weight-x-reps", weight: 140, reps: 3 },
+						pattern: "weight-x-reps",
+						weight: 140,
+						reps: 3,
 					},
 				],
 			},

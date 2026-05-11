@@ -6,17 +6,24 @@ import {
 	SetPlanRowWeightXRpe,
 } from "./set-plan-row";
 
-type SetPlanPattern =
-	| { kind: "weight-x-reps"; weight: number; reps: number }
-	| { kind: "weight-x-rpe"; weight: number; rpe: number }
-	| { kind: "reps-x-rpe"; reps: number; rpe: number };
+type SetPlan = { id: string } & (
+	| { pattern: null }
+	| { pattern: "weight-x-reps"; weight: number; reps: number }
+	| { pattern: "weight-x-rpe"; weight: number; rpe: number }
+	| { pattern: "reps-x-rpe"; reps: number; rpe: number }
+);
+
+type SetPlanChangePayload =
+	| { pattern: "weight-x-reps"; weight: number; reps: number }
+	| { pattern: "weight-x-rpe"; weight: number; rpe: number }
+	| { pattern: "reps-x-rpe"; reps: number; rpe: number };
 
 type Props = {
-	setPlans: { id: string; pattern: SetPlanPattern | null }[];
+	setPlans: SetPlan[];
 	weightUnit: "kg" | "lbs";
 	weightStep: number;
 	exerciseName: string;
-	onSetPlanChange: (setPlanId: string, pattern: SetPlanPattern) => void;
+	onSetPlanChange: (setPlanId: string, payload: SetPlanChangePayload) => void;
 };
 
 export const SetPlanSection: FC<Props> = ({
@@ -26,24 +33,21 @@ export const SetPlanSection: FC<Props> = ({
 	exerciseName,
 	onSetPlanChange,
 }) => {
-	const renderRow = (
-		setPlan: { id: string; pattern: SetPlanPattern | null },
-		index: number,
-	) => {
-		const { pattern } = setPlan;
-		if (pattern === null) return <SetPlanRowEmpty index={index} />;
-		switch (pattern.kind) {
+	const renderRow = (setPlan: SetPlan, index: number) => {
+		switch (setPlan.pattern) {
+			case null:
+				return <SetPlanRowEmpty index={index} />;
 			case "weight-x-reps":
 				return (
 					<SetPlanRowWeightXReps
 						index={index}
-						weight={pattern.weight}
-						reps={pattern.reps}
+						weight={setPlan.weight}
+						reps={setPlan.reps}
 						weightUnit={weightUnit}
 						weightStep={weightStep}
 						exerciseName={exerciseName}
 						onChange={(next) =>
-							onSetPlanChange(setPlan.id, { kind: "weight-x-reps", ...next })
+							onSetPlanChange(setPlan.id, { pattern: "weight-x-reps", ...next })
 						}
 					/>
 				);
@@ -51,13 +55,13 @@ export const SetPlanSection: FC<Props> = ({
 				return (
 					<SetPlanRowWeightXRpe
 						index={index}
-						weight={pattern.weight}
-						rpe={pattern.rpe}
+						weight={setPlan.weight}
+						rpe={setPlan.rpe}
 						weightUnit={weightUnit}
 						weightStep={weightStep}
 						exerciseName={exerciseName}
 						onChange={(next) =>
-							onSetPlanChange(setPlan.id, { kind: "weight-x-rpe", ...next })
+							onSetPlanChange(setPlan.id, { pattern: "weight-x-rpe", ...next })
 						}
 					/>
 				);
@@ -65,11 +69,11 @@ export const SetPlanSection: FC<Props> = ({
 				return (
 					<SetPlanRowRepsXRpe
 						index={index}
-						reps={pattern.reps}
-						rpe={pattern.rpe}
+						reps={setPlan.reps}
+						rpe={setPlan.rpe}
 						exerciseName={exerciseName}
 						onChange={(next) =>
-							onSetPlanChange(setPlan.id, { kind: "reps-x-rpe", ...next })
+							onSetPlanChange(setPlan.id, { pattern: "reps-x-rpe", ...next })
 						}
 					/>
 				);
