@@ -10,7 +10,11 @@ export const HeadingContext = createContext<
 	HeadingLevel | typeof Uninitialized
 >(Uninitialized);
 
-export const Section: FC<PropsWithChildren> = ({ children }) => {
+type SectionProps = PropsWithChildren<{
+	className?: string;
+}>;
+
+export const Section: FC<SectionProps> = ({ className, children }) => {
 	const level = (() => {
 		const context = use(HeadingContext);
 		switch (context) {
@@ -33,7 +37,7 @@ export const Section: FC<PropsWithChildren> = ({ children }) => {
 
 	return (
 		<HeadingContext value={level}>
-			<section>{children}</section>
+			<section className={className}>{children}</section>
 		</HeadingContext>
 	);
 };
