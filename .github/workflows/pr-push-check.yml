@@ -77,3 +77,38 @@ jobs:
 
       - name: Lint
         run: pnpm run lint
+
+  test:
+    name: Test
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
+
+      - name: Test
+        run: pnpm run test
+
+  storybook-test:
+    name: Storybook Test
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
+
+      - name: Install Playwright browsers
+        run: pnpm --filter @next-lift/react-components exec playwright install --with-deps chromium
+
+      - name: Run Storybook tests
+        run: pnpm --filter @next-lift/react-components exec vitest run --project storybook
