@@ -8,25 +8,11 @@ import { Button } from "../../../primitives/button";
 
 type Props = PropsWithChildren<{
 	title: string;
-	isOpen: boolean;
-	onOpenChange: (isOpen: boolean) => void;
-	onStart: () => void;
 }>;
 
-export const SetPlanRowPopover: FC<Props> = ({
-	title,
-	isOpen,
-	onOpenChange,
-	onStart,
-	children,
-}) => (
-	<DialogTrigger isOpen={isOpen} onOpenChange={onOpenChange}>
-		<Button
-			intent="plain"
-			size="sq-xs"
-			onPress={onStart}
-			aria-label={`${title}を編集`}
-		>
+export const SetPlanRowPopover: FC<Props> = ({ title, children }) => (
+	<DialogTrigger>
+		<Button intent="plain" size="sq-xs" aria-label={`${title}を編集`}>
 			<PencilSquareIcon data-slot="icon" className="size-4" aria-hidden />
 		</Button>
 		<Popover

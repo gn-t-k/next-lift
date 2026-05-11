@@ -19,6 +19,8 @@ type WeightFieldProps = {
 	weightStep: number;
 };
 
+// React Aria の NumberField は「空入力」を NaN で表現する（state 初期値も NaN）。
+// exactOptionalPropertyTypes 下では value: undefined を渡せないため、null は NaN で送り出す。
 export const WeightField: FC<WeightFieldProps> = ({
 	value,
 	onChange,

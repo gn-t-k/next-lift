@@ -1,10 +1,7 @@
 "use client";
 
-import { type FC, useState } from "react";
-import {
-	type RepsXRpeDraft,
-	SetPlanEditFormRepsXRpe,
-} from "./set-plan-edit-form-reps-x-rpe";
+import type { FC } from "react";
+import { RepsField, RpeField } from "./set-plan-edit-form-fields";
 import { SetPlanRowEditTrigger } from "./set-plan-row-edit-trigger";
 import { SetPlanRowFrame } from "./set-plan-row-frame";
 
@@ -25,34 +22,20 @@ export const SetPlanRowRepsXRpe: FC<Props> = ({
 	exerciseName,
 	onChange,
 }) => {
-	const [draft, setDraft] = useState<RepsXRpeDraft | null>(null);
-	const start = () => setDraft({ reps, rpe });
-	const cancel = () => setDraft(null);
-	const submit = () => {
-		if (draft === null) return;
-		if (draft.reps === null || draft.rpe === null) return;
-		onChange({ reps: draft.reps, rpe: draft.rpe });
-		setDraft(null);
-	};
-	const handleOpenChange = (isOpen: boolean) => {
-		if (!isOpen) cancel();
-	};
 	const title = `${exerciseName} ${index + 1}セット目`;
 	return (
 		<SetPlanRowFrame index={index} display={`${reps}回 @ RPE ${rpe}`}>
-			<SetPlanRowEditTrigger
-				title={title}
-				isOpen={draft !== null}
-				onOpenChange={handleOpenChange}
-				onStart={start}
-			>
-				{draft !== null && (
-					<SetPlanEditFormRepsXRpe
-						draft={draft}
-						onUpdate={setDraft}
-						onSubmit={submit}
+			<SetPlanRowEditTrigger title={title}>
+				<div className="flex flex-col gap-3">
+					<RepsField
+						value={reps}
+						onChange={(next) => next !== null && onChange({ reps: next, rpe })}
 					/>
-				)}
+					<RpeField
+						value={rpe}
+						onChange={(next) => next !== null && onChange({ reps, rpe: next })}
+					/>
+				</div>
 			</SetPlanRowEditTrigger>
 		</SetPlanRowFrame>
 	);

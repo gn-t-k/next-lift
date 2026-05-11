@@ -1,10 +1,7 @@
 "use client";
 
-import { type FC, useState } from "react";
-import {
-	SetPlanEditFormWeightXReps,
-	type WeightXRepsDraft,
-} from "./set-plan-edit-form-weight-x-reps";
+import type { FC } from "react";
+import { RepsField, WeightField } from "./set-plan-edit-form-fields";
 import { SetPlanRowEditTrigger } from "./set-plan-row-edit-trigger";
 import { SetPlanRowFrame } from "./set-plan-row-frame";
 
@@ -29,39 +26,29 @@ export const SetPlanRowWeightXReps: FC<Props> = ({
 	exerciseName,
 	onChange,
 }) => {
-	const [draft, setDraft] = useState<WeightXRepsDraft | null>(null);
-	const start = () => setDraft({ weight, reps });
-	const cancel = () => setDraft(null);
-	const submit = () => {
-		if (draft === null) return;
-		if (draft.weight === null || draft.reps === null) return;
-		onChange({ weight: draft.weight, reps: draft.reps });
-		setDraft(null);
-	};
-	const handleOpenChange = (isOpen: boolean) => {
-		if (!isOpen) cancel();
-	};
 	const title = `${exerciseName} ${index + 1}セット目`;
 	return (
 		<SetPlanRowFrame
 			index={index}
 			display={`${weight}${weightUnit} × ${reps}回`}
 		>
-			<SetPlanRowEditTrigger
-				title={title}
-				isOpen={draft !== null}
-				onOpenChange={handleOpenChange}
-				onStart={start}
-			>
-				{draft !== null && (
-					<SetPlanEditFormWeightXReps
-						draft={draft}
+			<SetPlanRowEditTrigger title={title}>
+				<div className="flex flex-col gap-3">
+					<WeightField
+						value={weight}
+						onChange={(next) =>
+							next !== null && onChange({ weight: next, reps })
+						}
 						weightUnit={weightUnit}
 						weightStep={weightStep}
-						onUpdate={setDraft}
-						onSubmit={submit}
 					/>
-				)}
+					<RepsField
+						value={reps}
+						onChange={(next) =>
+							next !== null && onChange({ weight, reps: next })
+						}
+					/>
+				</div>
 			</SetPlanRowEditTrigger>
 		</SetPlanRowFrame>
 	);

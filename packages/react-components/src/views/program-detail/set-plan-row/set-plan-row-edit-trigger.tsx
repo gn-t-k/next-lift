@@ -11,18 +11,9 @@ const MD_BREAKPOINT = "(min-width: 768px)";
 
 type Props = PropsWithChildren<{
 	title: string;
-	isOpen: boolean;
-	onOpenChange: (isOpen: boolean) => void;
-	onStart: () => void;
 }>;
 
-export const SetPlanRowEditTrigger: FC<Props> = ({
-	title,
-	isOpen,
-	onOpenChange,
-	onStart,
-	children,
-}) => {
+export const SetPlanRowEditTrigger: FC<Props> = ({ title, children }) => {
 	const isMdUp = useMediaQuery(MD_BREAKPOINT);
 	if (isMdUp === null) {
 		return (
@@ -37,14 +28,5 @@ export const SetPlanRowEditTrigger: FC<Props> = ({
 		);
 	}
 	const Trigger = isMdUp ? SetPlanRowPopover : SetPlanRowDrawer;
-	return (
-		<Trigger
-			title={title}
-			isOpen={isOpen}
-			onOpenChange={onOpenChange}
-			onStart={onStart}
-		>
-			{children}
-		</Trigger>
-	);
+	return <Trigger title={title}>{children}</Trigger>;
 };
