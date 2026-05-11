@@ -92,7 +92,7 @@ jobs:
         uses: ./.github/actions/setup-workspace
 
       - name: Test
-        run: pnpm run test
+        run: pnpm exec turbo test --concurrency=1
 
   storybook-test:
     name: Storybook Test
