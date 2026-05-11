@@ -6,5 +6,8 @@ type Props = {
 };
 
 export const SetPlanRowEmpty: FC<Props> = ({ index }) => (
-	<SetPlanRowFrame index={index} display="値未入力" tone="muted" />
+	<SetPlanRowFrame
+		index={index}
+		display={<span className="text-muted-fg">値未入力</span>}
+	/>
 );
