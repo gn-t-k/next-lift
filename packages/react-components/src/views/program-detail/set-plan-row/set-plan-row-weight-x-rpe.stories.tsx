@@ -39,8 +39,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
-export const DesktopEditingSubmitByConfirmButton: Story = {
-	name: "広画面: 確定ボタンで確定（RPE 変更）",
+export const DesktopEditingSavesOnRpeToggleClick: Story = {
+	name: "広画面: RPE トグルで即保存",
 	globals: { viewport: { value: "desktop" } },
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
@@ -52,15 +52,14 @@ export const DesktopEditingSubmitByConfirmButton: Story = {
 			expect(findEditDialog()).not.toBeNull();
 		});
 		await userEvent.click(requireButtonInDialogByName("9"));
-		await userEvent.click(requireButtonInDialogByName("確定"));
 		await waitFor(() => {
 			expect(args.onChange).toHaveBeenCalledWith({ weight: 100, rpe: 9 });
 		});
 	},
 };
 
-export const DesktopEditingCancelByEscape: Story = {
-	name: "広画面: Escape でキャンセル",
+export const DesktopEscapeDoesNotSave: Story = {
+	name: "広画面: Escape で破棄して保存しない",
 	globals: { viewport: { value: "desktop" } },
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
@@ -81,7 +80,7 @@ export const DesktopEditingCancelByEscape: Story = {
 	},
 };
 
-export const DesktopEditingRpeCentersOnOpen: Story = {
+export const DesktopRpeCentersOnOpen: Story = {
 	name: "広画面: RPE 既選択時に中央スクロールで開く",
 	globals: { viewport: { value: "desktop" } },
 	render: (args) => <StatefulRow {...args} />,
@@ -105,8 +104,8 @@ export const DesktopEditingRpeCentersOnOpen: Story = {
 	},
 };
 
-export const MobileEditingSubmit: Story = {
-	name: "狭画面: Drawer で確定",
+export const MobileEditingSavesOnEnter: Story = {
+	name: "狭画面: Drawer で編集して Enter で即保存",
 	globals: { viewport: { value: "mobile" } },
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
@@ -119,8 +118,7 @@ export const MobileEditingSubmit: Story = {
 		});
 		const weightInput = findInputByLabel("重量 (kg)");
 		await userEvent.tripleClick(weightInput);
-		await userEvent.keyboard("110");
-		await userEvent.click(requireButtonInDialogByName("確定"));
+		await userEvent.keyboard("110{Enter}");
 		await waitFor(() => {
 			expect(args.onChange).toHaveBeenCalledWith({ weight: 110, rpe: 8 });
 		});

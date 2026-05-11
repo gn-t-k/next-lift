@@ -3,11 +3,7 @@ import type { ComponentProps, FC } from "react";
 import { useState } from "react";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import { SetPlanRowWeightXReps } from "./set-plan-row-weight-x-reps";
-import {
-	findEditDialog,
-	findInputByLabel,
-	requireButtonInDialogByName,
-} from "./stories-test-utils";
+import { findEditDialog, findInputByLabel } from "./stories-test-utils";
 
 const meta = {
 	title: "View/V2 プログラム詳細/SetPlanRow/重量×回数",
@@ -43,8 +39,8 @@ export const Lbs: Story = {
 	args: { weight: 225, weightUnit: "lbs" },
 };
 
-export const DesktopEditingSubmitByEnter: Story = {
-	name: "広画面: Enter で確定",
+export const DesktopEditingSavesOnEnter: Story = {
+	name: "広画面: 編集して Enter で即保存",
 	globals: { viewport: { value: "desktop" } },
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
@@ -64,30 +60,8 @@ export const DesktopEditingSubmitByEnter: Story = {
 	},
 };
 
-export const DesktopEditingSubmitByConfirmButton: Story = {
-	name: "広画面: 確定ボタンで確定",
-	globals: { viewport: { value: "desktop" } },
-	render: (args) => <StatefulRow {...args} />,
-	play: async ({ canvasElement, args }) => {
-		const canvas = within(canvasElement);
-		await userEvent.click(
-			canvas.getByRole("button", { name: "ベンチプレス 1セット目を編集" }),
-		);
-		await waitFor(() => {
-			expect(findEditDialog()).not.toBeNull();
-		});
-		const repsInput = findInputByLabel("回数");
-		await userEvent.tripleClick(repsInput);
-		await userEvent.keyboard("8");
-		await userEvent.click(requireButtonInDialogByName("確定"));
-		await waitFor(() => {
-			expect(args.onChange).toHaveBeenCalledWith({ weight: 100, reps: 8 });
-		});
-	},
-};
-
-export const DesktopEditingCancelByEscape: Story = {
-	name: "広画面: Escape でキャンセル",
+export const DesktopEscapeDoesNotSave: Story = {
+	name: "広画面: Escape で破棄して保存しない",
 	globals: { viewport: { value: "desktop" } },
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
@@ -108,8 +82,8 @@ export const DesktopEditingCancelByEscape: Story = {
 	},
 };
 
-export const MobileEditingSubmitByConfirmButton: Story = {
-	name: "狭画面: Drawer で確定",
+export const MobileEditingSavesOnEnter: Story = {
+	name: "狭画面: Drawer で編集して Enter で即保存",
 	globals: { viewport: { value: "mobile" } },
 	args: { index: 2 },
 	render: (args) => <StatefulRow {...args} />,
@@ -124,34 +98,10 @@ export const MobileEditingSubmitByConfirmButton: Story = {
 		expect(findEditDialog()?.textContent).toContain("ベンチプレス 3セット目");
 		const weightInput = findInputByLabel("重量 (kg)");
 		await userEvent.tripleClick(weightInput);
-		await userEvent.keyboard("110");
-		await userEvent.click(requireButtonInDialogByName("確定"));
+		await userEvent.keyboard("110{Enter}");
 		await waitFor(() => {
 			expect(args.onChange).toHaveBeenCalledWith({ weight: 110, reps: 5 });
 		});
-	},
-};
-
-export const MobileEditingCancelByCloseButton: Story = {
-	name: "狭画面: Drawer の × ボタンでキャンセル",
-	globals: { viewport: { value: "mobile" } },
-	render: (args) => <StatefulRow {...args} />,
-	play: async ({ canvasElement, args }) => {
-		const canvas = within(canvasElement);
-		await userEvent.click(
-			canvas.getByRole("button", { name: "ベンチプレス 1セット目を編集" }),
-		);
-		await waitFor(() => {
-			expect(findEditDialog()).not.toBeNull();
-		});
-		const weightInput = findInputByLabel("重量 (kg)");
-		await userEvent.tripleClick(weightInput);
-		await userEvent.keyboard("999");
-		await userEvent.click(requireButtonInDialogByName("閉じる"));
-		await waitFor(() => {
-			expect(findEditDialog()).toBeNull();
-		});
-		expect(args.onChange).not.toHaveBeenCalled();
 	},
 };
 
