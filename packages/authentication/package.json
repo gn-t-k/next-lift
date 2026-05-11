@@ -39,7 +39,7 @@
 		"@next-lift/turso": "workspace:*",
 		"@praha/drizzle-factory": "1.4.2",
 		"@tsconfig/strictest": "2.0.8",
-		"@types/node": "24.12.2",
+		"@types/node": "24.12.3",
 		"drizzle-kit": "0.31.10",
 		"tsx": "4.21.0",
 		"typescript": "6.0.3",
