@@ -1,5 +1,6 @@
 import type { FC } from "react";
 import {
+	SetPlanAddTrigger,
 	SetPlanRowEmpty,
 	SetPlanRowRepsXRpe,
 	SetPlanRowWeightXReps,
@@ -18,12 +19,16 @@ type SetPlanChangePayload =
 	| { pattern: "weight-x-rpe"; weight: number; rpe: number }
 	| { pattern: "reps-x-rpe"; reps: number; rpe: number };
 
+type SetPlanAddPayload = SetPlanChangePayload;
+
 type Props = {
 	setPlans: SetPlan[];
 	weightUnit: "kg" | "lbs";
 	weightStep: number;
 	exerciseName: string;
 	onSetPlanChange: (setPlanId: string, payload: SetPlanChangePayload) => void;
+	onAddSetPlan: (payload: SetPlanAddPayload) => void;
+	onDeleteSetPlan: (setPlanId: string) => void;
 };
 
 export const SetPlanSection: FC<Props> = ({
@@ -32,11 +37,19 @@ export const SetPlanSection: FC<Props> = ({
 	weightStep,
 	exerciseName,
 	onSetPlanChange,
+	onAddSetPlan,
+	onDeleteSetPlan,
 }) => {
 	const renderRow = (setPlan: SetPlan, index: number) => {
 		switch (setPlan.pattern) {
 			case null:
-				return <SetPlanRowEmpty index={index} />;
+				return (
+					<SetPlanRowEmpty
+						index={index}
+						exerciseName={exerciseName}
+						onDelete={() => onDeleteSetPlan(setPlan.id)}
+					/>
+				);
 			case "weight-x-reps":
 				return (
 					<SetPlanRowWeightXReps
@@ -49,6 +62,7 @@ export const SetPlanSection: FC<Props> = ({
 						onChange={(next) =>
 							onSetPlanChange(setPlan.id, { pattern: "weight-x-reps", ...next })
 						}
+						onDelete={() => onDeleteSetPlan(setPlan.id)}
 					/>
 				);
 			case "weight-x-rpe":
@@ -63,6 +77,7 @@ export const SetPlanSection: FC<Props> = ({
 						onChange={(next) =>
 							onSetPlanChange(setPlan.id, { pattern: "weight-x-rpe", ...next })
 						}
+						onDelete={() => onDeleteSetPlan(setPlan.id)}
 					/>
 				);
 			case "reps-x-rpe":
@@ -75,16 +90,26 @@ export const SetPlanSection: FC<Props> = ({
 						onChange={(next) =>
 							onSetPlanChange(setPlan.id, { pattern: "reps-x-rpe", ...next })
 						}
+						onDelete={() => onDeleteSetPlan(setPlan.id)}
 					/>
 				);
 		}
 	};
-	if (setPlans.length === 0) return null;
 	return (
-		<ol className="flex flex-col">
-			{setPlans.map((setPlan, index) => (
-				<li key={setPlan.id}>{renderRow(setPlan, index)}</li>
-			))}
-		</ol>
+		<div className="flex flex-col">
+			{setPlans.length > 0 && (
+				<ol className="flex flex-col">
+					{setPlans.map((setPlan, index) => (
+						<li key={setPlan.id}>{renderRow(setPlan, index)}</li>
+					))}
+				</ol>
+			)}
+			<SetPlanAddTrigger
+				setPlans={setPlans}
+				weightUnit={weightUnit}
+				exerciseName={exerciseName}
+				onAdd={onAddSetPlan}
+			/>
+		</div>
 	);
 };

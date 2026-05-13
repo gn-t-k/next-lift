@@ -10,6 +10,10 @@ type SetPlanChangePayload = Parameters<
 	ComponentProps<typeof SetPlanSection>["onSetPlanChange"]
 >[1];
 
+type SetPlanAddPayload = Parameters<
+	ComponentProps<typeof SetPlanSection>["onAddSetPlan"]
+>[0];
+
 type Props = {
 	name: string;
 	meta: string | null;
@@ -17,6 +21,8 @@ type Props = {
 	defaultSelectedDayId?: string;
 	onAddDay: () => void;
 	onSetPlanChange: (setPlanId: string, payload: SetPlanChangePayload) => void;
+	onAddSetPlan: (exercisePlanId: string, payload: SetPlanAddPayload) => void;
+	onDeleteSetPlan: (setPlanId: string) => void;
 };
 
 type Day = {
@@ -41,6 +47,8 @@ export const ProgramDetail: FC<Props> = ({
 	defaultSelectedDayId,
 	onAddDay,
 	onSetPlanChange,
+	onAddSetPlan,
+	onDeleteSetPlan,
 }) => {
 	const tabsProps =
 		defaultSelectedDayId !== undefined
@@ -79,6 +87,10 @@ export const ProgramDetail: FC<Props> = ({
 												weightStep={exercisePlan.exercise.weightStep}
 												exerciseName={exercisePlan.exercise.name}
 												onSetPlanChange={onSetPlanChange}
+												onAddSetPlan={(payload) =>
+													onAddSetPlan(exercisePlan.id, payload)
+												}
+												onDeleteSetPlan={onDeleteSetPlan}
 											/>
 										) : null
 									}
