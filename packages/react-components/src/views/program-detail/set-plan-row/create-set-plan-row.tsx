@@ -3,7 +3,7 @@
 import { ArrowsRightLeftIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { type FC, useState } from "react";
 import { Button as AriaButton } from "react-aria-components";
-import { cx } from "../../../libs/primitive";
+import { cn } from "../../../libs/utils";
 import { Button } from "../../../primitives/button";
 import { createAffordanceClass } from "../../../primitives/create-affordance";
 import type { Pattern, SetPlanWithParams, WeightUnit } from "../set-plan-types";
@@ -62,7 +62,7 @@ const PreviewButton: FC<PreviewButtonProps> = ({
 	<AriaButton
 		onPress={onPress}
 		aria-label={`${exerciseName} ${index + 1}セット目を追加`}
-		className={cx(
+		className={cn(
 			createAffordanceClass,
 			"flex flex-1 items-baseline gap-3 rounded-md px-[calc(--spacing(3)-1px)] py-[calc(--spacing(2)-1px)] text-left tabular-nums",
 		)}

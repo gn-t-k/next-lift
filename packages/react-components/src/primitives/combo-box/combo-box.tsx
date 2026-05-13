@@ -61,7 +61,7 @@ export const ComboBoxLabel: FC<LabelProps> = ({ className, ...props }) => (
 export const ComboBoxInput: FC<InputProps> = ({ className, ...props }) => (
 	<Group
 		data-slot="control"
-		className={cx(
+		className={cn(
 			"flex w-full overflow-hidden rounded-lg border border-border bg-overlay",
 			"focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-bg",
 			"data-invalid:border-danger",
@@ -79,7 +79,7 @@ export const ComboBoxInput: FC<InputProps> = ({ className, ...props }) => (
 			{...props}
 		/>
 		<ButtonPrimitive
-			className={cx(
+			className={cn(
 				"flex min-h-10 min-w-10 shrink-0 items-center justify-center text-muted-fg",
 				"border-border border-l",
 				"hover:enabled:bg-secondary hover:enabled:text-fg",
@@ -105,7 +105,7 @@ export const ComboBoxList = <T extends object>({
 	...props
 }: ComboBoxListProps<T>) => (
 	<Popover
-		className={cx(
+		className={cn(
 			"min-w-(--trigger-width) origin-(--trigger-anchor-point)",
 			"max-h-72 overflow-hidden",
 			"rounded-lg border border-border bg-overlay text-overlay-fg shadow-lg outline-hidden",
