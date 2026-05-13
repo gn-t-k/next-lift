@@ -1,33 +1,20 @@
 import type { FC } from "react";
 import {
-	SetPlanAddTrigger,
+	CreateSetPlanRow,
 	SetPlanRowEmpty,
 	SetPlanRowRepsXRpe,
 	SetPlanRowWeightXReps,
 	SetPlanRowWeightXRpe,
 } from "./set-plan-row";
-
-type SetPlan = { id: string } & (
-	| { pattern: null }
-	| { pattern: "weight-x-reps"; weight: number; reps: number }
-	| { pattern: "weight-x-rpe"; weight: number; rpe: number }
-	| { pattern: "reps-x-rpe"; reps: number; rpe: number }
-);
-
-type SetPlanChangePayload =
-	| { pattern: "weight-x-reps"; weight: number; reps: number }
-	| { pattern: "weight-x-rpe"; weight: number; rpe: number }
-	| { pattern: "reps-x-rpe"; reps: number; rpe: number };
-
-type SetPlanAddPayload = SetPlanChangePayload;
+import type { SetPlan, SetPlanWithParams } from "./set-plan-types";
 
 type Props = {
 	setPlans: SetPlan[];
 	weightUnit: "kg" | "lbs";
 	weightStep: number;
 	exerciseName: string;
-	onSetPlanChange: (setPlanId: string, payload: SetPlanChangePayload) => void;
-	onAddSetPlan: (payload: SetPlanAddPayload) => void;
+	onSetPlanChange: (setPlanId: string, payload: SetPlanWithParams) => void;
+	onAddSetPlan: (payload: SetPlanWithParams) => void;
 	onDeleteSetPlan: (setPlanId: string) => void;
 };
 
@@ -104,7 +91,7 @@ export const SetPlanSection: FC<Props> = ({
 					))}
 				</ol>
 			)}
-			<SetPlanAddTrigger
+			<CreateSetPlanRow
 				setPlans={setPlans}
 				weightUnit={weightUnit}
 				exerciseName={exerciseName}

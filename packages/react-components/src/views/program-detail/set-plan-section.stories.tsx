@@ -111,7 +111,7 @@ export const CyclePatternAndAdd: Story = {
 			expect(args.onAddSetPlan).toHaveBeenCalledWith({
 				pattern: "reps-x-rpe",
 				reps: 0,
-				rpe: 7,
+				rpe: 8,
 			});
 		});
 	},
