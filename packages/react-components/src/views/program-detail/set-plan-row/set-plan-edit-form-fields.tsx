@@ -11,11 +11,12 @@ import {
 	SingleToggleButtonGroup,
 	ToggleButton,
 } from "../../../primitives/toggle-button-group";
+import type { WeightUnit } from "../set-plan-types";
 
 type WeightFieldProps = {
 	value: number | null;
 	onChange: (value: number | null) => void;
-	weightUnit: "kg" | "lbs";
+	weightUnit: WeightUnit;
 	weightStep: number;
 };
 

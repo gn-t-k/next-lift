@@ -6,13 +6,13 @@ import { Button as AriaButton } from "react-aria-components";
 import { cx } from "../../../libs/primitive";
 import { Button } from "../../../primitives/button";
 import { createAffordanceClass } from "../../../primitives/create-affordance";
-import type { Pattern, SetPlanWithParams } from "../set-plan-types";
+import type { Pattern, SetPlanWithParams, WeightUnit } from "../set-plan-types";
 import { buildPayload } from "./build-payload";
 import { inferLastPattern } from "./infer-last-pattern";
 
 type Props = {
 	setPlans: readonly (SetPlanWithParams | { pattern: null })[];
-	weightUnit: "kg" | "lbs";
+	weightUnit: WeightUnit;
 	exerciseName: string;
 	onAdd: (payload: SetPlanWithParams) => void;
 };
@@ -48,7 +48,7 @@ type PreviewButtonProps = {
 	index: number;
 	exerciseName: string;
 	payload: SetPlanWithParams;
-	weightUnit: "kg" | "lbs";
+	weightUnit: WeightUnit;
 	onPress: () => void;
 };
 

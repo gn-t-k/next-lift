@@ -6,11 +6,11 @@ import {
 	SetPlanRowWeightXReps,
 	SetPlanRowWeightXRpe,
 } from "./set-plan-row";
-import type { SetPlan, SetPlanWithParams } from "./set-plan-types";
+import type { SetPlan, SetPlanWithParams, WeightUnit } from "./set-plan-types";
 
 type Props = {
 	setPlans: SetPlan[];
-	weightUnit: "kg" | "lbs";
+	weightUnit: WeightUnit;
 	weightStep: number;
 	exerciseName: string;
 	onSetPlanChange: (setPlanId: string, payload: SetPlanWithParams) => void;
