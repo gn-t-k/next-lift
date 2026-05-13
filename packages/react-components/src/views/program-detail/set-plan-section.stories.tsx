@@ -58,52 +58,23 @@ export const Empty: Story = {
 	args: { setPlans: [] },
 };
 
-export const AddInheritsFromLastSet: Story = {
-	name: "直前セットの kind と値を初期値として継承して追加できる",
+export const QuickAddInheritsFromLastSet: Story = {
+	name: "直前セットがあるとき、ダイアログを開かず前値を継承して 1 タップで追加",
 	args: { setPlans: SAMPLE_SET_PLANS },
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
-		// 「セットを追加」アフォーダンスを押すとダイアログが開く
-		await userEvent.click(canvas.getByRole("button", { name: "セットを追加" }));
-		await waitFor(() => {
-			expect(findEditDialog()).not.toBeNull();
-		});
-		// 直前 (sp-3: weight-x-rpe, 100kg, RPE 9) が初期値に。そのまま確定で同じ値が追加される
-		await userEvent.click(requireButtonInDialogByName(/確定/));
+		// 直前 (sp-3: weight-x-rpe, 100kg, RPE 9) の値をラベルに埋めたボタンが出る。
+		// アクセシブル名にはインデックス (#4) も含まれるので部分一致で照合
+		await userEvent.click(
+			canvas.getByRole("button", { name: /100kg @ RPE 9を追加/ }),
+		);
+		// ダイアログは開かず、直接 onAdd が呼ばれる
+		expect(findEditDialog()).toBeNull();
 		await waitFor(() => {
 			expect(args.onAddSetPlan).toHaveBeenCalledWith({
 				pattern: "weight-x-rpe",
 				weight: 100,
 				rpe: 9,
-			});
-		});
-		await waitFor(() => {
-			expect(findEditDialog()).toBeNull();
-		});
-	},
-};
-
-export const AddSwitchPatternFromLastSet: Story = {
-	name: "タブで kind を切り替えて値を入れて追加",
-	args: { setPlans: SAMPLE_SET_PLANS },
-	play: async ({ canvasElement, args }) => {
-		const canvas = within(canvasElement);
-		await userEvent.click(canvas.getByRole("button", { name: "セットを追加" }));
-		await waitFor(() => {
-			expect(findEditDialog()).not.toBeNull();
-		});
-		// 直前は weight-x-rpe だが、回数×RPE に切り替えて追加する
-		await userEvent.click(requireTabInDialogByName("回数×RPE"));
-		const repsInput = findInputByLabel("回数");
-		await userEvent.tripleClick(repsInput);
-		await userEvent.keyboard("12");
-		await userEvent.click(requireButtonInDialogByName("8"));
-		await userEvent.click(requireButtonInDialogByName(/確定/));
-		await waitFor(() => {
-			expect(args.onAddSetPlan).toHaveBeenCalledWith({
-				pattern: "reps-x-rpe",
-				reps: 12,
-				rpe: 8,
 			});
 		});
 	},
@@ -140,7 +111,7 @@ export const AddFromEmptyRequiresInput: Story = {
 
 export const AddEscapeDiscards: Story = {
 	name: "ダイアログを Escape で閉じると追加されない",
-	args: { setPlans: SAMPLE_SET_PLANS },
+	args: { setPlans: [] },
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(canvas.getByRole("button", { name: "セットを追加" }));
