@@ -31,13 +31,10 @@ export const SetPlanRowWeightXReps: FC<Props> = ({
 }) => {
 	const title = `${exerciseName} ${index + 1}セット目`;
 	return (
-		<SetPlanRowFrame
-			index={index}
-			display={`${weight}${weightUnit} × ${reps}回`}
-			menu={
-				<SetPlanRowDeleteButton label={`${title}を削除`} onPress={onDelete} />
-			}
-		>
+		<SetPlanRowFrame index={index}>
+			<span className="flex-1 text-fg tabular-nums">
+				{`${weight}${weightUnit} × ${reps}回`}
+			</span>
 			<SetPlanRowEditTrigger title={title}>
 				<div className="flex flex-col gap-3">
 					<WeightField
@@ -56,6 +53,7 @@ export const SetPlanRowWeightXReps: FC<Props> = ({
 					/>
 				</div>
 			</SetPlanRowEditTrigger>
+			<SetPlanRowDeleteButton label={`${title}を削除`} onPress={onDelete} />
 		</SetPlanRowFrame>
 	);
 };

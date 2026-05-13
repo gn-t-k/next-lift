@@ -13,14 +13,11 @@ export const SetPlanRowEmpty: FC<Props> = ({
 	exerciseName,
 	onDelete,
 }) => (
-	<SetPlanRowFrame
-		index={index}
-		display={<span className="text-muted-fg">値未入力</span>}
-		menu={
-			<SetPlanRowDeleteButton
-				label={`${exerciseName} ${index + 1}セット目を削除`}
-				onPress={onDelete}
-			/>
-		}
-	/>
+	<SetPlanRowFrame index={index}>
+		<span className="flex-1 text-muted-fg">値未入力</span>
+		<SetPlanRowDeleteButton
+			label={`${exerciseName} ${index + 1}セット目を削除`}
+			onPress={onDelete}
+		/>
+	</SetPlanRowFrame>
 );
