@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps } from "react";
-import { fn } from "storybook/test";
+import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import { Main } from "../../primitives/main";
 import { ProgramDetail } from ".";
 
@@ -158,6 +158,8 @@ const meta = {
 	args: {
 		defaultSelectedDayId: "d1",
 		onAddDay: fn(),
+		onAddExercisePlan: fn(),
+		onDeleteExercisePlan: fn(),
 		onSetPlanChange: fn(),
 		onAddSetPlan: fn(),
 		onDeleteSetPlan: fn(),
@@ -271,5 +273,93 @@ export const NoDaysDesktop: Story = {
 	},
 	globals: {
 		viewport: { value: "desktop" },
+	},
+};
+
+// 選択中の Day に種目計画が 0 件の状態（途中で全削除した、または Day 直後）。
+// ExercisePlanSection が「種目計画を追加」CTA だけを描画する。
+export const NoExercisePlansInSelectedDay: Story = {
+	name: "選択中の Day に種目計画ゼロ件",
+	args: {
+		name: "新しいプログラム",
+		meta: null,
+		days: [
+			{
+				id: "d-empty",
+				label: "Day 1",
+				detailHref: "/programs/p1/days/d-empty",
+				exercisePlans: [],
+			},
+		],
+		defaultSelectedDayId: "d-empty",
+	},
+};
+
+export const AddExercisePlanInvokesCallback: Story = {
+	name: "「種目計画を追加」CTA で onAddExercisePlan が選択中の dayId とともに呼ばれる",
+	args: {
+		name: "新しいプログラム",
+		meta: null,
+		days: [
+			{
+				id: "d-empty",
+				label: "Day 1",
+				detailHref: "/programs/p1/days/d-empty",
+				exercisePlans: [],
+			},
+		],
+		defaultSelectedDayId: "d-empty",
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			canvas.getByRole("button", { name: "種目計画を追加" }),
+		);
+		await waitFor(() => {
+			expect(args.onAddExercisePlan).toHaveBeenCalledWith("d-empty");
+		});
+	},
+};
+
+export const DeleteExercisePlanInvokesCallback: Story = {
+	name: "種目計画の操作メニューから削除すると onDeleteExercisePlan が呼ばれる",
+	args: {
+		name: "新しいプログラム",
+		meta: null,
+		days: [
+			{
+				id: "d1",
+				label: "Day 1",
+				detailHref: "/programs/p1/days/d1",
+				exercisePlans: [
+					{
+						id: "ep-bench",
+						exercise: benchPress,
+						setPlans: [
+							{
+								id: "sp-bench-1",
+								pattern: "weight-x-reps",
+								weight: 100,
+								reps: 5,
+							},
+						],
+					},
+				],
+			},
+		],
+		defaultSelectedDayId: "d1",
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			canvas.getByRole("button", { name: "ベンチプレスの操作" }),
+		);
+		const body = within(canvasElement.ownerDocument.body);
+		await userEvent.click(
+			await body.findByRole("menuitem", { name: "種目計画を削除" }),
+		);
+		await waitFor(() => {
+			expect(args.onDeleteExercisePlan).toHaveBeenCalledWith("ep-bench");
+		});
 	},
 };
