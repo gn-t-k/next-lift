@@ -6,12 +6,7 @@ import {
 	SetPlanRowWeightXReps,
 	SetPlanRowWeightXRpe,
 } from "./set-plan-row";
-import type {
-	Pattern,
-	SetPlan,
-	SetPlanWithParams,
-	WeightUnit,
-} from "./set-plan-types";
+import type { SetPlan, SetPlanWithParams, WeightUnit } from "./set-plan-types";
 
 type Props = {
 	setPlans: SetPlan[];
@@ -32,6 +27,7 @@ export const SetPlanSection: FC<Props> = ({
 	onAddSetPlan,
 	onDeleteSetPlan,
 }) => {
+	const hasEmptyRow = setPlans.some((sp) => sp.pattern === null);
 	const renderRow = (setPlan: SetPlan, index: number) => {
 		switch (setPlan.pattern) {
 			case null:
@@ -39,9 +35,9 @@ export const SetPlanSection: FC<Props> = ({
 					<SetPlanRowEmpty
 						index={index}
 						exerciseName={exerciseName}
-						onSelectKind={(kind) =>
-							onSetPlanChange(setPlan.id, defaultPayloadFor(kind))
-						}
+						weightUnit={weightUnit}
+						weightStep={weightStep}
+						onSubmit={(payload) => onSetPlanChange(setPlan.id, payload)}
 						onDelete={() => onDeleteSetPlan(setPlan.id)}
 					/>
 				);
@@ -99,23 +95,14 @@ export const SetPlanSection: FC<Props> = ({
 					))}
 				</ol>
 			)}
-			<CreateSetPlanRow
-				setPlans={setPlans}
-				weightUnit={weightUnit}
-				exerciseName={exerciseName}
-				onAdd={onAddSetPlan}
-			/>
+			{!hasEmptyRow && (
+				<CreateSetPlanRow
+					setPlans={setPlans}
+					weightUnit={weightUnit}
+					exerciseName={exerciseName}
+					onAdd={onAddSetPlan}
+				/>
+			)}
 		</div>
 	);
-};
-
-const defaultPayloadFor = (kind: Pattern): SetPlanWithParams => {
-	switch (kind) {
-		case "weight-x-reps":
-			return { pattern: "weight-x-reps", weight: 0, reps: 0 };
-		case "weight-x-rpe":
-			return { pattern: "weight-x-rpe", weight: 0, rpe: 8 };
-		case "reps-x-rpe":
-			return { pattern: "reps-x-rpe", reps: 0, rpe: 8 };
-	}
 };

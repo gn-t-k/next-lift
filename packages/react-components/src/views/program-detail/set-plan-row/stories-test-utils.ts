@@ -27,6 +27,18 @@ export const requireButtonInDialogByName = (
 	return el;
 };
 
+export const findTabInDialogByName = (name: string): HTMLElement | undefined =>
+	Array.from(
+		requireEditDialog().querySelectorAll<HTMLElement>('[role="tab"]'),
+	).find((el) => el.textContent?.trim() === name);
+
+export const requireTabInDialogByName = (name: string): HTMLElement => {
+	const el = findTabInDialogByName(name);
+	if (el === undefined)
+		throw new Error(`tab with name "${name}" not found in edit dialog`);
+	return el;
+};
+
 export const findInputByLabel = (label: string): HTMLInputElement => {
 	const dialog = requireEditDialog();
 	const labelEl = Array.from(
