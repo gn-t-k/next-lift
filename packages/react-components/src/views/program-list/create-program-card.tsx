@@ -1,6 +1,7 @@
 import { PlusIcon } from "@heroicons/react/24/solid";
 import type { FC } from "react";
 import { cn } from "../../libs/utils";
+import { createAffordanceClass } from "../../primitives/create-affordance";
 import { Link } from "../../primitives/link";
 
 type Props = {
@@ -12,11 +13,8 @@ export const CreateProgramCard: FC<Props> = ({ href }) => {
 		<Link
 			href={href}
 			className={cn(
-				"flex h-full min-h-20 items-center justify-center gap-2 rounded-lg p-4 no-underline outline-none",
-				"border border-border border-dashed text-muted-fg",
-				"transition-colors",
-				"hover:border-solid hover:bg-secondary hover:text-fg",
-				"focus-visible:border-solid focus-visible:bg-secondary focus-visible:text-fg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+				createAffordanceClass,
+				"flex h-full min-h-20 items-center justify-center gap-2 rounded-lg p-4 no-underline",
 			)}
 		>
 			<PlusIcon className="size-4" />

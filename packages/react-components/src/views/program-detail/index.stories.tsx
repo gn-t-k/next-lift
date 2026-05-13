@@ -159,6 +159,8 @@ const meta = {
 		defaultSelectedDayId: "d1",
 		onAddDay: fn(),
 		onSetPlanChange: fn(),
+		onAddSetPlan: fn(),
+		onDeleteSetPlan: fn(),
 	},
 	decorators: [
 		(Story) => (
