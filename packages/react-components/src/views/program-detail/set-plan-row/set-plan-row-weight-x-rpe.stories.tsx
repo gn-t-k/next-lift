@@ -39,8 +39,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
-export const DesktopEditingSavesOnRpeToggleClick: Story = {
-	name: "広画面: RPE トグルで即保存",
+export const DesktopRpeChangeCommitsOnConfirmButton: Story = {
+	name: "広画面: RPE トグルで編集してチェックアイコンで確定",
 	globals: { viewport: { value: "desktop" } },
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
@@ -52,13 +52,42 @@ export const DesktopEditingSavesOnRpeToggleClick: Story = {
 			expect(findEditDialog()).not.toBeNull();
 		});
 		await userEvent.click(requireButtonInDialogByName("9"));
+		expect(args.onChange).not.toHaveBeenCalled();
+		await userEvent.click(requireButtonInDialogByName(/確定/));
 		await waitFor(() => {
 			expect(args.onChange).toHaveBeenCalledWith({ weight: 100, rpe: 9 });
+		});
+		await waitFor(() => {
+			expect(findEditDialog()).toBeNull();
 		});
 	},
 };
 
-export const DesktopEscapeDoesNotSave: Story = {
+export const DesktopEditingCommitsOnEnter: Story = {
+	name: "広画面: 重量を編集して Enter で確定",
+	globals: { viewport: { value: "desktop" } },
+	render: (args) => <StatefulRow {...args} />,
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			canvas.getByRole("button", { name: "ベンチプレス 1セット目を編集" }),
+		);
+		await waitFor(() => {
+			expect(findEditDialog()).not.toBeNull();
+		});
+		const weightInput = findInputByLabel("重量 (kg)");
+		await userEvent.tripleClick(weightInput);
+		await userEvent.keyboard("110{Enter}");
+		await waitFor(() => {
+			expect(args.onChange).toHaveBeenCalledWith({ weight: 110, rpe: 8 });
+		});
+		await waitFor(() => {
+			expect(findEditDialog()).toBeNull();
+		});
+	},
+};
+
+export const DesktopEscapeDiscardsDraft: Story = {
 	name: "広画面: Escape で破棄して保存しない",
 	globals: { viewport: { value: "desktop" } },
 	render: (args) => <StatefulRow {...args} />,
@@ -104,8 +133,8 @@ export const DesktopRpeCentersOnOpen: Story = {
 	},
 };
 
-export const MobileEditingSavesOnEnter: Story = {
-	name: "狭画面: Drawer で編集して Enter で即保存",
+export const MobileEditingCommitsOnEnter: Story = {
+	name: "狭画面: Drawer で編集して Enter で確定",
 	globals: { viewport: { value: "mobile" } },
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
@@ -121,6 +150,9 @@ export const MobileEditingSavesOnEnter: Story = {
 		await userEvent.keyboard("110{Enter}");
 		await waitFor(() => {
 			expect(args.onChange).toHaveBeenCalledWith({ weight: 110, rpe: 8 });
+		});
+		await waitFor(() => {
+			expect(findEditDialog()).toBeNull();
 		});
 	},
 };

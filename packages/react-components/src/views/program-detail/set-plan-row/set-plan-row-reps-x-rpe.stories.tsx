@@ -37,8 +37,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
-export const DesktopEditingSavesOnEnter: Story = {
-	name: "広画面: 回数を編集して Enter で即保存",
+export const DesktopEditingCommitsOnEnter: Story = {
+	name: "広画面: 回数を編集して Enter で確定",
 	globals: { viewport: { value: "desktop" } },
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
@@ -57,10 +57,13 @@ export const DesktopEditingSavesOnEnter: Story = {
 		await waitFor(() => {
 			expect(args.onChange).toHaveBeenCalledWith({ reps: 15, rpe: 8 });
 		});
+		await waitFor(() => {
+			expect(findEditDialog()).toBeNull();
+		});
 	},
 };
 
-export const DesktopEscapeDoesNotSave: Story = {
+export const DesktopEscapeDiscardsDraft: Story = {
 	name: "広画面: Escape で破棄して保存しない",
 	globals: { viewport: { value: "desktop" } },
 	render: (args) => <StatefulRow {...args} />,
@@ -84,8 +87,8 @@ export const DesktopEscapeDoesNotSave: Story = {
 	},
 };
 
-export const MobileEditingSavesOnRpeToggleClick: Story = {
-	name: "狭画面: Drawer で RPE トグルを押して即保存",
+export const MobileRpeChangeCommitsOnConfirmButton: Story = {
+	name: "狭画面: Drawer で RPE トグルを押してチェックアイコンで確定",
 	globals: { viewport: { value: "mobile" } },
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
@@ -99,8 +102,13 @@ export const MobileEditingSavesOnRpeToggleClick: Story = {
 			expect(findEditDialog()).not.toBeNull();
 		});
 		await userEvent.click(requireButtonInDialogByName("9"));
+		expect(args.onChange).not.toHaveBeenCalled();
+		await userEvent.click(requireButtonInDialogByName(/確定/));
 		await waitFor(() => {
 			expect(args.onChange).toHaveBeenCalledWith({ reps: 12, rpe: 9 });
+		});
+		await waitFor(() => {
+			expect(findEditDialog()).toBeNull();
 		});
 	},
 };

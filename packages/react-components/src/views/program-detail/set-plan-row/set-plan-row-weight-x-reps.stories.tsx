@@ -3,7 +3,11 @@ import type { ComponentProps, FC } from "react";
 import { useState } from "react";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import { SetPlanRowWeightXReps } from "./set-plan-row-weight-x-reps";
-import { findEditDialog, findInputByLabel } from "./stories-test-utils";
+import {
+	findEditDialog,
+	findInputByLabel,
+	requireButtonInDialogByName,
+} from "./stories-test-utils";
 
 const meta = {
 	title: "View/V2 プログラム詳細/SetPlanRow/重量×回数",
@@ -39,8 +43,8 @@ export const Lbs: Story = {
 	args: { weight: 225, weightUnit: "lbs" },
 };
 
-export const DesktopEditingSavesOnEnter: Story = {
-	name: "広画面: 編集して Enter で即保存",
+export const DesktopEditingCommitsOnEnter: Story = {
+	name: "広画面: 編集して Enter で確定",
 	globals: { viewport: { value: "desktop" } },
 	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
@@ -57,10 +61,38 @@ export const DesktopEditingSavesOnEnter: Story = {
 		await waitFor(() => {
 			expect(args.onChange).toHaveBeenCalledWith({ weight: 110, reps: 5 });
 		});
+		await waitFor(() => {
+			expect(findEditDialog()).toBeNull();
+		});
 	},
 };
 
-export const DesktopEscapeDoesNotSave: Story = {
+export const DesktopEditingCommitsOnConfirmButton: Story = {
+	name: "広画面: 編集してチェックアイコンで確定",
+	globals: { viewport: { value: "desktop" } },
+	render: (args) => <StatefulRow {...args} />,
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			canvas.getByRole("button", { name: "ベンチプレス 1セット目を編集" }),
+		);
+		await waitFor(() => {
+			expect(findEditDialog()).not.toBeNull();
+		});
+		const weightInput = findInputByLabel("重量 (kg)");
+		await userEvent.tripleClick(weightInput);
+		await userEvent.keyboard("120");
+		await userEvent.click(requireButtonInDialogByName(/確定/));
+		await waitFor(() => {
+			expect(args.onChange).toHaveBeenCalledWith({ weight: 120, reps: 5 });
+		});
+		await waitFor(() => {
+			expect(findEditDialog()).toBeNull();
+		});
+	},
+};
+
+export const DesktopEscapeDiscardsDraft: Story = {
 	name: "広画面: Escape で破棄して保存しない",
 	globals: { viewport: { value: "desktop" } },
 	render: (args) => <StatefulRow {...args} />,
@@ -82,8 +114,8 @@ export const DesktopEscapeDoesNotSave: Story = {
 	},
 };
 
-export const MobileEditingSavesOnEnter: Story = {
-	name: "狭画面: Drawer で編集して Enter で即保存",
+export const MobileEditingCommitsOnEnter: Story = {
+	name: "狭画面: Drawer で編集して Enter で確定",
 	globals: { viewport: { value: "mobile" } },
 	args: { index: 2 },
 	render: (args) => <StatefulRow {...args} />,
@@ -101,6 +133,9 @@ export const MobileEditingSavesOnEnter: Story = {
 		await userEvent.keyboard("110{Enter}");
 		await waitFor(() => {
 			expect(args.onChange).toHaveBeenCalledWith({ weight: 110, reps: 5 });
+		});
+		await waitFor(() => {
+			expect(findEditDialog()).toBeNull();
 		});
 	},
 };
