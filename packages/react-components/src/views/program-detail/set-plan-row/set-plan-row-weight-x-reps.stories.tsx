@@ -9,6 +9,30 @@ import {
 	requireButtonInDialogByName,
 } from "./stories-test-utils";
 
+const StatefulRow: FC<ComponentProps<typeof SetPlanRowWeightXReps>> = ({
+	weight: initialWeight,
+	reps: initialReps,
+	onChange,
+	...rest
+}) => {
+	const [value, setValue] = useState({
+		weight: initialWeight,
+		reps: initialReps,
+	});
+	const handleChange = (next: { weight: number; reps: number }) => {
+		setValue(next);
+		onChange(next);
+	};
+	return (
+		<SetPlanRowWeightXReps
+			{...rest}
+			weight={value.weight}
+			reps={value.reps}
+			onChange={handleChange}
+		/>
+	);
+};
+
 const meta = {
 	title: "View/V2 プログラム詳細/SetPlanRow/重量×回数",
 	component: SetPlanRowWeightXReps,
@@ -33,6 +57,7 @@ const meta = {
 			</div>
 		),
 	],
+	render: (args) => <StatefulRow {...args} />,
 } satisfies Meta<typeof SetPlanRowWeightXReps>;
 
 export default meta;
@@ -47,7 +72,6 @@ export const Lbs: Story = {
 export const DesktopEditingCommitsOnEnter: Story = {
 	name: "広画面: 編集して Enter で確定",
 	globals: { viewport: { value: "desktop" } },
-	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
@@ -69,9 +93,8 @@ export const DesktopEditingCommitsOnEnter: Story = {
 };
 
 export const DesktopEditingCommitsOnConfirmButton: Story = {
-	name: "広画面: 編集してチェックアイコンで確定",
+	name: "広画面: 編集して確定ボタンで確定",
 	globals: { viewport: { value: "desktop" } },
-	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
@@ -96,7 +119,6 @@ export const DesktopEditingCommitsOnConfirmButton: Story = {
 export const DesktopEscapeDiscardsDraft: Story = {
 	name: "広画面: Escape で破棄して保存しない",
 	globals: { viewport: { value: "desktop" } },
-	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
@@ -119,7 +141,6 @@ export const MobileEditingCommitsOnEnter: Story = {
 	name: "狭画面: Drawer で編集して Enter で確定",
 	globals: { viewport: { value: "mobile" } },
 	args: { index: 2 },
-	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
@@ -139,28 +160,4 @@ export const MobileEditingCommitsOnEnter: Story = {
 			expect(findEditDialog()).toBeNull();
 		});
 	},
-};
-
-const StatefulRow: FC<ComponentProps<typeof SetPlanRowWeightXReps>> = ({
-	weight: initialWeight,
-	reps: initialReps,
-	onChange,
-	...rest
-}) => {
-	const [value, setValue] = useState({
-		weight: initialWeight,
-		reps: initialReps,
-	});
-	const handleChange = (next: { weight: number; reps: number }) => {
-		setValue(next);
-		onChange(next);
-	};
-	return (
-		<SetPlanRowWeightXReps
-			{...rest}
-			weight={value.weight}
-			reps={value.reps}
-			onChange={handleChange}
-		/>
-	);
 };

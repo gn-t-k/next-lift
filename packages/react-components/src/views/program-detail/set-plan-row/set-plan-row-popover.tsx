@@ -51,11 +51,12 @@ export const SetPlanRowPopover: FC<Props> = ({
 							<Button
 								type="submit"
 								intent="primary"
-								size="sq-sm"
+								size="sm"
 								isDisabled={isCommitDisabled}
-								aria-label={`${title}の編集を確定`}
+								className="[--btn-icon:var(--btn-fg)]"
 							>
 								<CheckIcon data-slot="icon" className="size-4" aria-hidden />
+								確定
 							</Button>
 						</div>
 					</form>

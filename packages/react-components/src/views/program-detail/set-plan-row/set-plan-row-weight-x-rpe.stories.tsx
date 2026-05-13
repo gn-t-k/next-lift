@@ -9,6 +9,30 @@ import {
 	requireButtonInDialogByName,
 } from "./stories-test-utils";
 
+const StatefulRow: FC<ComponentProps<typeof SetPlanRowWeightXRpe>> = ({
+	weight: initialWeight,
+	rpe: initialRpe,
+	onChange,
+	...rest
+}) => {
+	const [value, setValue] = useState({
+		weight: initialWeight,
+		rpe: initialRpe,
+	});
+	const handleChange = (next: { weight: number; rpe: number }) => {
+		setValue(next);
+		onChange(next);
+	};
+	return (
+		<SetPlanRowWeightXRpe
+			{...rest}
+			weight={value.weight}
+			rpe={value.rpe}
+			onChange={handleChange}
+		/>
+	);
+};
+
 const meta = {
 	title: "View/V2 プログラム詳細/SetPlanRow/重量×RPE",
 	component: SetPlanRowWeightXRpe,
@@ -33,6 +57,7 @@ const meta = {
 			</div>
 		),
 	],
+	render: (args) => <StatefulRow {...args} />,
 } satisfies Meta<typeof SetPlanRowWeightXRpe>;
 
 export default meta;
@@ -41,9 +66,8 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const DesktopRpeChangeCommitsOnConfirmButton: Story = {
-	name: "広画面: RPE トグルで編集してチェックアイコンで確定",
+	name: "広画面: RPE トグルで編集して確定ボタンで確定",
 	globals: { viewport: { value: "desktop" } },
-	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
@@ -67,7 +91,6 @@ export const DesktopRpeChangeCommitsOnConfirmButton: Story = {
 export const DesktopEditingCommitsOnEnter: Story = {
 	name: "広画面: 重量を編集して Enter で確定",
 	globals: { viewport: { value: "desktop" } },
-	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
@@ -91,7 +114,6 @@ export const DesktopEditingCommitsOnEnter: Story = {
 export const DesktopEscapeDiscardsDraft: Story = {
 	name: "広画面: Escape で破棄して保存しない",
 	globals: { viewport: { value: "desktop" } },
-	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
@@ -113,7 +135,6 @@ export const DesktopEscapeDiscardsDraft: Story = {
 export const DesktopRpeCentersOnOpen: Story = {
 	name: "広画面: RPE 既選択時に中央スクロールで開く",
 	globals: { viewport: { value: "desktop" } },
-	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
@@ -137,7 +158,6 @@ export const DesktopRpeCentersOnOpen: Story = {
 export const MobileEditingCommitsOnEnter: Story = {
 	name: "狭画面: Drawer で編集して Enter で確定",
 	globals: { viewport: { value: "mobile" } },
-	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
@@ -156,28 +176,4 @@ export const MobileEditingCommitsOnEnter: Story = {
 			expect(findEditDialog()).toBeNull();
 		});
 	},
-};
-
-const StatefulRow: FC<ComponentProps<typeof SetPlanRowWeightXRpe>> = ({
-	weight: initialWeight,
-	rpe: initialRpe,
-	onChange,
-	...rest
-}) => {
-	const [value, setValue] = useState({
-		weight: initialWeight,
-		rpe: initialRpe,
-	});
-	const handleChange = (next: { weight: number; rpe: number }) => {
-		setValue(next);
-		onChange(next);
-	};
-	return (
-		<SetPlanRowWeightXRpe
-			{...rest}
-			weight={value.weight}
-			rpe={value.rpe}
-			onChange={handleChange}
-		/>
-	);
 };

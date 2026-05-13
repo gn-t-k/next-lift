@@ -9,6 +9,27 @@ import {
 	requireButtonInDialogByName,
 } from "./stories-test-utils";
 
+const StatefulRow: FC<ComponentProps<typeof SetPlanRowRepsXRpe>> = ({
+	reps: initialReps,
+	rpe: initialRpe,
+	onChange,
+	...rest
+}) => {
+	const [value, setValue] = useState({ reps: initialReps, rpe: initialRpe });
+	const handleChange = (next: { reps: number; rpe: number }) => {
+		setValue(next);
+		onChange(next);
+	};
+	return (
+		<SetPlanRowRepsXRpe
+			{...rest}
+			reps={value.reps}
+			rpe={value.rpe}
+			onChange={handleChange}
+		/>
+	);
+};
+
 const meta = {
 	title: "View/V2 プログラム詳細/SetPlanRow/回数×RPE",
 	component: SetPlanRowRepsXRpe,
@@ -31,6 +52,7 @@ const meta = {
 			</div>
 		),
 	],
+	render: (args) => <StatefulRow {...args} />,
 } satisfies Meta<typeof SetPlanRowRepsXRpe>;
 
 export default meta;
@@ -41,7 +63,6 @@ export const Default: Story = {};
 export const DesktopEditingCommitsOnEnter: Story = {
 	name: "広画面: 回数を編集して Enter で確定",
 	globals: { viewport: { value: "desktop" } },
-	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
@@ -67,7 +88,6 @@ export const DesktopEditingCommitsOnEnter: Story = {
 export const DesktopEscapeDiscardsDraft: Story = {
 	name: "広画面: Escape で破棄して保存しない",
 	globals: { viewport: { value: "desktop" } },
-	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
@@ -89,9 +109,8 @@ export const DesktopEscapeDiscardsDraft: Story = {
 };
 
 export const MobileRpeChangeCommitsOnConfirmButton: Story = {
-	name: "狭画面: Drawer で RPE トグルを押してチェックアイコンで確定",
+	name: "狭画面: Drawer で RPE トグルを押して確定ボタンで確定",
 	globals: { viewport: { value: "mobile" } },
-	render: (args) => <StatefulRow {...args} />,
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
@@ -112,25 +131,4 @@ export const MobileRpeChangeCommitsOnConfirmButton: Story = {
 			expect(findEditDialog()).toBeNull();
 		});
 	},
-};
-
-const StatefulRow: FC<ComponentProps<typeof SetPlanRowRepsXRpe>> = ({
-	reps: initialReps,
-	rpe: initialRpe,
-	onChange,
-	...rest
-}) => {
-	const [value, setValue] = useState({ reps: initialReps, rpe: initialRpe });
-	const handleChange = (next: { reps: number; rpe: number }) => {
-		setValue(next);
-		onChange(next);
-	};
-	return (
-		<SetPlanRowRepsXRpe
-			{...rest}
-			reps={value.reps}
-			rpe={value.rpe}
-			onChange={handleChange}
-		/>
-	);
 };

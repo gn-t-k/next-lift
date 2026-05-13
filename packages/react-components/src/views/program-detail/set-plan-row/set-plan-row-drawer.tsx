@@ -45,7 +45,7 @@ export const SetPlanRowDrawer: FC<Props> = ({
 								intent="primary"
 								size="sm"
 								isDisabled={isCommitDisabled}
-								aria-label={`${title}の編集を確定`}
+								className="[--btn-icon:var(--btn-fg)]"
 							>
 								<CheckIcon data-slot="icon" className="size-4" aria-hidden />
 								確定
