@@ -13,7 +13,7 @@ import {
 	Modal as ModalPrimitive,
 } from "react-aria-components";
 import { tv, type VariantProps } from "tailwind-variants";
-import { cx } from "../../libs/primitive";
+import { cn } from "../../libs/utils";
 import {
 	Dialog,
 	DialogBody,
@@ -176,7 +176,7 @@ const ModalContentInner: FC<ModalContentInnerProps> = ({
 }) => (
 	<ModalPrimitive
 		data-slot="modal-content"
-		className={cx([contentStyles({ size }), className])}
+		className={cn([contentStyles({ size }), className])}
 	>
 		{children}
 	</ModalPrimitive>

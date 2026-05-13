@@ -22,6 +22,7 @@ const meta = {
 		rpe: 8,
 		exerciseName: "トライセプスプッシュダウン",
 		onChange: fn(),
+		onDelete: fn(),
 	},
 	decorators: [
 		(Story) => (

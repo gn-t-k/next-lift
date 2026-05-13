@@ -2,7 +2,9 @@
 
 import type { FC } from "react";
 import { useRef, useState } from "react";
+import type { WeightUnit } from "../set-plan-types";
 import { RepsField, WeightField } from "./set-plan-edit-form-fields";
+import { SetPlanRowDeleteButton } from "./set-plan-row-delete-button";
 import { SetPlanRowEditTrigger } from "./set-plan-row-edit-trigger";
 import { SetPlanRowFrame } from "./set-plan-row-frame";
 
@@ -13,10 +15,11 @@ type Props = {
 	index: number;
 	weight: number;
 	reps: number;
-	weightUnit: "kg" | "lbs";
+	weightUnit: WeightUnit;
 	weightStep: number;
 	exerciseName: string;
 	onChange: (next: Value) => void;
+	onDelete: () => void;
 };
 
 export const SetPlanRowWeightXReps: FC<Props> = ({
@@ -27,6 +30,7 @@ export const SetPlanRowWeightXReps: FC<Props> = ({
 	weightStep,
 	exerciseName,
 	onChange,
+	onDelete,
 }) => {
 	const title = `${exerciseName} ${index + 1}セット目`;
 	const [isOpen, setIsOpen] = useState(false);
@@ -62,10 +66,10 @@ export const SetPlanRowWeightXReps: FC<Props> = ({
 		draft === null || draft.weight === null || draft.reps === null;
 
 	return (
-		<SetPlanRowFrame
-			index={index}
-			display={`${weight}${weightUnit} × ${reps}回`}
-		>
+		<SetPlanRowFrame index={index}>
+			<span className="flex-1 text-fg tabular-nums">
+				{`${weight}${weightUnit} × ${reps}回`}
+			</span>
 			<SetPlanRowEditTrigger
 				title={title}
 				isOpen={isOpen}
@@ -88,6 +92,7 @@ export const SetPlanRowWeightXReps: FC<Props> = ({
 					}
 				/>
 			</SetPlanRowEditTrigger>
+			<SetPlanRowDeleteButton label={`${title}を削除`} onPress={onDelete} />
 		</SetPlanRowFrame>
 	);
 };

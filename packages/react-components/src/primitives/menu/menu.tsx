@@ -28,7 +28,7 @@ export const Menu = <T extends object>({
 	...props
 }: MenuProps<T>) => (
 	<Popover
-		className={cx(
+		className={cn(
 			"min-w-(--trigger-width) max-w-xs origin-(--trigger-anchor-point)",
 			"rounded-lg border border-border bg-overlay text-overlay-fg shadow-lg outline-hidden",
 			"entering:fade-in entering:animate-in entering:duration-150",

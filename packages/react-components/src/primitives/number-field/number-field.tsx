@@ -56,7 +56,7 @@ export const NumberFieldLabel: FC<LabelProps> = ({ className, ...props }) => (
 export const NumberFieldInput: FC<InputProps> = ({ className, ...props }) => (
 	<Group
 		data-slot="control"
-		className={cx(
+		className={cn(
 			"flex w-full overflow-hidden rounded-lg border border-border bg-overlay",
 			"focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-bg",
 			"data-invalid:border-danger",
