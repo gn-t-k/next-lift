@@ -2,6 +2,7 @@
 
 import type { FC } from "react";
 import { RpeField, WeightField } from "./set-plan-edit-form-fields";
+import { SetPlanRowDeleteButton } from "./set-plan-row-delete-button";
 import { SetPlanRowEditTrigger } from "./set-plan-row-edit-trigger";
 import { SetPlanRowFrame } from "./set-plan-row-frame";
 
@@ -15,6 +16,7 @@ type Props = {
 	weightStep: number;
 	exerciseName: string;
 	onChange: (next: Value) => void;
+	onDelete: () => void;
 };
 
 export const SetPlanRowWeightXRpe: FC<Props> = ({
@@ -25,12 +27,16 @@ export const SetPlanRowWeightXRpe: FC<Props> = ({
 	weightStep,
 	exerciseName,
 	onChange,
+	onDelete,
 }) => {
 	const title = `${exerciseName} ${index + 1}セット目`;
 	return (
 		<SetPlanRowFrame
 			index={index}
 			display={`${weight}${weightUnit} @ RPE ${rpe}`}
+			menu={
+				<SetPlanRowDeleteButton label={`${title}を削除`} onPress={onDelete} />
+			}
 		>
 			<SetPlanRowEditTrigger title={title}>
 				<div className="flex flex-col gap-3">

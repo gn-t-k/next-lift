@@ -24,6 +24,7 @@ const meta = {
 		weightStep: 2.5,
 		exerciseName: "ベンチプレス",
 		onChange: fn(),
+		onDelete: fn(),
 	},
 	decorators: [
 		(Story) => (

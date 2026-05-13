@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { fn } from "storybook/test";
 import { SetPlanRowEmpty } from "./set-plan-row-empty";
 
 const meta = {
@@ -10,6 +11,8 @@ const meta = {
 	tags: ["autodocs"],
 	args: {
 		index: 0,
+		exerciseName: "ベンチプレス",
+		onDelete: fn(),
 	},
 	decorators: [
 		(Story) => (
