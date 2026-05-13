@@ -1,9 +1,12 @@
 "use client";
 
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
-import type { FC, PropsWithChildren } from "react";
+import type { FC, PropsWithChildren, ReactNode } from "react";
+import { Button as AriaButton } from "react-aria-components";
 import { useMediaQuery } from "../../../libs";
+import { cn } from "../../../libs/utils";
 import { Button } from "../../../primitives/button";
+import { createAffordanceClass } from "../../../primitives/create-affordance";
 import { SetPlanRowDrawer } from "./set-plan-row-drawer";
 import { SetPlanRowPopover } from "./set-plan-row-popover";
 
@@ -15,6 +18,7 @@ type Props = PropsWithChildren<{
 	onOpenChange: (open: boolean) => void;
 	onCommit: () => void;
 	isCommitDisabled: boolean;
+	affordanceLabel?: string;
 }>;
 
 export const SetPlanRowEditTrigger: FC<Props> = ({
@@ -23,31 +27,55 @@ export const SetPlanRowEditTrigger: FC<Props> = ({
 	onOpenChange,
 	onCommit,
 	isCommitDisabled,
+	affordanceLabel,
 	children,
 }) => {
 	const isMdUp = useMediaQuery(MD_BREAKPOINT);
+	const trigger = renderTrigger({ title, affordanceLabel });
 	if (isMdUp === null) {
-		return (
-			<Button
-				intent="plain"
-				size="sq-xs"
-				isDisabled
-				aria-label={`${title}を編集`}
-			>
-				<PencilSquareIcon data-slot="icon" className="size-4" aria-hidden />
-			</Button>
-		);
+		// SSR / 初回マウント時は DialogTrigger 未マウントなので、押しても開かないが
+		// レイアウトを保つためにトリガー要素だけ描画する
+		return <>{trigger}</>;
 	}
-	const Trigger = isMdUp ? SetPlanRowPopover : SetPlanRowDrawer;
+	const Variant = isMdUp ? SetPlanRowPopover : SetPlanRowDrawer;
 	return (
-		<Trigger
+		<Variant
 			title={title}
+			trigger={trigger}
 			isOpen={isOpen}
 			onOpenChange={onOpenChange}
 			onCommit={onCommit}
 			isCommitDisabled={isCommitDisabled}
 		>
 			{children}
-		</Trigger>
+		</Variant>
+	);
+};
+
+const renderTrigger = ({
+	title,
+	affordanceLabel,
+}: {
+	title: string;
+	affordanceLabel: string | undefined;
+}): ReactNode => {
+	if (affordanceLabel !== undefined) {
+		return (
+			<AriaButton
+				aria-label={`${title}を編集`}
+				className={cn(
+					createAffordanceClass,
+					"flex flex-1 items-baseline gap-3 rounded-md px-[calc(--spacing(3)-1px)] py-[calc(--spacing(2)-1px)] text-left",
+				)}
+			>
+				<span className="flex-1 truncate">{affordanceLabel}</span>
+				<PencilSquareIcon className="size-4 shrink-0 self-center" aria-hidden />
+			</AriaButton>
+		);
+	}
+	return (
+		<Button intent="plain" size="sq-xs" aria-label={`${title}を編集`}>
+			<PencilSquareIcon data-slot="icon" className="size-4" aria-hidden />
+		</Button>
 	);
 };

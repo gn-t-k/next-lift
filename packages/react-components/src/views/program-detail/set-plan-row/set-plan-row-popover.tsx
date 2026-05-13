@@ -1,13 +1,14 @@
 "use client";
 
-import { CheckIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
-import type { FC, FormEvent, PropsWithChildren } from "react";
+import { CheckIcon } from "@heroicons/react/24/outline";
+import type { FC, FormEvent, PropsWithChildren, ReactNode } from "react";
 import { Dialog, DialogTrigger, Popover } from "react-aria-components";
 import { cn } from "../../../libs/utils";
 import { Button } from "../../../primitives/button";
 
 type Props = PropsWithChildren<{
 	title: string;
+	trigger: ReactNode;
 	isOpen: boolean;
 	onOpenChange: (open: boolean) => void;
 	onCommit: () => void;
@@ -16,6 +17,7 @@ type Props = PropsWithChildren<{
 
 export const SetPlanRowPopover: FC<Props> = ({
 	title,
+	trigger,
 	isOpen,
 	onOpenChange,
 	onCommit,
@@ -28,9 +30,7 @@ export const SetPlanRowPopover: FC<Props> = ({
 	};
 	return (
 		<DialogTrigger isOpen={isOpen} onOpenChange={onOpenChange}>
-			<Button intent="plain" size="sq-xs" aria-label={`${title}を編集`}>
-				<PencilSquareIcon data-slot="icon" className="size-4" aria-hidden />
-			</Button>
+			{trigger}
 			<Popover
 				placement="bottom end"
 				className={cn(

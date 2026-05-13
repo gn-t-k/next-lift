@@ -67,13 +67,13 @@ export const SetPlanRowEmpty: FC<Props> = ({
 
 	return (
 		<SetPlanRowFrame index={index}>
-			<span className="flex-1 text-muted-fg">値未入力</span>
 			<SetPlanRowEditTrigger
 				title={setName}
 				isOpen={isOpen}
 				onOpenChange={handleOpenChange}
 				onCommit={handleCommit}
 				isCommitDisabled={isCommitDisabled}
+				affordanceLabel="セットを設定"
 			>
 				<Tabs
 					selectedKey={draft.kind}
