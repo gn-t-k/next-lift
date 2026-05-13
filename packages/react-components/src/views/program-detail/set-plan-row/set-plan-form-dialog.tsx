@@ -58,6 +58,12 @@ export const SetPlanFormDialog: FC<Props> = ({
 	};
 
 	const handleCommit = () => {
+		// onSelectionChange と同じ理由（React Aria Button の preventDefault で
+		// blur が発火しない）で、active input を明示的に blur して NumberField の
+		// 値を commit させてから payload を組み立てる
+		if (document.activeElement instanceof HTMLInputElement) {
+			document.activeElement.blur();
+		}
 		const payload = buildPayloadFromDraft(draftRef.current);
 		if (payload !== null) {
 			onSubmit(payload);
@@ -79,9 +85,16 @@ export const SetPlanFormDialog: FC<Props> = ({
 		>
 			<Tabs
 				selectedKey={draft.kind}
-				onSelectionChange={(key) =>
-					writeDraft({ ...draftRef.current, kind: key as Pattern })
-				}
+				onSelectionChange={(key) => {
+					// React Aria の Button は pointer down で preventDefault するため
+					// マウスクリックではフォーカスが奪われず、focused input の blur が
+					// 発火しない。Tab 切替で TabPanel が unmount される前に active input
+					// を明示的に blur して NumberField の値を commit させる
+					if (document.activeElement instanceof HTMLInputElement) {
+						document.activeElement.blur();
+					}
+					writeDraft({ ...draftRef.current, kind: key as Pattern });
+				}}
 			>
 				<TabList aria-label="セットの種類">
 					<Tab id="weight-x-reps">重量×回数</Tab>

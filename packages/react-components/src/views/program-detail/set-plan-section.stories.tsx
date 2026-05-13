@@ -155,6 +155,59 @@ export const AddEscapeDiscards: Story = {
 	},
 };
 
+export const CommitWithoutBlurPersistsLatestValue: Story = {
+	name: "入力後 blur せずに確定ボタンを押しても最新値が commit される",
+	args: { setPlans: [] },
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(canvas.getByRole("button", { name: "セットを追加" }));
+		await waitFor(() => {
+			expect(findEditDialog()).not.toBeNull();
+		});
+		const weightInput = findInputByLabel("重量 (kg)");
+		const repsInput = findInputByLabel("回数");
+		await userEvent.tripleClick(weightInput);
+		await userEvent.keyboard("80");
+		await userEvent.tripleClick(repsInput);
+		await userEvent.keyboard("10");
+		// blur せずに直接「確定」ボタンを押す
+		await userEvent.click(requireButtonInDialogByName(/確定/));
+		await waitFor(() => {
+			expect(args.onAddSetPlan).toHaveBeenCalledWith({
+				pattern: "weight-x-reps",
+				weight: 80,
+				reps: 10,
+			});
+		});
+	},
+};
+
+export const TabSwitchPreservesValues: Story = {
+	name: "Tabs 切替で入力値が保持される（input にフォーカスが残ったまま切替）",
+	args: { setPlans: [] },
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(canvas.getByRole("button", { name: "セットを追加" }));
+		await waitFor(() => {
+			expect(findEditDialog()).not.toBeNull();
+		});
+		// 重量×RPE タブで 100 を入力（Tab キーで blur せず、input にフォーカスを残したまま）
+		await userEvent.click(requireTabInDialogByName("重量×RPE"));
+		const weightInput = findInputByLabel("重量 (kg)");
+		await userEvent.tripleClick(weightInput);
+		await userEvent.keyboard("100");
+		// blur せずにそのままタブをクリック（React Aria の Button preventDefault で
+		// マウスクリックでは blur が発火しないため、ここで commit が漏れるバグの再現条件）
+		await userEvent.click(requireTabInDialogByName("重量×回数"));
+		const weightInRepsTab = findInputByLabel("重量 (kg)");
+		expect(weightInRepsTab.value).toBe("100");
+		// 重量×RPE へ戻る → やはり 100 が保持されているはず
+		await userEvent.click(requireTabInDialogByName("重量×RPE"));
+		const weightInRpeTab = findInputByLabel("重量 (kg)");
+		expect(weightInRpeTab.value).toBe("100");
+	},
+};
+
 export const DeleteSetPlan: Story = {
 	name: "Row の削除ボタンで削除",
 	args: { setPlans: SAMPLE_SET_PLANS },
