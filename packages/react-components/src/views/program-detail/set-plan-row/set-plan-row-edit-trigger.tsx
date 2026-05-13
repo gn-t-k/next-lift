@@ -1,6 +1,6 @@
 "use client";
 
-import { PencilSquareIcon } from "@heroicons/react/24/outline";
+import { PencilSquareIcon, PlusIcon } from "@heroicons/react/24/outline";
 import type { FC, PropsWithChildren, ReactNode } from "react";
 import { Button as AriaButton } from "react-aria-components";
 import { useMediaQuery } from "../../../libs";
@@ -62,14 +62,13 @@ const renderTrigger = ({
 	if (affordanceLabel !== undefined) {
 		return (
 			<AriaButton
-				aria-label={`${title}を編集`}
 				className={cn(
 					createAffordanceClass,
 					"flex flex-1 items-baseline gap-3 rounded-md px-[calc(--spacing(3)-1px)] py-[calc(--spacing(2)-1px)] text-left",
 				)}
 			>
 				<span className="flex-1 truncate">{affordanceLabel}</span>
-				<PencilSquareIcon className="size-4 shrink-0 self-center" aria-hidden />
+				<PlusIcon className="size-4 shrink-0 self-center" aria-hidden />
 			</AriaButton>
 		);
 	}

@@ -1,7 +1,6 @@
 import type { FC } from "react";
 import {
 	CreateSetPlanRow,
-	SetPlanRowEmpty,
 	SetPlanRowRepsXRpe,
 	SetPlanRowWeightXReps,
 	SetPlanRowWeightXRpe,
@@ -27,20 +26,8 @@ export const SetPlanSection: FC<Props> = ({
 	onAddSetPlan,
 	onDeleteSetPlan,
 }) => {
-	const hasEmptyRow = setPlans.some((sp) => sp.pattern === null);
 	const renderRow = (setPlan: SetPlan, index: number) => {
 		switch (setPlan.pattern) {
-			case null:
-				return (
-					<SetPlanRowEmpty
-						index={index}
-						exerciseName={exerciseName}
-						weightUnit={weightUnit}
-						weightStep={weightStep}
-						onSubmit={(payload) => onSetPlanChange(setPlan.id, payload)}
-						onDelete={() => onDeleteSetPlan(setPlan.id)}
-					/>
-				);
 			case "weight-x-reps":
 				return (
 					<SetPlanRowWeightXReps
@@ -95,14 +82,13 @@ export const SetPlanSection: FC<Props> = ({
 					))}
 				</ol>
 			)}
-			{!hasEmptyRow && (
-				<CreateSetPlanRow
-					setPlans={setPlans}
-					weightUnit={weightUnit}
-					exerciseName={exerciseName}
-					onAdd={onAddSetPlan}
-				/>
-			)}
+			<CreateSetPlanRow
+				setPlans={setPlans}
+				weightUnit={weightUnit}
+				weightStep={weightStep}
+				exerciseName={exerciseName}
+				onAdd={onAddSetPlan}
+			/>
 		</div>
 	);
 };

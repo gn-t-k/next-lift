@@ -58,16 +58,18 @@ export const Empty: Story = {
 	args: { setPlans: [] },
 };
 
-export const InheritsFromLastSetOnAdd: Story = {
-	name: "プレビューをタップで直前セットの値+パターンを継承して追加",
+export const AddInheritsFromLastSet: Story = {
+	name: "直前セットの kind と値を初期値として継承して追加できる",
 	args: { setPlans: SAMPLE_SET_PLANS },
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
-		await userEvent.click(
-			canvas.getByRole("button", {
-				name: "ベンチプレス 4セット目を追加",
-			}),
-		);
+		// 「セットを追加」アフォーダンスを押すとダイアログが開く
+		await userEvent.click(canvas.getByRole("button", { name: "セットを追加" }));
+		await waitFor(() => {
+			expect(findEditDialog()).not.toBeNull();
+		});
+		// 直前 (sp-3: weight-x-rpe, 100kg, RPE 9) が初期値に。そのまま確定で同じ値が追加される
+		await userEvent.click(requireButtonInDialogByName(/確定/));
 		await waitFor(() => {
 			expect(args.onAddSetPlan).toHaveBeenCalledWith({
 				pattern: "weight-x-rpe",
@@ -75,51 +77,81 @@ export const InheritsFromLastSetOnAdd: Story = {
 				rpe: 9,
 			});
 		});
-	},
-};
-
-export const AddFromEmptyUsesDefault: Story = {
-	name: "セット計画ゼロ件のとき weight-x-reps 既定で追加",
-	args: { setPlans: [] },
-	play: async ({ canvasElement, args }) => {
-		const canvas = within(canvasElement);
-		await userEvent.click(
-			canvas.getByRole("button", {
-				name: "ベンチプレス 1セット目を追加",
-			}),
-		);
 		await waitFor(() => {
-			expect(args.onAddSetPlan).toHaveBeenCalledWith({
-				pattern: "weight-x-reps",
-				weight: 0,
-				reps: 0,
-			});
+			expect(findEditDialog()).toBeNull();
 		});
 	},
 };
 
-export const CyclePatternAndAdd: Story = {
-	name: "↔ボタンでパターンを切り替えてから追加",
+export const AddSwitchPatternFromLastSet: Story = {
+	name: "タブで kind を切り替えて値を入れて追加",
 	args: { setPlans: SAMPLE_SET_PLANS },
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
-		const cycle = canvas.getByRole("button", {
-			name: /追加するセットのパターンを切り替え/,
+		await userEvent.click(canvas.getByRole("button", { name: "セットを追加" }));
+		await waitFor(() => {
+			expect(findEditDialog()).not.toBeNull();
 		});
-		// 初期は直前と同じ weight-x-rpe。1 回押すと reps-x-rpe へ
-		await userEvent.click(cycle);
-		await userEvent.click(
-			canvas.getByRole("button", {
-				name: "ベンチプレス 4セット目を追加",
-			}),
-		);
+		// 直前は weight-x-rpe だが、回数×RPE に切り替えて追加する
+		await userEvent.click(requireTabInDialogByName("回数×RPE"));
+		const repsInput = findInputByLabel("回数");
+		await userEvent.tripleClick(repsInput);
+		await userEvent.keyboard("12");
+		await userEvent.click(requireButtonInDialogByName("8"));
+		await userEvent.click(requireButtonInDialogByName(/確定/));
 		await waitFor(() => {
 			expect(args.onAddSetPlan).toHaveBeenCalledWith({
 				pattern: "reps-x-rpe",
-				reps: 0,
+				reps: 12,
 				rpe: 8,
 			});
 		});
+	},
+};
+
+export const AddFromEmptyRequiresInput: Story = {
+	name: "セット計画ゼロ件のとき、初期値なしで値を入力して追加",
+	args: { setPlans: [] },
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(canvas.getByRole("button", { name: "セットを追加" }));
+		await waitFor(() => {
+			expect(findEditDialog()).not.toBeNull();
+		});
+		// 直前セットなし → 値未入力で disabled
+		expect(requireButtonInDialogByName(/確定/)).toBeDisabled();
+		const weightInput = findInputByLabel("重量 (kg)");
+		const repsInput = findInputByLabel("回数");
+		await userEvent.tripleClick(weightInput);
+		await userEvent.keyboard("60");
+		await userEvent.tripleClick(repsInput);
+		await userEvent.keyboard("10");
+		await userEvent.tab();
+		await userEvent.click(requireButtonInDialogByName(/確定/));
+		await waitFor(() => {
+			expect(args.onAddSetPlan).toHaveBeenCalledWith({
+				pattern: "weight-x-reps",
+				weight: 60,
+				reps: 10,
+			});
+		});
+	},
+};
+
+export const AddEscapeDiscards: Story = {
+	name: "ダイアログを Escape で閉じると追加されない",
+	args: { setPlans: SAMPLE_SET_PLANS },
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(canvas.getByRole("button", { name: "セットを追加" }));
+		await waitFor(() => {
+			expect(findEditDialog()).not.toBeNull();
+		});
+		await userEvent.keyboard("{Escape}");
+		await waitFor(() => {
+			expect(findEditDialog()).toBeNull();
+		});
+		expect(args.onAddSetPlan).not.toHaveBeenCalled();
 	},
 };
 
@@ -135,59 +167,6 @@ export const DeleteSetPlan: Story = {
 		);
 		await waitFor(() => {
 			expect(args.onDeleteSetPlan).toHaveBeenCalledWith("sp-2");
-		});
-	},
-};
-
-export const EmptyRowFillsAndBecomesNormalRow: Story = {
-	name: "Empty Row で種類と値を入れて確定すると通常 Row に切り替わる",
-	args: {
-		setPlans: [{ id: "sp-empty", pattern: null }],
-	},
-	play: async ({ canvasElement, args }) => {
-		const canvas = within(canvasElement);
-		// 初期: Empty Row が表示され、追加ボタンは Empty があるため非表示
-		expect(
-			canvas.queryByRole("button", { name: "ベンチプレス 2セット目を追加" }),
-		).toBeNull();
-		expect(
-			canvas.queryByRole("button", { name: "ベンチプレス 1セット目を追加" }),
-		).toBeNull();
-		// 編集ボタンで Popover/Drawer を開く
-		await userEvent.click(
-			canvas.getByRole("button", { name: "ベンチプレス 1セット目を編集" }),
-		);
-		await waitFor(() => {
-			expect(findEditDialog()).not.toBeNull();
-		});
-		// タブを「重量×RPE」に切り替えて値を入力
-		await userEvent.click(requireTabInDialogByName("重量×RPE"));
-		const weightInput = findInputByLabel("重量 (kg)");
-		await userEvent.tripleClick(weightInput);
-		await userEvent.keyboard("100");
-		await userEvent.click(requireButtonInDialogByName("9"));
-		await userEvent.click(requireButtonInDialogByName(/確定/));
-		// onSetPlanChange が入力済み値で呼ばれる
-		await waitFor(() => {
-			expect(args.onSetPlanChange).toHaveBeenCalledWith("sp-empty", {
-				pattern: "weight-x-rpe",
-				weight: 100,
-				rpe: 9,
-			});
-		});
-		// state 更新後、Empty Row が通常の Row（編集ボタン付き）に置き換わる
-		await waitFor(() => {
-			expect(
-				canvas.getByRole("button", {
-					name: "ベンチプレス 1セット目を編集",
-				}),
-			).toBeInTheDocument();
-		});
-		// Empty が解消されたので追加ボタンが現れる（2 セット目）
-		await waitFor(() => {
-			expect(
-				canvas.getByRole("button", { name: "ベンチプレス 2セット目を追加" }),
-			).toBeInTheDocument();
 		});
 	},
 };

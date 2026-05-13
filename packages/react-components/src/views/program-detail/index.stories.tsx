@@ -198,8 +198,9 @@ export const LongProgramName: Story = {
 	},
 };
 
-// 種目計画追加直後の transient state（exercise: null + pattern: null のセット計画 1 件）。
-// 設計判断 #61 により V2 は保存済みデータのみ表示するが、種目計画追加直後はこの形が一時的に出現する。
+// 種目計画追加直後の transient state（exercise: null + セット計画ゼロ件）。
+// 設計判断 #68 で空セット placeholder は廃止し、種目計画追加直後はセット計画ゼロ件で
+// 「セットを追加」アフォーダンスのみが見える状態になる。
 // 種目選択 picker は本ビューには持たず、種目選択 UI 自体は種目計画追加タスク (2-3-12) で導入する想定。
 export const AfterAddingExercisePlan: Story = {
 	args: {
@@ -214,7 +215,7 @@ export const AfterAddingExercisePlan: Story = {
 					{
 						id: "ep-init",
 						exercise: null,
-						setPlans: [{ id: "sp-init", pattern: null }],
+						setPlans: [],
 					},
 				],
 			},
