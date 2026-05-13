@@ -29,17 +29,17 @@ export const CreateSetPlanRow: FC<Props> = ({
 	);
 	const nextIndex = setPlans.length;
 	const payload = buildPayload(pattern, setPlans);
-	const display = formatDisplay(payload, weightUnit);
 	const cycle = () => setPattern(nextPattern(pattern));
 	return (
 		<div className="mt-1 flex items-baseline gap-3 pr-3 text-muted-fg text-sm">
 			<PreviewButton
 				index={nextIndex}
 				exerciseName={exerciseName}
-				display={display}
+				payload={payload}
+				weightUnit={weightUnit}
 				onPress={() => onAdd(payload)}
 			/>
-			<CycleButton patternLabel={patternLabel(pattern)} onPress={cycle} />
+			<CycleButton pattern={pattern} onPress={cycle} />
 		</div>
 	);
 };
@@ -47,14 +47,16 @@ export const CreateSetPlanRow: FC<Props> = ({
 type PreviewButtonProps = {
 	index: number;
 	exerciseName: string;
-	display: string;
+	payload: SetPlanWithParams;
+	weightUnit: "kg" | "lbs";
 	onPress: () => void;
 };
 
 const PreviewButton: FC<PreviewButtonProps> = ({
 	index,
 	exerciseName,
-	display,
+	payload,
+	weightUnit,
 	onPress,
 }) => (
 	<AriaButton
@@ -66,59 +68,53 @@ const PreviewButton: FC<PreviewButtonProps> = ({
 		)}
 	>
 		<span className="w-8 shrink-0 text-xs">{`#${index + 1}`}</span>
-		<span className="flex-1 truncate">{display}</span>
+		<span className="flex-1 truncate">
+			{(() => {
+				switch (payload.pattern) {
+					case "weight-x-reps":
+						return `${payload.weight}${weightUnit} × ${payload.reps}回`;
+					case "weight-x-rpe":
+						return `${payload.weight}${weightUnit} @ RPE ${payload.rpe}`;
+					case "reps-x-rpe":
+						return `${payload.reps}回 @ RPE ${payload.rpe}`;
+				}
+			})()}
+		</span>
 		<PlusIcon className="size-4 shrink-0 self-center" aria-hidden />
 	</AriaButton>
 );
 
 type CycleButtonProps = {
-	patternLabel: string;
+	pattern: Pattern;
 	onPress: () => void;
 };
 
-const CycleButton: FC<CycleButtonProps> = ({ patternLabel, onPress }) => (
+const CycleButton: FC<CycleButtonProps> = ({ pattern, onPress }) => (
 	<Button
 		intent="plain"
 		size="sq-xs"
 		onPress={onPress}
-		aria-label={`追加するセットのパターンを切り替え（現在: ${patternLabel}）`}
+		aria-label={`追加するセットのパターンを切り替え（現在: ${(() => {
+			switch (pattern) {
+				case "weight-x-reps":
+					return "重量×回数";
+				case "weight-x-rpe":
+					return "重量×RPE";
+				case "reps-x-rpe":
+					return "回数×RPE";
+			}
+		})()}）`}
 	>
 		<ArrowsRightLeftIcon data-slot="icon" className="size-4" aria-hidden />
 	</Button>
 );
 
-const PATTERN_ORDER = [
-	"weight-x-reps",
-	"weight-x-rpe",
-	"reps-x-rpe",
-] as const satisfies readonly Pattern[];
-
 const nextPattern = (current: Pattern): Pattern => {
+	const PATTERN_ORDER = [
+		"weight-x-reps",
+		"weight-x-rpe",
+		"reps-x-rpe",
+	] as const satisfies readonly Pattern[];
 	const i = PATTERN_ORDER.indexOf(current);
 	return PATTERN_ORDER[(i + 1) % PATTERN_ORDER.length] ?? "weight-x-reps";
-};
-
-const patternLabel = (pattern: Pattern): string => {
-	switch (pattern) {
-		case "weight-x-reps":
-			return "重量×回数";
-		case "weight-x-rpe":
-			return "重量×RPE";
-		case "reps-x-rpe":
-			return "回数×RPE";
-	}
-};
-
-const formatDisplay = (
-	payload: SetPlanWithParams,
-	weightUnit: "kg" | "lbs",
-): string => {
-	switch (payload.pattern) {
-		case "weight-x-reps":
-			return `${payload.weight}${weightUnit} × ${payload.reps}回`;
-		case "weight-x-rpe":
-			return `${payload.weight}${weightUnit} @ RPE ${payload.rpe}`;
-		case "reps-x-rpe":
-			return `${payload.reps}回 @ RPE ${payload.rpe}`;
-	}
 };
