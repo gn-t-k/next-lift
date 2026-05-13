@@ -2,7 +2,7 @@
 
 import type { FC } from "react";
 import type { SetPlanWithParams, WeightUnit } from "../set-plan-types";
-import { SetPlanAddDialog } from "./set-plan-add-dialog";
+import { SetPlanFormDialog } from "./set-plan-form-dialog";
 
 type Props = {
 	setPlans: readonly SetPlanWithParams[];
@@ -19,12 +19,13 @@ export const CreateSetPlanRow: FC<Props> = ({
 	exerciseName,
 	onAdd,
 }) => (
-	<SetPlanAddDialog
+	<SetPlanFormDialog
+		mode="add"
 		exerciseName={exerciseName}
 		weightUnit={weightUnit}
 		weightStep={weightStep}
-		nextIndex={setPlans.length}
-		previousSetPlan={setPlans[setPlans.length - 1]}
-		onAdd={onAdd}
+		index={setPlans.length}
+		initial={setPlans[setPlans.length - 1]}
+		onSubmit={onAdd}
 	/>
 );

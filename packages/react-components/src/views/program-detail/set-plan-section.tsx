@@ -27,6 +27,9 @@ export const SetPlanSection: FC<Props> = ({
 	onDeleteSetPlan,
 }) => {
 	const renderRow = (setPlan: SetPlan, index: number) => {
+		const handleChange = (payload: SetPlanWithParams) =>
+			onSetPlanChange(setPlan.id, payload);
+		const handleDelete = () => onDeleteSetPlan(setPlan.id);
 		switch (setPlan.pattern) {
 			case "weight-x-reps":
 				return (
@@ -37,10 +40,8 @@ export const SetPlanSection: FC<Props> = ({
 						weightUnit={weightUnit}
 						weightStep={weightStep}
 						exerciseName={exerciseName}
-						onChange={(next) =>
-							onSetPlanChange(setPlan.id, { pattern: "weight-x-reps", ...next })
-						}
-						onDelete={() => onDeleteSetPlan(setPlan.id)}
+						onChange={handleChange}
+						onDelete={handleDelete}
 					/>
 				);
 			case "weight-x-rpe":
@@ -52,10 +53,8 @@ export const SetPlanSection: FC<Props> = ({
 						weightUnit={weightUnit}
 						weightStep={weightStep}
 						exerciseName={exerciseName}
-						onChange={(next) =>
-							onSetPlanChange(setPlan.id, { pattern: "weight-x-rpe", ...next })
-						}
-						onDelete={() => onDeleteSetPlan(setPlan.id)}
+						onChange={handleChange}
+						onDelete={handleDelete}
 					/>
 				);
 			case "reps-x-rpe":
@@ -64,11 +63,11 @@ export const SetPlanSection: FC<Props> = ({
 						index={index}
 						reps={setPlan.reps}
 						rpe={setPlan.rpe}
+						weightUnit={weightUnit}
+						weightStep={weightStep}
 						exerciseName={exerciseName}
-						onChange={(next) =>
-							onSetPlanChange(setPlan.id, { pattern: "reps-x-rpe", ...next })
-						}
-						onDelete={() => onDeleteSetPlan(setPlan.id)}
+						onChange={handleChange}
+						onDelete={handleDelete}
 					/>
 				);
 		}

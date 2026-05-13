@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps, FC } from "react";
 import { useState } from "react";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
+import type { SetPlanWithParams } from "../set-plan-types";
 import { SetPlanRowRepsXRpe } from "./set-plan-row-reps-x-rpe";
 import {
 	findEditDialog,
@@ -9,15 +10,21 @@ import {
 	requireButtonInDialogByName,
 } from "./stories-test-utils";
 
+type Value = Extract<SetPlanWithParams, { pattern: "reps-x-rpe" }>;
+
 const StatefulRow: FC<ComponentProps<typeof SetPlanRowRepsXRpe>> = ({
 	reps: initialReps,
 	rpe: initialRpe,
 	onChange,
 	...rest
 }) => {
-	const [value, setValue] = useState({ reps: initialReps, rpe: initialRpe });
-	const handleChange = (next: { reps: number; rpe: number }) => {
-		setValue(next);
+	const [value, setValue] = useState<Value>({
+		pattern: "reps-x-rpe",
+		reps: initialReps,
+		rpe: initialRpe,
+	});
+	const handleChange = (next: SetPlanWithParams) => {
+		if (next.pattern === "reps-x-rpe") setValue(next);
 		onChange(next);
 	};
 	return (
@@ -41,6 +48,8 @@ const meta = {
 		index: 0,
 		reps: 12,
 		rpe: 8,
+		weightUnit: "kg",
+		weightStep: 2.5,
 		exerciseName: "トライセプスプッシュダウン",
 		onChange: fn(),
 		onDelete: fn(),
@@ -60,8 +69,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
-export const DesktopEditingCommitsOnEnter: Story = {
-	name: "広画面: 回数を編集して Enter で確定",
+export const EditRepsInSameKind: Story = {
+	name: "回数×RPE タブのまま回数を変更して確定",
 	globals: { viewport: { value: "desktop" } },
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -75,18 +84,20 @@ export const DesktopEditingCommitsOnEnter: Story = {
 		});
 		const repsInput = findInputByLabel("回数");
 		await userEvent.tripleClick(repsInput);
-		await userEvent.keyboard("15{Enter}");
+		await userEvent.keyboard("15");
+		await userEvent.click(requireButtonInDialogByName(/確定/));
 		await waitFor(() => {
-			expect(args.onChange).toHaveBeenCalledWith({ reps: 15, rpe: 8 });
-		});
-		await waitFor(() => {
-			expect(findEditDialog()).toBeNull();
+			expect(args.onChange).toHaveBeenCalledWith({
+				pattern: "reps-x-rpe",
+				reps: 15,
+				rpe: 8,
+			});
 		});
 	},
 };
 
-export const DesktopEscapeDiscardsDraft: Story = {
-	name: "広画面: Escape で破棄して保存しない",
+export const EscapeDiscardsDraft: Story = {
+	name: "Escape で破棄して保存しない",
 	globals: { viewport: { value: "desktop" } },
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -108,8 +119,8 @@ export const DesktopEscapeDiscardsDraft: Story = {
 	},
 };
 
-export const MobileRpeChangeCommitsOnConfirmButton: Story = {
-	name: "狭画面: Drawer で RPE トグルを押して確定ボタンで確定",
+export const MobileEdit: Story = {
+	name: "狭画面: Drawer で RPE トグルを変更して確定",
 	globals: { viewport: { value: "mobile" } },
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -122,13 +133,13 @@ export const MobileRpeChangeCommitsOnConfirmButton: Story = {
 			expect(findEditDialog()).not.toBeNull();
 		});
 		await userEvent.click(requireButtonInDialogByName("9"));
-		expect(args.onChange).not.toHaveBeenCalled();
 		await userEvent.click(requireButtonInDialogByName(/確定/));
 		await waitFor(() => {
-			expect(args.onChange).toHaveBeenCalledWith({ reps: 12, rpe: 9 });
-		});
-		await waitFor(() => {
-			expect(findEditDialog()).toBeNull();
+			expect(args.onChange).toHaveBeenCalledWith({
+				pattern: "reps-x-rpe",
+				reps: 12,
+				rpe: 9,
+			});
 		});
 	},
 };

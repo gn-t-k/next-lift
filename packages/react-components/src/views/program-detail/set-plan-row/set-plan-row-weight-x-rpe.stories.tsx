@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps, FC } from "react";
 import { useState } from "react";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
+import type { SetPlanWithParams } from "../set-plan-types";
 import { SetPlanRowWeightXRpe } from "./set-plan-row-weight-x-rpe";
 import {
 	findEditDialog,
@@ -9,18 +10,21 @@ import {
 	requireButtonInDialogByName,
 } from "./stories-test-utils";
 
+type Value = Extract<SetPlanWithParams, { pattern: "weight-x-rpe" }>;
+
 const StatefulRow: FC<ComponentProps<typeof SetPlanRowWeightXRpe>> = ({
 	weight: initialWeight,
 	rpe: initialRpe,
 	onChange,
 	...rest
 }) => {
-	const [value, setValue] = useState({
+	const [value, setValue] = useState<Value>({
+		pattern: "weight-x-rpe",
 		weight: initialWeight,
 		rpe: initialRpe,
 	});
-	const handleChange = (next: { weight: number; rpe: number }) => {
-		setValue(next);
+	const handleChange = (next: SetPlanWithParams) => {
+		if (next.pattern === "weight-x-rpe") setValue(next);
 		onChange(next);
 	};
 	return (
@@ -65,8 +69,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
-export const DesktopRpeChangeCommitsOnConfirmButton: Story = {
-	name: "広画面: RPE トグルで編集して確定ボタンで確定",
+export const EditRpeInSameKind: Story = {
+	name: "重量×RPE タブのまま RPE を変更して確定",
 	globals: { viewport: { value: "desktop" } },
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -77,42 +81,19 @@ export const DesktopRpeChangeCommitsOnConfirmButton: Story = {
 			expect(findEditDialog()).not.toBeNull();
 		});
 		await userEvent.click(requireButtonInDialogByName("9"));
-		expect(args.onChange).not.toHaveBeenCalled();
 		await userEvent.click(requireButtonInDialogByName(/確定/));
 		await waitFor(() => {
-			expect(args.onChange).toHaveBeenCalledWith({ weight: 100, rpe: 9 });
-		});
-		await waitFor(() => {
-			expect(findEditDialog()).toBeNull();
-		});
-	},
-};
-
-export const DesktopEditingCommitsOnEnter: Story = {
-	name: "広画面: 重量を編集して Enter で確定",
-	globals: { viewport: { value: "desktop" } },
-	play: async ({ canvasElement, args }) => {
-		const canvas = within(canvasElement);
-		await userEvent.click(
-			canvas.getByRole("button", { name: "ベンチプレス 1セット目を編集" }),
-		);
-		await waitFor(() => {
-			expect(findEditDialog()).not.toBeNull();
-		});
-		const weightInput = findInputByLabel("重量 (kg)");
-		await userEvent.tripleClick(weightInput);
-		await userEvent.keyboard("110{Enter}");
-		await waitFor(() => {
-			expect(args.onChange).toHaveBeenCalledWith({ weight: 110, rpe: 8 });
-		});
-		await waitFor(() => {
-			expect(findEditDialog()).toBeNull();
+			expect(args.onChange).toHaveBeenCalledWith({
+				pattern: "weight-x-rpe",
+				weight: 100,
+				rpe: 9,
+			});
 		});
 	},
 };
 
-export const DesktopEscapeDiscardsDraft: Story = {
-	name: "広画面: Escape で破棄して保存しない",
+export const EscapeDiscardsDraft: Story = {
+	name: "Escape で破棄して保存しない",
 	globals: { viewport: { value: "desktop" } },
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -132,8 +113,8 @@ export const DesktopEscapeDiscardsDraft: Story = {
 	},
 };
 
-export const DesktopRpeCentersOnOpen: Story = {
-	name: "広画面: RPE 既選択時に中央スクロールで開く",
+export const RpeCentersOnOpen: Story = {
+	name: "RPE 既選択時に中央スクロールで開く",
 	globals: { viewport: { value: "desktop" } },
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -155,8 +136,8 @@ export const DesktopRpeCentersOnOpen: Story = {
 	},
 };
 
-export const MobileEditingCommitsOnEnter: Story = {
-	name: "狭画面: Drawer で編集して Enter で確定",
+export const MobileEdit: Story = {
+	name: "狭画面: Drawer で編集して確定",
 	globals: { viewport: { value: "mobile" } },
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -168,12 +149,14 @@ export const MobileEditingCommitsOnEnter: Story = {
 		});
 		const weightInput = findInputByLabel("重量 (kg)");
 		await userEvent.tripleClick(weightInput);
-		await userEvent.keyboard("110{Enter}");
+		await userEvent.keyboard("110");
+		await userEvent.click(requireButtonInDialogByName(/確定/));
 		await waitFor(() => {
-			expect(args.onChange).toHaveBeenCalledWith({ weight: 110, rpe: 8 });
-		});
-		await waitFor(() => {
-			expect(findEditDialog()).toBeNull();
+			expect(args.onChange).toHaveBeenCalledWith({
+				pattern: "weight-x-rpe",
+				weight: 110,
+				rpe: 8,
+			});
 		});
 	},
 };

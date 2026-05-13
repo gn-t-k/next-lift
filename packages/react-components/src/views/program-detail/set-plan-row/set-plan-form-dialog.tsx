@@ -15,28 +15,31 @@ type Draft = {
 };
 
 type Props = {
+	mode: "add" | "edit";
 	exerciseName: string;
 	weightUnit: WeightUnit;
 	weightStep: number;
-	nextIndex: number;
-	previousSetPlan: SetPlanWithParams | undefined;
-	onAdd: (payload: SetPlanWithParams) => void;
+	index: number;
+	initial: SetPlanWithParams | undefined;
+	onSubmit: (payload: SetPlanWithParams) => void;
 };
 
-export const SetPlanAddDialog: FC<Props> = ({
+export const SetPlanFormDialog: FC<Props> = ({
+	mode,
 	exerciseName,
 	weightUnit,
 	weightStep,
-	nextIndex,
-	previousSetPlan,
-	onAdd,
+	index,
+	initial,
+	onSubmit,
 }) => {
-	const dialogTitle = `${exerciseName} ${nextIndex + 1}セット目を追加`;
+	const dialogTitle =
+		mode === "add"
+			? `${exerciseName} ${index + 1}セット目を追加`
+			: `${exerciseName} ${index + 1}セット目`;
 	const [isOpen, setIsOpen] = useState(false);
-	const [draft, setDraft] = useState<Draft>(() =>
-		makeInitialDraft(previousSetPlan),
-	);
-	const draftRef = useRef<Draft>(makeInitialDraft(previousSetPlan));
+	const [draft, setDraft] = useState<Draft>(() => makeInitialDraft(initial));
+	const draftRef = useRef<Draft>(makeInitialDraft(initial));
 
 	const writeDraft = (next: Draft) => {
 		draftRef.current = next;
@@ -44,7 +47,7 @@ export const SetPlanAddDialog: FC<Props> = ({
 	};
 
 	const resetDraft = () => {
-		const init = makeInitialDraft(previousSetPlan);
+		const init = makeInitialDraft(initial);
 		draftRef.current = init;
 		setDraft(init);
 	};
@@ -57,7 +60,7 @@ export const SetPlanAddDialog: FC<Props> = ({
 	const handleCommit = () => {
 		const payload = buildPayloadFromDraft(draftRef.current);
 		if (payload !== null) {
-			onAdd(payload);
+			onSubmit(payload);
 		}
 		resetDraft();
 		setIsOpen(false);
@@ -72,7 +75,7 @@ export const SetPlanAddDialog: FC<Props> = ({
 			onOpenChange={handleOpenChange}
 			onCommit={handleCommit}
 			isCommitDisabled={isCommitDisabled}
-			affordanceLabel="セットを追加"
+			{...(mode === "add" ? { affordanceLabel: "セットを追加" } : {})}
 		>
 			<Tabs
 				selectedKey={draft.kind}
@@ -142,31 +145,31 @@ export const SetPlanAddDialog: FC<Props> = ({
 	);
 };
 
-const makeInitialDraft = (previous: SetPlanWithParams | undefined): Draft => {
-	if (previous === undefined) {
+const makeInitialDraft = (initial: SetPlanWithParams | undefined): Draft => {
+	if (initial === undefined) {
 		return { kind: "weight-x-reps", weight: null, reps: null, rpe: null };
 	}
-	switch (previous.pattern) {
+	switch (initial.pattern) {
 		case "weight-x-reps":
 			return {
 				kind: "weight-x-reps",
-				weight: previous.weight,
-				reps: previous.reps,
+				weight: initial.weight,
+				reps: initial.reps,
 				rpe: null,
 			};
 		case "weight-x-rpe":
 			return {
 				kind: "weight-x-rpe",
-				weight: previous.weight,
+				weight: initial.weight,
 				reps: null,
-				rpe: previous.rpe,
+				rpe: initial.rpe,
 			};
 		case "reps-x-rpe":
 			return {
 				kind: "reps-x-rpe",
 				weight: null,
-				reps: previous.reps,
-				rpe: previous.rpe,
+				reps: initial.reps,
+				rpe: initial.rpe,
 			};
 	}
 };
