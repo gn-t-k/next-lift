@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps, FC } from "react";
 import { useState } from "react";
-import { expect, fn, userEvent, waitFor, within } from "storybook/test";
+import { expect, fn, screen, userEvent, waitFor, within } from "storybook/test";
 import { SetPlanSection } from "./set-plan-section";
 
 type SetPlan = ComponentProps<typeof SetPlanSection>["setPlans"][number];
@@ -130,6 +130,52 @@ export const DeleteSetPlan: Story = {
 		await waitFor(() => {
 			expect(args.onDeleteSetPlan).toHaveBeenCalledWith("sp-2");
 		});
+	},
+};
+
+export const EmptyRowSelectKindBecomesNormalRow: Story = {
+	name: "Empty Row で種類を選ぶと通常の Row に切り替わる",
+	args: {
+		setPlans: [{ id: "sp-empty", pattern: null }],
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		// 初期: Empty Row が表示されている（編集ボタンはまだ無い）
+		expect(
+			canvas.queryByRole("button", { name: "ベンチプレス 1セット目を編集" }),
+		).toBeNull();
+		// 種類選択メニューを開く
+		await userEvent.click(
+			canvas.getByRole("button", {
+				name: "ベンチプレス 1セット目の種類を選択",
+			}),
+		);
+		await waitFor(() => {
+			expect(screen.queryByRole("menu")).not.toBeNull();
+		});
+		await userEvent.click(screen.getByRole("menuitem", { name: "重量 × RPE" }));
+		// onSetPlanChange が default payload で呼ばれる
+		await waitFor(() => {
+			expect(args.onSetPlanChange).toHaveBeenCalledWith("sp-empty", {
+				pattern: "weight-x-rpe",
+				weight: 0,
+				rpe: 8,
+			});
+		});
+		// state 更新後、Empty Row が通常の Row（編集ボタン付き）に置き換わっている
+		await waitFor(() => {
+			expect(
+				canvas.getByRole("button", {
+					name: "ベンチプレス 1セット目を編集",
+				}),
+			).toBeInTheDocument();
+		});
+		// 種類選択メニューのボタンはもう存在しない
+		expect(
+			canvas.queryByRole("button", {
+				name: "ベンチプレス 1セット目の種類を選択",
+			}),
+		).toBeNull();
 	},
 };
 

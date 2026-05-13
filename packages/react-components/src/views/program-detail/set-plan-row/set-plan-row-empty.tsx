@@ -1,14 +1,11 @@
 "use client";
 
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import type { FC } from "react";
-import { useRef, useState } from "react";
-import {
-	SingleToggleButtonGroup,
-	ToggleButton,
-} from "../../../primitives/toggle-button-group";
+import { Button } from "../../../primitives/button";
+import { Menu, MenuItem, MenuTrigger } from "../../../primitives/menu";
 import type { Pattern } from "../set-plan-types";
 import { SetPlanRowDeleteButton } from "./set-plan-row-delete-button";
-import { SetPlanRowEditTrigger } from "./set-plan-row-edit-trigger";
 import { SetPlanRowFrame } from "./set-plan-row-frame";
 
 type Props = {
@@ -24,65 +21,30 @@ export const SetPlanRowEmpty: FC<Props> = ({
 	onSelectKind,
 	onDelete,
 }) => {
-	const title = `${exerciseName} ${index + 1}セット目`;
-	const [isOpen, setIsOpen] = useState(false);
-	const [draft, setDraft] = useState<Pattern | null>(null);
-	const draftRef = useRef<Pattern | null>(null);
-
-	const writeDraft = (next: Pattern | null) => {
-		draftRef.current = next;
-		setDraft(next);
-	};
-
-	const handleOpenChange = (open: boolean) => {
-		if (!open) {
-			writeDraft(null);
-		}
-		setIsOpen(open);
-	};
-
-	const handleCommit = () => {
-		const current = draftRef.current;
-		if (current !== null) {
-			onSelectKind(current);
-		}
-		writeDraft(null);
-		setIsOpen(false);
-	};
-
+	const setName = `${exerciseName} ${index + 1}セット目`;
 	return (
 		<SetPlanRowFrame index={index}>
 			<span className="flex-1 text-muted-fg">値未入力</span>
-			<SetPlanRowEditTrigger
-				title={title}
-				isOpen={isOpen}
-				onOpenChange={handleOpenChange}
-				onCommit={handleCommit}
-				isCommitDisabled={draft === null}
-			>
-				<SingleToggleButtonGroup
-					aria-label="セットの種類"
-					selectedKey={draft}
-					onSelectionChange={(key) =>
-						writeDraft(key === null ? null : (key as Pattern))
-					}
-					className="flex flex-col gap-1"
+			<MenuTrigger>
+				<Button
+					intent="plain"
+					size="sq-xs"
+					aria-label={`${setName}の種類を選択`}
+				>
+					<PencilSquareIcon data-slot="icon" className="size-4" aria-hidden />
+				</Button>
+				<Menu
+					aria-label={`${setName}の種類`}
+					onAction={(key) => onSelectKind(key as Pattern)}
 				>
 					{KIND_OPTIONS.map((option) => (
-						<ToggleButton
-							key={option.kind}
-							id={option.kind}
-							className="w-full justify-start"
-						>
+						<MenuItem key={option.kind} id={option.kind}>
 							{option.label}
-						</ToggleButton>
+						</MenuItem>
 					))}
-				</SingleToggleButtonGroup>
-			</SetPlanRowEditTrigger>
-			<SetPlanRowDeleteButton
-				label={`${exerciseName} ${index + 1}セット目を削除`}
-				onPress={onDelete}
-			/>
+				</Menu>
+			</MenuTrigger>
+			<SetPlanRowDeleteButton label={`${setName}を削除`} onPress={onDelete} />
 		</SetPlanRowFrame>
 	);
 };
