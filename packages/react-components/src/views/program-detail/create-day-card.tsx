@@ -3,7 +3,7 @@
 import { PlusIcon } from "@heroicons/react/24/solid";
 import type { FC } from "react";
 import { Button } from "react-aria-components";
-import { cx } from "../../libs/primitive";
+import { cn } from "../../libs/utils";
 
 type Props = {
 	onAddDay: () => void;
@@ -13,7 +13,7 @@ export const CreateDayCard: FC<Props> = ({ onAddDay }) => {
 	return (
 		<Button
 			onPress={onAddDay}
-			className={cx(
+			className={cn(
 				"flex min-h-32 w-full items-center justify-center gap-2 rounded-lg p-6 outline-none",
 				"border border-border border-dashed bg-transparent text-muted-fg",
 				"transition-colors",

@@ -13,7 +13,6 @@ import {
 	type HeadingProps as PrimitiveHeadingProps,
 } from "react-aria-components";
 import { tv, type VariantProps } from "tailwind-variants";
-import { cx } from "../../libs/primitive";
 import { cn } from "../../libs/utils";
 import { Button } from "../button";
 
@@ -84,7 +83,7 @@ export const DrawerContent: FC<DrawerContentProps> = ({
 	return (
 		<ModalOverlayPrimitive
 			isDismissable={isDismissable}
-			className={cx(
+			className={cn(
 				"fixed inset-0 z-50 bg-black/30",
 				"entering:fade-in entering:animate-in entering:duration-300",
 				"exiting:fade-out exiting:animate-out exiting:duration-200",
@@ -92,7 +91,7 @@ export const DrawerContent: FC<DrawerContentProps> = ({
 			{...props}
 		>
 			<ModalPrimitive
-				className={cx(drawerPanelStyles({ placement }), className)}
+				className={cn(drawerPanelStyles({ placement }), className)}
 			>
 				<PrimitiveDialog
 					role={role}

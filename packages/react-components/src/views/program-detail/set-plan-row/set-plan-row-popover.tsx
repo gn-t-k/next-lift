@@ -3,7 +3,7 @@
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import type { FC, PropsWithChildren } from "react";
 import { Dialog, DialogTrigger, Popover } from "react-aria-components";
-import { cx } from "../../../libs/primitive";
+import { cn } from "../../../libs/utils";
 import { Button } from "../../../primitives/button";
 
 type Props = PropsWithChildren<{
@@ -17,7 +17,7 @@ export const SetPlanRowPopover: FC<Props> = ({ title, children }) => (
 		</Button>
 		<Popover
 			placement="bottom end"
-			className={cx(
+			className={cn(
 				"max-w-[min(20rem,calc(100vw-2rem))]",
 				"rounded-lg border border-border bg-overlay text-overlay-fg shadow-lg outline-hidden",
 				"entering:fade-in entering:animate-in entering:duration-150",
