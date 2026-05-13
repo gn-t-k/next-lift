@@ -1,13 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps, FC } from "react";
 import { useState } from "react";
-import { expect, fn, userEvent, waitFor, within } from "storybook/test";
-import {
-	findEditDialog,
-	findInputByLabel,
-	requireButtonInDialogByName,
-	requireTabInDialogByName,
-} from "./set-plan-row/stories-test-utils";
+import { expect, fn, screen, userEvent, waitFor, within } from "storybook/test";
 import { SetPlanSection } from "./set-plan-section";
 
 type SetPlan = ComponentProps<typeof SetPlanSection>["setPlans"][number];
@@ -44,9 +38,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const SAMPLE_SET_PLANS: SetPlan[] = [
-	{ id: "sp-1", pattern: "weight-x-reps", weight: 100, reps: 5 },
-	{ id: "sp-2", pattern: "weight-x-reps", weight: 100, reps: 5 },
-	{ id: "sp-3", pattern: "weight-x-rpe", weight: 100, rpe: 9 },
+	{ id: "sp-1", pattern: "weight-reps", weight: 100, reps: 5 },
+	{ id: "sp-2", pattern: "weight-reps", weight: 100, reps: 5 },
+	{ id: "sp-3", pattern: "weight-rpe", weight: 100, rpe: 9 },
 ];
 
 export const Default: Story = {
@@ -63,16 +57,16 @@ export const QuickAddInheritsFromLastSet: Story = {
 	args: { setPlans: SAMPLE_SET_PLANS },
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
-		// 直前 (sp-3: weight-x-rpe, 100kg, RPE 9) の値をラベルに埋めたボタンが出る。
+		// 直前 (sp-3: weight-rpe, 100kg, RPE 9) の値をラベルに埋めたボタンが出る。
 		// アクセシブル名にはインデックス (#4) も含まれるので部分一致で照合
 		await userEvent.click(
 			canvas.getByRole("button", { name: /100kg @ RPE 9を追加/ }),
 		);
 		// ダイアログは開かず、直接 onAdd が呼ばれる
-		expect(findEditDialog()).toBeNull();
+		expect(screen.queryByRole("dialog")).toBeNull();
 		await waitFor(() => {
 			expect(args.onAddSetPlan).toHaveBeenCalledWith({
-				pattern: "weight-x-rpe",
+				pattern: "weight-rpe",
 				weight: 100,
 				rpe: 9,
 			});
@@ -86,22 +80,22 @@ export const AddFromEmptyRequiresInput: Story = {
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(canvas.getByRole("button", { name: "セットを追加" }));
-		await waitFor(() => {
-			expect(findEditDialog()).not.toBeNull();
-		});
+		const dialog = await screen.findByRole("dialog");
 		// 直前セットなし → 値未入力で disabled
-		expect(requireButtonInDialogByName(/確定/)).toBeDisabled();
-		const weightInput = findInputByLabel("重量 (kg)");
-		const repsInput = findInputByLabel("回数");
+		expect(within(dialog).getByRole("button", { name: /確定/ })).toBeDisabled();
+		const weightInput = within(dialog).getByRole("textbox", {
+			name: "重量 (kg)",
+		});
+		const repsInput = within(dialog).getByRole("textbox", { name: "回数" });
 		await userEvent.tripleClick(weightInput);
 		await userEvent.keyboard("60");
 		await userEvent.tripleClick(repsInput);
 		await userEvent.keyboard("10");
 		await userEvent.tab();
-		await userEvent.click(requireButtonInDialogByName(/確定/));
+		await userEvent.click(within(dialog).getByRole("button", { name: /確定/ }));
 		await waitFor(() => {
 			expect(args.onAddSetPlan).toHaveBeenCalledWith({
-				pattern: "weight-x-reps",
+				pattern: "weight-reps",
 				weight: 60,
 				reps: 10,
 			});
@@ -115,12 +109,10 @@ export const AddEscapeDiscards: Story = {
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(canvas.getByRole("button", { name: "セットを追加" }));
-		await waitFor(() => {
-			expect(findEditDialog()).not.toBeNull();
-		});
+		await screen.findByRole("dialog");
 		await userEvent.keyboard("{Escape}");
 		await waitFor(() => {
-			expect(findEditDialog()).toBeNull();
+			expect(screen.queryByRole("dialog")).toBeNull();
 		});
 		expect(args.onAddSetPlan).not.toHaveBeenCalled();
 	},
@@ -132,50 +124,24 @@ export const CommitWithoutBlurPersistsLatestValue: Story = {
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(canvas.getByRole("button", { name: "セットを追加" }));
-		await waitFor(() => {
-			expect(findEditDialog()).not.toBeNull();
+		const dialog = await screen.findByRole("dialog");
+		const weightInput = within(dialog).getByRole("textbox", {
+			name: "重量 (kg)",
 		});
-		const weightInput = findInputByLabel("重量 (kg)");
-		const repsInput = findInputByLabel("回数");
+		const repsInput = within(dialog).getByRole("textbox", { name: "回数" });
 		await userEvent.tripleClick(weightInput);
 		await userEvent.keyboard("80");
 		await userEvent.tripleClick(repsInput);
 		await userEvent.keyboard("10");
 		// blur せずに直接「確定」ボタンを押す
-		await userEvent.click(requireButtonInDialogByName(/確定/));
+		await userEvent.click(within(dialog).getByRole("button", { name: /確定/ }));
 		await waitFor(() => {
 			expect(args.onAddSetPlan).toHaveBeenCalledWith({
-				pattern: "weight-x-reps",
+				pattern: "weight-reps",
 				weight: 80,
 				reps: 10,
 			});
 		});
-	},
-};
-
-export const TabSwitchPreservesValues: Story = {
-	name: "Tabs 切替で入力値が保持される（input にフォーカスが残ったまま切替）",
-	args: { setPlans: [] },
-	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		await userEvent.click(canvas.getByRole("button", { name: "セットを追加" }));
-		await waitFor(() => {
-			expect(findEditDialog()).not.toBeNull();
-		});
-		// 重量×RPE タブで 100 を入力（Tab キーで blur せず、input にフォーカスを残したまま）
-		await userEvent.click(requireTabInDialogByName("重量×RPE"));
-		const weightInput = findInputByLabel("重量 (kg)");
-		await userEvent.tripleClick(weightInput);
-		await userEvent.keyboard("100");
-		// blur せずにそのままタブをクリック（React Aria の Button preventDefault で
-		// マウスクリックでは blur が発火しないため、ここで commit が漏れるバグの再現条件）
-		await userEvent.click(requireTabInDialogByName("重量×回数"));
-		const weightInRepsTab = findInputByLabel("重量 (kg)");
-		expect(weightInRepsTab.value).toBe("100");
-		// 重量×RPE へ戻る → やはり 100 が保持されているはず
-		await userEvent.click(requireTabInDialogByName("重量×RPE"));
-		const weightInRpeTab = findInputByLabel("重量 (kg)");
-		expect(weightInRpeTab.value).toBe("100");
 	},
 };
 

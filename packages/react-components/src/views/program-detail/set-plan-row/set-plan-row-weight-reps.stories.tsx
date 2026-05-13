@@ -1,35 +1,29 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps, FC } from "react";
 import { useState } from "react";
-import { expect, fn, userEvent, waitFor, within } from "storybook/test";
+import { expect, fn, screen, userEvent, waitFor, within } from "storybook/test";
 import type { SetPlanWithParams } from "../set-plan-types";
-import { SetPlanRowWeightXReps } from "./set-plan-row-weight-x-reps";
-import {
-	findEditDialog,
-	findInputByLabel,
-	requireButtonInDialogByName,
-	requireTabInDialogByName,
-} from "./stories-test-utils";
+import { SetPlanRowWeightReps } from "./set-plan-row-weight-reps";
 
-type Value = Extract<SetPlanWithParams, { pattern: "weight-x-reps" }>;
+type Value = Extract<SetPlanWithParams, { pattern: "weight-reps" }>;
 
-const StatefulRow: FC<ComponentProps<typeof SetPlanRowWeightXReps>> = ({
+const StatefulRow: FC<ComponentProps<typeof SetPlanRowWeightReps>> = ({
 	weight: initialWeight,
 	reps: initialReps,
 	onChange,
 	...rest
 }) => {
 	const [value, setValue] = useState<Value>({
-		pattern: "weight-x-reps",
+		pattern: "weight-reps",
 		weight: initialWeight,
 		reps: initialReps,
 	});
 	const handleChange = (next: SetPlanWithParams) => {
-		if (next.pattern === "weight-x-reps") setValue(next);
+		if (next.pattern === "weight-reps") setValue(next);
 		onChange(next);
 	};
 	return (
-		<SetPlanRowWeightXReps
+		<SetPlanRowWeightReps
 			{...rest}
 			weight={value.weight}
 			reps={value.reps}
@@ -40,7 +34,7 @@ const StatefulRow: FC<ComponentProps<typeof SetPlanRowWeightXReps>> = ({
 
 const meta = {
 	title: "View/V2 プログラム詳細/SetPlanRow/重量×回数",
-	component: SetPlanRowWeightXReps,
+	component: SetPlanRowWeightReps,
 	parameters: {
 		layout: "centered",
 	},
@@ -63,7 +57,7 @@ const meta = {
 		),
 	],
 	render: (args) => <StatefulRow {...args} />,
-} satisfies Meta<typeof SetPlanRowWeightXReps>;
+} satisfies Meta<typeof SetPlanRowWeightReps>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -74,7 +68,7 @@ export const Lbs: Story = {
 	args: { weight: 225, weightUnit: "lbs" },
 };
 
-export const EditValuesInSameKind: Story = {
+export const EditWeightInSameTab: Story = {
 	name: "重量×回数タブのままで値を編集して確定",
 	globals: { viewport: { value: "desktop" } },
 	play: async ({ canvasElement, args }) => {
@@ -82,47 +76,53 @@ export const EditValuesInSameKind: Story = {
 		await userEvent.click(
 			canvas.getByRole("button", { name: "ベンチプレス 1セット目を編集" }),
 		);
-		await waitFor(() => {
-			expect(findEditDialog()).not.toBeNull();
+		const dialog = await screen.findByRole("dialog");
+		const weightInput = within(dialog).getByRole("textbox", {
+			name: "重量 (kg)",
 		});
-		const weightInput = findInputByLabel("重量 (kg)");
 		await userEvent.tripleClick(weightInput);
 		await userEvent.keyboard("110");
-		await userEvent.click(requireButtonInDialogByName(/確定/));
+		await userEvent.click(within(dialog).getByRole("button", { name: /確定/ }));
 		await waitFor(() => {
 			expect(args.onChange).toHaveBeenCalledWith({
-				pattern: "weight-x-reps",
+				pattern: "weight-reps",
 				weight: 110,
 				reps: 5,
 			});
 		});
 		await waitFor(() => {
-			expect(findEditDialog()).toBeNull();
+			expect(screen.queryByRole("dialog")).toBeNull();
 		});
 	},
 };
 
-export const SwitchToWeightXRpeKeepsWeight: Story = {
-	name: "重量×RPE タブに切り替えると重量は保持・RPE を入力して kind 変更",
+export const SwitchTabKeepsWeight: Story = {
+	name: "重量×RPE タブに切り替えると重量は保持・RPE を入力して pattern 変更",
 	globals: { viewport: { value: "desktop" } },
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
 			canvas.getByRole("button", { name: "ベンチプレス 1セット目を編集" }),
 		);
-		await waitFor(() => {
-			expect(findEditDialog()).not.toBeNull();
-		});
+		const dialog = await screen.findByRole("dialog");
 		// 「重量×RPE」タブに切り替えると重量 100 は保持され、確定ボタンは RPE 未入力で disabled
-		await userEvent.click(requireTabInDialogByName("重量×RPE"));
-		expect(findInputByLabel("重量 (kg)").value).toBe("100");
-		expect(requireButtonInDialogByName(/確定/)).toBeDisabled();
-		// RPE を入れたら確定可能、kind 変更された payload で commit
-		await userEvent.click(requireButtonInDialogByName("9"));
-		await userEvent.click(requireButtonInDialogByName(/確定/));
+		await userEvent.click(
+			within(dialog).getByRole("tab", { name: "重量×RPE" }),
+		);
+		expect(
+			(
+				within(dialog).getByRole("textbox", {
+					name: "重量 (kg)",
+				}) as HTMLInputElement
+			).value,
+		).toBe("100");
+		expect(within(dialog).getByRole("button", { name: /確定/ })).toBeDisabled();
+		// RPE を入れたら確定可能、pattern 変更された payload で commit
+		await userEvent.click(within(dialog).getByRole("radio", { name: "9" }));
+		await userEvent.click(within(dialog).getByRole("button", { name: /確定/ }));
 		await waitFor(() => {
 			expect(args.onChange).toHaveBeenCalledWith({
-				pattern: "weight-x-rpe",
+				pattern: "weight-rpe",
 				weight: 100,
 				rpe: 9,
 			});
@@ -138,14 +138,14 @@ export const EscapeDiscardsDraft: Story = {
 		await userEvent.click(
 			canvas.getByRole("button", { name: "ベンチプレス 1セット目を編集" }),
 		);
-		await waitFor(() => {
-			expect(findEditDialog()).not.toBeNull();
+		const dialog = await screen.findByRole("dialog");
+		const weightInput = within(dialog).getByRole("textbox", {
+			name: "重量 (kg)",
 		});
-		const weightInput = findInputByLabel("重量 (kg)");
 		await userEvent.tripleClick(weightInput);
 		await userEvent.keyboard("999{Escape}");
 		await waitFor(() => {
-			expect(findEditDialog()).toBeNull();
+			expect(screen.queryByRole("dialog")).toBeNull();
 		});
 		expect(args.onChange).not.toHaveBeenCalled();
 	},
@@ -160,16 +160,16 @@ export const MobileEdit: Story = {
 		await userEvent.click(
 			canvas.getByRole("button", { name: "ベンチプレス 3セット目を編集" }),
 		);
-		await waitFor(() => {
-			expect(findEditDialog()).not.toBeNull();
+		const dialog = await screen.findByRole("dialog");
+		const weightInput = within(dialog).getByRole("textbox", {
+			name: "重量 (kg)",
 		});
-		const weightInput = findInputByLabel("重量 (kg)");
 		await userEvent.tripleClick(weightInput);
 		await userEvent.keyboard("110");
-		await userEvent.click(requireButtonInDialogByName(/確定/));
+		await userEvent.click(within(dialog).getByRole("button", { name: /確定/ }));
 		await waitFor(() => {
 			expect(args.onChange).toHaveBeenCalledWith({
-				pattern: "weight-x-reps",
+				pattern: "weight-reps",
 				weight: 110,
 				reps: 5,
 			});

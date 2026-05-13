@@ -1,44 +1,49 @@
 "use client";
 
-import type { FC } from "react";
-import { useRef, useState } from "react";
+import type { FC, ReactNode } from "react";
+import { useId, useRef, useState } from "react";
+import type { Key } from "react-aria-components";
+import { useMediaQuery } from "../../../libs";
 import { Tab, TabList, TabPanel, Tabs } from "../../../primitives/tabs";
 import type { Pattern, SetPlanWithParams, WeightUnit } from "../set-plan-types";
+import {
+	buildPayloadFromDraft,
+	type Draft,
+	makeInitialDraft,
+} from "./build-payload-from-draft";
 import { RepsField, RpeField, WeightField } from "./set-plan-edit-form-fields";
-import { SetPlanRowEditTrigger } from "./set-plan-row-edit-trigger";
+import { SetPlanRowDrawer } from "./set-plan-row-drawer";
+import { SetPlanRowPopover } from "./set-plan-row-popover";
 
-type Draft = {
-	kind: Pattern;
-	weight: number | null;
-	reps: number | null;
-	rpe: number | null;
-};
+const MD_BREAKPOINT = "(min-width: 768px)";
 
 type Props = {
-	mode: "add" | "edit";
-	exerciseName: string;
+	title: string;
+	trigger: ReactNode;
+	initial: SetPlanWithParams | undefined;
 	weightUnit: WeightUnit;
 	weightStep: number;
-	index: number;
-	initial: SetPlanWithParams | undefined;
 	onSubmit: (payload: SetPlanWithParams) => void;
 };
 
 export const SetPlanFormDialog: FC<Props> = ({
-	mode,
-	exerciseName,
+	title,
+	trigger,
+	initial,
 	weightUnit,
 	weightStep,
-	index,
-	initial,
 	onSubmit,
 }) => {
-	const dialogTitle =
-		mode === "add"
-			? `${exerciseName} ${index + 1}セット目を追加`
-			: `${exerciseName} ${index + 1}セット目`;
+	const baseId = useId();
+	const tabIds = {
+		"weight-reps": `${baseId}-weight-reps`,
+		"weight-rpe": `${baseId}-weight-rpe`,
+		"reps-rpe": `${baseId}-reps-rpe`,
+	} as const satisfies Record<Pattern, string>;
+
 	const [isOpen, setIsOpen] = useState(false);
 	const [draft, setDraft] = useState<Draft>(() => makeInitialDraft(initial));
+	// blur で更新された draft を同一ハンドラ内で同期的に読むため、ref に持つ
 	const draftRef = useRef<Draft>(makeInitialDraft(initial));
 
 	const writeDraft = (next: Draft) => {
@@ -52,18 +57,21 @@ export const SetPlanFormDialog: FC<Props> = ({
 		setDraft(init);
 	};
 
+	const blurActiveInput = () => {
+		if (document.activeElement instanceof HTMLInputElement) {
+			document.activeElement.blur();
+		}
+	};
+
 	const handleOpenChange = (open: boolean) => {
 		resetDraft();
 		setIsOpen(open);
 	};
 
 	const handleCommit = () => {
-		// onSelectionChange と同じ理由（React Aria Button の preventDefault で
-		// blur が発火しない）で、active input を明示的に blur して NumberField の
-		// 値を commit させてから payload を組み立てる
-		if (document.activeElement instanceof HTMLInputElement) {
-			document.activeElement.blur();
-		}
+		// 確定ボタンのマウスクリックでも focused input の blur が発火しないため、
+		// 明示的に blur して NumberField の値を commit させてから payload を組む
+		blurActiveInput();
 		const payload = buildPayloadFromDraft(draftRef.current);
 		if (payload !== null) {
 			onSubmit(payload);
@@ -74,34 +82,40 @@ export const SetPlanFormDialog: FC<Props> = ({
 
 	const isCommitDisabled = buildPayloadFromDraft(draft) === null;
 
+	const isMdUp = useMediaQuery(MD_BREAKPOINT);
+	if (isMdUp === null) {
+		// SSR / 初回マウント時は DialogTrigger 未マウントなので、押しても開かないが
+		// レイアウトを保つためにトリガー要素だけ描画する
+		return <>{trigger}</>;
+	}
+	const Variant = isMdUp ? SetPlanRowPopover : SetPlanRowDrawer;
+
 	return (
-		<SetPlanRowEditTrigger
-			title={dialogTitle}
+		<Variant
+			title={title}
+			trigger={trigger}
 			isOpen={isOpen}
 			onOpenChange={handleOpenChange}
 			onCommit={handleCommit}
 			isCommitDisabled={isCommitDisabled}
-			{...(mode === "add" ? { affordanceLabel: "セットを追加" } : {})}
 		>
 			<Tabs
-				selectedKey={draft.kind}
+				selectedKey={tabIds[draft.pattern]}
 				onSelectionChange={(key) => {
-					// React Aria の Button は pointer down で preventDefault するため
-					// マウスクリックではフォーカスが奪われず、focused input の blur が
-					// 発火しない。Tab 切替で TabPanel が unmount される前に active input
-					// を明示的に blur して NumberField の値を commit させる
-					if (document.activeElement instanceof HTMLInputElement) {
-						document.activeElement.blur();
-					}
-					writeDraft({ ...draftRef.current, kind: key as Pattern });
+					// Tab マウスクリックでも focused input の blur が発火しないため、
+					// TabPanel が unmount される前に明示的に blur して値を commit させる
+					blurActiveInput();
+					const pattern = toPattern(key, tabIds);
+					if (pattern === undefined) return;
+					writeDraft({ ...draftRef.current, pattern });
 				}}
 			>
 				<TabList aria-label="セットの種類">
-					<Tab id="weight-x-reps">重量×回数</Tab>
-					<Tab id="weight-x-rpe">重量×RPE</Tab>
-					<Tab id="reps-x-rpe">回数×RPE</Tab>
+					<Tab id={tabIds["weight-reps"]}>重量×回数</Tab>
+					<Tab id={tabIds["weight-rpe"]}>重量×RPE</Tab>
+					<Tab id={tabIds["reps-rpe"]}>回数×RPE</Tab>
 				</TabList>
-				<TabPanel id="weight-x-reps">
+				<TabPanel id={tabIds["weight-reps"]}>
 					<div className="flex flex-col gap-3 pt-3">
 						<WeightField
 							value={draft.weight}
@@ -119,7 +133,7 @@ export const SetPlanFormDialog: FC<Props> = ({
 						/>
 					</div>
 				</TabPanel>
-				<TabPanel id="weight-x-rpe">
+				<TabPanel id={tabIds["weight-rpe"]}>
 					<div className="flex flex-col gap-3 pt-3">
 						<WeightField
 							value={draft.weight}
@@ -137,7 +151,7 @@ export const SetPlanFormDialog: FC<Props> = ({
 						/>
 					</div>
 				</TabPanel>
-				<TabPanel id="reps-x-rpe">
+				<TabPanel id={tabIds["reps-rpe"]}>
 					<div className="flex flex-col gap-3 pt-3">
 						<RepsField
 							value={draft.reps}
@@ -154,57 +168,14 @@ export const SetPlanFormDialog: FC<Props> = ({
 					</div>
 				</TabPanel>
 			</Tabs>
-		</SetPlanRowEditTrigger>
+		</Variant>
 	);
 };
 
-const makeInitialDraft = (initial: SetPlanWithParams | undefined): Draft => {
-	if (initial === undefined) {
-		return { kind: "weight-x-reps", weight: null, reps: null, rpe: null };
-	}
-	switch (initial.pattern) {
-		case "weight-x-reps":
-			return {
-				kind: "weight-x-reps",
-				weight: initial.weight,
-				reps: initial.reps,
-				rpe: null,
-			};
-		case "weight-x-rpe":
-			return {
-				kind: "weight-x-rpe",
-				weight: initial.weight,
-				reps: null,
-				rpe: initial.rpe,
-			};
-		case "reps-x-rpe":
-			return {
-				kind: "reps-x-rpe",
-				weight: null,
-				reps: initial.reps,
-				rpe: initial.rpe,
-			};
-	}
-};
-
-const buildPayloadFromDraft = (draft: Draft): SetPlanWithParams | null => {
-	switch (draft.kind) {
-		case "weight-x-reps":
-			if (draft.weight === null || draft.reps === null) return null;
-			return {
-				pattern: "weight-x-reps",
-				weight: draft.weight,
-				reps: draft.reps,
-			};
-		case "weight-x-rpe":
-			if (draft.weight === null || draft.rpe === null) return null;
-			return {
-				pattern: "weight-x-rpe",
-				weight: draft.weight,
-				rpe: draft.rpe,
-			};
-		case "reps-x-rpe":
-			if (draft.reps === null || draft.rpe === null) return null;
-			return { pattern: "reps-x-rpe", reps: draft.reps, rpe: draft.rpe };
-	}
-};
+const toPattern = (
+	key: Key,
+	tabIds: Record<Pattern, string>,
+): Pattern | undefined =>
+	(Object.entries(tabIds) as [Pattern, string][]).find(
+		([, id]) => id === key,
+	)?.[0];

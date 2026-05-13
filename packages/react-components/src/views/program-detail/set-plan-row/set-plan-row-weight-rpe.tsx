@@ -2,13 +2,14 @@
 
 import type { FC } from "react";
 import type { SetPlanWithParams, WeightUnit } from "../set-plan-types";
-import { SetPlanFormDialog } from "./set-plan-form-dialog";
+import { formatSetPlanSummary } from "./format-set-plan-summary";
+import { SetPlanEditDialog } from "./set-plan-edit-dialog";
 import { SetPlanRowDeleteButton } from "./set-plan-row-delete-button";
 import { SetPlanRowFrame } from "./set-plan-row-frame";
 
 type Props = {
 	index: number;
-	reps: number;
+	weight: number;
 	rpe: number;
 	weightUnit: WeightUnit;
 	weightStep: number;
@@ -17,9 +18,9 @@ type Props = {
 	onDelete: () => void;
 };
 
-export const SetPlanRowRepsXRpe: FC<Props> = ({
+export const SetPlanRowWeightRpe: FC<Props> = ({
 	index,
-	reps,
+	weight,
 	rpe,
 	weightUnit,
 	weightStep,
@@ -31,16 +32,18 @@ export const SetPlanRowRepsXRpe: FC<Props> = ({
 	return (
 		<SetPlanRowFrame index={index}>
 			<span className="flex-1 text-fg tabular-nums">
-				{`${reps}回 @ RPE ${rpe}`}
+				{formatSetPlanSummary(
+					{ pattern: "weight-rpe", weight, rpe },
+					weightUnit,
+				)}
 			</span>
-			<SetPlanFormDialog
-				mode="edit"
+			<SetPlanEditDialog
 				exerciseName={exerciseName}
 				weightUnit={weightUnit}
 				weightStep={weightStep}
 				index={index}
-				initial={{ pattern: "reps-x-rpe", reps, rpe }}
-				onSubmit={onChange}
+				current={{ pattern: "weight-rpe", weight, rpe }}
+				onChange={onChange}
 			/>
 			<SetPlanRowDeleteButton label={`${setName}を削除`} onPress={onDelete} />
 		</SetPlanRowFrame>

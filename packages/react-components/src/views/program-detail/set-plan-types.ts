@@ -1,9 +1,9 @@
-export type Pattern = "weight-x-reps" | "weight-x-rpe" | "reps-x-rpe";
+export type Pattern = "weight-reps" | "weight-rpe" | "reps-rpe";
 
 export type SetPlanWithParams =
-	| { pattern: "weight-x-reps"; weight: number; reps: number }
-	| { pattern: "weight-x-rpe"; weight: number; rpe: number }
-	| { pattern: "reps-x-rpe"; reps: number; rpe: number };
+	| { pattern: "weight-reps"; weight: number; reps: number }
+	| { pattern: "weight-rpe"; weight: number; rpe: number }
+	| { pattern: "reps-rpe"; reps: number; rpe: number };
 
 export type SetPlan = { id: string } & SetPlanWithParams;
 

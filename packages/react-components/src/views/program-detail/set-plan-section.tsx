@@ -1,9 +1,9 @@
 import type { FC } from "react";
 import {
 	CreateSetPlanRow,
-	SetPlanRowRepsXRpe,
-	SetPlanRowWeightXReps,
-	SetPlanRowWeightXRpe,
+	SetPlanRowRepsRpe,
+	SetPlanRowWeightReps,
+	SetPlanRowWeightRpe,
 } from "./set-plan-row";
 import type { SetPlan, SetPlanWithParams, WeightUnit } from "./set-plan-types";
 
@@ -31,9 +31,9 @@ export const SetPlanSection: FC<Props> = ({
 			onSetPlanChange(setPlan.id, payload);
 		const handleDelete = () => onDeleteSetPlan(setPlan.id);
 		switch (setPlan.pattern) {
-			case "weight-x-reps":
+			case "weight-reps":
 				return (
-					<SetPlanRowWeightXReps
+					<SetPlanRowWeightReps
 						index={index}
 						weight={setPlan.weight}
 						reps={setPlan.reps}
@@ -44,9 +44,9 @@ export const SetPlanSection: FC<Props> = ({
 						onDelete={handleDelete}
 					/>
 				);
-			case "weight-x-rpe":
+			case "weight-rpe":
 				return (
-					<SetPlanRowWeightXRpe
+					<SetPlanRowWeightRpe
 						index={index}
 						weight={setPlan.weight}
 						rpe={setPlan.rpe}
@@ -57,9 +57,9 @@ export const SetPlanSection: FC<Props> = ({
 						onDelete={handleDelete}
 					/>
 				);
-			case "reps-x-rpe":
+			case "reps-rpe":
 				return (
-					<SetPlanRowRepsXRpe
+					<SetPlanRowRepsRpe
 						index={index}
 						reps={setPlan.reps}
 						rpe={setPlan.rpe}
@@ -72,6 +72,9 @@ export const SetPlanSection: FC<Props> = ({
 				);
 		}
 	};
+	const lastSetPlan = setPlans[setPlans.length - 1];
+	const lastSetPlanParams =
+		lastSetPlan === undefined ? undefined : stripId(lastSetPlan);
 	return (
 		<div className="flex flex-col">
 			{setPlans.length > 0 && (
@@ -82,7 +85,8 @@ export const SetPlanSection: FC<Props> = ({
 				</ol>
 			)}
 			<CreateSetPlanRow
-				setPlans={setPlans}
+				lastSetPlan={lastSetPlanParams}
+				nextIndex={setPlans.length}
 				weightUnit={weightUnit}
 				weightStep={weightStep}
 				exerciseName={exerciseName}
@@ -91,3 +95,5 @@ export const SetPlanSection: FC<Props> = ({
 		</div>
 	);
 };
+
+const stripId = ({ id: _id, ...rest }: SetPlan): SetPlanWithParams => rest;
