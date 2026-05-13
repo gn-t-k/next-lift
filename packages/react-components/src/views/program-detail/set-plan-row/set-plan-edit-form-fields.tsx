@@ -83,6 +83,7 @@ export const RpeField: FC<RpeFieldProps> = ({ value, onChange }) => (
 						key={rpe}
 						id={rpe.toString()}
 						data-initial-scroll={value === rpe ? "" : undefined}
+						className="min-h-10 sm:min-h-9"
 					>
 						{rpe}
 					</ToggleButton>
