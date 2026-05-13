@@ -18,7 +18,7 @@
 		"tailwind-variants": "3.2.2"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.4.14",
+		"@biomejs/biome": "2.4.15",
 		"@chromatic-com/storybook": "5.1.2",
 		"@storybook/addon-a11y": "10.3.6",
 		"@storybook/addon-docs": "10.3.6",

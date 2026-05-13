@@ -14,7 +14,7 @@
 		"test": "vitest run"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.4.14",
+		"@biomejs/biome": "2.4.15",
 		"@tsconfig/strictest": "2.0.8",
 		"@types/node": "24.12.3",
 		"typescript": "6.0.3",
