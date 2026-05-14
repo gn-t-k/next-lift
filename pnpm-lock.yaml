@@ -127,8 +127,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/utilities
       '@praha/byethrow':
-        specifier: 0.11.1
-        version: 0.11.1(typescript@6.0.3)
+        specifier: 0.11.2
+        version: 0.11.2(typescript@6.0.3)
       '@praha/error-factory':
         specifier: 1.4.1
         version: 1.4.1
@@ -215,8 +215,8 @@ importers:
         specifier: workspace:*
         version: link:../utilities
       '@praha/byethrow':
-        specifier: 0.11.1
-        version: 0.11.1(typescript@6.0.3)
+        specifier: 0.11.2
+        version: 0.11.2(typescript@6.0.3)
       '@praha/diva':
         specifier: 1.0.2
         version: 1.0.2
@@ -264,8 +264,8 @@ importers:
   packages/env:
     dependencies:
       '@praha/byethrow':
-        specifier: 0.11.1
-        version: 0.11.1(typescript@6.0.3)
+        specifier: 0.11.2
+        version: 0.11.2(typescript@6.0.3)
       '@praha/error-factory':
         specifier: 1.4.1
         version: 1.4.1
@@ -310,8 +310,8 @@ importers:
         specifier: workspace:*
         version: link:../utilities
       '@praha/byethrow':
-        specifier: 0.11.1
-        version: 0.11.1(typescript@6.0.3)
+        specifier: 0.11.2
+        version: 0.11.2(typescript@6.0.3)
       '@praha/diva':
         specifier: 1.0.2
         version: 1.0.2
@@ -474,8 +474,8 @@ importers:
         specifier: workspace:*
         version: link:../env
       '@praha/byethrow':
-        specifier: 0.11.1
-        version: 0.11.1(typescript@6.0.3)
+        specifier: 0.11.2
+        version: 0.11.2(typescript@6.0.3)
       '@praha/diva':
         specifier: 1.0.2
         version: 1.0.2
@@ -2853,8 +2853,8 @@ packages:
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
 
-  '@praha/byethrow@0.11.1':
-    resolution: {integrity: sha512-rvtxuCpi+/qq1trcHLTsl1q4hrPWYoSQtYW5ekgHYpVBXwa9imQnLrJsjpl2dZNbOvpdCdY+R7ox88k7k21hwA==}
+  '@praha/byethrow@0.11.2':
+    resolution: {integrity: sha512-DtX4J1BhuojwA88vhymyGR+AsEeJjxXP4RmR7R9gqk299fAMtqH6dI82jq+0emWmk9+HSLZ54y3VIB14WuqfwQ==}
     peerDependencies:
       typescript: '>=5.0.0'
 
@@ -9646,7 +9646,7 @@ snapshots:
 
   '@polka/url@1.0.0-next.29': {}
 
-  '@praha/byethrow@0.11.1(typescript@6.0.3)':
+  '@praha/byethrow@0.11.2(typescript@6.0.3)':
     dependencies:
       '@standard-schema/spec': 1.1.0
       typescript: 6.0.3
