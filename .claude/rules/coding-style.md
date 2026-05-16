@@ -64,6 +64,9 @@ const fakeFetch = (delayMs: number, shouldFail: boolean) => { ... };
 // ✅ 振る舞いごとに別関数
 const fakeFetchSuccess = (delayMs: number) => { ... };
 const fakeFetchFailure = (delayMs: number) => { ... };
+
+// 呼び出し元で分岐
+const promise = outcome === "success" ? fakeFetchSuccess(delayMs) : fakeFetchFailure(delayMs);
 ```
 
 **Why:** 形（フラグ・boolean 数・union の枝数）を見て分けると、責務が同じものを過剰分割したり、責務が違うものを無理にまとめたりして、いずれも保守コストが上がる。
