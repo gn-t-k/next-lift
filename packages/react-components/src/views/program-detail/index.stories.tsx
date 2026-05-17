@@ -47,19 +47,19 @@ const SAMPLE_DAYS: Day[] = [
 				setPlans: [
 					{
 						id: "sp-d1-bench-1",
-						pattern: "weight-x-reps",
+						pattern: "weight-reps",
 						weight: 100,
 						reps: 5,
 					},
 					{
 						id: "sp-d1-bench-2",
-						pattern: "weight-x-reps",
+						pattern: "weight-reps",
 						weight: 100,
 						reps: 5,
 					},
 					{
 						id: "sp-d1-bench-3",
-						pattern: "weight-x-rpe",
+						pattern: "weight-rpe",
 						weight: 100,
 						rpe: 9,
 					},
@@ -71,13 +71,13 @@ const SAMPLE_DAYS: Day[] = [
 				setPlans: [
 					{
 						id: "sp-d1-incline-1",
-						pattern: "weight-x-reps",
+						pattern: "weight-reps",
 						weight: 30,
 						reps: 10,
 					},
 					{
 						id: "sp-d1-incline-2",
-						pattern: "weight-x-reps",
+						pattern: "weight-reps",
 						weight: 30,
 						reps: 10,
 					},
@@ -89,13 +89,13 @@ const SAMPLE_DAYS: Day[] = [
 				setPlans: [
 					{
 						id: "sp-d1-pushdown-1",
-						pattern: "reps-x-rpe",
+						pattern: "reps-rpe",
 						reps: 12,
 						rpe: 8,
 					},
 					{
 						id: "sp-d1-pushdown-2",
-						pattern: "reps-x-rpe",
+						pattern: "reps-rpe",
 						reps: 12,
 						rpe: 8,
 					},
@@ -114,19 +114,19 @@ const SAMPLE_DAYS: Day[] = [
 				setPlans: [
 					{
 						id: "sp-d2-squat-1",
-						pattern: "weight-x-reps",
+						pattern: "weight-reps",
 						weight: 140,
 						reps: 3,
 					},
 					{
 						id: "sp-d2-squat-2",
-						pattern: "weight-x-reps",
+						pattern: "weight-reps",
 						weight: 140,
 						reps: 3,
 					},
 					{
 						id: "sp-d2-squat-3",
-						pattern: "weight-x-reps",
+						pattern: "weight-reps",
 						weight: 140,
 						reps: 3,
 					},
@@ -198,8 +198,9 @@ export const LongProgramName: Story = {
 	},
 };
 
-// 種目計画追加直後の transient state（exercise: null + pattern: null のセット計画 1 件）。
-// 設計判断 #61 により V2 は保存済みデータのみ表示するが、種目計画追加直後はこの形が一時的に出現する。
+// 種目計画追加直後の transient state（exercise: null + セット計画ゼロ件）。
+// 設計判断 #68 で空セット placeholder は廃止し、種目計画追加直後はセット計画ゼロ件で
+// 「セットを追加」アフォーダンスのみが見える状態になる。
 // 種目選択 picker は本ビューには持たず、種目選択 UI 自体は種目計画追加タスク (2-3-12) で導入する想定。
 export const AfterAddingExercisePlan: Story = {
 	args: {
@@ -214,7 +215,7 @@ export const AfterAddingExercisePlan: Story = {
 					{
 						id: "ep-init",
 						exercise: null,
-						setPlans: [{ id: "sp-init", pattern: null }],
+						setPlans: [],
 					},
 				],
 			},

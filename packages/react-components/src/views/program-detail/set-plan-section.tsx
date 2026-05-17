@@ -1,10 +1,9 @@
 import type { FC } from "react";
 import {
 	CreateSetPlanRow,
-	SetPlanRowEmpty,
-	SetPlanRowRepsXRpe,
-	SetPlanRowWeightXReps,
-	SetPlanRowWeightXRpe,
+	SetPlanRowRepsRpe,
+	SetPlanRowWeightReps,
+	SetPlanRowWeightRpe,
 } from "./set-plan-row";
 import type { SetPlan, SetPlanWithParams, WeightUnit } from "./set-plan-types";
 
@@ -28,60 +27,54 @@ export const SetPlanSection: FC<Props> = ({
 	onDeleteSetPlan,
 }) => {
 	const renderRow = (setPlan: SetPlan, index: number) => {
+		const handleChange = (payload: SetPlanWithParams) =>
+			onSetPlanChange(setPlan.id, payload);
+		const handleDelete = () => onDeleteSetPlan(setPlan.id);
 		switch (setPlan.pattern) {
-			case null:
+			case "weight-reps":
 				return (
-					<SetPlanRowEmpty
-						index={index}
-						exerciseName={exerciseName}
-						onDelete={() => onDeleteSetPlan(setPlan.id)}
-					/>
-				);
-			case "weight-x-reps":
-				return (
-					<SetPlanRowWeightXReps
+					<SetPlanRowWeightReps
 						index={index}
 						weight={setPlan.weight}
 						reps={setPlan.reps}
 						weightUnit={weightUnit}
 						weightStep={weightStep}
 						exerciseName={exerciseName}
-						onChange={(next) =>
-							onSetPlanChange(setPlan.id, { pattern: "weight-x-reps", ...next })
-						}
-						onDelete={() => onDeleteSetPlan(setPlan.id)}
+						onChange={handleChange}
+						onDelete={handleDelete}
 					/>
 				);
-			case "weight-x-rpe":
+			case "weight-rpe":
 				return (
-					<SetPlanRowWeightXRpe
+					<SetPlanRowWeightRpe
 						index={index}
 						weight={setPlan.weight}
 						rpe={setPlan.rpe}
 						weightUnit={weightUnit}
 						weightStep={weightStep}
 						exerciseName={exerciseName}
-						onChange={(next) =>
-							onSetPlanChange(setPlan.id, { pattern: "weight-x-rpe", ...next })
-						}
-						onDelete={() => onDeleteSetPlan(setPlan.id)}
+						onChange={handleChange}
+						onDelete={handleDelete}
 					/>
 				);
-			case "reps-x-rpe":
+			case "reps-rpe":
 				return (
-					<SetPlanRowRepsXRpe
+					<SetPlanRowRepsRpe
 						index={index}
 						reps={setPlan.reps}
 						rpe={setPlan.rpe}
+						weightUnit={weightUnit}
+						weightStep={weightStep}
 						exerciseName={exerciseName}
-						onChange={(next) =>
-							onSetPlanChange(setPlan.id, { pattern: "reps-x-rpe", ...next })
-						}
-						onDelete={() => onDeleteSetPlan(setPlan.id)}
+						onChange={handleChange}
+						onDelete={handleDelete}
 					/>
 				);
 		}
 	};
+	const lastSetPlan = setPlans[setPlans.length - 1];
+	const lastSetPlanParams =
+		lastSetPlan === undefined ? undefined : stripId(lastSetPlan);
 	return (
 		<div className="flex flex-col">
 			{setPlans.length > 0 && (
@@ -92,11 +85,15 @@ export const SetPlanSection: FC<Props> = ({
 				</ol>
 			)}
 			<CreateSetPlanRow
-				setPlans={setPlans}
+				lastSetPlan={lastSetPlanParams}
+				nextIndex={setPlans.length}
 				weightUnit={weightUnit}
+				weightStep={weightStep}
 				exerciseName={exerciseName}
 				onAdd={onAddSetPlan}
 			/>
 		</div>
 	);
 };
+
+const stripId = ({ id: _id, ...rest }: SetPlan): SetPlanWithParams => rest;

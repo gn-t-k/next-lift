@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps, FC } from "react";
 import { useState } from "react";
-import { expect, fn, userEvent, waitFor, within } from "storybook/test";
+import { expect, fn, screen, userEvent, waitFor, within } from "storybook/test";
 import { SetPlanSection } from "./set-plan-section";
 
 type SetPlan = ComponentProps<typeof SetPlanSection>["setPlans"][number];
@@ -38,9 +38,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const SAMPLE_SET_PLANS: SetPlan[] = [
-	{ id: "sp-1", pattern: "weight-x-reps", weight: 100, reps: 5 },
-	{ id: "sp-2", pattern: "weight-x-reps", weight: 100, reps: 5 },
-	{ id: "sp-3", pattern: "weight-x-rpe", weight: 100, rpe: 9 },
+	{ id: "sp-1", pattern: "weight-reps", weight: 100, reps: 5 },
+	{ id: "sp-2", pattern: "weight-reps", weight: 100, reps: 5 },
+	{ id: "sp-3", pattern: "weight-rpe", weight: 100, rpe: 9 },
 ];
 
 export const Default: Story = {
@@ -52,19 +52,21 @@ export const Empty: Story = {
 	args: { setPlans: [] },
 };
 
-export const InheritsFromLastSetOnAdd: Story = {
-	name: "プレビューをタップで直前セットの値+パターンを継承して追加",
+export const QuickAddInheritsFromLastSet: Story = {
+	name: "直前セットがあるとき、ダイアログを開かず前値を継承して 1 タップで追加",
 	args: { setPlans: SAMPLE_SET_PLANS },
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
+		// 直前 (sp-3: weight-rpe, 100kg, RPE 9) の値をラベルに埋めたボタンが出る。
+		// アクセシブル名にはインデックス (#4) も含まれるので部分一致で照合
 		await userEvent.click(
-			canvas.getByRole("button", {
-				name: "ベンチプレス 4セット目を追加",
-			}),
+			canvas.getByRole("button", { name: /100kg @ RPE 9を追加/ }),
 		);
+		// ダイアログは開かず、直接 onAdd が呼ばれる
+		expect(screen.queryByRole("dialog")).toBeNull();
 		await waitFor(() => {
 			expect(args.onAddSetPlan).toHaveBeenCalledWith({
-				pattern: "weight-x-rpe",
+				pattern: "weight-rpe",
 				weight: 100,
 				rpe: 9,
 			});
@@ -72,46 +74,72 @@ export const InheritsFromLastSetOnAdd: Story = {
 	},
 };
 
-export const AddFromEmptyUsesDefault: Story = {
-	name: "セット計画ゼロ件のとき weight-x-reps 既定で追加",
+export const AddFromEmptyRequiresInput: Story = {
+	name: "セット計画ゼロ件のとき、初期値なしで値を入力して追加",
 	args: { setPlans: [] },
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
-		await userEvent.click(
-			canvas.getByRole("button", {
-				name: "ベンチプレス 1セット目を追加",
-			}),
-		);
+		await userEvent.click(canvas.getByRole("button", { name: "セットを追加" }));
+		const dialog = await screen.findByRole("dialog");
+		// 直前セットなし → 値未入力で disabled
+		expect(within(dialog).getByRole("button", { name: /確定/ })).toBeDisabled();
+		const weightInput = within(dialog).getByRole("textbox", {
+			name: "重量 (kg)",
+		});
+		const repsInput = within(dialog).getByRole("textbox", { name: "回数" });
+		await userEvent.tripleClick(weightInput);
+		await userEvent.keyboard("60");
+		await userEvent.tripleClick(repsInput);
+		await userEvent.keyboard("10");
+		await userEvent.tab();
+		await userEvent.click(within(dialog).getByRole("button", { name: /確定/ }));
 		await waitFor(() => {
 			expect(args.onAddSetPlan).toHaveBeenCalledWith({
-				pattern: "weight-x-reps",
-				weight: 0,
-				reps: 0,
+				pattern: "weight-reps",
+				weight: 60,
+				reps: 10,
 			});
 		});
 	},
 };
 
-export const CyclePatternAndAdd: Story = {
-	name: "↔ボタンでパターンを切り替えてから追加",
-	args: { setPlans: SAMPLE_SET_PLANS },
+export const AddEscapeDiscards: Story = {
+	name: "ダイアログを Escape で閉じると追加されない",
+	args: { setPlans: [] },
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
-		const cycle = canvas.getByRole("button", {
-			name: /追加するセットのパターンを切り替え/,
+		await userEvent.click(canvas.getByRole("button", { name: "セットを追加" }));
+		await screen.findByRole("dialog");
+		await userEvent.keyboard("{Escape}");
+		await waitFor(() => {
+			expect(screen.queryByRole("dialog")).toBeNull();
 		});
-		// 初期は直前と同じ weight-x-rpe。1 回押すと reps-x-rpe へ
-		await userEvent.click(cycle);
-		await userEvent.click(
-			canvas.getByRole("button", {
-				name: "ベンチプレス 4セット目を追加",
-			}),
-		);
+		expect(args.onAddSetPlan).not.toHaveBeenCalled();
+	},
+};
+
+export const CommitWithoutBlurPersistsLatestValue: Story = {
+	name: "入力後 blur せずに確定ボタンを押しても最新値が commit される",
+	args: { setPlans: [] },
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(canvas.getByRole("button", { name: "セットを追加" }));
+		const dialog = await screen.findByRole("dialog");
+		const weightInput = within(dialog).getByRole("textbox", {
+			name: "重量 (kg)",
+		});
+		const repsInput = within(dialog).getByRole("textbox", { name: "回数" });
+		await userEvent.tripleClick(weightInput);
+		await userEvent.keyboard("80");
+		await userEvent.tripleClick(repsInput);
+		await userEvent.keyboard("10");
+		// blur せずに直接「確定」ボタンを押す
+		await userEvent.click(within(dialog).getByRole("button", { name: /確定/ }));
 		await waitFor(() => {
 			expect(args.onAddSetPlan).toHaveBeenCalledWith({
-				pattern: "reps-x-rpe",
-				reps: 0,
-				rpe: 8,
+				pattern: "weight-reps",
+				weight: 80,
+				reps: 10,
 			});
 		});
 	},
