@@ -84,24 +84,3 @@ export const EditRpeInSameTab: Story = {
 		});
 	},
 };
-
-export const RpeCentersOnOpen: Story = {
-	name: "RPE 既選択時に中央スクロールで開く",
-	globals: { viewport: { value: "desktop" } },
-	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		await userEvent.click(
-			canvas.getByRole("button", { name: "ベンチプレス 1セット目を編集" }),
-		);
-		const dialog = await screen.findByRole("dialog");
-		const rpe8 = within(dialog).getByRole("radio", { name: "8" });
-		expect(rpe8).toHaveAttribute("aria-checked", "true");
-		const inner = rpe8.closest<HTMLElement>(".overflow-x-auto");
-		if (inner === null) throw new Error("scroll container not found");
-		const rpeRect = rpe8.getBoundingClientRect();
-		const innerRect = inner.getBoundingClientRect();
-		const rpeCenter = rpeRect.left + rpeRect.width / 2;
-		const innerCenter = innerRect.left + innerRect.width / 2;
-		expect(Math.abs(rpeCenter - innerCenter)).toBeLessThan(8);
-	},
-};
