@@ -79,6 +79,12 @@ src/
 4. 複数ビューで使われるドメイン部品（昇格後） → `src/views/` 直下
 5. ドメイン用語（Program / Day / ExercisePlan / SetPlan / Workout / Exercise / 1RM など）を含まない汎用部品 → `src/primitives/{名前}/{名前}.tsx`
 
+**ドメイン用語**: Next Lift のビジネスドメイン（トレーニング計画・実施・振り返り・種目マスタ・1RM）に固有の概念名。具体例: Program / Day / ExercisePlan / SetPlan / Workout / Exercise / 1RM。
+
+CRUD 操作（Create / Edit / Delete）やフォーム要素（Button / Field / Selector）のような、フィットネス領域に依存しない UI / 操作概念はドメイン用語に含まない。
+
+判定の目安: **別ジャンルのアプリ（ToDo / 家計簿 / レシピ等）に名前ごと持っていって意味が通るか**。通る → `primitives/`、通らない → `views/`。例: `CreateAffordance` は「項目を新規追加する破線枠のアフォーダンス」として ToDo でもレシピでも意味が通る → primitive。`SetPlanRow` は「セット計画の行」で他ドメインで意味が通らない → `views/program-detail/`。
+
 プリミティブ層の判別基準: **ドメイン用語を名前に含まない、意見を持たない、アクセシビリティと基本挙動のみを提供する**。
 
 ### 公開エクスポートの方針
