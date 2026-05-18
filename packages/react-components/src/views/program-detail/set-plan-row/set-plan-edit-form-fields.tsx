@@ -6,7 +6,6 @@ import {
 	NumberFieldInput,
 	NumberFieldLabel,
 } from "../../../primitives/number-field";
-import { ScrollArea } from "../../../primitives/scrollable";
 import {
 	SingleToggleButtonGroup,
 	ToggleButton,
@@ -71,27 +70,22 @@ export const RpeField: FC<RpeFieldProps> = ({ value, onChange }) => (
 		>
 			RPE
 		</span>
-		<ScrollArea scrollAlign="center">
-			<SingleToggleButtonGroup
-				aria-label="RPE"
-				selectedKey={value === null ? null : value.toString()}
-				onSelectionChange={(key) => onChange(key === null ? null : Number(key))}
-				// NumberField の Group（border 込み 42px）と高さを揃え、Tabs 切替時の
-				// フォーム高さ差を消すために min-h-[2.625rem] を指定。items-center で
-				// ToggleButton 自体（min-h-9 / sm:min-h-8）を垂直中央に置く
-				className="flex w-fit items-center gap-1 min-h-[2.625rem]"
-			>
-				{RPE_OPTIONS.map((rpe) => (
-					<ToggleButton
-						key={rpe}
-						id={rpe.toString()}
-						data-initial-scroll={value === rpe ? "" : undefined}
-					>
-						{rpe}
-					</ToggleButton>
-				))}
-			</SingleToggleButtonGroup>
-		</ScrollArea>
+		<SingleToggleButtonGroup
+			aria-label="RPE"
+			selectedKey={value === null ? null : value.toString()}
+			onSelectionChange={(key) => onChange(key === null ? null : Number(key))}
+			className="flex flex-wrap gap-1.5"
+		>
+			{RPE_OPTIONS.map((rpe) => (
+				<ToggleButton
+					key={rpe}
+					id={rpe.toString()}
+					className="min-h-10 min-w-12 px-3 text-base sm:min-h-10 sm:text-base"
+				>
+					{rpe}
+				</ToggleButton>
+			))}
+		</SingleToggleButtonGroup>
 	</div>
 );
 
