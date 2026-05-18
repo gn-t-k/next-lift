@@ -7,7 +7,7 @@ import { ExercisePlanSection } from "./exercise-plan-section";
 import { SetPlanSection } from "./set-plan-section";
 
 type SetPlanChangePayload = Parameters<
-	ComponentProps<typeof SetPlanSection>["onSetPlanChange"]
+	ComponentProps<typeof SetPlanSection>["onChangeSetPlan"]
 >[1];
 
 type SetPlanAddPayload = Parameters<
@@ -20,7 +20,7 @@ type Props = {
 	days: Day[];
 	defaultSelectedDayId?: string;
 	onAddDay: () => void;
-	onSetPlanChange: (setPlanId: string, payload: SetPlanChangePayload) => void;
+	onChangeSetPlan: (setPlanId: string, payload: SetPlanChangePayload) => void;
 	onAddSetPlan: (exercisePlanId: string, payload: SetPlanAddPayload) => void;
 	onDeleteSetPlan: (setPlanId: string) => void;
 };
@@ -46,7 +46,7 @@ export const ProgramDetail: FC<Props> = ({
 	days,
 	defaultSelectedDayId,
 	onAddDay,
-	onSetPlanChange,
+	onChangeSetPlan,
 	onAddSetPlan,
 	onDeleteSetPlan,
 }) => {
@@ -86,7 +86,7 @@ export const ProgramDetail: FC<Props> = ({
 												weightUnit={exercisePlan.exercise.weightUnit}
 												weightStep={exercisePlan.exercise.weightStep}
 												exerciseName={exercisePlan.exercise.name}
-												onSetPlanChange={onSetPlanChange}
+												onChangeSetPlan={onChangeSetPlan}
 												onAddSetPlan={(payload) =>
 													onAddSetPlan(exercisePlan.id, payload)
 												}
