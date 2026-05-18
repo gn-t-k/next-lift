@@ -71,21 +71,28 @@ src/
 
 `Main` / `Section` / `Heading` プリミティブは `primitives/` に配置し、すべてのビューが共通で使える。3つは HTML 要素（`<main>` / `<section>` / `<hN>`）と1対1対応するメンタルモデルで使う。
 
-### 配置基準（上から順に判定）
+### 配置基準
 
-プリミティブ層の判別基準: ドメイン用語を名前に含まない、意見を持たない、アクセシビリティと基本挙動のみを提供する。
+コンポーネントは primitives と views のいずれかに置く。
 
-1. V1〜V15 のどれかに対応する → `src/views/{ビュー名}/{ビュー名}.tsx`
-2. ビューの状態バリアント（loading / error 等、normal とは異なる構造を持つ） → `src/views/{ビュー名}/{ビュー名}-{状態}.tsx`（`index.ts` から再エクスポート）
-3. 特定ビュー専用のサブコンポーネント → `src/views/{ビュー名}/` 配下にコロケーション（`index.ts` から再エクスポートしない）
-4. 複数ビューで使われるドメイン部品（昇格後） → `src/views/` 直下
-5. 上記の判別基準を満たす汎用部品 → `src/primitives/{名前}/{名前}.tsx`
+- views: ドメイン用語（Program / Day / ExercisePlan / SetPlan / Workout / Exercise / 1RM など、Next Lift のビジネスドメインに固有の概念名）を表現するコンポーネント。
+- primitives: ドメイン用語を含まない汎用部品。意見を持たず、アクセシビリティと基本挙動のみを提供する。CRUD 操作（Create / Edit / Delete）やフォーム要素（Button / Field / Selector）はドメイン用語ではない。
 
-ドメイン用語とは、Next Lift のビジネスドメイン（トレーニング計画・実施・振り返り・種目マスタ・1RM）に固有の概念名を指す。具体例: Program / Day / ExercisePlan / SetPlan / Workout / Exercise / 1RM。
+判定の目安: 別ジャンルのアプリ（ToDo / 家計簿 / レシピ等）に名前ごと持っていって意味が通るか。通る → primitives、通らない → views。
 
-CRUD 操作（Create / Edit / Delete）やフォーム要素（Button / Field / Selector）のような、フィットネス領域に依存しない UI / 操作概念はドメイン用語に含まない。
+- 通る例: `CreateAffordance`（項目を新規追加する破線枠のアフォーダンス）→ primitives
+- 通らない例: `SetPlanRow`（セット計画の行）→ `views/program-detail/`
 
-判定の目安: 別ジャンルのアプリ（ToDo / 家計簿 / レシピ等）に名前ごと持っていって意味が通るか。通る → `primitives/`、通らない → `views/`。例: `CreateAffordance` は「項目を新規追加する破線枠のアフォーダンス」として ToDo でもレシピでも意味が通る → primitive。`SetPlanRow` は「セット計画の行」で他ドメインで意味が通らない → `views/program-detail/`。
+#### views 内部の配置
+
+1. ビュー本体（V1〜V15、normal 状態） → `src/views/{ビュー名}/index.tsx`
+2. 状態バリアント（loading / error 等、normal と構造が異なる） → ビュー本体と同じ `index.tsx` 内に併記して export
+3. 特定ビュー専用のサブコンポーネント → `src/views/{ビュー名}/` 配下に別ファイル（internal、`index.tsx` から export しない）
+4. 複数ビューで使われるドメイン部品（昇格後） → `src/views/{名前}/index.tsx`
+
+#### primitives の配置
+
+`src/primitives/{名前}/index.tsx`。バリアント群（例: `MultiToggleButtonGroup` / `SingleToggleButtonGroup`）は同じ `index.tsx` 内に併記する。
 
 ### 公開エクスポートの方針
 
