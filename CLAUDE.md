@@ -13,6 +13,8 @@
 
 コードレビュー・CI分析などで問題を発見した場合は `/issue` スキルでGitHub Issueとして記録する。
 
+ブランチ名・コミット分割の規則は `.claude/agents/commit-analyzer.md` に従う。特に `improve/` は開発環境・開発プロセスの改善専用で、エンドユーザー向けの「挙動の改善」は `feature/` を使う。
+
 ## プロジェクト構造
 
 ```text

@@ -14,6 +14,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      # 各 type の意味の使い分けは .claude/agents/commit-analyzer.md を参照。
+      # 要点:
+      #   feature/  — エンドユーザー向けの機能追加・挙動変更
+      #   bugfix/   — エンドユーザー向けの不具合修正
+      #   refactor/ — 振る舞いを変えない内部整理
+      #   infra/    — 本番インフラ・運用環境（Vercel / Turso / Sentry など）
+      #   improve/  — 開発環境・開発プロセス改善（CI、Storybook、ビルド設定、.claude/ など）
+      #   chore/    — その他の雑務
+      #   deps/     — 依存パッケージ更新
+      #   docs/     — ドキュメントのみの変更
       - name: Check head branch name
         id: check-head-branch-name
         uses: praha-inc/action-restrict-head-branch@48b7777bbd99e4702abe38e4a996fcd5a2453667 # v1.0.0
