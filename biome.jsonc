@@ -32,7 +32,9 @@
 				"noVoid": "warn",
 				"useIndexOf": "warn",
 				"useSimplifiedLogicExpression": "warn",
-				"useWhile": "warn"
+				"useWhile": "warn",
+				// tsconfig の noPropertyAccessFromIndexSignature と衝突するため無効化
+				"useLiteralKeys": "off"
 			},
 			"correctness": {
 				"noNestedComponentDefinitions": "warn",
