@@ -13,7 +13,12 @@
 		{
 			"description": "Web側のReact関連パッケージをグループ化",
 			"groupName": "react packages (web)",
-			"matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom"],
+			"matchPackageNames": [
+				"react",
+				"react-dom",
+				"@types/react",
+				"@types/react-dom"
+			],
 			"matchFileNames": ["apps/web/**", "packages/react-components/**"]
 		}
 	]

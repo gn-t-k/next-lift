@@ -26,7 +26,6 @@ export const AuthErrorAlert: FC<Props> = async ({ searchParams }) => {
 const getSearchParamsErrors = async (
 	searchParams: Promise<Record<string, string | string[] | undefined>>,
 ): Promise<string[]> => {
-	// biome-ignore lint/complexity/useLiteralKeys: index signatureへのアクセスにはブラケット記法が必要
 	const error = (await searchParams)["error"];
 	const errors =
 		error === undefined ? [] : Array.isArray(error) ? error : [error];
