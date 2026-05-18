@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { type FC, useId } from "react";
 import { SingleToggleButtonGroup } from "./single-toggle-button-group";
 import { ToggleButton } from "./toggle-button";
 
@@ -32,13 +33,26 @@ export const NumberOptions: Story = {
 
 export const StringOptions: Story = {
 	name: "文字列オプション（テキスト配置）",
-	render: () => (
-		<SingleToggleButtonGroup defaultSelectedKey="center" className="flex gap-1">
-			<ToggleButton id="left">左</ToggleButton>
-			<ToggleButton id="center">中央</ToggleButton>
-			<ToggleButton id="right">右</ToggleButton>
+	render: () => <StringOptionsDemo />,
+};
+
+const StringOptionsDemo: FC = () => {
+	const baseId = useId();
+	const ids = {
+		left: `${baseId}-left`,
+		center: `${baseId}-center`,
+		right: `${baseId}-right`,
+	};
+	return (
+		<SingleToggleButtonGroup
+			defaultSelectedKey={ids.center}
+			className="flex gap-1"
+		>
+			<ToggleButton id={ids.left}>左</ToggleButton>
+			<ToggleButton id={ids.center}>中央</ToggleButton>
+			<ToggleButton id={ids.right}>右</ToggleButton>
 		</SingleToggleButtonGroup>
-	),
+	);
 };
 
 export const NoneSelected: Story = {
