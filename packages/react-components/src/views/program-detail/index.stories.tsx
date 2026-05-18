@@ -158,7 +158,7 @@ const meta = {
 	args: {
 		defaultSelectedDayId: "d1",
 		onAddDay: fn(),
-		onSetPlanChange: fn(),
+		onChangeSetPlan: fn(),
 		onAddSetPlan: fn(),
 		onDeleteSetPlan: fn(),
 	},

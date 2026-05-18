@@ -1,10 +1,8 @@
-"use client";
-
 import { CheckIcon } from "@heroicons/react/24/outline";
-import type { FC, FormEvent, PropsWithChildren, ReactNode } from "react";
+import type { FC, PropsWithChildren, ReactNode, SubmitEvent } from "react";
 import { Dialog, DialogTrigger, Popover } from "react-aria-components";
-import { cn } from "../../../libs/utils";
-import { Button } from "../../../primitives/button";
+import { cn } from "../../../../libs/utils";
+import { Button } from "../../../../primitives/button";
 
 type Props = PropsWithChildren<{
 	title: string;
@@ -15,7 +13,7 @@ type Props = PropsWithChildren<{
 	isCommitDisabled: boolean;
 }>;
 
-export const SetPlanRowPopover: FC<Props> = ({
+export const SetPlanFormDialogPopover: FC<Props> = ({
 	title,
 	trigger,
 	isOpen,
@@ -24,7 +22,7 @@ export const SetPlanRowPopover: FC<Props> = ({
 	isCommitDisabled,
 	children,
 }) => {
-	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+	const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		onCommit();
 	};
@@ -34,13 +32,13 @@ export const SetPlanRowPopover: FC<Props> = ({
 			<Popover
 				placement="bottom end"
 				className={cn(
-					"max-w-[min(20rem,calc(100vw-2rem))]",
+					"max-w-[min(22rem,calc(100vw-2rem))]",
 					"rounded-lg border border-border bg-overlay text-overlay-fg shadow-lg outline-hidden",
 					"entering:fade-in entering:animate-in entering:duration-150",
 					"exiting:fade-out exiting:animate-out exiting:duration-100",
 				)}
 			>
-				<Dialog className="w-72 p-3 outline-hidden" aria-label={title}>
+				<Dialog className="w-88 p-3 outline-hidden" aria-label={title}>
 					<form
 						onSubmit={handleSubmit}
 						className="flex flex-col gap-3"

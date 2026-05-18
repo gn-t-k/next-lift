@@ -1,9 +1,11 @@
-"use client";
-
 import { CheckIcon } from "@heroicons/react/24/outline";
-import type { FC, FormEvent, PropsWithChildren, ReactNode } from "react";
-import { Button } from "../../../primitives/button";
-import { Drawer, DrawerContent, DrawerTitle } from "../../../primitives/drawer";
+import type { FC, PropsWithChildren, ReactNode, SubmitEvent } from "react";
+import { Button } from "../../../../primitives/button";
+import {
+	Drawer,
+	DrawerContent,
+	DrawerTitle,
+} from "../../../../primitives/drawer";
 
 type Props = PropsWithChildren<{
 	title: string;
@@ -14,7 +16,7 @@ type Props = PropsWithChildren<{
 	isCommitDisabled: boolean;
 }>;
 
-export const SetPlanRowDrawer: FC<Props> = ({
+export const SetPlanFormDialogDrawer: FC<Props> = ({
 	title,
 	trigger,
 	isOpen,
@@ -23,7 +25,7 @@ export const SetPlanRowDrawer: FC<Props> = ({
 	isCommitDisabled,
 	children,
 }) => {
-	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+	const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		onCommit();
 	};
