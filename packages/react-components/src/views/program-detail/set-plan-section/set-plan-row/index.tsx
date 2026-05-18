@@ -1,3 +1,5 @@
+"use client";
+
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import type { FC } from "react";
 import { Button } from "../../../../primitives/button";

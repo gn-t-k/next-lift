@@ -1,3 +1,5 @@
+"use client";
+
 import type { FC, ReactNode } from "react";
 import { useId, useState } from "react";
 import type { Key } from "react-aria-components";

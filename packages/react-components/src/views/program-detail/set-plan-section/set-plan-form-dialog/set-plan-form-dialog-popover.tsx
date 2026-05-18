@@ -1,3 +1,5 @@
+"use client";
+
 import { CheckIcon } from "@heroicons/react/24/outline";
 import type { FC, PropsWithChildren, ReactNode, SubmitEvent } from "react";
 import { Dialog, DialogTrigger, Popover } from "react-aria-components";

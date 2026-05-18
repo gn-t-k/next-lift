@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef, useState } from "react";
 import type { SetPlan, SetPlanDraft } from "../set-plan-types";
 import {
