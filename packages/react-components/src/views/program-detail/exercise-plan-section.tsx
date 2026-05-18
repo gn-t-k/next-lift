@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Heading, Section } from "../../primitives/heading";
-import type { WeightUnit } from "./set-plan-types";
+import type { WeightUnit } from "./weight-unit";
 
 // T で caller 側の追加フィールド（setPlans 等）を保持し、children 関数に渡せるようにする
 type Props<T extends ExercisePlan> = {
