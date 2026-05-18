@@ -10,6 +10,7 @@
 		"build": "turbo build",
 		"dev": "turbo dev",
 		"lint": "turbo lint",
+		"lint:root": "biome check .claude .mcp.json renovate.json biome.jsonc package.json turbo.json",
 		"type-check": "turbo type-check",
 		"test": "turbo test",
 		"clean": "turbo clean",

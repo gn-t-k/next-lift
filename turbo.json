@@ -30,8 +30,9 @@
 			"persistent": true
 		},
 		"lint": {
-			"dependsOn": ["^build", "^lint"]
+			"dependsOn": ["^build", "^lint", "//#lint:root"]
 		},
+		"//#lint:root": {},
 		"type-check": {
 			"dependsOn": ["^type-check"]
 		},
