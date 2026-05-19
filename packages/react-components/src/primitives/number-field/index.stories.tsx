@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Label } from "../label/label";
+import { Label } from "../label";
 import {
 	NumberField,
 	NumberFieldDescription,
 	NumberFieldError,
 	NumberFieldInput,
-} from "./number-field";
+} from ".";
 
 const meta = {
 	title: "UI/NumberField",

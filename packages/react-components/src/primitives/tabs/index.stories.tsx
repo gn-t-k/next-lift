@@ -1,11 +1,11 @@
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
 import type { Meta, StoryObj } from "@storybook/react";
 import { type FC, useState } from "react";
-import { Button } from "../button/button";
-import { Label } from "../label/label";
-import { ScrollArea } from "../scrollable/scrollable";
-import { TextField, TextFieldInput } from "../text-field/text-field";
-import { Tab, TabList, TabPanel, Tabs } from "./tabs";
+import { Button } from "../button";
+import { Label } from "../label";
+import { ScrollArea } from "../scrollable";
+import { TextField, TextFieldInput } from "../text-field";
+import { Tab, TabList, TabPanel, Tabs } from ".";
 
 const meta = {
 	title: "UI/Tabs",

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { NumberField, NumberFieldInput } from "../number-field/number-field";
-import { Label } from "./label";
+import { NumberField, NumberFieldInput } from "../number-field";
+import { Label } from ".";
 
 const meta = {
 	title: "UI/Label",

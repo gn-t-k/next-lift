@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { FC } from "react";
-import { GymContext } from "./gym-context";
+import { GymContext } from ".";
 
 const DensitySample: FC = () => (
 	<div className="space-y-1 rounded-md border border-border p-density-card">

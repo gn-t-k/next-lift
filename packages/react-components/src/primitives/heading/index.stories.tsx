@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Main } from "../main";
-import { Heading, Section } from "./heading";
+import { Heading, Section } from ".";
 
 const meta = {
 	title: "UI/Heading",

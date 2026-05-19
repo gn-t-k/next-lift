@@ -6,7 +6,7 @@ import {
 	DrawerContent,
 	DrawerTitle,
 	DrawerTrigger,
-} from "./drawer";
+} from ".";
 
 const meta = {
 	title: "UI/Drawer",

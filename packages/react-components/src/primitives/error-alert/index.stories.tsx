@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { ErrorBoundary } from "react-error-boundary";
-import { ErrorAlert } from "./error-alert";
+import { ErrorAlert } from ".";
 
 const meta = {
 	title: "UI/ErrorAlert",

@@ -3,7 +3,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Dialog } from "react-aria-components";
 import { Button } from "../button";
-import { Popover, PopoverContent } from "./popover";
+import { Popover, PopoverContent } from ".";
 
 const meta = {
 	title: "UI/Popover",

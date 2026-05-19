@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useMemo, useState } from "react";
 import type { Key } from "react-aria-components";
 import { expect, userEvent, waitFor, within } from "storybook/test";
-import { Label } from "../label/label";
+import { Label } from "../label";
 import {
 	ComboBox,
 	ComboBoxDescription,
@@ -10,7 +10,7 @@ import {
 	ComboBoxInput,
 	ComboBoxItem,
 	ComboBoxList,
-} from "./combo-box";
+} from ".";
 
 const exercises = [
 	{ id: "bench-press", name: "ベンチプレス" },

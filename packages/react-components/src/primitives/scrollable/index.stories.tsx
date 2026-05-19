@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps } from "react";
 import { cn } from "../../libs/utils";
-import { Button } from "../button/button";
-import { ScrollArea } from "./scrollable";
+import { Button } from "../button";
+import { ScrollArea } from ".";
 
 const meta = {
 	title: "UI/ScrollArea",

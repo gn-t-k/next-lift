@@ -2,7 +2,7 @@
 
 import type { FC, PropsWithChildren } from "react";
 import { tv, type VariantProps } from "tailwind-variants";
-import { HeadingContext } from "../heading/heading";
+import { HeadingContext } from "../heading";
 
 type Props = VariantProps<typeof styles>;
 

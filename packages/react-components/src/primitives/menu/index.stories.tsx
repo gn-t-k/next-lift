@@ -6,7 +6,7 @@ import {
 } from "@heroicons/react/24/outline";
 import type { Meta, StoryObj } from "@storybook/react";
 import { Button } from "../button";
-import { Menu, MenuItem, MenuSeparator, MenuTrigger } from "./menu";
+import { Menu, MenuItem, MenuSeparator, MenuTrigger } from ".";
 
 const meta = {
 	title: "UI/Menu",

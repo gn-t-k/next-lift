@@ -13,7 +13,7 @@ import {
 	ModalHeader,
 	ModalTitle,
 	ModalTrigger,
-} from "./modal";
+} from ".";
 
 const meta = {
 	title: "UI/Modal",
