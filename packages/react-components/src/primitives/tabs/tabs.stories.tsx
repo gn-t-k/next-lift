@@ -2,12 +2,9 @@ import { PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
 import type { Meta, StoryObj } from "@storybook/react";
 import { type FC, useState } from "react";
 import { Button } from "../button/button";
+import { Label } from "../label/label";
 import { ScrollArea } from "../scrollable/scrollable";
-import {
-	TextField,
-	TextFieldInput,
-	TextFieldLabel,
-} from "../text-field/text-field";
+import { TextField, TextFieldInput } from "../text-field/text-field";
 import { Tab, TabList, TabPanel, Tabs } from "./tabs";
 
 const meta = {
@@ -188,7 +185,7 @@ const EditFromPanelDemo: FC = () => {
 						value={item.label}
 						onChange={(value) => handleChange(item.id, value)}
 					>
-						<TextFieldLabel>ラベル</TextFieldLabel>
+						<Label>ラベル</Label>
 						<TextFieldInput />
 					</TextField>
 				</TabPanel>

@@ -1,10 +1,10 @@
 "use client";
 
 import type { FC } from "react";
+import { Label } from "../../../../primitives/label";
 import {
 	NumberField,
 	NumberFieldInput,
-	NumberFieldLabel,
 } from "../../../../primitives/number-field";
 import type { WeightUnit } from "../../weight-unit";
 import { fieldLayout } from "./field-layout";
@@ -31,7 +31,7 @@ export const WeightField: FC<Props> = ({
 		minValue={0}
 		className={fieldLayout}
 	>
-		<NumberFieldLabel>{`重量 (${weightUnit})`}</NumberFieldLabel>
+		<Label>{`重量 (${weightUnit})`}</Label>
 		<NumberFieldInput />
 	</NumberField>
 );
