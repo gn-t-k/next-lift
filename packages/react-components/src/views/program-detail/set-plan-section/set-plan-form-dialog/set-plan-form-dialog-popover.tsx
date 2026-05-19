@@ -2,9 +2,9 @@
 
 import { CheckIcon } from "@heroicons/react/24/outline";
 import type { FC, PropsWithChildren, ReactNode, SubmitEvent } from "react";
-import { Dialog, DialogTrigger, Popover } from "react-aria-components";
-import { cn } from "../../../../libs/utils";
+import { Dialog } from "react-aria-components";
 import { Button } from "../../../../primitives/button";
+import { Popover, PopoverContent } from "../../../../primitives/popover";
 
 type Props = PropsWithChildren<{
 	title: string;
@@ -29,16 +29,11 @@ export const SetPlanFormDialogPopover: FC<Props> = ({
 		onCommit();
 	};
 	return (
-		<DialogTrigger isOpen={isOpen} onOpenChange={onOpenChange}>
+		<Popover isOpen={isOpen} onOpenChange={onOpenChange}>
 			{trigger}
-			<Popover
+			<PopoverContent
 				placement="bottom end"
-				className={cn(
-					"max-w-[min(22rem,calc(100vw-2rem))]",
-					"rounded-lg border border-border bg-overlay text-overlay-fg shadow-lg outline-hidden",
-					"entering:fade-in entering:animate-in entering:duration-150",
-					"exiting:fade-out exiting:animate-out exiting:duration-100",
-				)}
+				className="max-w-[min(22rem,calc(100vw-2rem))]"
 			>
 				<Dialog className="w-88 p-3 outline-hidden" aria-label={title}>
 					<form
@@ -61,7 +56,7 @@ export const SetPlanFormDialogPopover: FC<Props> = ({
 						</div>
 					</form>
 				</Dialog>
-			</Popover>
-		</DialogTrigger>
+			</PopoverContent>
+		</Popover>
 	);
 };
