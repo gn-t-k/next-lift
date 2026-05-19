@@ -5,6 +5,7 @@ export * from "./drawer";
 export * from "./error-alert";
 export * from "./gym-context";
 export * from "./heading";
+export * from "./label";
 export * from "./link";
 export * from "./main";
 export * from "./menu";

@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { Label } from "../label/label";
 import {
 	TextField,
 	TextFieldDescription,
 	TextFieldError,
 	TextFieldInput,
-	TextFieldLabel,
 } from "./text-field";
 
 const meta = {
@@ -29,7 +29,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
 	render: () => (
 		<TextField>
-			<TextFieldLabel>プログラム名</TextFieldLabel>
+			<Label>プログラム名</Label>
 			<TextFieldInput placeholder="例: 上半身" />
 		</TextField>
 	),
@@ -38,7 +38,7 @@ export const Default: Story = {
 export const WithDescription: Story = {
 	render: () => (
 		<TextField>
-			<TextFieldLabel>プログラム名</TextFieldLabel>
+			<Label>プログラム名</Label>
 			<TextFieldInput placeholder="例: 上半身" />
 			<TextFieldDescription>
 				あとから種目や Day を追加できます
@@ -50,7 +50,7 @@ export const WithDescription: Story = {
 export const Required: Story = {
 	render: () => (
 		<TextField isRequired>
-			<TextFieldLabel>プログラム名</TextFieldLabel>
+			<Label>プログラム名</Label>
 			<TextFieldInput placeholder="例: 上半身" />
 		</TextField>
 	),
@@ -59,7 +59,7 @@ export const Required: Story = {
 export const Invalid: Story = {
 	render: () => (
 		<TextField isInvalid>
-			<TextFieldLabel>プログラム名</TextFieldLabel>
+			<Label>プログラム名</Label>
 			<TextFieldInput />
 			<TextFieldError>プログラム名を入力してください</TextFieldError>
 		</TextField>
@@ -69,7 +69,7 @@ export const Invalid: Story = {
 export const WithValidation: Story = {
 	render: () => (
 		<TextField isRequired>
-			<TextFieldLabel>プログラム名</TextFieldLabel>
+			<Label>プログラム名</Label>
 			<TextFieldInput />
 			<TextFieldError>
 				{({ validationDetails }) =>
@@ -83,7 +83,7 @@ export const WithValidation: Story = {
 export const Disabled: Story = {
 	render: () => (
 		<TextField isDisabled>
-			<TextFieldLabel>プログラム名</TextFieldLabel>
+			<Label>プログラム名</Label>
 			<TextFieldInput defaultValue="上半身" />
 			<TextFieldDescription>変更できません</TextFieldDescription>
 		</TextField>
@@ -93,7 +93,7 @@ export const Disabled: Story = {
 export const ReadOnly: Story = {
 	render: () => (
 		<TextField isReadOnly>
-			<TextFieldLabel>プログラム名</TextFieldLabel>
+			<Label>プログラム名</Label>
 			<TextFieldInput defaultValue="上半身" />
 		</TextField>
 	),

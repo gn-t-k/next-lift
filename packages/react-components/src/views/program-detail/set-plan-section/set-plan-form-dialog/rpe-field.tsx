@@ -1,6 +1,7 @@
 "use client";
 
 import type { FC } from "react";
+import { Label } from "../../../../primitives/label";
 import {
 	SingleToggleButtonGroup,
 	ToggleButton,
@@ -14,13 +15,7 @@ type Props = {
 
 export const RpeField: FC<Props> = ({ value, onChange }) => (
 	<div className={fieldLayout}>
-		{/* TODO(#799): NumberFieldLabel と同じ base styling を手書きでコピーしている。Label primitive 新設時に置き換える */}
-		<span
-			data-slot="label"
-			className="block select-none font-medium text-base/6 text-fg sm:text-sm/6"
-		>
-			RPE
-		</span>
+		<Label>RPE</Label>
 		<SingleToggleButtonGroup
 			aria-label="RPE"
 			selectedKey={value === null ? null : value.toString()}

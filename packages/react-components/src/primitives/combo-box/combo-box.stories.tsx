@@ -2,13 +2,13 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useMemo, useState } from "react";
 import type { Key } from "react-aria-components";
 import { expect, userEvent, waitFor, within } from "storybook/test";
+import { Label } from "../label/label";
 import {
 	ComboBox,
 	ComboBoxDescription,
 	ComboBoxError,
 	ComboBoxInput,
 	ComboBoxItem,
-	ComboBoxLabel,
 	ComboBoxList,
 } from "./combo-box";
 
@@ -47,7 +47,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
 	render: () => (
 		<ComboBox aria-label="種目を選択">
-			<ComboBoxLabel>種目</ComboBoxLabel>
+			<Label>種目</Label>
 			<ComboBoxInput placeholder="種目名で検索" />
 			<ComboBoxList items={exercises}>
 				{(item) => <ComboBoxItem id={item.id}>{item.name}</ComboBoxItem>}
@@ -59,7 +59,7 @@ export const Default: Story = {
 export const WithDescription: Story = {
 	render: () => (
 		<ComboBox>
-			<ComboBoxLabel>種目</ComboBoxLabel>
+			<Label>種目</Label>
 			<ComboBoxInput placeholder="種目名で検索" />
 			<ComboBoxDescription>
 				一覧から選ぶか、入力して絞り込めます
@@ -75,7 +75,7 @@ export const WithDefaultSelection: Story = {
 	name: "選択済み",
 	render: () => (
 		<ComboBox defaultValue="squat">
-			<ComboBoxLabel>種目</ComboBoxLabel>
+			<Label>種目</Label>
 			<ComboBoxInput placeholder="種目名で検索" />
 			<ComboBoxList items={exercises}>
 				{(item) => <ComboBoxItem id={item.id}>{item.name}</ComboBoxItem>}
@@ -88,7 +88,7 @@ export const Empty: Story = {
 	name: "0件 (まだ種目未登録)",
 	render: () => (
 		<ComboBox>
-			<ComboBoxLabel>種目</ComboBoxLabel>
+			<Label>種目</Label>
 			<ComboBoxInput placeholder="種目名で検索" />
 			<ComboBoxList<{ id: string; name: string }>
 				items={[]}
@@ -108,7 +108,7 @@ export const NoMatches: Story = {
 	name: "検索結果なし",
 	render: () => (
 		<ComboBox defaultInputValue="存在しない種目">
-			<ComboBoxLabel>種目</ComboBoxLabel>
+			<Label>種目</Label>
 			<ComboBoxInput placeholder="種目名で検索" />
 			<ComboBoxList
 				items={exercises}
@@ -127,7 +127,7 @@ export const NoMatches: Story = {
 export const Required: Story = {
 	render: () => (
 		<ComboBox isRequired>
-			<ComboBoxLabel>種目</ComboBoxLabel>
+			<Label>種目</Label>
 			<ComboBoxInput placeholder="種目名で検索" />
 			<ComboBoxList items={exercises}>
 				{(item) => <ComboBoxItem id={item.id}>{item.name}</ComboBoxItem>}
@@ -139,7 +139,7 @@ export const Required: Story = {
 export const Invalid: Story = {
 	render: () => (
 		<ComboBox isInvalid>
-			<ComboBoxLabel>種目</ComboBoxLabel>
+			<Label>種目</Label>
 			<ComboBoxInput placeholder="種目名で検索" />
 			<ComboBoxError>種目を選択してください</ComboBoxError>
 			<ComboBoxList items={exercises}>
@@ -152,7 +152,7 @@ export const Invalid: Story = {
 export const Disabled: Story = {
 	render: () => (
 		<ComboBox isDisabled defaultInputValue="ベンチプレス">
-			<ComboBoxLabel>種目</ComboBoxLabel>
+			<Label>種目</Label>
 			<ComboBoxInput />
 			<ComboBoxList items={exercises}>
 				{(item) => <ComboBoxItem id={item.id}>{item.name}</ComboBoxItem>}
@@ -208,7 +208,7 @@ const CreateNewOptionDemo = () => {
 			onChange={onChange}
 			allowsCustomValue
 		>
-			<ComboBoxLabel>種目</ComboBoxLabel>
+			<Label>種目</Label>
 			<ComboBoxInput placeholder="種目名で検索 / 新規登録" />
 			<ComboBoxDescription>
 				一致する種目がなければ「<strong>○○を登録する</strong>」が候補に出ます

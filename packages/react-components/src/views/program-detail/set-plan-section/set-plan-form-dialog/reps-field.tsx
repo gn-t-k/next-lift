@@ -1,10 +1,10 @@
 "use client";
 
 import type { FC } from "react";
+import { Label } from "../../../../primitives/label";
 import {
 	NumberField,
 	NumberFieldInput,
-	NumberFieldLabel,
 } from "../../../../primitives/number-field";
 import { fieldLayout } from "./field-layout";
 
@@ -23,7 +23,7 @@ export const RepsField: FC<Props> = ({ value, onChange }) => (
 		minValue={0}
 		className={fieldLayout}
 	>
-		<NumberFieldLabel>回数</NumberFieldLabel>
+		<Label>回数</Label>
 		<NumberFieldInput />
 	</NumberField>
 );

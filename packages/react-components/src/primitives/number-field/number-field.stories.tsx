@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { Label } from "../label/label";
 import {
 	NumberField,
 	NumberFieldDescription,
 	NumberFieldError,
 	NumberFieldInput,
-	NumberFieldLabel,
 } from "./number-field";
 
 const meta = {
@@ -29,7 +29,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
 	render: () => (
 		<NumberField defaultValue={10}>
-			<NumberFieldLabel>回数</NumberFieldLabel>
+			<Label>回数</Label>
 			<NumberFieldInput />
 		</NumberField>
 	),
@@ -38,7 +38,7 @@ export const Default: Story = {
 export const WithDescription: Story = {
 	render: () => (
 		<NumberField defaultValue={60} step={2.5}>
-			<NumberFieldLabel>重量</NumberFieldLabel>
+			<Label>重量</Label>
 			<NumberFieldInput />
 			<NumberFieldDescription>
 				+/- ボタンで 2.5kg ずつ調整
@@ -51,7 +51,7 @@ export const WeightWithUnitLabel: Story = {
 	name: "重量 (kg, step=2.5、単位は外側ラベルで表示)",
 	render: () => (
 		<NumberField defaultValue={60} step={2.5} minValue={0}>
-			<NumberFieldLabel>重量 (kg)</NumberFieldLabel>
+			<Label>重量 (kg)</Label>
 			<NumberFieldInput />
 			<NumberFieldDescription>
 				単位はラベルに含めて、入力欄は数値だけにする
@@ -65,7 +65,7 @@ export const WeightWithUnitSuffix: Story = {
 	render: () => (
 		<div className="flex items-end gap-2">
 			<NumberField defaultValue={60} step={2.5} minValue={0}>
-				<NumberFieldLabel>重量</NumberFieldLabel>
+				<Label>重量</Label>
 				<NumberFieldInput />
 			</NumberField>
 			<span className="pb-2 text-fg text-sm">kg</span>
@@ -77,7 +77,7 @@ export const WeightLbsWithUnitLabel: Story = {
 	name: "重量 (lbs, step=5、単位はラベルで表示)",
 	render: () => (
 		<NumberField defaultValue={135} step={5} minValue={0}>
-			<NumberFieldLabel>重量 (lbs)</NumberFieldLabel>
+			<Label>重量 (lbs)</Label>
 			<NumberFieldInput />
 		</NumberField>
 	),
@@ -87,7 +87,7 @@ export const Reps: Story = {
 	name: "回数 (step=1)",
 	render: () => (
 		<NumberField defaultValue={10} step={1} minValue={0}>
-			<NumberFieldLabel>回数</NumberFieldLabel>
+			<Label>回数</Label>
 			<NumberFieldInput />
 			<NumberFieldDescription>1 回ずつ調整</NumberFieldDescription>
 		</NumberField>
@@ -98,7 +98,7 @@ export const WithMinMax: Story = {
 	name: "min / max あり",
 	render: () => (
 		<NumberField defaultValue={5} minValue={0} maxValue={10}>
-			<NumberFieldLabel>セット数</NumberFieldLabel>
+			<Label>セット数</Label>
 			<NumberFieldInput />
 			<NumberFieldDescription>0〜10 の範囲で入力</NumberFieldDescription>
 		</NumberField>
@@ -108,7 +108,7 @@ export const WithMinMax: Story = {
 export const Required: Story = {
 	render: () => (
 		<NumberField isRequired>
-			<NumberFieldLabel>重量</NumberFieldLabel>
+			<Label>重量</Label>
 			<NumberFieldInput />
 		</NumberField>
 	),
@@ -117,7 +117,7 @@ export const Required: Story = {
 export const Invalid: Story = {
 	render: () => (
 		<NumberField isInvalid defaultValue={-10} minValue={0}>
-			<NumberFieldLabel>重量</NumberFieldLabel>
+			<Label>重量</Label>
 			<NumberFieldInput />
 			<NumberFieldError>0 以上の値を入力してください</NumberFieldError>
 		</NumberField>
@@ -127,7 +127,7 @@ export const Invalid: Story = {
 export const Disabled: Story = {
 	render: () => (
 		<NumberField isDisabled defaultValue={60}>
-			<NumberFieldLabel>重量</NumberFieldLabel>
+			<Label>重量</Label>
 			<NumberFieldInput />
 			<NumberFieldDescription>変更できません</NumberFieldDescription>
 		</NumberField>
@@ -137,7 +137,7 @@ export const Disabled: Story = {
 export const ReadOnly: Story = {
 	render: () => (
 		<NumberField isReadOnly defaultValue={60}>
-			<NumberFieldLabel>重量</NumberFieldLabel>
+			<Label>重量</Label>
 			<NumberFieldInput />
 		</NumberField>
 	),
@@ -146,7 +146,7 @@ export const ReadOnly: Story = {
 export const Empty: Story = {
 	render: () => (
 		<NumberField>
-			<NumberFieldLabel>重量</NumberFieldLabel>
+			<Label>重量</Label>
 			<NumberFieldInput placeholder="未入力" />
 			<NumberFieldDescription>
 				値未入力 (paramsなし) のセット計画相当

@@ -6,8 +6,6 @@ import {
 	type FieldErrorProps,
 	Input as InputPrimitive,
 	type InputProps,
-	Label as LabelPrimitive,
-	type LabelProps,
 	Text,
 	TextField as TextFieldPrimitive,
 	type TextFieldProps as TextFieldPrimitiveProps,
@@ -29,19 +27,6 @@ export const TextField: FC<TextFieldPrimitiveProps> = ({
 			"[&>[slot=description]+[data-slot=control]]:mt-2",
 			"[&>[data-slot=control]+[slot=description]]:mt-2",
 			"[&>[data-slot=control]+[role=alert]]:mt-2",
-			"in-disabled:opacity-50",
-			className,
-		)}
-		{...props}
-	/>
-);
-
-export const TextFieldLabel: FC<LabelProps> = ({ className, ...props }) => (
-	<LabelPrimitive
-		data-slot="label"
-		className={cn(
-			"block select-none font-medium text-base/6 text-fg sm:text-sm/6",
-			"in-data-[required=true]:after:ml-1.5 in-data-[required=true]:after:text-danger-subtle-fg in-data-[required=true]:after:content-['*']",
 			"in-disabled:opacity-50",
 			className,
 		)}
