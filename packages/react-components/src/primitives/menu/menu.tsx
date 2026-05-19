@@ -7,7 +7,6 @@ import {
 	Menu as MenuPrimitive,
 	type MenuProps as MenuPrimitiveProps,
 	MenuTrigger as MenuTriggerPrimitive,
-	Popover,
 	type PopoverProps,
 	Separator,
 	type SeparatorProps,
@@ -15,6 +14,7 @@ import {
 import { tv, type VariantProps } from "tailwind-variants";
 import { cx } from "../../libs/primitive";
 import { cn } from "../../libs/utils";
+import { PopoverContent } from "../popover";
 
 export const MenuTrigger = MenuTriggerPrimitive;
 
@@ -27,13 +27,8 @@ export const Menu = <T extends object>({
 	offset = 4,
 	...props
 }: MenuProps<T>) => (
-	<Popover
-		className={cn(
-			"min-w-(--trigger-width) max-w-xs origin-(--trigger-anchor-point)",
-			"rounded-lg border border-border bg-overlay text-overlay-fg shadow-lg outline-hidden",
-			"entering:fade-in entering:animate-in entering:duration-150",
-			"exiting:fade-out exiting:animate-out exiting:duration-100",
-		)}
+	<PopoverContent
+		className="min-w-(--trigger-width) max-w-xs origin-(--trigger-anchor-point)"
 		offset={offset}
 		{...(placement !== undefined ? { placement } : {})}
 	>
@@ -44,7 +39,7 @@ export const Menu = <T extends object>({
 			)}
 			{...props}
 		/>
-	</Popover>
+	</PopoverContent>
 );
 
 const menuItemStyles = tv({

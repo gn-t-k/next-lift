@@ -17,13 +17,13 @@ import {
 	ListBoxItem as ListBoxItemPrimitive,
 	type ListBoxItemProps,
 	type ListBoxProps,
-	Popover,
 	type PopoverProps,
 	Text,
 	type TextProps,
 } from "react-aria-components";
 import { cx } from "../../libs/primitive";
 import { cn } from "../../libs/utils";
+import { PopoverContent } from "../popover";
 
 export const ComboBox = <T extends object>({
 	className,
@@ -104,13 +104,10 @@ export const ComboBoxList = <T extends object>({
 	offset = 4,
 	...props
 }: ComboBoxListProps<T>) => (
-	<Popover
+	<PopoverContent
 		className={cn(
 			"min-w-(--trigger-width) origin-(--trigger-anchor-point)",
 			"max-h-72 overflow-hidden",
-			"rounded-lg border border-border bg-overlay text-overlay-fg shadow-lg outline-hidden",
-			"entering:fade-in entering:animate-in entering:duration-150",
-			"exiting:fade-out exiting:animate-out exiting:duration-100",
 		)}
 		offset={offset}
 		{...(placement !== undefined ? { placement } : {})}
@@ -122,7 +119,7 @@ export const ComboBoxList = <T extends object>({
 			)}
 			{...props}
 		/>
-	</Popover>
+	</PopoverContent>
 );
 
 export const ComboBoxItem = <T extends object>({
