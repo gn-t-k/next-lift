@@ -19,7 +19,7 @@ export const CreateDayCard: FC<Props> = ({ onAddDay }) => {
 				"flex min-h-32 w-full items-center justify-center gap-2 rounded-lg p-6",
 			)}
 		>
-			<PlusIcon className="size-4" />
+			<PlusIcon className="size-4" aria-hidden />
 			<span className="font-medium text-sm">Day を追加</span>
 		</Button>
 	);

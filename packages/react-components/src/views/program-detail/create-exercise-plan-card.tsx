@@ -19,7 +19,7 @@ export const CreateExercisePlanCard: FC<Props> = ({ onAddExercisePlan }) => {
 				"flex w-full items-center justify-center gap-2 rounded-lg p-4",
 			)}
 		>
-			<PlusIcon className="size-4" />
+			<PlusIcon className="size-4" aria-hidden />
 			<span className="font-medium text-sm">種目計画を追加</span>
 		</Button>
 	);
