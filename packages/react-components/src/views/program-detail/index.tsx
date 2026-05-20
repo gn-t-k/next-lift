@@ -18,10 +18,13 @@ type Props = {
 	name: string;
 	meta: string | null;
 	days: Day[];
+	availableExercises: AvailableExercise[];
 	defaultSelectedDayId?: string;
 	onAddDay: () => void;
 	onAddExercisePlan: (dayId: string) => void;
 	onDeleteExercisePlan: (exercisePlanId: string) => void;
+	onSelectExercise: (exercisePlanId: string, exerciseId: string) => void;
+	onCreateExercise: (exercisePlanId: string, name: string) => void;
 	onChangeSetPlan: (setPlanId: string, payload: SetPlanChangePayload) => void;
 	onAddSetPlan: (exercisePlanId: string, payload: SetPlanAddPayload) => void;
 	onDeleteSetPlan: (setPlanId: string) => void;
@@ -40,16 +43,23 @@ type ExercisePlan = ComponentProps<
 	typeof ExercisePlanSection
 >["exercisePlans"][number];
 
+type AvailableExercise = ComponentProps<
+	typeof ExercisePlanSection
+>["availableExercises"][number];
+
 type SetPlan = ComponentProps<typeof SetPlanSection>["setPlans"][number];
 
 export const ProgramDetail: FC<Props> = ({
 	name,
 	meta,
 	days,
+	availableExercises,
 	defaultSelectedDayId,
 	onAddDay,
 	onAddExercisePlan,
 	onDeleteExercisePlan,
+	onSelectExercise,
+	onCreateExercise,
 	onChangeSetPlan,
 	onAddSetPlan,
 	onDeleteSetPlan,
@@ -84,8 +94,11 @@ export const ProgramDetail: FC<Props> = ({
 							<TabPanel key={day.id} id={day.id} className="pt-4">
 								<ExercisePlanSection
 									exercisePlans={day.exercisePlans}
+									availableExercises={availableExercises}
 									onAddExercisePlan={() => onAddExercisePlan(day.id)}
 									onDeleteExercisePlan={onDeleteExercisePlan}
+									onSelectExercise={onSelectExercise}
+									onCreateExercise={onCreateExercise}
 								>
 									{(exercisePlan) =>
 										exercisePlan.exercise !== null ? (
