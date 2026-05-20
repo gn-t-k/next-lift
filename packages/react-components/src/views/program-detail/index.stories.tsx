@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import type { ComponentProps } from "react";
-import { fn } from "storybook/test";
+import type { ComponentProps, FC } from "react";
+import { useState } from "react";
+import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import { Main } from "../../primitives/main";
 import { ProgramDetail } from ".";
 
@@ -158,6 +159,8 @@ const meta = {
 	args: {
 		defaultSelectedDayId: "d1",
 		onAddDay: fn(),
+		onAddExercisePlan: fn(),
+		onDeleteExercisePlan: fn(),
 		onChangeSetPlan: fn(),
 		onAddSetPlan: fn(),
 		onDeleteSetPlan: fn(),
@@ -272,5 +275,164 @@ export const NoDaysDesktop: Story = {
 	},
 	globals: {
 		viewport: { value: "desktop" },
+	},
+};
+
+// 種目計画を全削除した後のエッジケース。設計判断 #61 により通常状態では発生しないが、
+// 削除直後の transient state として ExercisePlanSection が CreateExercisePlanCard のみ表示する空状態。
+export const NoExercisePlansInSelectedDay: Story = {
+	args: {
+		name: "新しいプログラム",
+		meta: null,
+		days: [
+			{
+				id: "d1",
+				label: "Day 1",
+				detailHref: "/programs/p1/days/d1",
+				exercisePlans: [],
+			},
+		],
+	},
+};
+
+export const AddExercisePlanInvokesCallback: Story = {
+	name: "「種目計画を追加」を押すと onAddExercisePlan が選択中の dayId で呼ばれる",
+	args: {
+		name: "新しいプログラム",
+		meta: null,
+		days: [
+			{
+				id: "d1",
+				label: "Day 1",
+				detailHref: "/programs/p1/days/d1",
+				exercisePlans: [],
+			},
+		],
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			canvas.getByRole("button", { name: "種目計画を追加" }),
+		);
+		await waitFor(() => {
+			expect(args.onAddExercisePlan).toHaveBeenCalledWith("d1");
+		});
+	},
+};
+
+// 設計判断 #71 の「初期構造の生成は consumer 責務」を story 上で再現するための stateful wrapper。
+// 種目計画追加時は `exercise: null` + `setPlans: []` の初期構造を生成し、削除時は対象 id を除外する。
+const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
+	days: initialDays,
+	...rest
+}) => {
+	const [days, setDays] = useState(initialDays);
+
+	const handleAddExercisePlan = (dayId: string) => {
+		setDays((prev) =>
+			prev.map((day) =>
+				day.id === dayId
+					? {
+							...day,
+							exercisePlans: [
+								...day.exercisePlans,
+								{
+									id: crypto.randomUUID(),
+									exercise: null,
+									setPlans: [],
+								},
+							],
+						}
+					: day,
+			),
+		);
+	};
+
+	const handleDeleteExercisePlan = (exercisePlanId: string) => {
+		setDays((prev) =>
+			prev.map((day) => ({
+				...day,
+				exercisePlans: day.exercisePlans.filter(
+					(exercisePlan) => exercisePlan.id !== exercisePlanId,
+				),
+			})),
+		);
+	};
+
+	return (
+		<ProgramDetail
+			{...rest}
+			days={days}
+			onAddExercisePlan={handleAddExercisePlan}
+			onDeleteExercisePlan={handleDeleteExercisePlan}
+		/>
+	);
+};
+
+export const ExercisePlanAddDeleteFlow: Story = {
+	name: "種目計画の追加・削除を実体験できる",
+	render: (args) => <StatefulProgramDetail {...args} />,
+	args: {
+		name: "新しいプログラム",
+		meta: null,
+		days: [
+			{
+				id: "d1",
+				label: "Day 1",
+				detailHref: "/programs/p1/days/d1",
+				exercisePlans: [
+					{
+						id: "ep-d1-bench",
+						exercise: benchPress,
+						setPlans: [
+							{
+								id: "sp-d1-bench-1",
+								pattern: "weight-reps",
+								weight: 100,
+								reps: 5,
+							},
+						],
+					},
+				],
+			},
+		],
+	},
+};
+
+export const DeleteExercisePlanInvokesCallback: Story = {
+	name: "削除ボタンを押すと onDeleteExercisePlan が対象 id で呼ばれる",
+	args: {
+		name: "5/3/1 BBB",
+		meta: null,
+		days: [
+			{
+				id: "d1",
+				label: "Day 1",
+				detailHref: "/programs/p1/days/d1",
+				exercisePlans: [
+					{
+						id: "ep-d1-bench",
+						exercise: benchPress,
+						setPlans: [
+							{
+								id: "sp-d1-bench-1",
+								pattern: "weight-reps",
+								weight: 100,
+								reps: 5,
+							},
+						],
+					},
+				],
+			},
+		],
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			canvas.getByRole("button", { name: "ベンチプレスを削除" }),
+		);
+		await waitFor(() => {
+			expect(args.onDeleteExercisePlan).toHaveBeenCalledWith("ep-d1-bench");
+		});
 	},
 };

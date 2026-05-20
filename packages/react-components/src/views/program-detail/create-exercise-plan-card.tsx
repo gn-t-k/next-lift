@@ -7,20 +7,20 @@ import { cn } from "../../libs/utils";
 import { createAffordanceClass } from "../../primitives/create-affordance";
 
 type Props = {
-	onAddDay: () => void;
+	onAddExercisePlan: () => void;
 };
 
-export const CreateDayCard: FC<Props> = ({ onAddDay }) => {
+export const CreateExercisePlanCard: FC<Props> = ({ onAddExercisePlan }) => {
 	return (
 		<Button
-			onPress={onAddDay}
+			onPress={onAddExercisePlan}
 			className={cn(
 				createAffordanceClass,
-				"flex min-h-32 w-full items-center justify-center gap-2 rounded-lg p-6",
+				"flex w-full items-center justify-center gap-2 rounded-lg p-4",
 			)}
 		>
 			<PlusIcon className="size-4" aria-hidden />
-			<span className="font-medium text-sm">Day を追加</span>
+			<span className="font-medium text-sm">種目計画を追加</span>
 		</Button>
 	);
 };

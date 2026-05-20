@@ -20,6 +20,8 @@ type Props = {
 	days: Day[];
 	defaultSelectedDayId?: string;
 	onAddDay: () => void;
+	onAddExercisePlan: (dayId: string) => void;
+	onDeleteExercisePlan: (exercisePlanId: string) => void;
 	onChangeSetPlan: (setPlanId: string, payload: SetPlanChangePayload) => void;
 	onAddSetPlan: (exercisePlanId: string, payload: SetPlanAddPayload) => void;
 	onDeleteSetPlan: (setPlanId: string) => void;
@@ -46,6 +48,8 @@ export const ProgramDetail: FC<Props> = ({
 	days,
 	defaultSelectedDayId,
 	onAddDay,
+	onAddExercisePlan,
+	onDeleteExercisePlan,
 	onChangeSetPlan,
 	onAddSetPlan,
 	onDeleteSetPlan,
@@ -78,7 +82,11 @@ export const ProgramDetail: FC<Props> = ({
 						</ScrollArea>
 						{days.map((day) => (
 							<TabPanel key={day.id} id={day.id} className="pt-4">
-								<ExercisePlanSection exercisePlans={day.exercisePlans}>
+								<ExercisePlanSection
+									exercisePlans={day.exercisePlans}
+									onAddExercisePlan={() => onAddExercisePlan(day.id)}
+									onDeleteExercisePlan={onDeleteExercisePlan}
+								>
 									{(exercisePlan) =>
 										exercisePlan.exercise !== null ? (
 											<SetPlanSection
