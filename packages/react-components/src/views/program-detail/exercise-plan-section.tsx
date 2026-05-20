@@ -1,6 +1,6 @@
 "use client";
 
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 import type { ReactNode } from "react";
 import { Button } from "../../primitives/button";
 import { Heading, Section } from "../../primitives/heading";
@@ -39,8 +39,8 @@ export const ExercisePlanSection = <T extends ExercisePlan>({
 				<ol className="flex flex-col gap-3">
 					{exercisePlans.map((exercisePlan) => (
 						<li key={exercisePlan.id}>
-							<Section className="flex flex-col gap-2 rounded-lg bg-overlay p-3 text-overlay-fg shadow-sm">
-								<header className="flex items-baseline justify-between gap-2 px-1">
+							<Section className="relative flex flex-col gap-2 rounded-lg bg-overlay p-3 text-overlay-fg shadow-sm">
+								<header className="flex items-baseline gap-2 pr-8 pl-1">
 									{exercisePlan.exercise === null ? (
 										<span className="text-muted-fg text-sm">種目を選択</span>
 									) : (
@@ -48,19 +48,16 @@ export const ExercisePlanSection = <T extends ExercisePlan>({
 											{exercisePlan.exercise.name}
 										</Heading>
 									)}
-									<Button
-										intent="plain"
-										size="sq-xs"
-										aria-label={`${exercisePlan.exercise?.name ?? "未選択の種目計画"}を削除`}
-										onPress={() => onDeleteExercisePlan(exercisePlan.id)}
-									>
-										<TrashIcon
-											data-slot="icon"
-											className="size-4"
-											aria-hidden
-										/>
-									</Button>
 								</header>
+								<Button
+									intent="plain"
+									size="sq-xs"
+									aria-label={`${exercisePlan.exercise?.name ?? "未選択の種目計画"}を削除`}
+									onPress={() => onDeleteExercisePlan(exercisePlan.id)}
+									className="absolute top-2 right-2"
+								>
+									<XMarkIcon data-slot="icon" className="size-4" aria-hidden />
+								</Button>
 								{children(exercisePlan)}
 							</Section>
 						</li>
