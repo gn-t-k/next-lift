@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps } from "react";
-import { fn } from "storybook/test";
+import { expect, fn, screen, userEvent, waitFor, within } from "storybook/test";
 import { Main } from "../../primitives/main";
 import { ProgramDetail } from ".";
 
@@ -158,6 +158,8 @@ const meta = {
 	args: {
 		defaultSelectedDayId: "d1",
 		onAddDay: fn(),
+		onAddExercisePlan: fn(),
+		onDeleteExercisePlan: fn(),
 		onChangeSetPlan: fn(),
 		onAddSetPlan: fn(),
 		onDeleteSetPlan: fn(),
@@ -272,5 +274,89 @@ export const NoDaysDesktop: Story = {
 	},
 	globals: {
 		viewport: { value: "desktop" },
+	},
+};
+
+// 種目計画を全削除した後のエッジケース。設計判断 #61 により通常状態では発生しないが、
+// 削除直後の transient state として ExercisePlanSection が CreateExercisePlanCard のみ表示する空状態。
+export const NoExercisePlansInSelectedDay: Story = {
+	args: {
+		name: "新しいプログラム",
+		meta: null,
+		days: [
+			{
+				id: "d1",
+				label: "Day 1",
+				detailHref: "/programs/p1/days/d1",
+				exercisePlans: [],
+			},
+		],
+	},
+};
+
+export const AddExercisePlanInvokesCallback: Story = {
+	name: "「種目計画を追加」を押すと onAddExercisePlan が選択中の dayId で呼ばれる",
+	args: {
+		name: "新しいプログラム",
+		meta: null,
+		days: [
+			{
+				id: "d1",
+				label: "Day 1",
+				detailHref: "/programs/p1/days/d1",
+				exercisePlans: [],
+			},
+		],
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			canvas.getByRole("button", { name: "種目計画を追加" }),
+		);
+		await waitFor(() => {
+			expect(args.onAddExercisePlan).toHaveBeenCalledWith("d1");
+		});
+	},
+};
+
+export const DeleteExercisePlanInvokesCallback: Story = {
+	name: "メニューから「種目計画を削除」を選ぶと onDeleteExercisePlan が対象 id で呼ばれる",
+	args: {
+		name: "5/3/1 BBB",
+		meta: null,
+		days: [
+			{
+				id: "d1",
+				label: "Day 1",
+				detailHref: "/programs/p1/days/d1",
+				exercisePlans: [
+					{
+						id: "ep-d1-bench",
+						exercise: benchPress,
+						setPlans: [
+							{
+								id: "sp-d1-bench-1",
+								pattern: "weight-reps",
+								weight: 100,
+								reps: 5,
+							},
+						],
+					},
+				],
+			},
+		],
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			canvas.getByRole("button", { name: "ベンチプレスの操作" }),
+		);
+		const menu = await screen.findByRole("menu");
+		await userEvent.click(
+			within(menu).getByRole("menuitem", { name: /種目計画を削除/ }),
+		);
+		await waitFor(() => {
+			expect(args.onDeleteExercisePlan).toHaveBeenCalledWith("ep-d1-bench");
+		});
 	},
 };
