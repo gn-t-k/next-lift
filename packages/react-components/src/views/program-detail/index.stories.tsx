@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import type { ComponentProps } from "react";
+import type { ComponentProps, FC } from "react";
+import { useState } from "react";
 import { expect, fn, screen, userEvent, waitFor, within } from "storybook/test";
 import { Main } from "../../primitives/main";
 import { ProgramDetail } from ".";
@@ -316,6 +317,85 @@ export const AddExercisePlanInvokesCallback: Story = {
 		await waitFor(() => {
 			expect(args.onAddExercisePlan).toHaveBeenCalledWith("d1");
 		});
+	},
+};
+
+// 設計判断 #71 の「初期構造の生成は consumer 責務」を story 上で再現するための stateful wrapper。
+// 種目計画追加時は `exercise: null` + `setPlans: []` の初期構造を生成し、削除時は対象 id を除外する。
+const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
+	days: initialDays,
+	...rest
+}) => {
+	const [days, setDays] = useState(initialDays);
+
+	const handleAddExercisePlan = (dayId: string) => {
+		setDays((prev) =>
+			prev.map((day) =>
+				day.id === dayId
+					? {
+							...day,
+							exercisePlans: [
+								...day.exercisePlans,
+								{
+									id: crypto.randomUUID(),
+									exercise: null,
+									setPlans: [],
+								},
+							],
+						}
+					: day,
+			),
+		);
+	};
+
+	const handleDeleteExercisePlan = (exercisePlanId: string) => {
+		setDays((prev) =>
+			prev.map((day) => ({
+				...day,
+				exercisePlans: day.exercisePlans.filter(
+					(exercisePlan) => exercisePlan.id !== exercisePlanId,
+				),
+			})),
+		);
+	};
+
+	return (
+		<ProgramDetail
+			{...rest}
+			days={days}
+			onAddExercisePlan={handleAddExercisePlan}
+			onDeleteExercisePlan={handleDeleteExercisePlan}
+		/>
+	);
+};
+
+export const ExercisePlanAddDeleteFlow: Story = {
+	name: "種目計画の追加・削除を実体験できる",
+	render: (args) => <StatefulProgramDetail {...args} />,
+	args: {
+		name: "新しいプログラム",
+		meta: null,
+		days: [
+			{
+				id: "d1",
+				label: "Day 1",
+				detailHref: "/programs/p1/days/d1",
+				exercisePlans: [
+					{
+						id: "ep-d1-bench",
+						exercise: benchPress,
+						setPlans: [
+							{
+								id: "sp-d1-bench-1",
+								pattern: "weight-reps",
+								weight: 100,
+								reps: 5,
+							},
+						],
+					},
+				],
+			},
+		],
 	},
 };
 
