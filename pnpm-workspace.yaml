@@ -11,7 +11,7 @@ onlyBuiltDependencies:
   - "@op-engineering/op-sqlite"
 
 overrides:
-  esbuild: 0.27.7
+  esbuild: 0.28.0
 
 peerDependencyRules:
   allowedVersions:
