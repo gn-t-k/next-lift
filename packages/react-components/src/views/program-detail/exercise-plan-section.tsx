@@ -1,10 +1,9 @@
 "use client";
 
-import { EllipsisVerticalIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import type { ReactNode } from "react";
 import { Button } from "../../primitives/button";
 import { Heading, Section } from "../../primitives/heading";
-import { Menu, MenuItem, MenuTrigger } from "../../primitives/menu";
 import { CreateExercisePlanCard } from "./create-exercise-plan-card";
 import type { WeightUnit } from "./weight-unit";
 
@@ -49,28 +48,18 @@ export const ExercisePlanSection = <T extends ExercisePlan>({
 											{exercisePlan.exercise.name}
 										</Heading>
 									)}
-									<MenuTrigger>
-										<Button
-											intent="plain"
-											size="sq-xs"
-											aria-label={`${exercisePlan.exercise?.name ?? "未選択の種目計画"}の操作`}
-										>
-											<EllipsisVerticalIcon
-												data-slot="icon"
-												className="size-4"
-												aria-hidden
-											/>
-										</Button>
-										<Menu>
-											<MenuItem
-												intent="danger"
-												onAction={() => onDeleteExercisePlan(exercisePlan.id)}
-											>
-												<TrashIcon className="size-4" aria-hidden />
-												種目計画を削除
-											</MenuItem>
-										</Menu>
-									</MenuTrigger>
+									<Button
+										intent="plain"
+										size="sq-xs"
+										aria-label={`${exercisePlan.exercise?.name ?? "未選択の種目計画"}を削除`}
+										onPress={() => onDeleteExercisePlan(exercisePlan.id)}
+									>
+										<TrashIcon
+											data-slot="icon"
+											className="size-4"
+											aria-hidden
+										/>
+									</Button>
 								</header>
 								{children(exercisePlan)}
 							</Section>

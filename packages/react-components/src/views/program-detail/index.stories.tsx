@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps, FC } from "react";
 import { useState } from "react";
-import { expect, fn, screen, userEvent, waitFor, within } from "storybook/test";
+import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import { Main } from "../../primitives/main";
 import { ProgramDetail } from ".";
 
@@ -400,7 +400,7 @@ export const ExercisePlanAddDeleteFlow: Story = {
 };
 
 export const DeleteExercisePlanInvokesCallback: Story = {
-	name: "メニューから「種目計画を削除」を選ぶと onDeleteExercisePlan が対象 id で呼ばれる",
+	name: "削除ボタンを押すと onDeleteExercisePlan が対象 id で呼ばれる",
 	args: {
 		name: "5/3/1 BBB",
 		meta: null,
@@ -429,11 +429,7 @@ export const DeleteExercisePlanInvokesCallback: Story = {
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
-			canvas.getByRole("button", { name: "ベンチプレスの操作" }),
-		);
-		const menu = await screen.findByRole("menu");
-		await userEvent.click(
-			within(menu).getByRole("menuitem", { name: /種目計画を削除/ }),
+			canvas.getByRole("button", { name: "ベンチプレスを削除" }),
 		);
 		await waitFor(() => {
 			expect(args.onDeleteExercisePlan).toHaveBeenCalledWith("ep-d1-bench");
