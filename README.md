@@ -12,6 +12,21 @@ Next.js / React Native (Expo) / Turso / Drizzle / Better Auth / React Aria Compo
 pnpm install
 ```
 
+### worktree でのセットアップ
+
+`git worktree add` 直後は env ファイル / `.vercel/` / Next.js の `.next/types` が無いため、`pnpm type-check` や `pnpm test` がローカルで落ちる。親リポでログイン済みであれば次のコマンドで一括整備できる。
+
+```sh
+# 親リポ側で一度だけ
+npx vercel pull --yes --environment=preview
+
+# worktree のルートで
+pnpm install
+pnpm setup:worktree
+```
+
+`pnpm setup:worktree` の中身は [worktree 運用ガイド](docs/development/worktree.md) を参照。
+
 ## 開発コマンド
 
 | コマンド | 説明 |

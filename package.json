@@ -14,7 +14,8 @@
 		"type-check": "turbo type-check",
 		"test": "turbo test",
 		"clean": "turbo clean",
-		"worktree:copy-env": "bash .claude/scripts/copy-worktree-env.sh"
+		"worktree:copy-env": "bash .claude/scripts/copy-worktree-env.sh",
+		"setup:worktree": "bash .claude/scripts/setup-worktree.sh"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.15",
