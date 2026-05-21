@@ -19,6 +19,7 @@ const StatefulSelector: FC<ComponentProps<typeof ExerciseSelector>> = ({
 	selectedExerciseId: initialSelectedId,
 	onSelect,
 	onCreateExercise,
+	label,
 }) => {
 	const [exercises, setExercises] = useState(initialExercises);
 	const [selectedId, setSelectedId] = useState(initialSelectedId);
@@ -41,6 +42,7 @@ const StatefulSelector: FC<ComponentProps<typeof ExerciseSelector>> = ({
 			{...(selectedId !== undefined ? { selectedExerciseId: selectedId } : {})}
 			onSelect={handleSelect}
 			onCreateExercise={handleCreate}
+			label={label}
 		/>
 	);
 };
@@ -56,6 +58,7 @@ const meta = {
 		exercises: SAMPLE_EXERCISES,
 		onSelect: fn(),
 		onCreateExercise: fn(),
+		label: "種目を追加",
 	},
 	render: (args) => <StatefulSelector {...args} />,
 	decorators: [
@@ -238,7 +241,7 @@ export const MobileSelectAfterSearch: Story = {
 	globals: { viewport: { value: "mobile" } },
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
-		const trigger = canvas.getByRole("button", { name: /種目を選択/ });
+		const trigger = canvas.getByRole("button", { name: /種目を追加/ });
 
 		await userEvent.click(trigger);
 		await waitFor(() => {
@@ -267,7 +270,7 @@ export const MobileCreateAfterSearch: Story = {
 	globals: { viewport: { value: "mobile" } },
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
-		const trigger = canvas.getByRole("button", { name: /種目を選択/ });
+		const trigger = canvas.getByRole("button", { name: /種目を追加/ });
 
 		await userEvent.click(trigger);
 		await waitFor(() => {
@@ -318,7 +321,7 @@ export const MobilePanelHeightStable: Story = {
 	globals: { viewport: { value: "mobile" } },
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		const trigger = canvas.getByRole("button", { name: /種目を選択/ });
+		const trigger = canvas.getByRole("button", { name: /種目を追加/ });
 
 		await userEvent.click(trigger);
 		await waitFor(() => {
@@ -349,7 +352,7 @@ export const MobileEmptyList: Story = {
 	globals: { viewport: { value: "mobile" } },
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
-		const trigger = canvas.getByRole("button", { name: /種目を選択/ });
+		const trigger = canvas.getByRole("button", { name: /種目を追加/ });
 
 		await userEvent.click(trigger);
 		await waitFor(() => {
@@ -397,6 +400,7 @@ const InteractiveDemo = () => {
 					: {})}
 				onSelect={setSelectedId}
 				onCreateExercise={handleCreate}
+				label="種目を追加"
 			/>
 			<p className="text-muted-fg text-sm">
 				選択中: <span className="text-fg">{selectedName ?? "-"}</span>

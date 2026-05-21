@@ -1,23 +1,25 @@
 "use client";
 
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { Button } from "../../primitives/button";
 import { Heading, Section } from "../../primitives/heading";
-import { CreateExercisePlanCard } from "./create-exercise-plan-card";
+import { ExerciseSelector } from "../exercise-selector";
 import type { WeightUnit } from "./weight-unit";
 
 // T で caller 側の追加フィールド（setPlans 等）を保持し、children 関数に渡せるようにする
 type Props<T extends ExercisePlan> = {
 	exercisePlans: T[];
-	onAddExercisePlan: () => void;
+	availableExercises: ComponentProps<typeof ExerciseSelector>["exercises"];
+	onAddExercisePlanWithSelectedExercise: (exerciseId: string) => void;
+	onAddExercisePlanWithNewExercise: (name: string) => void;
 	onDeleteExercisePlan: (exercisePlanId: string) => void;
 	children: (exercisePlan: T) => ReactNode;
 };
 
 type ExercisePlan = {
 	id: string;
-	exercise: Exercise | null;
+	exercise: Exercise;
 };
 
 type Exercise = {
@@ -29,7 +31,9 @@ type Exercise = {
 
 export const ExercisePlanSection = <T extends ExercisePlan>({
 	exercisePlans,
-	onAddExercisePlan,
+	availableExercises,
+	onAddExercisePlanWithSelectedExercise,
+	onAddExercisePlanWithNewExercise,
 	onDeleteExercisePlan,
 	children,
 }: Props<T>): ReactNode => {
@@ -40,19 +44,15 @@ export const ExercisePlanSection = <T extends ExercisePlan>({
 					{exercisePlans.map((exercisePlan) => (
 						<li key={exercisePlan.id}>
 							<Section className="relative flex flex-col gap-2 rounded-lg bg-overlay p-3 text-overlay-fg shadow-sm">
-								<header className="flex items-baseline gap-2 pr-8 pl-1">
-									{exercisePlan.exercise === null ? (
-										<span className="text-muted-fg text-sm">種目を選択</span>
-									) : (
-										<Heading className="font-medium text-base">
-											{exercisePlan.exercise.name}
-										</Heading>
-									)}
+								<header className="pr-8 pl-1">
+									<Heading className="font-medium text-base">
+										{exercisePlan.exercise.name}
+									</Heading>
 								</header>
 								<Button
 									intent="plain"
 									size="sq-xs"
-									aria-label={`${exercisePlan.exercise?.name ?? "未選択の種目計画"}を削除`}
+									aria-label={`${exercisePlan.exercise.name}を削除`}
 									onPress={() => onDeleteExercisePlan(exercisePlan.id)}
 									className="absolute top-2 right-2"
 								>
@@ -64,7 +64,12 @@ export const ExercisePlanSection = <T extends ExercisePlan>({
 					))}
 				</ol>
 			)}
-			<CreateExercisePlanCard onAddExercisePlan={onAddExercisePlan} />
+			<ExerciseSelector
+				exercises={availableExercises}
+				onSelect={onAddExercisePlanWithSelectedExercise}
+				onCreateExercise={onAddExercisePlanWithNewExercise}
+				label="種目を追加"
+			/>
 		</div>
 	);
 };

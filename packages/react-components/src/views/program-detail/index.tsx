@@ -18,13 +18,19 @@ type Props = {
 	name: string;
 	meta: string | null;
 	days: Day[];
+	availableExercises: AvailableExercise[];
 	defaultSelectedDayId?: string;
 	onAddDay: () => void;
-	onAddExercisePlan: (dayId: string) => void;
+	onAddExercisePlanWithSelectedExercise: (
+		dayId: string,
+		exerciseId: string,
+	) => void;
+	onAddExercisePlanWithNewExercise: (dayId: string, name: string) => void;
 	onDeleteExercisePlan: (exercisePlanId: string) => void;
 	onChangeSetPlan: (setPlanId: string, payload: SetPlanChangePayload) => void;
 	onAddSetPlan: (exercisePlanId: string, payload: SetPlanAddPayload) => void;
 	onDeleteSetPlan: (setPlanId: string) => void;
+	lastAddedExercisePlanId?: string | undefined;
 };
 
 type Day = {
@@ -40,19 +46,26 @@ type ExercisePlan = ComponentProps<
 	typeof ExercisePlanSection
 >["exercisePlans"][number];
 
+type AvailableExercise = ComponentProps<
+	typeof ExercisePlanSection
+>["availableExercises"][number];
+
 type SetPlan = ComponentProps<typeof SetPlanSection>["setPlans"][number];
 
 export const ProgramDetail: FC<Props> = ({
 	name,
 	meta,
 	days,
+	availableExercises,
 	defaultSelectedDayId,
 	onAddDay,
-	onAddExercisePlan,
+	onAddExercisePlanWithSelectedExercise,
+	onAddExercisePlanWithNewExercise,
 	onDeleteExercisePlan,
 	onChangeSetPlan,
 	onAddSetPlan,
 	onDeleteSetPlan,
+	lastAddedExercisePlanId,
 }) => {
 	const tabsProps =
 		defaultSelectedDayId !== undefined
@@ -84,24 +97,31 @@ export const ProgramDetail: FC<Props> = ({
 							<TabPanel key={day.id} id={day.id} className="pt-4">
 								<ExercisePlanSection
 									exercisePlans={day.exercisePlans}
-									onAddExercisePlan={() => onAddExercisePlan(day.id)}
+									availableExercises={availableExercises}
+									onAddExercisePlanWithSelectedExercise={(exerciseId) =>
+										onAddExercisePlanWithSelectedExercise(day.id, exerciseId)
+									}
+									onAddExercisePlanWithNewExercise={(exerciseName) =>
+										onAddExercisePlanWithNewExercise(day.id, exerciseName)
+									}
 									onDeleteExercisePlan={onDeleteExercisePlan}
 								>
-									{(exercisePlan) =>
-										exercisePlan.exercise !== null ? (
-											<SetPlanSection
-												setPlans={exercisePlan.setPlans}
-												weightUnit={exercisePlan.exercise.weightUnit}
-												weightStep={exercisePlan.exercise.weightStep}
-												exerciseName={exercisePlan.exercise.name}
-												onChangeSetPlan={onChangeSetPlan}
-												onAddSetPlan={(payload) =>
-													onAddSetPlan(exercisePlan.id, payload)
-												}
-												onDeleteSetPlan={onDeleteSetPlan}
-											/>
-										) : null
-									}
+									{(exercisePlan) => (
+										<SetPlanSection
+											setPlans={exercisePlan.setPlans}
+											weightUnit={exercisePlan.exercise.weightUnit}
+											weightStep={exercisePlan.exercise.weightStep}
+											exerciseName={exercisePlan.exercise.name}
+											onChangeSetPlan={onChangeSetPlan}
+											onAddSetPlan={(payload) =>
+												onAddSetPlan(exercisePlan.id, payload)
+											}
+											onDeleteSetPlan={onDeleteSetPlan}
+											autoFocusAddTrigger={
+												exercisePlan.id === lastAddedExercisePlanId
+											}
+										/>
+									)}
 								</ExercisePlanSection>
 							</TabPanel>
 						))}
