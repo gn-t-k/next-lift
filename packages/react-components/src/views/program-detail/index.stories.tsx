@@ -130,6 +130,7 @@ const meta = {
 			</Main>
 		),
 	],
+	render: (args) => <StatefulProgramDetail {...args} />,
 } satisfies Meta<typeof ProgramDetail>;
 
 export default meta;
@@ -197,8 +198,10 @@ export const NoExercisePlansInSelectedDay: Story = {
 const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 	days: initialDays,
 	availableExercises: initialAvailableExercises,
+	onAddDay,
 	onAddExercisePlanWithSelectedExercise,
 	onAddExercisePlanWithNewExercise,
+	onDeleteExercisePlan,
 	onAddSetPlan,
 	onChangeSetPlan,
 	onDeleteSetPlan,
@@ -211,6 +214,20 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 	const [lastAddedExercisePlanId, setLastAddedExercisePlanId] = useState<
 		string | undefined
 	>(undefined);
+
+	const handleAddDay = () => {
+		const id = crypto.randomUUID();
+		setDays((prev) => [
+			...prev,
+			{
+				id,
+				label: `Day ${prev.length + 1}`,
+				detailHref: `/programs/p1/days/${id}`,
+				exercisePlans: [],
+			},
+		]);
+		onAddDay();
+	};
 
 	const handleAddExercisePlanWithSelectedExercise = (
 		dayId: string,
@@ -287,6 +304,7 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 				),
 			})),
 		);
+		onDeleteExercisePlan(exercisePlanId);
 	};
 
 	const handleAddSetPlan: ComponentProps<typeof ProgramDetail>["onAddSetPlan"] =
@@ -347,6 +365,7 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 			{...rest}
 			days={days}
 			availableExercises={availableExercises}
+			onAddDay={handleAddDay}
 			onAddExercisePlanWithSelectedExercise={
 				handleAddExercisePlanWithSelectedExercise
 			}
@@ -362,7 +381,6 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 
 export const ExercisePlanAddDeleteFlow: Story = {
 	name: "種目計画の追加・削除を実体験できる",
-	render: (args) => <StatefulProgramDetail {...args} />,
 	args: {
 		name: "新しいプログラム",
 		meta: null,
