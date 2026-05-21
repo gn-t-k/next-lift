@@ -7,6 +7,7 @@ type Props = {
 	selectedExerciseId?: string;
 	onSelect: (exerciseId: string) => void;
 	onCreateExercise: (name: string) => void;
+	label: string;
 };
 
 export const ExerciseSelector: FC<Props> = (props) => {

@@ -21,13 +21,16 @@ type Props = {
 	availableExercises: AvailableExercise[];
 	defaultSelectedDayId?: string;
 	onAddDay: () => void;
-	onAddExercisePlan: (dayId: string) => void;
+	onAddExercisePlanWithSelectedExercise: (
+		dayId: string,
+		exerciseId: string,
+	) => void;
+	onAddExercisePlanWithNewExercise: (dayId: string, name: string) => void;
 	onDeleteExercisePlan: (exercisePlanId: string) => void;
-	onSelectExercise: (exercisePlanId: string, exerciseId: string) => void;
-	onCreateExercise: (exercisePlanId: string, name: string) => void;
 	onChangeSetPlan: (setPlanId: string, payload: SetPlanChangePayload) => void;
 	onAddSetPlan: (exercisePlanId: string, payload: SetPlanAddPayload) => void;
 	onDeleteSetPlan: (setPlanId: string) => void;
+	lastAddedExercisePlanId?: string | undefined;
 };
 
 type Day = {
@@ -56,13 +59,13 @@ export const ProgramDetail: FC<Props> = ({
 	availableExercises,
 	defaultSelectedDayId,
 	onAddDay,
-	onAddExercisePlan,
+	onAddExercisePlanWithSelectedExercise,
+	onAddExercisePlanWithNewExercise,
 	onDeleteExercisePlan,
-	onSelectExercise,
-	onCreateExercise,
 	onChangeSetPlan,
 	onAddSetPlan,
 	onDeleteSetPlan,
+	lastAddedExercisePlanId,
 }) => {
 	const tabsProps =
 		defaultSelectedDayId !== undefined
@@ -95,26 +98,30 @@ export const ProgramDetail: FC<Props> = ({
 								<ExercisePlanSection
 									exercisePlans={day.exercisePlans}
 									availableExercises={availableExercises}
-									onAddExercisePlan={() => onAddExercisePlan(day.id)}
-									onDeleteExercisePlan={onDeleteExercisePlan}
-									onSelectExercise={onSelectExercise}
-									onCreateExercise={onCreateExercise}
-								>
-									{(exercisePlan) =>
-										exercisePlan.exercise !== null ? (
-											<SetPlanSection
-												setPlans={exercisePlan.setPlans}
-												weightUnit={exercisePlan.exercise.weightUnit}
-												weightStep={exercisePlan.exercise.weightStep}
-												exerciseName={exercisePlan.exercise.name}
-												onChangeSetPlan={onChangeSetPlan}
-												onAddSetPlan={(payload) =>
-													onAddSetPlan(exercisePlan.id, payload)
-												}
-												onDeleteSetPlan={onDeleteSetPlan}
-											/>
-										) : null
+									onAddExercisePlanWithSelectedExercise={(exerciseId) =>
+										onAddExercisePlanWithSelectedExercise(day.id, exerciseId)
 									}
+									onAddExercisePlanWithNewExercise={(exerciseName) =>
+										onAddExercisePlanWithNewExercise(day.id, exerciseName)
+									}
+									onDeleteExercisePlan={onDeleteExercisePlan}
+								>
+									{(exercisePlan) => (
+										<SetPlanSection
+											setPlans={exercisePlan.setPlans}
+											weightUnit={exercisePlan.exercise.weightUnit}
+											weightStep={exercisePlan.exercise.weightStep}
+											exerciseName={exercisePlan.exercise.name}
+											onChangeSetPlan={onChangeSetPlan}
+											onAddSetPlan={(payload) =>
+												onAddSetPlan(exercisePlan.id, payload)
+											}
+											onDeleteSetPlan={onDeleteSetPlan}
+											autoFocusAddTrigger={
+												exercisePlan.id === lastAddedExercisePlanId
+											}
+										/>
+									)}
 								</ExercisePlanSection>
 							</TabPanel>
 						))}

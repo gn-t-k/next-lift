@@ -172,10 +172,9 @@ const meta = {
 		defaultSelectedDayId: "d1",
 		availableExercises: SAMPLE_AVAILABLE_EXERCISES,
 		onAddDay: fn(),
-		onAddExercisePlan: fn(),
+		onAddExercisePlanWithSelectedExercise: fn(),
+		onAddExercisePlanWithNewExercise: fn(),
 		onDeleteExercisePlan: fn(),
-		onSelectExercise: fn(),
-		onCreateExercise: fn(),
 		onChangeSetPlan: fn(),
 		onAddSetPlan: fn(),
 		onDeleteSetPlan: fn(),
@@ -213,31 +212,6 @@ export const LongProgramName: Story = {
 		name: "Wendler 5/3/1 Boring But Big with Joker Sets and First Set Last AMRAP Conjugate Method (3-day split, 16-week mesocycle, deload weeks included) 詳細メソッド付きの上級者向け長期プログラム（完全版）",
 		meta: "メインリフトは 5/3/1 で、補助は BBB（Boring But Big）。\nDeload week は 4 週ごとに挿入する。",
 		days: SAMPLE_DAYS,
-	},
-};
-
-// 種目計画追加直後の transient state（exercise: null + セット計画ゼロ件）。
-// 設計判断 #68 で空セット placeholder は廃止し、種目計画追加直後はセット計画ゼロ件で
-// 「セットを追加」アフォーダンスのみが見える状態になる。
-// 種目選択 picker は exercise === null 行に常時表示され、ユーザーがフォーカス/タップで起動する。
-export const AfterAddingExercisePlan: Story = {
-	args: {
-		name: "新しいプログラム",
-		meta: null,
-		days: [
-			{
-				id: "d1",
-				label: "Day 1",
-				detailHref: "/programs/p1/days/d1",
-				exercisePlans: [
-					{
-						id: "ep-init",
-						exercise: null,
-						setPlans: [],
-					},
-				],
-			},
-		],
 	},
 };
 
@@ -294,7 +268,7 @@ export const NoDaysDesktop: Story = {
 };
 
 // 種目計画を全削除した後のエッジケース。設計判断 #61 により通常状態では発生しないが、
-// 削除直後の transient state として ExercisePlanSection が CreateExercisePlanCard のみ表示する空状態。
+// 削除直後の transient state として ExercisePlanSection が ExercisePlanPickerCard のみ表示する空状態。
 export const NoExercisePlansInSelectedDay: Story = {
 	args: {
 		name: "新しいプログラム",
@@ -310,47 +284,36 @@ export const NoExercisePlansInSelectedDay: Story = {
 	},
 };
 
-export const AddExercisePlanInvokesCallback: Story = {
-	name: "「種目計画を追加」を押すと onAddExercisePlan が選択中の dayId で呼ばれる",
-	args: {
-		name: "新しいプログラム",
-		meta: null,
-		days: [
-			{
-				id: "d1",
-				label: "Day 1",
-				detailHref: "/programs/p1/days/d1",
-				exercisePlans: [],
-			},
-		],
-	},
-	play: async ({ canvasElement, args }) => {
-		const canvas = within(canvasElement);
-		await userEvent.click(
-			canvas.getByRole("button", { name: "種目計画を追加" }),
-		);
-		await waitFor(() => {
-			expect(args.onAddExercisePlan).toHaveBeenCalledWith("d1");
-		});
-	},
-};
-
 // 設計判断 #71 の「初期構造の生成は consumer 責務」を story 上で再現するための stateful wrapper。
-// 種目計画追加時は `exercise: null` + `setPlans: []` の初期構造を生成し、削除時は対象 id を除外する。
-// 種目選択 / 新規登録時は exercisePlan.exercise を更新し、未登録種目は availableExercises にも追加する。
+// 種目選択 / 新規登録時はその exercise を含む種目計画を新規作成する（exercise: null の transient state は持たない）。
+// 未登録種目は availableExercises にも追加する。削除時は対象 id を除外する。
+// 追加直後の種目計画は lastAddedExercisePlanId に記録し、SetPlanFormDialog を自動オープン
+// （種目選択 → 即セット定義の流れを途切れさせない）。
 const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 	days: initialDays,
 	availableExercises: initialAvailableExercises,
-	onSelectExercise,
-	onCreateExercise,
+	onAddExercisePlanWithSelectedExercise,
+	onAddExercisePlanWithNewExercise,
+	onAddSetPlan,
+	onChangeSetPlan,
+	onDeleteSetPlan,
 	...rest
 }) => {
 	const [days, setDays] = useState(initialDays);
 	const [availableExercises, setAvailableExercises] = useState(
 		initialAvailableExercises,
 	);
+	const [lastAddedExercisePlanId, setLastAddedExercisePlanId] = useState<
+		string | undefined
+	>(undefined);
 
-	const handleAddExercisePlan = (dayId: string) => {
+	const handleAddExercisePlanWithSelectedExercise = (
+		dayId: string,
+		exerciseId: string,
+	) => {
+		const selected = availableExercises.find((e) => e.id === exerciseId);
+		if (selected === undefined) return;
+		const newExercisePlanId = crypto.randomUUID();
 		setDays((prev) =>
 			prev.map((day) =>
 				day.id === dayId
@@ -359,8 +322,13 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 							exercisePlans: [
 								...day.exercisePlans,
 								{
-									id: crypto.randomUUID(),
-									exercise: null,
+									id: newExercisePlanId,
+									exercise: {
+										id: selected.id,
+										name: selected.name,
+										weightUnit: "kg",
+										weightStep: 2.5,
+									},
 									setPlans: [],
 								},
 							],
@@ -368,6 +336,41 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 					: day,
 			),
 		);
+		setLastAddedExercisePlanId(newExercisePlanId);
+		onAddExercisePlanWithSelectedExercise(dayId, exerciseId);
+	};
+
+	const handleAddExercisePlanWithNewExercise = (
+		dayId: string,
+		name: string,
+	) => {
+		const id = `ex-new-${Date.now()}`;
+		const newExercisePlanId = crypto.randomUUID();
+		setAvailableExercises((prev) => [...prev, { id, name }]);
+		setDays((prev) =>
+			prev.map((day) =>
+				day.id === dayId
+					? {
+							...day,
+							exercisePlans: [
+								...day.exercisePlans,
+								{
+									id: newExercisePlanId,
+									exercise: {
+										id,
+										name,
+										weightUnit: "kg",
+										weightStep: 2.5,
+									},
+									setPlans: [],
+								},
+							],
+						}
+					: day,
+			),
+		);
+		setLastAddedExercisePlanId(newExercisePlanId);
+		onAddExercisePlanWithNewExercise(dayId, name);
 	};
 
 	const handleDeleteExercisePlan = (exercisePlanId: string) => {
@@ -381,52 +384,57 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 		);
 	};
 
-	const handleSelectExercise = (exercisePlanId: string, exerciseId: string) => {
-		const selected = availableExercises.find((e) => e.id === exerciseId);
-		if (selected === undefined) return;
+	const handleAddSetPlan: ComponentProps<typeof ProgramDetail>["onAddSetPlan"] =
+		(exercisePlanId, payload) => {
+			setDays((prev) =>
+				prev.map((day) => ({
+					...day,
+					exercisePlans: day.exercisePlans.map((exercisePlan) =>
+						exercisePlan.id === exercisePlanId
+							? {
+									...exercisePlan,
+									setPlans: [
+										...exercisePlan.setPlans,
+										{ id: crypto.randomUUID(), ...payload },
+									],
+								}
+							: exercisePlan,
+					),
+				})),
+			);
+			onAddSetPlan(exercisePlanId, payload);
+		};
+
+	const handleChangeSetPlan: ComponentProps<
+		typeof ProgramDetail
+	>["onChangeSetPlan"] = (setPlanId, payload) => {
 		setDays((prev) =>
 			prev.map((day) => ({
 				...day,
-				exercisePlans: day.exercisePlans.map((exercisePlan) =>
-					exercisePlan.id === exercisePlanId
-						? {
-								...exercisePlan,
-								exercise: {
-									id: selected.id,
-									name: selected.name,
-									weightUnit: "kg",
-									weightStep: 2.5,
-								},
-							}
-						: exercisePlan,
-				),
+				exercisePlans: day.exercisePlans.map((exercisePlan) => ({
+					...exercisePlan,
+					setPlans: exercisePlan.setPlans.map((setPlan) =>
+						setPlan.id === setPlanId ? { id: setPlanId, ...payload } : setPlan,
+					),
+				})),
 			})),
 		);
-		onSelectExercise(exercisePlanId, exerciseId);
+		onChangeSetPlan(setPlanId, payload);
 	};
 
-	const handleCreateExercise = (exercisePlanId: string, name: string) => {
-		const id = `ex-new-${Date.now()}`;
-		setAvailableExercises((prev) => [...prev, { id, name }]);
+	const handleDeleteSetPlan = (setPlanId: string) => {
 		setDays((prev) =>
 			prev.map((day) => ({
 				...day,
-				exercisePlans: day.exercisePlans.map((exercisePlan) =>
-					exercisePlan.id === exercisePlanId
-						? {
-								...exercisePlan,
-								exercise: {
-									id,
-									name,
-									weightUnit: "kg",
-									weightStep: 2.5,
-								},
-							}
-						: exercisePlan,
-				),
+				exercisePlans: day.exercisePlans.map((exercisePlan) => ({
+					...exercisePlan,
+					setPlans: exercisePlan.setPlans.filter(
+						(setPlan) => setPlan.id !== setPlanId,
+					),
+				})),
 			})),
 		);
-		onCreateExercise(exercisePlanId, name);
+		onDeleteSetPlan(setPlanId);
 	};
 
 	return (
@@ -434,10 +442,15 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 			{...rest}
 			days={days}
 			availableExercises={availableExercises}
-			onAddExercisePlan={handleAddExercisePlan}
+			onAddExercisePlanWithSelectedExercise={
+				handleAddExercisePlanWithSelectedExercise
+			}
+			onAddExercisePlanWithNewExercise={handleAddExercisePlanWithNewExercise}
 			onDeleteExercisePlan={handleDeleteExercisePlan}
-			onSelectExercise={handleSelectExercise}
-			onCreateExercise={handleCreateExercise}
+			onAddSetPlan={handleAddSetPlan}
+			onChangeSetPlan={handleChangeSetPlan}
+			onDeleteSetPlan={handleDeleteSetPlan}
+			lastAddedExercisePlanId={lastAddedExercisePlanId}
 		/>
 	);
 };
@@ -510,13 +523,12 @@ export const DeleteExercisePlanInvokesCallback: Story = {
 	},
 };
 
-// 種目計画追加 → 種目選択 picker (広画面 = ComboBox) で種目を選ぶ統合フロー。
+// picker (広画面 = ComboBox) で既存の種目を選ぶと、その種目で種目計画が追加される。
 // ExerciseSelector 自体の振る舞いは exercise-selector.stories.tsx で網羅しているため、
-// ここでは「ExercisePlanSection から picker が呼び出され、選択が伝搬する」点だけ確認する。
-export const SelectExerciseAfterAdding: Story = {
-	name: "種目計画追加後に picker から種目を選ぶと onSelectExercise が伝搬する",
+// ここでは「ExercisePlanSection の picker から選択が伝搬する」点だけ確認する。
+export const AddExercisePlanBySelectingExercise: Story = {
+	name: "picker から既存種目を選ぶと onAddExercisePlanWithSelectedExercise が呼ばれる",
 	globals: { viewport: { value: "desktop" } },
-	render: (args) => <StatefulProgramDetail {...args} />,
 	args: {
 		name: "新しいプログラム",
 		meta: null,
@@ -531,15 +543,11 @@ export const SelectExerciseAfterAdding: Story = {
 	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
-		await userEvent.click(
-			canvas.getByRole("button", { name: "種目計画を追加" }),
-		);
-
 		const combobox = await waitFor(() => {
-			const input = canvasElement.querySelector<HTMLInputElement>(
-				'input[role="combobox"]',
-			);
-			if (input === null) throw new Error("combobox not found");
+			const input = canvas.getByRole("combobox", { name: "種目を追加" });
+			if (!(input instanceof HTMLInputElement)) {
+				throw new Error("combobox is not an input");
+			}
 			return input;
 		});
 		await userEvent.click(combobox);
@@ -555,8 +563,8 @@ export const SelectExerciseAfterAdding: Story = {
 		await userEvent.click(option);
 
 		await waitFor(() => {
-			expect(args.onSelectExercise).toHaveBeenCalledWith(
-				expect.any(String),
+			expect(args.onAddExercisePlanWithSelectedExercise).toHaveBeenCalledWith(
+				"d1",
 				"ex-bench",
 			);
 		});

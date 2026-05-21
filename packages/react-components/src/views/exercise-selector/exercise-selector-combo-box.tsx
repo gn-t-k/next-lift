@@ -20,7 +20,7 @@ import {
 
 export const ExerciseSelectorComboBox: FC<
 	ComponentProps<typeof ExerciseSelector>
-> = ({ exercises, selectedExerciseId, onSelect, onCreateExercise }) => {
+> = ({ exercises, selectedExerciseId, onSelect, onCreateExercise, label }) => {
 	const selectedName =
 		exercises.find((exercise) => exercise.id === selectedExerciseId)?.name ??
 		"";
@@ -63,7 +63,7 @@ export const ExerciseSelectorComboBox: FC<
 
 	return (
 		<ComboBox
-			aria-label="種目を選択"
+			aria-label={label}
 			menuTrigger="focus"
 			items={items}
 			inputValue={inputValue}
@@ -72,7 +72,7 @@ export const ExerciseSelectorComboBox: FC<
 			value={selectedExerciseId ?? null}
 			onChange={handleChange}
 		>
-			<ComboBoxInput placeholder="種目を選択" />
+			<ComboBoxInput placeholder={label} />
 			<ComboBoxList<ListItem>>
 				{(item) => {
 					if (item.kind === "create") {

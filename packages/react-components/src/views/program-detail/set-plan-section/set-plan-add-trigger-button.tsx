@@ -6,8 +6,13 @@ import { Button as AriaButton } from "react-aria-components";
 import { cn } from "../../../libs/utils";
 import { createAffordanceClass } from "../../../primitives/create-affordance";
 
-export const SetPlanAddTriggerButton: FC = () => (
+type Props = {
+	autoFocus?: boolean | undefined;
+};
+
+export const SetPlanAddTriggerButton: FC<Props> = ({ autoFocus }) => (
 	<AriaButton
+		autoFocus={autoFocus ?? false}
 		className={cn(
 			createAffordanceClass,
 			"flex flex-1 items-baseline gap-3 rounded-md px-[calc(--spacing(3)-1px)] py-[calc(--spacing(2)-1px)] text-left",
