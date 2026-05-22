@@ -25,13 +25,6 @@ const inclineDumbbell: ExercisePlan["exercise"] = {
 	weightStep: 1,
 };
 
-const tricepsPushdown: ExercisePlan["exercise"] = {
-	id: "ex-pushdown",
-	name: "トライセプスプッシュダウン",
-	weightUnit: "kg",
-	weightStep: 2.5,
-};
-
 const squat: ExercisePlan["exercise"] = {
 	id: "ex-squat",
 	name: "バックスクワット",
@@ -42,7 +35,6 @@ const squat: ExercisePlan["exercise"] = {
 const SAMPLE_AVAILABLE_EXERCISES: AvailableExercise[] = [
 	{ id: "ex-bench", name: "ベンチプレス" },
 	{ id: "ex-incline-db", name: "インクラインダンベルプレス" },
-	{ id: "ex-pushdown", name: "トライセプスプッシュダウン" },
 	{ id: "ex-squat", name: "バックスクワット" },
 	{ id: "ex-deadlift", name: "デッドリフト" },
 	{ id: "ex-overhead-press", name: "オーバーヘッドプレス" },
@@ -70,12 +62,6 @@ const SAMPLE_DAYS: Day[] = [
 						weight: 100,
 						reps: 5,
 					},
-					{
-						id: "sp-d1-bench-3",
-						pattern: "weight-rpe",
-						weight: 100,
-						rpe: 9,
-					},
 				],
 			},
 			{
@@ -87,30 +73,6 @@ const SAMPLE_DAYS: Day[] = [
 						pattern: "weight-reps",
 						weight: 30,
 						reps: 10,
-					},
-					{
-						id: "sp-d1-incline-2",
-						pattern: "weight-reps",
-						weight: 30,
-						reps: 10,
-					},
-				],
-			},
-			{
-				id: "ep-d1-pushdown",
-				exercise: tricepsPushdown,
-				setPlans: [
-					{
-						id: "sp-d1-pushdown-1",
-						pattern: "reps-rpe",
-						reps: 12,
-						rpe: 8,
-					},
-					{
-						id: "sp-d1-pushdown-2",
-						pattern: "reps-rpe",
-						reps: 12,
-						rpe: 8,
 					},
 				],
 			},
@@ -131,18 +93,6 @@ const SAMPLE_DAYS: Day[] = [
 						weight: 140,
 						reps: 3,
 					},
-					{
-						id: "sp-d2-squat-2",
-						pattern: "weight-reps",
-						weight: 140,
-						reps: 3,
-					},
-					{
-						id: "sp-d2-squat-3",
-						pattern: "weight-reps",
-						weight: 140,
-						reps: 3,
-					},
 				],
 			},
 		],
@@ -151,12 +101,6 @@ const SAMPLE_DAYS: Day[] = [
 		id: "d3",
 		label: "Day 3: 上半身プル",
 		detailHref: "/programs/p1/days/d3",
-		exercisePlans: [],
-	},
-	{
-		id: "d4",
-		label: "Day 4: コンディショニング",
-		detailHref: "/programs/p1/days/d4",
 		exercisePlans: [],
 	},
 ];
@@ -186,12 +130,14 @@ const meta = {
 			</Main>
 		),
 	],
+	render: (args) => <StatefulProgramDetail {...args} />,
 } satisfies Meta<typeof ProgramDetail>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const MultipleDays: Story = {
+	name: "複数 Day",
 	args: {
 		name: "5/3/1 BBB",
 		meta: "メインリフトは 5/3/1 で、補助は BBB（Boring But Big）。\nDeload week は 4 週ごとに挿入する。",
@@ -200,6 +146,7 @@ export const MultipleDays: Story = {
 };
 
 export const NoMeta: Story = {
+	name: "meta なし",
 	args: {
 		name: "PPL Hypertrophy",
 		meta: null,
@@ -208,6 +155,7 @@ export const NoMeta: Story = {
 };
 
 export const LongProgramName: Story = {
+	name: "長いプログラム名",
 	args: {
 		name: "Wendler 5/3/1 Boring But Big with Joker Sets and First Set Last AMRAP Conjugate Method (3-day split, 16-week mesocycle, deload weeks included) 詳細メソッド付きの上級者向け長期プログラム（完全版）",
 		meta: "メインリフトは 5/3/1 で、補助は BBB（Boring But Big）。\nDeload week は 4 週ごとに挿入する。",
@@ -215,61 +163,19 @@ export const LongProgramName: Story = {
 	},
 };
 
-export const Mobile: Story = {
-	args: {
-		name: "5/3/1 BBB",
-		meta: "メインリフトは 5/3/1 で、補助は BBB（Boring But Big）。\nDeload week は 4 週ごとに挿入する。",
-		days: SAMPLE_DAYS,
-	},
-	globals: {
-		viewport: { value: "mobile" },
-	},
-};
-
-export const Desktop: Story = {
-	args: {
-		name: "5/3/1 BBB",
-		meta: "メインリフトは 5/3/1 で、補助は BBB（Boring But Big）。\nDeload week は 4 週ごとに挿入する。",
-		days: SAMPLE_DAYS,
-	},
-	globals: {
-		viewport: { value: "desktop" },
-	},
-};
-
 export const NoDays: Story = {
+	name: "Day ゼロ件",
 	args: {
 		name: "新しいプログラム",
 		meta: null,
 		days: [],
-	},
-};
-
-export const NoDaysMobile: Story = {
-	args: {
-		name: "新しいプログラム",
-		meta: null,
-		days: [],
-	},
-	globals: {
-		viewport: { value: "mobile" },
-	},
-};
-
-export const NoDaysDesktop: Story = {
-	args: {
-		name: "新しいプログラム",
-		meta: null,
-		days: [],
-	},
-	globals: {
-		viewport: { value: "desktop" },
 	},
 };
 
 // 種目計画を全削除した後のエッジケース。設計判断 #61 により通常状態では発生しないが、
 // 削除直後の transient state として ExercisePlanSection が ExercisePlanPickerCard のみ表示する空状態。
 export const NoExercisePlansInSelectedDay: Story = {
+	name: "選択中の Day に種目計画ゼロ件（削除直後の transient state）",
 	args: {
 		name: "新しいプログラム",
 		meta: null,
@@ -292,8 +198,10 @@ export const NoExercisePlansInSelectedDay: Story = {
 const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 	days: initialDays,
 	availableExercises: initialAvailableExercises,
+	onAddDay,
 	onAddExercisePlanWithSelectedExercise,
 	onAddExercisePlanWithNewExercise,
+	onDeleteExercisePlan,
 	onAddSetPlan,
 	onChangeSetPlan,
 	onDeleteSetPlan,
@@ -306,6 +214,20 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 	const [lastAddedExercisePlanId, setLastAddedExercisePlanId] = useState<
 		string | undefined
 	>(undefined);
+
+	const handleAddDay = () => {
+		const id = crypto.randomUUID();
+		setDays((prev) => [
+			...prev,
+			{
+				id,
+				label: `Day ${prev.length + 1}`,
+				detailHref: `/programs/p1/days/${id}`,
+				exercisePlans: [],
+			},
+		]);
+		onAddDay();
+	};
 
 	const handleAddExercisePlanWithSelectedExercise = (
 		dayId: string,
@@ -382,6 +304,7 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 				),
 			})),
 		);
+		onDeleteExercisePlan(exercisePlanId);
 	};
 
 	const handleAddSetPlan: ComponentProps<typeof ProgramDetail>["onAddSetPlan"] =
@@ -442,6 +365,7 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 			{...rest}
 			days={days}
 			availableExercises={availableExercises}
+			onAddDay={handleAddDay}
 			onAddExercisePlanWithSelectedExercise={
 				handleAddExercisePlanWithSelectedExercise
 			}
@@ -457,7 +381,6 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 
 export const ExercisePlanAddDeleteFlow: Story = {
 	name: "種目計画の追加・削除を実体験できる",
-	render: (args) => <StatefulProgramDetail {...args} />,
 	args: {
 		name: "新しいプログラム",
 		meta: null,
