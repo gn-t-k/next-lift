@@ -14,6 +14,7 @@ type Props = {
 	onAddSetPlan: (payload: SetPlanDraft) => void;
 	onChangeSetPlan: (setPlanId: SetPlan["id"], payload: SetPlanDraft) => void;
 	onDeleteSetPlan: (setPlanId: SetPlan["id"]) => void;
+	autoFocusAddTrigger?: boolean | undefined;
 };
 
 export const SetPlanSection: FC<Props> = ({
@@ -24,6 +25,7 @@ export const SetPlanSection: FC<Props> = ({
 	onAddSetPlan,
 	onChangeSetPlan,
 	onDeleteSetPlan,
+	autoFocusAddTrigger,
 }) => {
 	const lastSetPlan = setPlans[setPlans.length - 1];
 
@@ -32,7 +34,7 @@ export const SetPlanSection: FC<Props> = ({
 			<div className="flex flex-col">
 				<SetPlanFormDialog
 					title={`${exerciseName} 1セット目を追加`}
-					trigger={<SetPlanAddTriggerButton />}
+					trigger={<SetPlanAddTriggerButton autoFocus={autoFocusAddTrigger} />}
 					initial={undefined}
 					weightUnit={weightUnit}
 					weightStep={weightStep}

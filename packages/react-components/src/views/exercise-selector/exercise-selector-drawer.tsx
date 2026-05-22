@@ -18,7 +18,7 @@ import { isCreatableName } from "./is-creatable-name";
 
 export const ExerciseSelectorDrawer: FC<
 	ComponentProps<typeof ExerciseSelector>
-> = ({ exercises, selectedExerciseId, onSelect, onCreateExercise }) => {
+> = ({ exercises, selectedExerciseId, onSelect, onCreateExercise, label }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [query, setQuery] = useState("");
 
@@ -54,14 +54,14 @@ export const ExerciseSelectorDrawer: FC<
 					selectedExercise === undefined && "text-muted-fg",
 				)}
 			>
-				{selectedExercise?.name ?? "種目を選択"}
+				{selectedExercise?.name ?? label}
 				<ChevronUpDownIcon
 					className="size-4 text-muted-fg"
 					aria-hidden="true"
 				/>
 			</DrawerTrigger>
 			<DrawerContent placement="bottom" className="h-[80dvh]">
-				<DrawerTitle>種目を選択</DrawerTitle>
+				<DrawerTitle>{label}</DrawerTitle>
 				<TextField
 					aria-label="種目名で検索"
 					value={query}
