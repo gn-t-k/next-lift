@@ -1,7 +1,7 @@
 "use client";
 
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { type ComponentProps, type FC, useState } from "react";
+import type { ComponentProps, FC } from "react";
 import { Button } from "../../primitives/button";
 import { Heading, Section } from "../../primitives/heading";
 import { ScrollArea } from "../../primitives/scrollable";
@@ -9,6 +9,7 @@ import { Tab, TabList, TabPanel, Tabs } from "../../primitives/tabs";
 import { CreateDayCard } from "./create-day-card";
 import { ExercisePlanSection } from "./exercise-plan-section";
 import { SetPlanSection } from "./set-plan-section";
+import { useDayTabSelection } from "./use-day-tab-selection";
 
 type SetPlanChangePayload = Parameters<
 	ComponentProps<typeof SetPlanSection>["onChangeSetPlan"]
@@ -75,19 +76,13 @@ export const ProgramDetail: FC<Props> = ({
 	lastAddedExercisePlanId,
 	lastAddedDayId,
 }) => {
-	const [selectedDayId, setSelectedDayId] = useState<string | undefined>(
+	const dayIds = days.map((day) => day.id);
+	const firstDayId = dayIds[0];
+	const [selectedDayId, selectDay] = useDayTabSelection({
+		dayIds,
 		defaultSelectedDayId,
-	);
-	const [prevLastAddedDayId, setPrevLastAddedDayId] = useState<
-		string | undefined
-	>(undefined);
-	if (lastAddedDayId !== prevLastAddedDayId) {
-		setPrevLastAddedDayId(lastAddedDayId);
-		if (lastAddedDayId !== undefined) {
-			setSelectedDayId(lastAddedDayId);
-		}
-	}
-	const firstDayId = days[0]?.id;
+		lastAddedDayId,
+	});
 	return (
 		<div className="flex flex-col gap-6">
 			<header className="flex flex-col gap-2">
@@ -101,13 +96,8 @@ export const ProgramDetail: FC<Props> = ({
 			) : (
 				<Section>
 					<Tabs
-						selectedKey={
-							selectedDayId !== undefined &&
-							days.some((day) => day.id === selectedDayId)
-								? selectedDayId
-								: firstDayId
-						}
-						onSelectionChange={(key) => setSelectedDayId(String(key))}
+						selectedKey={selectedDayId ?? firstDayId}
+						onSelectionChange={(key) => selectDay(String(key))}
 					>
 						<div className="flex items-end gap-2 border-border border-b">
 							<ScrollArea className="flex-1">
