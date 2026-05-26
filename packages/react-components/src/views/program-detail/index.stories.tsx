@@ -545,5 +545,9 @@ export const DeleteDayInvokesCallback: Story = {
 		await waitFor(() => {
 			expect(args.onDeleteDay).toHaveBeenCalledWith("d1");
 		});
+		await waitFor(() => {
+			const fallbackTab = canvas.getByRole("tab", { name: "Day 2: 下半身" });
+			expect(fallbackTab).toHaveAttribute("aria-selected", "true");
+		});
 	},
 };
