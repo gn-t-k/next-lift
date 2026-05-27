@@ -117,6 +117,7 @@ const meta = {
 		availableExercises: SAMPLE_AVAILABLE_EXERCISES,
 		onAddDay: fn(),
 		onDeleteDay: fn(),
+		onChangeDayLabel: fn(),
 		onAddExercisePlanWithSelectedExercise: fn(),
 		onAddExercisePlanWithNewExercise: fn(),
 		onDeleteExercisePlan: fn(),
@@ -201,6 +202,7 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 	availableExercises: initialAvailableExercises,
 	onAddDay,
 	onDeleteDay,
+	onChangeDayLabel,
 	onAddExercisePlanWithSelectedExercise,
 	onAddExercisePlanWithNewExercise,
 	onDeleteExercisePlan,
@@ -238,6 +240,13 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 	const handleDeleteDay = (dayId: string) => {
 		setDays((prev) => prev.filter((day) => day.id !== dayId));
 		onDeleteDay(dayId);
+	};
+
+	const handleChangeDayLabel = (dayId: string, label: string) => {
+		setDays((prev) =>
+			prev.map((day) => (day.id === dayId ? { ...day, label } : day)),
+		);
+		onChangeDayLabel(dayId, label);
 	};
 
 	const handleAddExercisePlanWithSelectedExercise = (
@@ -378,6 +387,7 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 			availableExercises={availableExercises}
 			onAddDay={handleAddDay}
 			onDeleteDay={handleDeleteDay}
+			onChangeDayLabel={handleChangeDayLabel}
 			onAddExercisePlanWithSelectedExercise={
 				handleAddExercisePlanWithSelectedExercise
 			}
@@ -510,7 +520,7 @@ export const AddExercisePlanBySelectingExercise: Story = {
 // Day 1 件以上の通常状態で「+ Day」ボタンが TabList の右隣に表示され、
 // 押下すると onAddDay が呼ばれ、新規 Day タブが選択状態になる。
 export const AddDayFromExistingDays: Story = {
-	name: "通常状態から Day を追加すると新しい Day タブが選択される",
+	name: "通常状態から Day を追加すると新しい Day が選択される",
 	args: {
 		name: "5/3/1 BBB",
 		meta: null,
@@ -522,16 +532,40 @@ export const AddDayFromExistingDays: Story = {
 		await waitFor(() => {
 			expect(args.onAddDay).toHaveBeenCalled();
 		});
-		// 追加された Day タブ（Day 4）が selected 状態になっている
 		await waitFor(() => {
 			const newTab = canvas.getByRole("tab", { name: "Day 4" });
 			expect(newTab).toHaveAttribute("aria-selected", "true");
+		});
+		expect(
+			canvas.queryByRole("textbox", { name: "Day 4のラベル" }),
+		).not.toBeInTheDocument();
+	},
+};
+
+export const AddDayConsecutively: Story = {
+	name: "Day を連続追加すると最後に追加した Day が選択される",
+	args: {
+		name: "5/3/1 BBB",
+		meta: null,
+		days: SAMPLE_DAYS,
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(canvas.getByRole("button", { name: "Day を追加" }));
+		await userEvent.click(canvas.getByRole("button", { name: "Day を追加" }));
+		await waitFor(() => {
+			expect(args.onAddDay).toHaveBeenCalledTimes(2);
+		});
+		expect(args.onChangeDayLabel).not.toHaveBeenCalled();
+		await waitFor(() => {
+			const secondAddedTab = canvas.getByRole("tab", { name: "Day 5" });
+			expect(secondAddedTab).toHaveAttribute("aria-selected", "true");
 		});
 	},
 };
 
 export const DeleteDayInvokesCallback: Story = {
-	name: "Day 削除ボタンを押すと onDeleteDay が対象 id で呼ばれる",
+	name: "Day 操作メニューで削除すると onDeleteDay が対象 id で呼ばれる",
 	args: {
 		name: "5/3/1 BBB",
 		meta: null,
@@ -540,7 +574,14 @@ export const DeleteDayInvokesCallback: Story = {
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
-			canvas.getByRole("button", { name: "Day 1: 上半身プッシュを削除" }),
+			canvas.getByRole("button", { name: "Day 1: 上半身プッシュの操作" }),
+		);
+		await userEvent.click(
+			await waitFor(() =>
+				within(document.body).getByRole("menuitem", {
+					name: "Day 1: 上半身プッシュを削除",
+				}),
+			),
 		);
 		await waitFor(() => {
 			expect(args.onDeleteDay).toHaveBeenCalledWith("d1");
@@ -548,6 +589,110 @@ export const DeleteDayInvokesCallback: Story = {
 		await waitFor(() => {
 			const fallbackTab = canvas.getByRole("tab", { name: "Day 2: 下半身" });
 			expect(fallbackTab).toHaveAttribute("aria-selected", "true");
+		});
+	},
+};
+
+export const EditDayLabelSavesOnEnter: Story = {
+	name: "Day ラベルを編集して Enter で保存する",
+	args: {
+		name: "5/3/1 BBB",
+		meta: null,
+		days: SAMPLE_DAYS,
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			canvas.getByRole("button", { name: "Day 1: 上半身プッシュの操作" }),
+		);
+		await userEvent.click(
+			await waitFor(() =>
+				within(document.body).getByRole("menuitem", { name: "名前を変更" }),
+			),
+		);
+		const input = within(document.body).getByRole("textbox", {
+			name: "Day 1: 上半身プッシュのラベル",
+		});
+		await userEvent.clear(input);
+		await userEvent.type(input, "Push Day{Enter}");
+		await waitFor(() => {
+			expect(args.onChangeDayLabel).toHaveBeenCalledWith("d1", "Push Day");
+		});
+		await waitFor(() => {
+			expect(canvas.getByRole("tab", { name: "Push Day" })).toHaveAttribute(
+				"aria-selected",
+				"true",
+			);
+		});
+	},
+};
+
+export const EditDayLabelSavesOnConfirm: Story = {
+	name: "Day ラベルを編集して確定で保存する",
+	args: {
+		name: "5/3/1 BBB",
+		meta: null,
+		days: SAMPLE_DAYS,
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			canvas.getByRole("button", { name: "Day 1: 上半身プッシュの操作" }),
+		);
+		await userEvent.click(
+			await waitFor(() =>
+				within(document.body).getByRole("menuitem", { name: "名前を変更" }),
+			),
+		);
+		const input = within(document.body).getByRole("textbox", {
+			name: "Day 1: 上半身プッシュのラベル",
+		});
+		await userEvent.clear(input);
+		await userEvent.type(input, "Push Day");
+		await userEvent.click(
+			within(document.body).getByRole("button", { name: "確定" }),
+		);
+		await waitFor(() => {
+			expect(args.onChangeDayLabel).toHaveBeenCalledWith("d1", "Push Day");
+		});
+		await waitFor(() => {
+			expect(canvas.getByRole("tab", { name: "Push Day" })).toHaveAttribute(
+				"aria-selected",
+				"true",
+			);
+		});
+	},
+};
+
+export const EditDayLabelCancelsOnEscape: Story = {
+	name: "Day ラベル編集を Escape で破棄する",
+	args: {
+		name: "5/3/1 BBB",
+		meta: null,
+		days: SAMPLE_DAYS,
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			canvas.getByRole("button", { name: "Day 1: 上半身プッシュの操作" }),
+		);
+		await userEvent.click(
+			await waitFor(() =>
+				within(document.body).getByRole("menuitem", { name: "名前を変更" }),
+			),
+		);
+		const input = within(document.body).getByRole("textbox", {
+			name: "Day 1: 上半身プッシュのラベル",
+		});
+		await userEvent.clear(input);
+		await userEvent.type(input, "Push Day{Escape}");
+		await waitFor(() => {
+			expect(args.onChangeDayLabel).not.toHaveBeenCalled();
+		});
+		await waitFor(() => {
+			expect(
+				canvas.getByRole("tab", { name: "Day 1: 上半身プッシュ" }),
+			).toHaveAttribute("aria-selected", "true");
 		});
 	},
 };

@@ -1,12 +1,10 @@
 "use client";
 
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import type { ComponentProps, FC } from "react";
-import { Button } from "../../primitives/button";
+import { type ComponentProps, type FC, type Key, useCallback } from "react";
 import { Heading, Section } from "../../primitives/heading";
-import { ScrollArea } from "../../primitives/scrollable";
-import { Tab, TabList, TabPanel, Tabs } from "../../primitives/tabs";
+import { TabPanel, Tabs } from "../../primitives/tabs";
 import { CreateDayCard } from "./create-day-card";
+import { DayTabs } from "./day-tabs";
 import { ExercisePlanSection } from "./exercise-plan-section";
 import { SetPlanSection } from "./set-plan-section";
 import { useDayTabSelection } from "./use-day-tab-selection";
@@ -27,6 +25,7 @@ type Props = {
 	defaultSelectedDayId?: string;
 	onAddDay: () => void;
 	onDeleteDay: (dayId: string) => void;
+	onChangeDayLabel: (dayId: string, label: string) => void;
 	onAddExercisePlanWithSelectedExercise: (
 		dayId: string,
 		exerciseId: string,
@@ -67,6 +66,7 @@ export const ProgramDetail: FC<Props> = ({
 	defaultSelectedDayId,
 	onAddDay,
 	onDeleteDay,
+	onChangeDayLabel,
 	onAddExercisePlanWithSelectedExercise,
 	onAddExercisePlanWithNewExercise,
 	onDeleteExercisePlan,
@@ -83,6 +83,14 @@ export const ProgramDetail: FC<Props> = ({
 		defaultSelectedDayId,
 		lastAddedDayId,
 	});
+	const handleChangeSelection = useCallback(
+		(key: Key) => {
+			selectDay(String(key));
+		},
+		[selectDay],
+	);
+	const selectedKey = selectedDayId ?? firstDayId ?? "";
+
 	return (
 		<div className="flex flex-col gap-6">
 			<header className="flex flex-col gap-2">
@@ -96,47 +104,15 @@ export const ProgramDetail: FC<Props> = ({
 			) : (
 				<Section>
 					<Tabs
-						selectedKey={selectedDayId ?? firstDayId}
-						onSelectionChange={(key) => selectDay(String(key))}
+						selectedKey={selectedKey}
+						onSelectionChange={handleChangeSelection}
 					>
-						<div className="flex items-end gap-2 border-border border-b">
-							<ScrollArea className="flex-1">
-								<TabList aria-label="Day" className="border-b-0">
-									{days.map((day) => (
-										<Tab
-											key={day.id}
-											id={day.id}
-											aria-label={day.label}
-											className="gap-x-1.5 pr-1.5"
-										>
-											<span>{day.label}</span>
-											<Button
-												intent="plain"
-												size="sq-xs"
-												aria-label={`${day.label}を削除`}
-												onPress={() => onDeleteDay(day.id)}
-												className="size-5 min-h-0 border-0 sm:size-5"
-											>
-												<XMarkIcon
-													data-slot="icon"
-													className="size-3.5"
-													aria-hidden
-												/>
-											</Button>
-										</Tab>
-									))}
-								</TabList>
-							</ScrollArea>
-							<Button
-								intent="plain"
-								size="sq-xs"
-								aria-label="Day を追加"
-								onPress={onAddDay}
-								className="-mb-px shrink-0"
-							>
-								<PlusIcon data-slot="icon" className="size-4" aria-hidden />
-							</Button>
-						</div>
+						<DayTabs
+							days={days}
+							onAddDay={onAddDay}
+							onChangeDayLabel={onChangeDayLabel}
+							onDeleteDay={onDeleteDay}
+						/>
 						{days.map((day) => (
 							<TabPanel key={day.id} id={day.id} className="pt-4">
 								<ExercisePlanSection
