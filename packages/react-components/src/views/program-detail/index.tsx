@@ -1,11 +1,12 @@
 "use client";
 
 import { type ComponentProps, type FC, type Key, useCallback } from "react";
-import { Heading, Section } from "../../primitives/heading";
+import { Section } from "../../primitives/heading";
 import { TabPanel, Tabs } from "../../primitives/tabs";
 import { CreateDayCard } from "./create-day-card";
 import { DayTabs } from "./day-tabs";
 import { ExercisePlanSection } from "./exercise-plan-section";
+import { ProgramInfo } from "./program-info";
 import { SetPlanSection } from "./set-plan-section";
 import { useDayTabSelection } from "./use-day-tab-selection";
 
@@ -26,6 +27,7 @@ type Props = {
 	onAddDay: () => void;
 	onDeleteDay: (dayId: string) => void;
 	onChangeDayLabel: (dayId: string, label: string) => void;
+	onChangeProgramInfo: (payload: { name: string; meta: string | null }) => void;
 	onAddExercisePlanWithSelectedExercise: (
 		dayId: string,
 		exerciseId: string,
@@ -67,6 +69,7 @@ export const ProgramDetail: FC<Props> = ({
 	onAddDay,
 	onDeleteDay,
 	onChangeDayLabel,
+	onChangeProgramInfo,
 	onAddExercisePlanWithSelectedExercise,
 	onAddExercisePlanWithNewExercise,
 	onDeleteExercisePlan,
@@ -93,12 +96,7 @@ export const ProgramDetail: FC<Props> = ({
 
 	return (
 		<div className="flex flex-col gap-6">
-			<header className="flex flex-col gap-2">
-				<Heading>{name}</Heading>
-				{meta !== null && meta !== "" && (
-					<p className="whitespace-pre-wrap text-muted-fg text-sm">{meta}</p>
-				)}
-			</header>
+			<ProgramInfo name={name} meta={meta} onChange={onChangeProgramInfo} />
 			{firstDayId === undefined ? (
 				<CreateDayCard onAddDay={onAddDay} />
 			) : (
