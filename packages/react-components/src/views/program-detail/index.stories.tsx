@@ -118,6 +118,7 @@ const meta = {
 		onAddDay: fn(),
 		onDeleteDay: fn(),
 		onChangeDayLabel: fn(),
+		onChangeProgramInfo: fn(),
 		onAddExercisePlanWithSelectedExercise: fn(),
 		onAddExercisePlanWithNewExercise: fn(),
 		onDeleteExercisePlan: fn(),
@@ -198,11 +199,14 @@ export const NoExercisePlansInSelectedDay: Story = {
 // 追加直後の種目計画は lastAddedExercisePlanId に記録し、SetPlanFormDialog を自動オープン
 // （種目選択 → 即セット定義の流れを途切れさせない）。
 const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
+	name: initialName,
+	meta: initialMeta,
 	days: initialDays,
 	availableExercises: initialAvailableExercises,
 	onAddDay,
 	onDeleteDay,
 	onChangeDayLabel,
+	onChangeProgramInfo,
 	onAddExercisePlanWithSelectedExercise,
 	onAddExercisePlanWithNewExercise,
 	onDeleteExercisePlan,
@@ -211,6 +215,8 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 	onDeleteSetPlan,
 	...rest
 }) => {
+	const [name, setName] = useState(initialName);
+	const [meta, setMeta] = useState(initialMeta);
 	const [days, setDays] = useState(initialDays);
 	const [availableExercises, setAvailableExercises] = useState(
 		initialAvailableExercises,
@@ -247,6 +253,14 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 			prev.map((day) => (day.id === dayId ? { ...day, label } : day)),
 		);
 		onChangeDayLabel(dayId, label);
+	};
+
+	const handleChangeProgramInfo: ComponentProps<
+		typeof ProgramDetail
+	>["onChangeProgramInfo"] = (payload) => {
+		setName(payload.name);
+		setMeta(payload.meta);
+		onChangeProgramInfo(payload);
 	};
 
 	const handleAddExercisePlanWithSelectedExercise = (
@@ -383,11 +397,14 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 	return (
 		<ProgramDetail
 			{...rest}
+			name={name}
+			meta={meta}
 			days={days}
 			availableExercises={availableExercises}
 			onAddDay={handleAddDay}
 			onDeleteDay={handleDeleteDay}
 			onChangeDayLabel={handleChangeDayLabel}
+			onChangeProgramInfo={handleChangeProgramInfo}
 			onAddExercisePlanWithSelectedExercise={
 				handleAddExercisePlanWithSelectedExercise
 			}
@@ -400,6 +417,73 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 			lastAddedDayId={lastAddedDayId}
 		/>
 	);
+};
+
+export const EditProgramInfoSavesOnConfirm: Story = {
+	name: "プログラム名とメモを編集して確定で保存する",
+	args: {
+		name: "5/3/1 BBB",
+		meta: "メインリフトは 5/3/1 で、補助は BBB。",
+		days: SAMPLE_DAYS,
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			canvas.getByRole("button", { name: "プログラム情報を編集" }),
+		);
+		const nameInput = await waitFor(() =>
+			within(document.body).getByRole("textbox", { name: "プログラム名" }),
+		);
+		const metaInput = within(document.body).getByRole("textbox", {
+			name: "メモ",
+		});
+		await userEvent.clear(nameInput);
+		await userEvent.type(nameInput, "Strength Base");
+		await userEvent.clear(metaInput);
+		await userEvent.type(metaInput, "週 3 回。フォーム優先。");
+		await userEvent.click(
+			within(document.body).getByRole("button", { name: "確定" }),
+		);
+		await waitFor(() => {
+			expect(args.onChangeProgramInfo).toHaveBeenCalledWith({
+				name: "Strength Base",
+				meta: "週 3 回。フォーム優先。",
+			});
+		});
+		await waitFor(() => {
+			expect(
+				canvas.getByRole("heading", { name: "Strength Base" }),
+			).toBeInTheDocument();
+		});
+	},
+};
+
+export const EditProgramInfoCancelsOnEscape: Story = {
+	name: "プログラム情報編集を Escape で破棄する",
+	args: {
+		name: "5/3/1 BBB",
+		meta: "メインリフトは 5/3/1 で、補助は BBB。",
+		days: SAMPLE_DAYS,
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			canvas.getByRole("button", { name: "プログラム情報を編集" }),
+		);
+		const nameInput = await waitFor(() =>
+			within(document.body).getByRole("textbox", { name: "プログラム名" }),
+		);
+		await userEvent.clear(nameInput);
+		await userEvent.type(nameInput, "Strength Base{Escape}");
+		await waitFor(() => {
+			expect(args.onChangeProgramInfo).not.toHaveBeenCalled();
+		});
+		await waitFor(() => {
+			expect(
+				canvas.getByRole("heading", { name: "5/3/1 BBB" }),
+			).toBeInTheDocument();
+		});
+	},
 };
 
 export const ExercisePlanAddDeleteFlow: Story = {
