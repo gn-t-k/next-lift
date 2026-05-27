@@ -116,6 +116,7 @@ const meta = {
 		defaultSelectedDayId: "d1",
 		availableExercises: SAMPLE_AVAILABLE_EXERCISES,
 		onAddDay: fn(),
+		onDeleteDay: fn(),
 		onAddExercisePlanWithSelectedExercise: fn(),
 		onAddExercisePlanWithNewExercise: fn(),
 		onDeleteExercisePlan: fn(),
@@ -199,6 +200,7 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 	days: initialDays,
 	availableExercises: initialAvailableExercises,
 	onAddDay,
+	onDeleteDay,
 	onAddExercisePlanWithSelectedExercise,
 	onAddExercisePlanWithNewExercise,
 	onDeleteExercisePlan,
@@ -214,6 +216,9 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 	const [lastAddedExercisePlanId, setLastAddedExercisePlanId] = useState<
 		string | undefined
 	>(undefined);
+	const [lastAddedDayId, setLastAddedDayId] = useState<string | undefined>(
+		undefined,
+	);
 
 	const handleAddDay = () => {
 		const id = crypto.randomUUID();
@@ -226,7 +231,13 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 				exercisePlans: [],
 			},
 		]);
+		setLastAddedDayId(id);
 		onAddDay();
+	};
+
+	const handleDeleteDay = (dayId: string) => {
+		setDays((prev) => prev.filter((day) => day.id !== dayId));
+		onDeleteDay(dayId);
 	};
 
 	const handleAddExercisePlanWithSelectedExercise = (
@@ -366,6 +377,7 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 			days={days}
 			availableExercises={availableExercises}
 			onAddDay={handleAddDay}
+			onDeleteDay={handleDeleteDay}
 			onAddExercisePlanWithSelectedExercise={
 				handleAddExercisePlanWithSelectedExercise
 			}
@@ -375,6 +387,7 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 			onChangeSetPlan={handleChangeSetPlan}
 			onDeleteSetPlan={handleDeleteSetPlan}
 			lastAddedExercisePlanId={lastAddedExercisePlanId}
+			lastAddedDayId={lastAddedDayId}
 		/>
 	);
 };
@@ -490,6 +503,51 @@ export const AddExercisePlanBySelectingExercise: Story = {
 				"d1",
 				"ex-bench",
 			);
+		});
+	},
+};
+
+// Day 1 件以上の通常状態で「+ Day」ボタンが TabList の右隣に表示され、
+// 押下すると onAddDay が呼ばれ、新規 Day タブが選択状態になる。
+export const AddDayFromExistingDays: Story = {
+	name: "通常状態から Day を追加すると新しい Day タブが選択される",
+	args: {
+		name: "5/3/1 BBB",
+		meta: null,
+		days: SAMPLE_DAYS,
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(canvas.getByRole("button", { name: "Day を追加" }));
+		await waitFor(() => {
+			expect(args.onAddDay).toHaveBeenCalled();
+		});
+		// 追加された Day タブ（Day 4）が selected 状態になっている
+		await waitFor(() => {
+			const newTab = canvas.getByRole("tab", { name: "Day 4" });
+			expect(newTab).toHaveAttribute("aria-selected", "true");
+		});
+	},
+};
+
+export const DeleteDayInvokesCallback: Story = {
+	name: "Day 削除ボタンを押すと onDeleteDay が対象 id で呼ばれる",
+	args: {
+		name: "5/3/1 BBB",
+		meta: null,
+		days: SAMPLE_DAYS,
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			canvas.getByRole("button", { name: "Day 1: 上半身プッシュを削除" }),
+		);
+		await waitFor(() => {
+			expect(args.onDeleteDay).toHaveBeenCalledWith("d1");
+		});
+		await waitFor(() => {
+			const fallbackTab = canvas.getByRole("tab", { name: "Day 2: 下半身" });
+			expect(fallbackTab).toHaveAttribute("aria-selected", "true");
 		});
 	},
 };
