@@ -14,5 +14,6 @@ export * from "./number-field";
 export * from "./popover";
 export * from "./scrollable";
 export * from "./tabs";
+export * from "./text-area";
 export * from "./text-field";
 export * from "./toggle-button-group";
