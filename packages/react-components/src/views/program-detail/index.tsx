@@ -28,6 +28,7 @@ type Props = {
 	onDeleteDay: (dayId: string) => void;
 	onChangeDayLabel: (dayId: string, label: string) => void;
 	onChangeProgramInfo: (payload: { name: string; meta: string | null }) => void;
+	onDuplicate: () => void;
 	onAddExercisePlanWithSelectedExercise: (
 		dayId: string,
 		exerciseId: string,
@@ -70,6 +71,7 @@ export const ProgramDetail: FC<Props> = ({
 	onDeleteDay,
 	onChangeDayLabel,
 	onChangeProgramInfo,
+	onDuplicate,
 	onAddExercisePlanWithSelectedExercise,
 	onAddExercisePlanWithNewExercise,
 	onDeleteExercisePlan,
@@ -96,7 +98,12 @@ export const ProgramDetail: FC<Props> = ({
 
 	return (
 		<div className="flex flex-col gap-6">
-			<ProgramInfo name={name} meta={meta} onChange={onChangeProgramInfo} />
+			<ProgramInfo
+				name={name}
+				meta={meta}
+				onChange={onChangeProgramInfo}
+				onDuplicate={onDuplicate}
+			/>
 			{firstDayId === undefined ? (
 				<CreateDayCard onAddDay={onAddDay} />
 			) : (

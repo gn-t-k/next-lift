@@ -119,6 +119,7 @@ const meta = {
 		onDeleteDay: fn(),
 		onChangeDayLabel: fn(),
 		onChangeProgramInfo: fn(),
+		onDuplicate: fn(),
 		onAddExercisePlanWithSelectedExercise: fn(),
 		onAddExercisePlanWithNewExercise: fn(),
 		onDeleteExercisePlan: fn(),
@@ -138,6 +139,20 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+const openProgramActionsMenu = async (canvasElement: HTMLElement) => {
+	const canvas = within(canvasElement);
+	await userEvent.click(canvas.getByRole("button", { name: "プログラム操作" }));
+	return within(document.body);
+};
+
+const openProgramInfoEditor = async (canvasElement: HTMLElement) => {
+	const body = await openProgramActionsMenu(canvasElement);
+	await userEvent.click(
+		await waitFor(() => body.getByRole("menuitem", { name: "情報を編集" })),
+	);
+	return body;
+};
 
 export const MultipleDays: Story = {
 	name: "複数 Day",
@@ -207,6 +222,7 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 	onDeleteDay,
 	onChangeDayLabel,
 	onChangeProgramInfo,
+	onDuplicate,
 	onAddExercisePlanWithSelectedExercise,
 	onAddExercisePlanWithNewExercise,
 	onDeleteExercisePlan,
@@ -405,6 +421,7 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 			onDeleteDay={handleDeleteDay}
 			onChangeDayLabel={handleChangeDayLabel}
 			onChangeProgramInfo={handleChangeProgramInfo}
+			onDuplicate={onDuplicate}
 			onAddExercisePlanWithSelectedExercise={
 				handleAddExercisePlanWithSelectedExercise
 			}
@@ -428,22 +445,18 @@ export const EditProgramInfoSavesOnConfirm: Story = {
 	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
-		await userEvent.click(
-			canvas.getByRole("button", { name: "プログラム情報を編集" }),
-		);
+		const body = await openProgramInfoEditor(canvasElement);
 		const nameInput = await waitFor(() =>
-			within(document.body).getByRole("textbox", { name: "プログラム名" }),
+			body.getByRole("textbox", { name: "プログラム名" }),
 		);
-		const metaInput = within(document.body).getByRole("textbox", {
+		const metaInput = body.getByRole("textbox", {
 			name: "メモ",
 		});
 		await userEvent.clear(nameInput);
 		await userEvent.type(nameInput, "Strength Base");
 		await userEvent.clear(metaInput);
 		await userEvent.type(metaInput, "週 3 回。フォーム優先。");
-		await userEvent.click(
-			within(document.body).getByRole("button", { name: "確定" }),
-		);
+		await userEvent.click(body.getByRole("button", { name: "確定" }));
 		await waitFor(() => {
 			expect(args.onChangeProgramInfo).toHaveBeenCalledWith({
 				name: "Strength Base",
@@ -467,11 +480,9 @@ export const EditProgramInfoCancelsOnEscape: Story = {
 	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
-		await userEvent.click(
-			canvas.getByRole("button", { name: "プログラム情報を編集" }),
-		);
+		const body = await openProgramInfoEditor(canvasElement);
 		const nameInput = await waitFor(() =>
-			within(document.body).getByRole("textbox", { name: "プログラム名" }),
+			body.getByRole("textbox", { name: "プログラム名" }),
 		);
 		await userEvent.clear(nameInput);
 		await userEvent.type(nameInput, "Strength Base{Escape}");
@@ -482,6 +493,26 @@ export const EditProgramInfoCancelsOnEscape: Story = {
 			expect(
 				canvas.getByRole("heading", { name: "5/3/1 BBB" }),
 			).toBeInTheDocument();
+		});
+	},
+};
+
+export const DuplicateProgramInvokesCallback: Story = {
+	name: "プログラム操作メニューでコピーして新規作成すると onDuplicate が呼ばれる",
+	args: {
+		name: "5/3/1 BBB",
+		meta: null,
+		days: SAMPLE_DAYS,
+	},
+	play: async ({ canvasElement, args }) => {
+		const body = await openProgramActionsMenu(canvasElement);
+		await userEvent.click(
+			await waitFor(() =>
+				body.getByRole("menuitem", { name: "コピーして新規作成" }),
+			),
+		);
+		await waitFor(() => {
+			expect(args.onDuplicate).toHaveBeenCalled();
 		});
 	},
 };
