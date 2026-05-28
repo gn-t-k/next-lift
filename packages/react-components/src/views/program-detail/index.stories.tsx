@@ -120,6 +120,7 @@ const meta = {
 		onChangeDayLabel: fn(),
 		onChangeProgramInfo: fn(),
 		onDuplicate: fn(),
+		onDelete: fn(),
 		onAddExercisePlanWithSelectedExercise: fn(),
 		onAddExercisePlanWithNewExercise: fn(),
 		onDeleteExercisePlan: fn(),
@@ -223,6 +224,7 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 	onChangeDayLabel,
 	onChangeProgramInfo,
 	onDuplicate,
+	onDelete,
 	onAddExercisePlanWithSelectedExercise,
 	onAddExercisePlanWithNewExercise,
 	onDeleteExercisePlan,
@@ -422,6 +424,7 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 			onChangeDayLabel={handleChangeDayLabel}
 			onChangeProgramInfo={handleChangeProgramInfo}
 			onDuplicate={onDuplicate}
+			onDelete={onDelete}
 			onAddExercisePlanWithSelectedExercise={
 				handleAddExercisePlanWithSelectedExercise
 			}
@@ -513,6 +516,32 @@ export const DuplicateProgramInvokesCallback: Story = {
 		);
 		await waitFor(() => {
 			expect(args.onDuplicate).toHaveBeenCalled();
+		});
+	},
+};
+
+export const DeleteProgramInvokesCallbackAfterConfirm: Story = {
+	name: "プログラム操作メニューで削除確認して onDelete が呼ばれる",
+	args: {
+		name: "5/3/1 BBB",
+		meta: null,
+		days: SAMPLE_DAYS,
+	},
+	play: async ({ canvasElement, args }) => {
+		const body = await openProgramActionsMenu(canvasElement);
+		await userEvent.click(
+			await waitFor(() => body.getByRole("menuitem", { name: "削除…" })),
+		);
+		const dialog = await waitFor(() => {
+			const found = body.getByRole("alertdialog", {
+				name: "このプログラムを削除しますか？",
+			});
+			expect(found).toBeInTheDocument();
+			return found;
+		});
+		await userEvent.click(within(dialog).getByRole("button", { name: "削除" }));
+		await waitFor(() => {
+			expect(args.onDelete).toHaveBeenCalled();
 		});
 	},
 };
