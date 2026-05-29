@@ -44,11 +44,13 @@ const SAMPLE_WORKOUTS: Day["workouts"] = [
 	{
 		id: "w-d1-2026-05-22",
 		startedAt: new Date("2026-05-22T19:30:00"),
+		detailHref: "/workouts/w-d1-2026-05-22",
 		memoPreview: "右肩に違和感あり。次回はアップを長めにする。",
 	},
 	{
 		id: "w-d1-2026-05-15",
 		startedAt: new Date("2026-05-15T19:10:00"),
+		detailHref: "/workouts/w-d1-2026-05-15",
 		memoPreview: null,
 	},
 ];
@@ -100,6 +102,7 @@ const SAMPLE_DAYS: Day[] = [
 			{
 				id: "w-d2-2026-05-20",
 				startedAt: new Date("2026-05-20T07:20:00"),
+				detailHref: "/workouts/w-d2-2026-05-20",
 				memoPreview: "フォームは安定。最終セットだけ少し重い。",
 			},
 		],
@@ -144,7 +147,6 @@ const meta = {
 		onDuplicate: fn(),
 		onDelete: fn(),
 		onStartWorkoutFromDay: fn(),
-		onViewWorkoutDetail: fn(),
 		onAddExercisePlanWithSelectedExercise: fn(),
 		onAddExercisePlanWithNewExercise: fn(),
 		onDeleteExercisePlan: fn(),
@@ -251,7 +253,6 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 	onDuplicate,
 	onDelete,
 	onStartWorkoutFromDay,
-	onViewWorkoutDetail,
 	onAddExercisePlanWithSelectedExercise,
 	onAddExercisePlanWithNewExercise,
 	onDeleteExercisePlan,
@@ -454,7 +455,6 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 			onDuplicate={onDuplicate}
 			onDelete={onDelete}
 			onStartWorkoutFromDay={onStartWorkoutFromDay}
-			onViewWorkoutDetail={onViewWorkoutDetail}
 			onAddExercisePlanWithSelectedExercise={
 				handleAddExercisePlanWithSelectedExercise
 			}
@@ -576,26 +576,22 @@ export const DeleteProgramInvokesCallbackAfterConfirm: Story = {
 	},
 };
 
-export const ViewWorkoutDetailInvokesCallback: Story = {
-	name: "実施履歴からワークアウト詳細を開ける",
+export const WorkoutHistoryLinksToDetail: Story = {
+	name: "実施履歴がワークアウト詳細へのリンクになる",
 	args: {
 		name: "5/3/1 BBB",
 		meta: null,
 		days: SAMPLE_DAYS,
 	},
-	play: async ({ canvasElement, args }) => {
+	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		expect(
 			canvas.getByText("右肩に違和感あり。次回はアップを長めにする。"),
 		).toBeInTheDocument();
-		await userEvent.click(
-			canvas.getByRole("button", {
-				name: "2026/05/22 19:30の実施履歴を確認、メモ: 右肩に違和感あり。次回はアップを長めにする。",
-			}),
-		);
-		await waitFor(() => {
-			expect(args.onViewWorkoutDetail).toHaveBeenCalledWith("w-d1-2026-05-22");
+		const link = canvas.getByRole("link", {
+			name: "2026/05/22 19:30の実施履歴を確認、メモ: 右肩に違和感あり。次回はアップを長めにする。",
 		});
+		expect(link).toHaveAttribute("href", "/workouts/w-d1-2026-05-22");
 	},
 };
 

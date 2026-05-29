@@ -6,18 +6,19 @@ import { cn } from "../../libs";
 import { Button } from "../../primitives/button";
 import { createAffordanceClass } from "../../primitives/create-affordance";
 import { Heading, Section } from "../../primitives/heading";
+import { Link } from "../../primitives/link";
 
 type Props = {
 	dayId: string;
 	dayLabel: string;
 	workouts: WorkoutHistory[];
 	onStartWorkout: (dayId: string) => void;
-	onViewWorkoutDetail: (workoutId: string) => void;
 };
 
 export type WorkoutHistory = {
 	id: string;
 	startedAt: Date;
+	detailHref: string;
 	memoPreview?: string | null;
 };
 
@@ -26,7 +27,6 @@ export const WorkoutHistorySection: FC<Props> = ({
 	dayLabel,
 	workouts,
 	onStartWorkout,
-	onViewWorkoutDetail,
 }) => {
 	const sortedWorkouts = [...workouts].sort(
 		(a, b) => b.startedAt.getTime() - a.startedAt.getTime(),
@@ -57,15 +57,14 @@ export const WorkoutHistorySection: FC<Props> = ({
 					const ariaLabel = formatWorkoutAriaLabel(startedAt, memoPreview);
 					return (
 						<li key={workout.id}>
-							<Button
-								intent="plain"
+							<Link
+								href={workout.detailHref}
 								aria-label={ariaLabel}
 								className={cn(
-									"block h-full min-h-20 w-full rounded-lg bg-overlay p-4 text-left text-overlay-fg shadow-sm outline-none",
+									"block h-full min-h-20 w-full rounded-lg bg-overlay p-4 text-left text-overlay-fg no-underline shadow-sm outline-none",
 									"transition-all hover:bg-secondary hover:shadow-md",
 									"focus-visible:bg-secondary focus-visible:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
 								)}
-								onPress={() => onViewWorkoutDetail(workout.id)}
 							>
 								<span className="flex items-center gap-2 font-medium text-base">
 									<CalendarDaysIcon
@@ -81,7 +80,7 @@ export const WorkoutHistorySection: FC<Props> = ({
 										{memoPreview}
 									</span>
 								) : null}
-							</Button>
+							</Link>
 						</li>
 					);
 				})}
