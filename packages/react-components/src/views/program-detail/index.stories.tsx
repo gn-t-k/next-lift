@@ -44,22 +44,12 @@ const SAMPLE_WORKOUTS: Day["workouts"] = [
 	{
 		id: "w-d1-2026-05-22",
 		startedAt: new Date("2026-05-22T19:30:00"),
-		planResult: {
-			label: "計画通り",
-			tone: "success",
-			detail: "全3セットを計画値で実施",
-		},
-		highlights: ["最大 100kg", "総ボリューム 1,300kg"],
+		memoPreview: "右肩に違和感あり。次回はアップを長めにする。",
 	},
 	{
 		id: "w-d1-2026-05-15",
 		startedAt: new Date("2026-05-15T19:10:00"),
-		planResult: {
-			label: "一部変更",
-			tone: "warning",
-			detail: "1セット追加して実施",
-		},
-		highlights: ["最大 102.5kg"],
+		memoPreview: null,
 	},
 ];
 
@@ -110,12 +100,7 @@ const SAMPLE_DAYS: Day[] = [
 			{
 				id: "w-d2-2026-05-20",
 				startedAt: new Date("2026-05-20T07:20:00"),
-				planResult: {
-					label: "未完了",
-					tone: "danger",
-					detail: "最後のセットをスキップ",
-				},
-				highlights: ["最大 140kg"],
+				memoPreview: "フォームは安定。最終セットだけ少し重い。",
 			},
 		],
 		exercisePlans: [
@@ -600,13 +585,12 @@ export const ViewWorkoutDetailInvokesCallback: Story = {
 	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
-		expect(canvas.getByText("計画通り")).toBeInTheDocument();
-		expect(canvas.getByText("全3セットを計画値で実施")).toBeInTheDocument();
-		expect(canvas.getByText("最大 100kg")).toBeInTheDocument();
-		expect(canvas.getByText("総ボリューム 1,300kg")).toBeInTheDocument();
+		expect(
+			canvas.getByText("右肩に違和感あり。次回はアップを長めにする。"),
+		).toBeInTheDocument();
 		await userEvent.click(
 			canvas.getByRole("button", {
-				name: "2026/05/22 19:30の実施履歴を確認、計画通り、全3セットを計画値で実施、最大 100kg、総ボリューム 1,300kg",
+				name: "2026/05/22 19:30の実施履歴を確認、メモ: 右肩に違和感あり。次回はアップを長めにする。",
 			}),
 		);
 		await waitFor(() => {

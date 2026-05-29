@@ -18,14 +18,7 @@ type Props = {
 export type WorkoutHistory = {
 	id: string;
 	startedAt: Date;
-	planResult?: WorkoutPlanResult;
-	highlights?: string[];
-};
-
-type WorkoutPlanResult = {
-	label: string;
-	tone?: "success" | "warning" | "danger" | "muted";
-	detail?: string;
+	memoPreview?: string | null;
 };
 
 export const WorkoutHistorySection: FC<Props> = ({
@@ -60,12 +53,8 @@ export const WorkoutHistorySection: FC<Props> = ({
 				</li>
 				{sortedWorkouts.map((workout) => {
 					const startedAt = formatWorkoutStartedAt(workout.startedAt);
-					const highlights = workout.highlights ?? [];
-					const ariaLabel = formatWorkoutAriaLabel(
-						startedAt,
-						workout.planResult,
-						highlights,
-					);
+					const memoPreview = formatMemoPreview(workout.memoPreview);
+					const ariaLabel = formatWorkoutAriaLabel(startedAt, memoPreview);
 					return (
 						<li key={workout.id}>
 							<Button
@@ -78,36 +67,18 @@ export const WorkoutHistorySection: FC<Props> = ({
 								)}
 								onPress={() => onViewWorkoutDetail(workout.id)}
 							>
-								<span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-									<span className="flex items-center gap-2 font-medium text-base">
-										<CalendarDaysIcon
-											data-slot="icon"
-											className="size-4"
-											aria-hidden
-										/>
-										{startedAt}
-									</span>
-									{workout.planResult !== undefined ? (
-										<span
-											className={cn(
-												"inline-flex rounded px-1.5 py-0.5 font-medium text-xs",
-												getPlanResultClassName(workout.planResult.tone),
-											)}
-										>
-											{workout.planResult.label}
-										</span>
-									) : null}
+								<span className="flex items-center gap-2 font-medium text-base">
+									<CalendarDaysIcon
+										data-slot="icon"
+										className="size-4"
+										aria-hidden
+									/>
+									{startedAt}
 								</span>
-								{workout.planResult?.detail !== undefined ? (
-									<span className="wrap-break-word mt-2 line-clamp-1 block text-muted-fg text-sm">
-										{workout.planResult.detail}
-									</span>
-								) : null}
-								{highlights.length > 0 ? (
-									<span className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-muted-fg text-xs">
-										{highlights.map((item) => (
-											<span key={item}>{item}</span>
-										))}
+								{memoPreview !== undefined ? (
+									<span className="wrap-break-word mt-2 line-clamp-2 block text-muted-fg text-sm">
+										<span className="font-medium">メモ: </span>
+										{memoPreview}
 									</span>
 								) : null}
 							</Button>
@@ -128,31 +99,17 @@ const formatWorkoutStartedAt = (date: Date): string =>
 		minute: "2-digit",
 	}).format(date);
 
-const getPlanResultClassName = (
-	tone: WorkoutPlanResult["tone"] = "muted",
-): string => {
-	switch (tone) {
-		case "success":
-			return "bg-success-subtle text-success-subtle-fg";
-		case "warning":
-			return "bg-warning-subtle text-warning-subtle-fg";
-		case "danger":
-			return "bg-danger-subtle text-danger-subtle-fg";
-		case "muted":
-			return "bg-muted text-muted-fg";
-	}
+const formatMemoPreview = (
+	memo: string | null | undefined,
+): string | undefined => {
+	const trimmedMemo = memo?.trim();
+	return trimmedMemo === "" ? undefined : trimmedMemo;
 };
 
 const formatWorkoutAriaLabel = (
 	startedAt: string,
-	planResult: WorkoutPlanResult | undefined,
-	highlights: string[],
+	memoPreview: string | undefined,
 ): string =>
-	[
-		`${startedAt}の実施履歴を確認`,
-		planResult?.label,
-		planResult?.detail,
-		...highlights,
-	]
+	[`${startedAt}の実施履歴を確認`, memoPreview && `メモ: ${memoPreview}`]
 		.filter((item): item is string => item !== undefined)
 		.join("、");
