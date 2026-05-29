@@ -18,6 +18,10 @@ type Props = {
 export type WorkoutHistory = {
 	id: string;
 	startedAt: Date;
+	exerciseNames?: string[];
+	exerciseCount?: number;
+	setCount?: number;
+	totalVolumeKg?: number;
 };
 
 export const WorkoutHistorySection: FC<Props> = ({
@@ -52,11 +56,18 @@ export const WorkoutHistorySection: FC<Props> = ({
 				</li>
 				{sortedWorkouts.map((workout) => {
 					const startedAt = formatWorkoutStartedAt(workout.startedAt);
+					const exerciseNames = formatExerciseNames(workout.exerciseNames);
+					const summaryItems = formatSummaryItems(workout);
+					const ariaLabel = formatWorkoutAriaLabel(
+						startedAt,
+						exerciseNames,
+						summaryItems,
+					);
 					return (
 						<li key={workout.id}>
 							<Button
 								intent="plain"
-								aria-label={`${startedAt}の実施履歴を確認`}
+								aria-label={ariaLabel}
 								className={cn(
 									"block h-full min-h-20 w-full rounded-lg bg-overlay p-4 text-left text-overlay-fg shadow-sm outline-none",
 									"transition-all hover:bg-secondary hover:shadow-md",
@@ -72,6 +83,18 @@ export const WorkoutHistorySection: FC<Props> = ({
 									/>
 									{startedAt}
 								</span>
+								{exerciseNames !== undefined ? (
+									<span className="wrap-break-word mt-2 line-clamp-1 block text-muted-fg text-sm">
+										{exerciseNames}
+									</span>
+								) : null}
+								{summaryItems.length > 0 ? (
+									<span className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-muted-fg text-xs">
+										{summaryItems.map((item) => (
+											<span key={item}>{item}</span>
+										))}
+									</span>
+								) : null}
 							</Button>
 						</li>
 					);
@@ -89,3 +112,48 @@ const formatWorkoutStartedAt = (date: Date): string =>
 		hour: "2-digit",
 		minute: "2-digit",
 	}).format(date);
+
+const formatExerciseNames = (
+	exerciseNames: string[] | undefined,
+): string | undefined => {
+	if (exerciseNames === undefined || exerciseNames.length === 0) {
+		return undefined;
+	}
+	if (exerciseNames.length <= 2) {
+		return exerciseNames.join("、");
+	}
+	return `${exerciseNames.slice(0, 2).join("、")} ほか${exerciseNames.length - 2}種目`;
+};
+
+const formatSummaryItems = (workout: WorkoutHistory): string[] => {
+	const items: string[] = [];
+	if (workout.exerciseCount !== undefined || workout.setCount !== undefined) {
+		items.push(
+			[
+				workout.exerciseCount === undefined
+					? undefined
+					: `${workout.exerciseCount}種目`,
+				workout.setCount === undefined
+					? undefined
+					: `${workout.setCount}セット`,
+			]
+				.filter((item): item is string => item !== undefined)
+				.join(" / "),
+		);
+	}
+	if (workout.totalVolumeKg !== undefined) {
+		items.push(
+			`総ボリューム ${new Intl.NumberFormat("ja-JP").format(workout.totalVolumeKg)}kg`,
+		);
+	}
+	return items;
+};
+
+const formatWorkoutAriaLabel = (
+	startedAt: string,
+	exerciseNames: string | undefined,
+	summaryItems: string[],
+): string =>
+	[`${startedAt}の実施履歴を確認`, exerciseNames, ...summaryItems]
+		.filter((item): item is string => item !== undefined)
+		.join("、");

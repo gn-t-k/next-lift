@@ -41,8 +41,22 @@ const SAMPLE_AVAILABLE_EXERCISES: AvailableExercise[] = [
 ];
 
 const SAMPLE_WORKOUTS: Day["workouts"] = [
-	{ id: "w-d1-2026-05-22", startedAt: new Date("2026-05-22T19:30:00") },
-	{ id: "w-d1-2026-05-15", startedAt: new Date("2026-05-15T19:10:00") },
+	{
+		id: "w-d1-2026-05-22",
+		startedAt: new Date("2026-05-22T19:30:00"),
+		exerciseNames: ["ベンチプレス", "インクラインダンベルプレス"],
+		exerciseCount: 2,
+		setCount: 3,
+		totalVolumeKg: 2900,
+	},
+	{
+		id: "w-d1-2026-05-15",
+		startedAt: new Date("2026-05-15T19:10:00"),
+		exerciseNames: ["ベンチプレス", "インクラインダンベルプレス", "ディップス"],
+		exerciseCount: 3,
+		setCount: 7,
+		totalVolumeKg: 5120,
+	},
 ];
 
 const SAMPLE_DAYS: Day[] = [
@@ -89,7 +103,14 @@ const SAMPLE_DAYS: Day[] = [
 		label: "Day 2: 下半身",
 		detailHref: "/programs/p1/days/d2",
 		workouts: [
-			{ id: "w-d2-2026-05-20", startedAt: new Date("2026-05-20T07:20:00") },
+			{
+				id: "w-d2-2026-05-20",
+				startedAt: new Date("2026-05-20T07:20:00"),
+				exerciseNames: ["バックスクワット"],
+				exerciseCount: 1,
+				setCount: 3,
+				totalVolumeKg: 1260,
+			},
 		],
 		exercisePlans: [
 			{
@@ -573,9 +594,14 @@ export const ViewWorkoutDetailInvokesCallback: Story = {
 	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
+		expect(
+			canvas.getByText("ベンチプレス、インクラインダンベルプレス"),
+		).toBeInTheDocument();
+		expect(canvas.getByText("2種目 / 3セット")).toBeInTheDocument();
+		expect(canvas.getByText("総ボリューム 2,900kg")).toBeInTheDocument();
 		await userEvent.click(
 			canvas.getByRole("button", {
-				name: "2026/05/22 19:30の実施履歴を確認",
+				name: "2026/05/22 19:30の実施履歴を確認、ベンチプレス、インクラインダンベルプレス、2種目 / 3セット、総ボリューム 2,900kg",
 			}),
 		);
 		await waitFor(() => {
