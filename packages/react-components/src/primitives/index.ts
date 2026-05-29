@@ -1,6 +1,7 @@
 export * from "./button";
 export * from "./combo-box";
 export * from "./create-affordance";
+export * from "./dialog";
 export * from "./drawer";
 export * from "./error-alert";
 export * from "./gym-context";

@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from "react";
-import { Dialog } from "react-aria-components";
 import type { useMediaQuery } from "../../libs";
 import { Button } from "../../primitives/button";
+import { Dialog, DialogTitle } from "../../primitives/dialog";
 import { Drawer, DrawerContent, DrawerTitle } from "../../primitives/drawer";
 import { Popover, PopoverContent } from "../../primitives/popover";
 
@@ -43,11 +43,7 @@ export const ProgramDeleteDialog: FC<Props> = ({
 						offset={4}
 						className="w-80 p-3"
 					>
-						<Dialog
-							role="alertdialog"
-							aria-label={title}
-							className="outline-hidden"
-						>
+						<Dialog role="alertdialog" aria-label={title}>
 							<ProgramDeleteDialogContent
 								title={title}
 								name={name}
@@ -92,9 +88,7 @@ const ProgramDeleteDialogContent: FC<ContentProps> = ({
 }) => (
 	<div className="flex flex-col gap-3">
 		<div className="flex flex-col gap-1">
-			<h2 className="text-balance font-semibold text-base/6 text-fg">
-				{title}
-			</h2>
+			<DialogTitle>{title}</DialogTitle>
 			<ProgramDeleteDialogBody name={name} />
 		</div>
 		<ProgramDeleteDialogActions onCancel={onCancel} onDelete={onDelete} />

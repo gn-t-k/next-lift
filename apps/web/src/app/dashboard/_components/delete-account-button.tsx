@@ -2,6 +2,8 @@
 
 import {
 	Button,
+	Dialog,
+	DialogTitle,
 	Drawer,
 	DrawerContent,
 	DrawerTitle,
@@ -52,19 +54,17 @@ export const DeleteAccountButton: FC = () => {
 				<Popover isOpen={isOpen} onOpenChange={setIsOpen}>
 					{trigger}
 					<PopoverContent placement="bottom end" className="w-96 p-4">
-						<div
+						<Dialog
 							role="alertdialog"
 							aria-label={title}
 							className="flex flex-col gap-4 outline-hidden"
 						>
 							<div className="flex flex-col gap-1">
-								<h2 className="text-balance font-semibold text-base/6 text-fg">
-									{title}
-								</h2>
+								<DialogTitle>{title}</DialogTitle>
 								<DeleteAccountDialogDescription />
 							</div>
 							{content}
-						</div>
+						</Dialog>
 					</PopoverContent>
 				</Popover>
 			);
