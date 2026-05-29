@@ -1,6 +1,8 @@
 "use client";
 
+import { ChartBarSquareIcon } from "@heroicons/react/24/solid";
 import { type ComponentProps, type FC, type Key, useCallback } from "react";
+import { Button } from "../../primitives/button";
 import { Section } from "../../primitives/heading";
 import { TabPanel, Tabs } from "../../primitives/tabs";
 import { CreateDayCard } from "./create-day-card";
@@ -30,6 +32,7 @@ type Props = {
 	onChangeProgramInfo: (payload: { name: string; meta: string | null }) => void;
 	onDuplicate: () => void;
 	onDelete: () => void;
+	onViewPlanRecordComparison: (dayId: string) => void;
 	onAddExercisePlanWithSelectedExercise: (
 		dayId: string,
 		exerciseId: string,
@@ -74,6 +77,7 @@ export const ProgramDetail: FC<Props> = ({
 	onChangeProgramInfo,
 	onDuplicate,
 	onDelete,
+	onViewPlanRecordComparison,
 	onAddExercisePlanWithSelectedExercise,
 	onAddExercisePlanWithNewExercise,
 	onDeleteExercisePlan,
@@ -123,6 +127,20 @@ export const ProgramDetail: FC<Props> = ({
 						/>
 						{days.map((day) => (
 							<TabPanel key={day.id} id={day.id} className="pt-4">
+								<div className="mb-3 flex justify-end">
+									<Button
+										intent="outline"
+										size="sm"
+										onPress={() => onViewPlanRecordComparison(day.id)}
+									>
+										<ChartBarSquareIcon
+											data-slot="icon"
+											className="size-4"
+											aria-hidden
+										/>
+										計画実績を確認
+									</Button>
+								</div>
 								<ExercisePlanSection
 									exercisePlans={day.exercisePlans}
 									availableExercises={availableExercises}

@@ -121,6 +121,7 @@ const meta = {
 		onChangeProgramInfo: fn(),
 		onDuplicate: fn(),
 		onDelete: fn(),
+		onViewPlanRecordComparison: fn(),
 		onAddExercisePlanWithSelectedExercise: fn(),
 		onAddExercisePlanWithNewExercise: fn(),
 		onDeleteExercisePlan: fn(),
@@ -225,6 +226,7 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 	onChangeProgramInfo,
 	onDuplicate,
 	onDelete,
+	onViewPlanRecordComparison,
 	onAddExercisePlanWithSelectedExercise,
 	onAddExercisePlanWithNewExercise,
 	onDeleteExercisePlan,
@@ -425,6 +427,7 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 			onChangeProgramInfo={handleChangeProgramInfo}
 			onDuplicate={onDuplicate}
 			onDelete={onDelete}
+			onViewPlanRecordComparison={onViewPlanRecordComparison}
 			onAddExercisePlanWithSelectedExercise={
 				handleAddExercisePlanWithSelectedExercise
 			}
@@ -542,6 +545,24 @@ export const DeleteProgramInvokesCallbackAfterConfirm: Story = {
 		await userEvent.click(within(dialog).getByRole("button", { name: "削除" }));
 		await waitFor(() => {
 			expect(args.onDelete).toHaveBeenCalled();
+		});
+	},
+};
+
+export const ViewPlanRecordComparisonInvokesCallback: Story = {
+	name: "計画実績確認の導線を押すと選択中の Day id で呼ばれる",
+	args: {
+		name: "5/3/1 BBB",
+		meta: null,
+		days: SAMPLE_DAYS,
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			canvas.getByRole("button", { name: "計画実績を確認" }),
+		);
+		await waitFor(() => {
+			expect(args.onViewPlanRecordComparison).toHaveBeenCalledWith("d1");
 		});
 	},
 };
