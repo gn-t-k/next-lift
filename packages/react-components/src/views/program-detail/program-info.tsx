@@ -77,6 +77,7 @@ export const ProgramInfo: FC<Props> = ({
 						isOpen={isDeleteDialogOpen}
 						onOpenChange={setIsDeleteDialogOpen}
 						onDelete={onDelete}
+						desktopViewport={desktopViewport}
 					/>
 				) : (
 					<ProgramActionsMenu

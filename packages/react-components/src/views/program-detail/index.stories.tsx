@@ -530,7 +530,7 @@ export const DeleteProgramInvokesCallbackAfterConfirm: Story = {
 	play: async ({ canvasElement, args }) => {
 		const body = await openProgramActionsMenu(canvasElement);
 		await userEvent.click(
-			await waitFor(() => body.getByRole("menuitem", { name: "削除…" })),
+			await waitFor(() => body.getByRole("menuitem", { name: "削除" })),
 		);
 		const dialog = await waitFor(() => {
 			const found = body.getByRole("alertdialog", {

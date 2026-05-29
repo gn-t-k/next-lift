@@ -42,7 +42,7 @@ export const WithSeparator: Story = {
 				<MenuItem>複製</MenuItem>
 				<MenuItem>名前を変更</MenuItem>
 				<MenuSeparator />
-				<MenuItem intent="danger">削除…</MenuItem>
+				<MenuItem intent="danger">削除</MenuItem>
 			</Menu>
 		</MenuTrigger>
 	),
@@ -67,7 +67,7 @@ export const ProgramContextMenu: Story = {
 				<MenuSeparator />
 				<MenuItem intent="danger">
 					<TrashIcon className="size-4" aria-hidden />
-					削除…
+					削除
 				</MenuItem>
 			</Menu>
 		</MenuTrigger>
@@ -100,7 +100,7 @@ export const DisabledItem: Story = {
 				<MenuItem>複製</MenuItem>
 				<MenuItem isDisabled>共有 (準備中)</MenuItem>
 				<MenuSeparator />
-				<MenuItem intent="danger">削除…</MenuItem>
+				<MenuItem intent="danger">削除</MenuItem>
 			</Menu>
 		</MenuTrigger>
 	),

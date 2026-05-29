@@ -42,7 +42,7 @@ export const ProgramActionsMenu: FC<Props> = ({
 			<MenuSeparator />
 			<MenuItem intent="danger" onAction={onDelete}>
 				<TrashIcon className="size-4" aria-hidden />
-				削除…
+				削除
 			</MenuItem>
 		</Menu>
 	</MenuTrigger>
