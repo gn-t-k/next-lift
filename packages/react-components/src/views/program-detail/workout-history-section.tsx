@@ -18,10 +18,14 @@ type Props = {
 export type WorkoutHistory = {
 	id: string;
 	startedAt: Date;
-	exerciseNames?: string[];
-	exerciseCount?: number;
-	setCount?: number;
-	totalVolumeKg?: number;
+	planResult?: WorkoutPlanResult;
+	highlights?: string[];
+};
+
+type WorkoutPlanResult = {
+	label: string;
+	tone?: "success" | "warning" | "danger" | "muted";
+	detail?: string;
 };
 
 export const WorkoutHistorySection: FC<Props> = ({
@@ -56,12 +60,11 @@ export const WorkoutHistorySection: FC<Props> = ({
 				</li>
 				{sortedWorkouts.map((workout) => {
 					const startedAt = formatWorkoutStartedAt(workout.startedAt);
-					const exerciseNames = formatExerciseNames(workout.exerciseNames);
-					const summaryItems = formatSummaryItems(workout);
+					const highlights = workout.highlights ?? [];
 					const ariaLabel = formatWorkoutAriaLabel(
 						startedAt,
-						exerciseNames,
-						summaryItems,
+						workout.planResult,
+						highlights,
 					);
 					return (
 						<li key={workout.id}>
@@ -75,22 +78,34 @@ export const WorkoutHistorySection: FC<Props> = ({
 								)}
 								onPress={() => onViewWorkoutDetail(workout.id)}
 							>
-								<span className="flex items-center gap-2 font-medium text-base">
-									<CalendarDaysIcon
-										data-slot="icon"
-										className="size-4"
-										aria-hidden
-									/>
-									{startedAt}
+								<span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+									<span className="flex items-center gap-2 font-medium text-base">
+										<CalendarDaysIcon
+											data-slot="icon"
+											className="size-4"
+											aria-hidden
+										/>
+										{startedAt}
+									</span>
+									{workout.planResult !== undefined ? (
+										<span
+											className={cn(
+												"inline-flex rounded px-1.5 py-0.5 font-medium text-xs",
+												getPlanResultClassName(workout.planResult.tone),
+											)}
+										>
+											{workout.planResult.label}
+										</span>
+									) : null}
 								</span>
-								{exerciseNames !== undefined ? (
+								{workout.planResult?.detail !== undefined ? (
 									<span className="wrap-break-word mt-2 line-clamp-1 block text-muted-fg text-sm">
-										{exerciseNames}
+										{workout.planResult.detail}
 									</span>
 								) : null}
-								{summaryItems.length > 0 ? (
+								{highlights.length > 0 ? (
 									<span className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-muted-fg text-xs">
-										{summaryItems.map((item) => (
+										{highlights.map((item) => (
 											<span key={item}>{item}</span>
 										))}
 									</span>
@@ -113,47 +128,31 @@ const formatWorkoutStartedAt = (date: Date): string =>
 		minute: "2-digit",
 	}).format(date);
 
-const formatExerciseNames = (
-	exerciseNames: string[] | undefined,
-): string | undefined => {
-	if (exerciseNames === undefined || exerciseNames.length === 0) {
-		return undefined;
+const getPlanResultClassName = (
+	tone: WorkoutPlanResult["tone"] = "muted",
+): string => {
+	switch (tone) {
+		case "success":
+			return "bg-success-subtle text-success-subtle-fg";
+		case "warning":
+			return "bg-warning-subtle text-warning-subtle-fg";
+		case "danger":
+			return "bg-danger-subtle text-danger-subtle-fg";
+		case "muted":
+			return "bg-muted text-muted-fg";
 	}
-	if (exerciseNames.length <= 2) {
-		return exerciseNames.join("、");
-	}
-	return `${exerciseNames.slice(0, 2).join("、")} ほか${exerciseNames.length - 2}種目`;
-};
-
-const formatSummaryItems = (workout: WorkoutHistory): string[] => {
-	const items: string[] = [];
-	if (workout.exerciseCount !== undefined || workout.setCount !== undefined) {
-		items.push(
-			[
-				workout.exerciseCount === undefined
-					? undefined
-					: `${workout.exerciseCount}種目`,
-				workout.setCount === undefined
-					? undefined
-					: `${workout.setCount}セット`,
-			]
-				.filter((item): item is string => item !== undefined)
-				.join(" / "),
-		);
-	}
-	if (workout.totalVolumeKg !== undefined) {
-		items.push(
-			`総ボリューム ${new Intl.NumberFormat("ja-JP").format(workout.totalVolumeKg)}kg`,
-		);
-	}
-	return items;
 };
 
 const formatWorkoutAriaLabel = (
 	startedAt: string,
-	exerciseNames: string | undefined,
-	summaryItems: string[],
+	planResult: WorkoutPlanResult | undefined,
+	highlights: string[],
 ): string =>
-	[`${startedAt}の実施履歴を確認`, exerciseNames, ...summaryItems]
+	[
+		`${startedAt}の実施履歴を確認`,
+		planResult?.label,
+		planResult?.detail,
+		...highlights,
+	]
 		.filter((item): item is string => item !== undefined)
 		.join("、");
