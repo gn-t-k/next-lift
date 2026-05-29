@@ -38,7 +38,7 @@ export const WorkoutHistorySection: FC<Props> = ({
 						href={startWorkoutHref}
 						className={cn(
 							createAffordanceClass,
-							"flex h-full min-h-20 w-full flex-col gap-2 rounded-lg p-4 text-center",
+							"flex h-full min-h-20 w-full flex-col items-center justify-center gap-2 rounded-lg p-4 text-center",
 						)}
 					>
 						<PlayIcon data-slot="icon" className="size-4" aria-hidden />
