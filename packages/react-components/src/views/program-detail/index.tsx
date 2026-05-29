@@ -1,8 +1,6 @@
 "use client";
 
-import { ChartBarSquareIcon } from "@heroicons/react/24/solid";
 import { type ComponentProps, type FC, type Key, useCallback } from "react";
-import { Button } from "../../primitives/button";
 import { Section } from "../../primitives/heading";
 import { TabPanel, Tabs } from "../../primitives/tabs";
 import { CreateDayCard } from "./create-day-card";
@@ -11,6 +9,10 @@ import { ExercisePlanSection } from "./exercise-plan-section";
 import { ProgramInfo } from "./program-info";
 import { SetPlanSection } from "./set-plan-section";
 import { useDayTabSelection } from "./use-day-tab-selection";
+import {
+	type WorkoutHistory,
+	WorkoutHistorySection,
+} from "./workout-history-section";
 
 type SetPlanChangePayload = Parameters<
 	ComponentProps<typeof SetPlanSection>["onChangeSetPlan"]
@@ -32,7 +34,8 @@ type Props = {
 	onChangeProgramInfo: (payload: { name: string; meta: string | null }) => void;
 	onDuplicate: () => void;
 	onDelete: () => void;
-	onViewPlanRecordComparison: (dayId: string) => void;
+	onStartWorkoutFromDay: (dayId: string) => void;
+	onViewPlanRecordComparison: (dayId: string, workoutId: string) => void;
 	onAddExercisePlanWithSelectedExercise: (
 		dayId: string,
 		exerciseId: string,
@@ -50,6 +53,7 @@ type Day = {
 	id: string;
 	label: string;
 	detailHref: string;
+	workouts: WorkoutHistory[];
 	exercisePlans: (ExercisePlan & {
 		setPlans: SetPlan[];
 	})[];
@@ -77,6 +81,7 @@ export const ProgramDetail: FC<Props> = ({
 	onChangeProgramInfo,
 	onDuplicate,
 	onDelete,
+	onStartWorkoutFromDay,
 	onViewPlanRecordComparison,
 	onAddExercisePlanWithSelectedExercise,
 	onAddExercisePlanWithNewExercise,
@@ -127,20 +132,6 @@ export const ProgramDetail: FC<Props> = ({
 						/>
 						{days.map((day) => (
 							<TabPanel key={day.id} id={day.id} className="pt-4">
-								<div className="mb-3 flex justify-end">
-									<Button
-										intent="outline"
-										size="sm"
-										onPress={() => onViewPlanRecordComparison(day.id)}
-									>
-										<ChartBarSquareIcon
-											data-slot="icon"
-											className="size-4"
-											aria-hidden
-										/>
-										計画実績を確認
-									</Button>
-								</div>
 								<ExercisePlanSection
 									exercisePlans={day.exercisePlans}
 									availableExercises={availableExercises}
@@ -169,6 +160,13 @@ export const ProgramDetail: FC<Props> = ({
 										/>
 									)}
 								</ExercisePlanSection>
+								<WorkoutHistorySection
+									dayId={day.id}
+									dayLabel={day.label}
+									workouts={day.workouts}
+									onStartWorkout={onStartWorkoutFromDay}
+									onViewPlanRecordComparison={onViewPlanRecordComparison}
+								/>
 							</TabPanel>
 						))}
 					</Tabs>
