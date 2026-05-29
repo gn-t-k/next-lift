@@ -132,7 +132,7 @@ const meta = {
 		onDuplicate: fn(),
 		onDelete: fn(),
 		onStartWorkoutFromDay: fn(),
-		onViewPlanRecordComparison: fn(),
+		onViewWorkoutDetail: fn(),
 		onAddExercisePlanWithSelectedExercise: fn(),
 		onAddExercisePlanWithNewExercise: fn(),
 		onDeleteExercisePlan: fn(),
@@ -239,7 +239,7 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 	onDuplicate,
 	onDelete,
 	onStartWorkoutFromDay,
-	onViewPlanRecordComparison,
+	onViewWorkoutDetail,
 	onAddExercisePlanWithSelectedExercise,
 	onAddExercisePlanWithNewExercise,
 	onDeleteExercisePlan,
@@ -442,7 +442,7 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 			onDuplicate={onDuplicate}
 			onDelete={onDelete}
 			onStartWorkoutFromDay={onStartWorkoutFromDay}
-			onViewPlanRecordComparison={onViewPlanRecordComparison}
+			onViewWorkoutDetail={onViewWorkoutDetail}
 			onAddExercisePlanWithSelectedExercise={
 				handleAddExercisePlanWithSelectedExercise
 			}
@@ -564,8 +564,8 @@ export const DeleteProgramInvokesCallbackAfterConfirm: Story = {
 	},
 };
 
-export const ViewPlanRecordComparisonInvokesCallback: Story = {
-	name: "実施履歴から計画実績比較を開ける",
+export const ViewWorkoutDetailInvokesCallback: Story = {
+	name: "実施履歴からワークアウト詳細を開ける",
 	args: {
 		name: "5/3/1 BBB",
 		meta: null,
@@ -579,10 +579,7 @@ export const ViewPlanRecordComparisonInvokesCallback: Story = {
 			}),
 		);
 		await waitFor(() => {
-			expect(args.onViewPlanRecordComparison).toHaveBeenCalledWith(
-				"d1",
-				"w-d1-2026-05-22",
-			);
+			expect(args.onViewWorkoutDetail).toHaveBeenCalledWith("w-d1-2026-05-22");
 		});
 	},
 };

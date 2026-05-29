@@ -12,7 +12,7 @@ type Props = {
 	dayLabel: string;
 	workouts: WorkoutHistory[];
 	onStartWorkout: (dayId: string) => void;
-	onViewPlanRecordComparison: (dayId: string, workoutId: string) => void;
+	onViewWorkoutDetail: (workoutId: string) => void;
 };
 
 export type WorkoutHistory = {
@@ -25,7 +25,7 @@ export const WorkoutHistorySection: FC<Props> = ({
 	dayLabel,
 	workouts,
 	onStartWorkout,
-	onViewPlanRecordComparison,
+	onViewWorkoutDetail,
 }) => {
 	const sortedWorkouts = [...workouts].sort(
 		(a, b) => b.startedAt.getTime() - a.startedAt.getTime(),
@@ -62,7 +62,7 @@ export const WorkoutHistorySection: FC<Props> = ({
 									"transition-all hover:bg-secondary hover:shadow-md",
 									"focus-visible:bg-secondary focus-visible:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
 								)}
-								onPress={() => onViewPlanRecordComparison(dayId, workout.id)}
+								onPress={() => onViewWorkoutDetail(workout.id)}
 							>
 								<span className="flex items-center gap-2 font-medium text-base">
 									<CalendarDaysIcon
@@ -71,9 +71,6 @@ export const WorkoutHistorySection: FC<Props> = ({
 										aria-hidden
 									/>
 									{startedAt}
-								</span>
-								<span className="mt-1 block text-muted-fg text-xs">
-									計画との差分を確認
 								</span>
 							</Button>
 						</li>
