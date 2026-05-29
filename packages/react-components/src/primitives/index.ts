@@ -1,6 +1,7 @@
 export * from "./button";
 export * from "./combo-box";
 export * from "./create-affordance";
+export * from "./dialog";
 export * from "./drawer";
 export * from "./error-alert";
 export * from "./gym-context";
@@ -9,7 +10,6 @@ export * from "./label";
 export * from "./link";
 export * from "./main";
 export * from "./menu";
-export * from "./modal";
 export * from "./number-field";
 export * from "./popover";
 export * from "./scrollable";

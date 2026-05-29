@@ -1,9 +1,15 @@
 import {
 	DocumentDuplicateIcon,
 	PencilSquareIcon,
+	TrashIcon,
 } from "@heroicons/react/24/outline";
 import type { FC, ReactNode } from "react";
-import { Menu, MenuItem, MenuTrigger } from "../../primitives/menu";
+import {
+	Menu,
+	MenuItem,
+	MenuSeparator,
+	MenuTrigger,
+} from "../../primitives/menu";
 
 type Props = {
 	trigger: ReactNode;
@@ -11,6 +17,7 @@ type Props = {
 	onOpenChange: (open: boolean) => void;
 	onEdit: () => void;
 	onDuplicate: () => void;
+	onDelete: () => void;
 };
 
 export const ProgramActionsMenu: FC<Props> = ({
@@ -19,6 +26,7 @@ export const ProgramActionsMenu: FC<Props> = ({
 	onOpenChange,
 	onEdit,
 	onDuplicate,
+	onDelete,
 }) => (
 	<MenuTrigger isOpen={isOpen} onOpenChange={onOpenChange}>
 		{trigger}
@@ -30,6 +38,11 @@ export const ProgramActionsMenu: FC<Props> = ({
 			<MenuItem onAction={onDuplicate}>
 				<DocumentDuplicateIcon className="size-4" aria-hidden />
 				コピーして新規作成
+			</MenuItem>
+			<MenuSeparator />
+			<MenuItem intent="danger" onAction={onDelete}>
+				<TrashIcon className="size-4" aria-hidden />
+				削除
 			</MenuItem>
 		</Menu>
 	</MenuTrigger>

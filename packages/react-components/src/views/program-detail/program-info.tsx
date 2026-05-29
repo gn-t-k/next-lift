@@ -5,6 +5,7 @@ import { useMediaQuery } from "../../libs";
 import { Heading } from "../../primitives/heading";
 import { ProgramActionsMenu } from "./program-actions-menu";
 import { ProgramActionsTrigger } from "./program-actions-trigger";
+import { ProgramDeleteDialog } from "./program-delete-dialog";
 import { ProgramInfoDialog } from "./program-info-dialog";
 import { type ProgramInfoChange, ProgramInfoForm } from "./program-info-form";
 
@@ -13,6 +14,7 @@ type Props = {
 	meta: string | null;
 	onChange: (payload: ProgramInfoChange) => void;
 	onDuplicate: () => void;
+	onDelete: () => void;
 };
 
 export const ProgramInfo: FC<Props> = ({
@@ -20,9 +22,11 @@ export const ProgramInfo: FC<Props> = ({
 	meta,
 	onChange,
 	onDuplicate,
+	onDelete,
 }) => {
 	const [isActionsMenuOpen, setIsActionsMenuOpen] = useState(false);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const desktopViewport = useMediaQuery("(min-width: 768px)");
 	const title = "プログラム情報を編集";
 	const trigger = <ProgramActionsTrigger />;
@@ -35,6 +39,11 @@ export const ProgramInfo: FC<Props> = ({
 	const handleDuplicate = () => {
 		onDuplicate();
 		setIsActionsMenuOpen(false);
+	};
+
+	const handleStartDelete = () => {
+		setIsActionsMenuOpen(false);
+		setIsDeleteDialogOpen(true);
 	};
 
 	return (
@@ -61,6 +70,15 @@ export const ProgramInfo: FC<Props> = ({
 							}}
 						/>
 					</ProgramInfoDialog>
+				) : isDeleteDialogOpen ? (
+					<ProgramDeleteDialog
+						name={name}
+						trigger={trigger}
+						isOpen={isDeleteDialogOpen}
+						onOpenChange={setIsDeleteDialogOpen}
+						onDelete={onDelete}
+						desktopViewport={desktopViewport}
+					/>
 				) : (
 					<ProgramActionsMenu
 						trigger={trigger}
@@ -68,6 +86,7 @@ export const ProgramInfo: FC<Props> = ({
 						onOpenChange={setIsActionsMenuOpen}
 						onEdit={handleStartEdit}
 						onDuplicate={handleDuplicate}
+						onDelete={handleStartDelete}
 					/>
 				)}
 			</div>

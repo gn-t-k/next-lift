@@ -29,6 +29,7 @@ type Props = {
 	onChangeDayLabel: (dayId: string, label: string) => void;
 	onChangeProgramInfo: (payload: { name: string; meta: string | null }) => void;
 	onDuplicate: () => void;
+	onDelete: () => void;
 	onAddExercisePlanWithSelectedExercise: (
 		dayId: string,
 		exerciseId: string,
@@ -72,6 +73,7 @@ export const ProgramDetail: FC<Props> = ({
 	onChangeDayLabel,
 	onChangeProgramInfo,
 	onDuplicate,
+	onDelete,
 	onAddExercisePlanWithSelectedExercise,
 	onAddExercisePlanWithNewExercise,
 	onDeleteExercisePlan,
@@ -103,6 +105,7 @@ export const ProgramDetail: FC<Props> = ({
 				meta={meta}
 				onChange={onChangeProgramInfo}
 				onDuplicate={onDuplicate}
+				onDelete={onDelete}
 			/>
 			{firstDayId === undefined ? (
 				<CreateDayCard onAddDay={onAddDay} />
