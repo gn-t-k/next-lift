@@ -3,16 +3,14 @@
 import { CalendarDaysIcon, PlayIcon } from "@heroicons/react/24/solid";
 import type { FC } from "react";
 import { cn } from "../../libs";
-import { Button } from "../../primitives/button";
 import { createAffordanceClass } from "../../primitives/create-affordance";
 import { Heading, Section } from "../../primitives/heading";
 import { Link } from "../../primitives/link";
 
 type Props = {
-	dayId: string;
 	dayLabel: string;
+	startWorkoutHref: string;
 	workouts: WorkoutHistory[];
-	onStartWorkout: (dayId: string) => void;
 };
 
 export type WorkoutHistory = {
@@ -23,10 +21,9 @@ export type WorkoutHistory = {
 };
 
 export const WorkoutHistorySection: FC<Props> = ({
-	dayId,
 	dayLabel,
+	startWorkoutHref,
 	workouts,
-	onStartWorkout,
 }) => {
 	const sortedWorkouts = [...workouts].sort(
 		(a, b) => b.startedAt.getTime() - a.startedAt.getTime(),
@@ -37,19 +34,18 @@ export const WorkoutHistorySection: FC<Props> = ({
 			<Heading className="font-medium text-base">実施履歴</Heading>
 			<ul className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
 				<li>
-					<Button
-						intent="plain"
+					<Link
+						href={startWorkoutHref}
 						className={cn(
 							createAffordanceClass,
 							"flex h-full min-h-20 w-full flex-col gap-2 rounded-lg p-4 text-center",
 						)}
-						onPress={() => onStartWorkout(dayId)}
 					>
 						<PlayIcon data-slot="icon" className="size-4" aria-hidden />
 						<span className="font-medium text-sm">
 							「{dayLabel}」を実施する
 						</span>
-					</Button>
+					</Link>
 				</li>
 				{sortedWorkouts.map((workout) => {
 					const startedAt = formatWorkoutStartedAt(workout.startedAt);

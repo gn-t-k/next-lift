@@ -60,6 +60,7 @@ const SAMPLE_DAYS: Day[] = [
 		id: "d1",
 		label: "Day 1: 上半身プッシュ",
 		detailHref: "/programs/p1/days/d1",
+		startWorkoutHref: "/workouts/new?dayId=d1",
 		workouts: SAMPLE_WORKOUTS,
 		exercisePlans: [
 			{
@@ -98,6 +99,7 @@ const SAMPLE_DAYS: Day[] = [
 		id: "d2",
 		label: "Day 2: 下半身",
 		detailHref: "/programs/p1/days/d2",
+		startWorkoutHref: "/workouts/new?dayId=d2",
 		workouts: [
 			{
 				id: "w-d2-2026-05-20",
@@ -125,6 +127,7 @@ const SAMPLE_DAYS: Day[] = [
 		id: "d3",
 		label: "Day 3: 上半身プル",
 		detailHref: "/programs/p1/days/d3",
+		startWorkoutHref: "/workouts/new?dayId=d3",
 		workouts: [],
 		exercisePlans: [],
 	},
@@ -146,7 +149,6 @@ const meta = {
 		onChangeProgramInfo: fn(),
 		onDuplicate: fn(),
 		onDelete: fn(),
-		onStartWorkoutFromDay: fn(),
 		onAddExercisePlanWithSelectedExercise: fn(),
 		onAddExercisePlanWithNewExercise: fn(),
 		onDeleteExercisePlan: fn(),
@@ -229,6 +231,7 @@ export const NoExercisePlansInSelectedDay: Story = {
 				id: "d1",
 				label: "Day 1",
 				detailHref: "/programs/p1/days/d1",
+				startWorkoutHref: "/workouts/new?dayId=d1",
 				workouts: [],
 				exercisePlans: [],
 			},
@@ -252,7 +255,6 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 	onChangeProgramInfo,
 	onDuplicate,
 	onDelete,
-	onStartWorkoutFromDay,
 	onAddExercisePlanWithSelectedExercise,
 	onAddExercisePlanWithNewExercise,
 	onDeleteExercisePlan,
@@ -282,6 +284,7 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 				id,
 				label: `Day ${prev.length + 1}`,
 				detailHref: `/programs/p1/days/${id}`,
+				startWorkoutHref: `/workouts/new?dayId=${id}`,
 				workouts: [],
 				exercisePlans: [],
 			},
@@ -454,7 +457,6 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 			onChangeProgramInfo={handleChangeProgramInfo}
 			onDuplicate={onDuplicate}
 			onDelete={onDelete}
-			onStartWorkoutFromDay={onStartWorkoutFromDay}
 			onAddExercisePlanWithSelectedExercise={
 				handleAddExercisePlanWithSelectedExercise
 			}
@@ -595,23 +597,19 @@ export const WorkoutHistoryLinksToDetail: Story = {
 	},
 };
 
-export const StartWorkoutFromDayInvokesCallback: Story = {
-	name: "実施する導線を押すと選択中の Day id で呼ばれる",
+export const StartWorkoutLinksToNewWorkout: Story = {
+	name: "実施する導線が新規ワークアウトへのリンクになる",
 	args: {
 		name: "5/3/1 BBB",
 		meta: null,
 		days: SAMPLE_DAYS,
 	},
-	play: async ({ canvasElement, args }) => {
+	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		await userEvent.click(
-			canvas.getByRole("button", {
-				name: "「Day 1: 上半身プッシュ」を実施する",
-			}),
-		);
-		await waitFor(() => {
-			expect(args.onStartWorkoutFromDay).toHaveBeenCalledWith("d1");
+		const link = canvas.getByRole("link", {
+			name: "「Day 1: 上半身プッシュ」を実施する",
 		});
+		expect(link).toHaveAttribute("href", "/workouts/new?dayId=d1");
 	},
 };
 
@@ -625,6 +623,7 @@ export const ExercisePlanAddDeleteFlow: Story = {
 				id: "d1",
 				label: "Day 1",
 				detailHref: "/programs/p1/days/d1",
+				startWorkoutHref: "/workouts/new?dayId=d1",
 				workouts: [],
 				exercisePlans: [
 					{
@@ -655,6 +654,7 @@ export const DeleteExercisePlanInvokesCallback: Story = {
 				id: "d1",
 				label: "Day 1",
 				detailHref: "/programs/p1/days/d1",
+				startWorkoutHref: "/workouts/new?dayId=d1",
 				workouts: [],
 				exercisePlans: [
 					{
@@ -698,6 +698,7 @@ export const AddExercisePlanBySelectingExercise: Story = {
 				id: "d1",
 				label: "Day 1",
 				detailHref: "/programs/p1/days/d1",
+				startWorkoutHref: "/workouts/new?dayId=d1",
 				workouts: [],
 				exercisePlans: [],
 			},

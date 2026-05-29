@@ -34,7 +34,6 @@ type Props = {
 	onChangeProgramInfo: (payload: { name: string; meta: string | null }) => void;
 	onDuplicate: () => void;
 	onDelete: () => void;
-	onStartWorkoutFromDay: (dayId: string) => void;
 	onAddExercisePlanWithSelectedExercise: (
 		dayId: string,
 		exerciseId: string,
@@ -52,6 +51,7 @@ type Day = {
 	id: string;
 	label: string;
 	detailHref: string;
+	startWorkoutHref: string;
 	workouts: WorkoutHistory[];
 	exercisePlans: (ExercisePlan & {
 		setPlans: SetPlan[];
@@ -80,7 +80,6 @@ export const ProgramDetail: FC<Props> = ({
 	onChangeProgramInfo,
 	onDuplicate,
 	onDelete,
-	onStartWorkoutFromDay,
 	onAddExercisePlanWithSelectedExercise,
 	onAddExercisePlanWithNewExercise,
 	onDeleteExercisePlan,
@@ -159,10 +158,9 @@ export const ProgramDetail: FC<Props> = ({
 									)}
 								</ExercisePlanSection>
 								<WorkoutHistorySection
-									dayId={day.id}
 									dayLabel={day.label}
+									startWorkoutHref={day.startWorkoutHref}
 									workouts={day.workouts}
-									onStartWorkout={onStartWorkoutFromDay}
 								/>
 							</TabPanel>
 						))}
