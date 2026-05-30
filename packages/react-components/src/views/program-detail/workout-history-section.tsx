@@ -1,11 +1,20 @@
-"use client";
-
 import { CalendarDaysIcon, PlayIcon } from "@heroicons/react/24/solid";
 import type { FC } from "react";
 import { cn } from "../../libs";
 import { createAffordanceClass } from "../../primitives/create-affordance";
 import { Heading, Section } from "../../primitives/heading";
 import { Link } from "../../primitives/link";
+
+const startWorkoutLinkClassName = cn(
+	createAffordanceClass,
+	"flex h-full min-h-20 w-full flex-col items-center justify-center gap-2 rounded-lg p-4 text-center",
+);
+
+const workoutHistoryLinkClassName = cn(
+	"block h-full min-h-20 w-full rounded-lg bg-overlay p-4 text-left text-overlay-fg no-underline shadow-sm outline-none",
+	"transition-all hover:bg-secondary hover:shadow-md",
+	"focus-visible:bg-secondary focus-visible:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+);
 
 type Props = {
 	dayLabel: string;
@@ -34,13 +43,7 @@ export const WorkoutHistorySection: FC<Props> = ({
 			<Heading className="font-medium text-base">実施履歴</Heading>
 			<ul className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
 				<li>
-					<Link
-						href={startWorkoutHref}
-						className={cn(
-							createAffordanceClass,
-							"flex h-full min-h-20 w-full flex-col items-center justify-center gap-2 rounded-lg p-4 text-center",
-						)}
-					>
+					<Link href={startWorkoutHref} className={startWorkoutLinkClassName}>
 						<PlayIcon data-slot="icon" className="size-4" aria-hidden />
 						<span className="font-medium text-sm">
 							「{dayLabel}」を実施する
@@ -56,11 +59,7 @@ export const WorkoutHistorySection: FC<Props> = ({
 							<Link
 								href={workout.detailHref}
 								aria-label={ariaLabel}
-								className={cn(
-									"block h-full min-h-20 w-full rounded-lg bg-overlay p-4 text-left text-overlay-fg no-underline shadow-sm outline-none",
-									"transition-all hover:bg-secondary hover:shadow-md",
-									"focus-visible:bg-secondary focus-visible:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
-								)}
+								className={workoutHistoryLinkClassName}
 							>
 								<span className="flex items-center gap-2 font-medium text-base">
 									<CalendarDaysIcon
@@ -68,7 +67,9 @@ export const WorkoutHistorySection: FC<Props> = ({
 										className="size-4"
 										aria-hidden
 									/>
-									{startedAt}
+									<time dateTime={workout.startedAt.toISOString()}>
+										{startedAt}
+									</time>
 								</span>
 								{memoPreview !== undefined ? (
 									<span className="wrap-break-word mt-2 line-clamp-2 block text-muted-fg text-sm">
