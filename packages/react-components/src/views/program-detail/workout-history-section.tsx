@@ -5,17 +5,6 @@ import { createAffordanceClass } from "../../primitives/create-affordance";
 import { Heading, Section } from "../../primitives/heading";
 import { Link } from "../../primitives/link";
 
-const startWorkoutLinkClassName = cn(
-	createAffordanceClass,
-	"flex h-full min-h-20 w-full flex-col items-center justify-center gap-2 rounded-lg p-4 text-center",
-);
-
-const workoutHistoryLinkClassName = cn(
-	"block h-full min-h-20 w-full rounded-lg bg-overlay p-4 text-left text-overlay-fg no-underline shadow-sm outline-none",
-	"transition-all hover:bg-secondary hover:shadow-md",
-	"focus-visible:bg-secondary focus-visible:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
-);
-
 type Props = {
 	dayLabel: string;
 	startWorkoutHref: string;
@@ -43,7 +32,13 @@ export const WorkoutHistorySection: FC<Props> = ({
 			<Heading className="font-medium text-base">実施履歴</Heading>
 			<ul className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
 				<li>
-					<Link href={startWorkoutHref} className={startWorkoutLinkClassName}>
+					<Link
+						href={startWorkoutHref}
+						className={cn(
+							createAffordanceClass,
+							"flex h-full min-h-20 w-full flex-col items-center justify-center gap-2 rounded-lg p-4 text-center",
+						)}
+					>
 						<PlayIcon data-slot="icon" className="size-4" aria-hidden />
 						<span className="font-medium text-sm">
 							「{dayLabel}」を実施する
@@ -59,7 +54,11 @@ export const WorkoutHistorySection: FC<Props> = ({
 							<Link
 								href={workout.detailHref}
 								aria-label={ariaLabel}
-								className={workoutHistoryLinkClassName}
+								className={cn(
+									"block h-full min-h-20 w-full rounded-lg bg-overlay p-4 text-left text-overlay-fg no-underline shadow-sm outline-none",
+									"transition-all hover:bg-secondary hover:shadow-md",
+									"focus-visible:bg-secondary focus-visible:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+								)}
 							>
 								<span className="flex items-center gap-2 font-medium text-base">
 									<CalendarDaysIcon
