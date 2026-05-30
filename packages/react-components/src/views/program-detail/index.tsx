@@ -9,6 +9,10 @@ import { ExercisePlanSection } from "./exercise-plan-section";
 import { ProgramInfo } from "./program-info";
 import { SetPlanSection } from "./set-plan-section";
 import { useDayTabSelection } from "./use-day-tab-selection";
+import {
+	type WorkoutHistory,
+	WorkoutHistorySection,
+} from "./workout-history-section";
 
 type SetPlanChangePayload = Parameters<
 	ComponentProps<typeof SetPlanSection>["onChangeSetPlan"]
@@ -47,6 +51,8 @@ type Day = {
 	id: string;
 	label: string;
 	detailHref: string;
+	startWorkoutHref: string;
+	workouts: WorkoutHistory[];
 	exercisePlans: (ExercisePlan & {
 		setPlans: SetPlan[];
 	})[];
@@ -151,6 +157,11 @@ export const ProgramDetail: FC<Props> = ({
 										/>
 									)}
 								</ExercisePlanSection>
+								<WorkoutHistorySection
+									dayLabel={day.label}
+									startWorkoutHref={day.startWorkoutHref}
+									workouts={day.workouts}
+								/>
 							</TabPanel>
 						))}
 					</Tabs>

@@ -40,11 +40,28 @@ const SAMPLE_AVAILABLE_EXERCISES: AvailableExercise[] = [
 	{ id: "ex-overhead-press", name: "オーバーヘッドプレス" },
 ];
 
+const SAMPLE_WORKOUTS: Day["workouts"] = [
+	{
+		id: "w-d1-2026-05-22",
+		startedAt: new Date("2026-05-22T19:30:00"),
+		detailHref: "/workouts/w-d1-2026-05-22",
+		memoPreview: "右肩に違和感あり。次回はアップを長めにする。",
+	},
+	{
+		id: "w-d1-2026-05-15",
+		startedAt: new Date("2026-05-15T19:10:00"),
+		detailHref: "/workouts/w-d1-2026-05-15",
+		memoPreview: null,
+	},
+];
+
 const SAMPLE_DAYS: Day[] = [
 	{
 		id: "d1",
 		label: "Day 1: 上半身プッシュ",
 		detailHref: "/programs/p1/days/d1",
+		startWorkoutHref: "/workouts/new?dayId=d1",
+		workouts: SAMPLE_WORKOUTS,
 		exercisePlans: [
 			{
 				id: "ep-d1-bench",
@@ -82,6 +99,15 @@ const SAMPLE_DAYS: Day[] = [
 		id: "d2",
 		label: "Day 2: 下半身",
 		detailHref: "/programs/p1/days/d2",
+		startWorkoutHref: "/workouts/new?dayId=d2",
+		workouts: [
+			{
+				id: "w-d2-2026-05-20",
+				startedAt: new Date("2026-05-20T07:20:00"),
+				detailHref: "/workouts/w-d2-2026-05-20",
+				memoPreview: "フォームは安定。最終セットだけ少し重い。",
+			},
+		],
 		exercisePlans: [
 			{
 				id: "ep-d2-squat",
@@ -101,6 +127,8 @@ const SAMPLE_DAYS: Day[] = [
 		id: "d3",
 		label: "Day 3: 上半身プル",
 		detailHref: "/programs/p1/days/d3",
+		startWorkoutHref: "/workouts/new?dayId=d3",
+		workouts: [],
 		exercisePlans: [],
 	},
 ];
@@ -203,6 +231,8 @@ export const NoExercisePlansInSelectedDay: Story = {
 				id: "d1",
 				label: "Day 1",
 				detailHref: "/programs/p1/days/d1",
+				startWorkoutHref: "/workouts/new?dayId=d1",
+				workouts: [],
 				exercisePlans: [],
 			},
 		],
@@ -254,6 +284,8 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 				id,
 				label: `Day ${prev.length + 1}`,
 				detailHref: `/programs/p1/days/${id}`,
+				startWorkoutHref: `/workouts/new?dayId=${id}`,
+				workouts: [],
 				exercisePlans: [],
 			},
 		]);
@@ -546,6 +578,41 @@ export const DeleteProgramInvokesCallbackAfterConfirm: Story = {
 	},
 };
 
+export const WorkoutHistoryLinksToDetail: Story = {
+	name: "実施履歴がワークアウト詳細へのリンクになる",
+	args: {
+		name: "5/3/1 BBB",
+		meta: null,
+		days: SAMPLE_DAYS,
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		expect(
+			canvas.getByText("右肩に違和感あり。次回はアップを長めにする。"),
+		).toBeInTheDocument();
+		const link = canvas.getByRole("link", {
+			name: "2026/05/22 19:30の実施履歴を確認、メモ: 右肩に違和感あり。次回はアップを長めにする。",
+		});
+		expect(link).toHaveAttribute("href", "/workouts/w-d1-2026-05-22");
+	},
+};
+
+export const StartWorkoutLinksToNewWorkout: Story = {
+	name: "実施する導線が新規ワークアウトへのリンクになる",
+	args: {
+		name: "5/3/1 BBB",
+		meta: null,
+		days: SAMPLE_DAYS,
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const link = canvas.getByRole("link", {
+			name: "「Day 1: 上半身プッシュ」を実施する",
+		});
+		expect(link).toHaveAttribute("href", "/workouts/new?dayId=d1");
+	},
+};
+
 export const ExercisePlanAddDeleteFlow: Story = {
 	name: "種目計画の追加・削除を実体験できる",
 	args: {
@@ -556,6 +623,8 @@ export const ExercisePlanAddDeleteFlow: Story = {
 				id: "d1",
 				label: "Day 1",
 				detailHref: "/programs/p1/days/d1",
+				startWorkoutHref: "/workouts/new?dayId=d1",
+				workouts: [],
 				exercisePlans: [
 					{
 						id: "ep-d1-bench",
@@ -585,6 +654,8 @@ export const DeleteExercisePlanInvokesCallback: Story = {
 				id: "d1",
 				label: "Day 1",
 				detailHref: "/programs/p1/days/d1",
+				startWorkoutHref: "/workouts/new?dayId=d1",
+				workouts: [],
 				exercisePlans: [
 					{
 						id: "ep-d1-bench",
@@ -627,6 +698,8 @@ export const AddExercisePlanBySelectingExercise: Story = {
 				id: "d1",
 				label: "Day 1",
 				detailHref: "/programs/p1/days/d1",
+				startWorkoutHref: "/workouts/new?dayId=d1",
+				workouts: [],
 				exercisePlans: [],
 			},
 		],
