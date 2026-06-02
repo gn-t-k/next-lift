@@ -13,6 +13,7 @@ export * from "./menu";
 export * from "./number-field";
 export * from "./popover";
 export * from "./scrollable";
+export * from "./surface-card";
 export * from "./tabs";
 export * from "./text-area";
 export * from "./text-field";
