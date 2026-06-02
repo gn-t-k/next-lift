@@ -2,8 +2,10 @@
 
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import type { ComponentProps, ReactNode } from "react";
+import { cn } from "../../libs";
 import { Button } from "../../primitives/button";
 import { Heading, Section } from "../../primitives/heading";
+import { Link } from "../../primitives/link";
 import { ExerciseSelector } from "../exercise-selector";
 import type { WeightUnit } from "./weight-unit";
 
@@ -27,6 +29,7 @@ type Exercise = {
 	name: string;
 	weightUnit: WeightUnit;
 	weightStep: number;
+	detailHref: string;
 };
 
 export const ExercisePlanSection = <T extends ExercisePlan>({
@@ -46,7 +49,16 @@ export const ExercisePlanSection = <T extends ExercisePlan>({
 							<Section className="relative flex flex-col gap-2 rounded-lg bg-overlay p-3 text-overlay-fg shadow-sm">
 								<header className="pr-8 pl-1">
 									<Heading className="font-medium text-base">
-										{exercisePlan.exercise.name}
+										<Link
+											href={exercisePlan.exercise.detailHref}
+											className={cn(
+												"rounded text-fg no-underline outline-none",
+												"hover:underline",
+												"focus-visible:ring-2 focus-visible:ring-ring",
+											)}
+										>
+											{exercisePlan.exercise.name}
+										</Link>
 									</Heading>
 								</header>
 								<Button
