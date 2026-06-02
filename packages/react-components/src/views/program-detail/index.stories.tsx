@@ -16,6 +16,7 @@ const benchPress: ExercisePlan["exercise"] = {
 	name: "ベンチプレス",
 	weightUnit: "kg",
 	weightStep: 2.5,
+	detailHref: "/exercises/ex-bench",
 };
 
 const inclineDumbbell: ExercisePlan["exercise"] = {
@@ -23,6 +24,7 @@ const inclineDumbbell: ExercisePlan["exercise"] = {
 	name: "インクラインダンベルプレス",
 	weightUnit: "kg",
 	weightStep: 1,
+	detailHref: "/exercises/ex-incline-db",
 };
 
 const squat: ExercisePlan["exercise"] = {
@@ -30,6 +32,7 @@ const squat: ExercisePlan["exercise"] = {
 	name: "バックスクワット",
 	weightUnit: "kg",
 	weightStep: 2.5,
+	detailHref: "/exercises/ex-squat",
 };
 
 const SAMPLE_AVAILABLE_EXERCISES: AvailableExercise[] = [
@@ -334,6 +337,7 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 										name: selected.name,
 										weightUnit: "kg",
 										weightStep: 2.5,
+										detailHref: `/exercises/${selected.id}`,
 									},
 									setPlans: [],
 								},
@@ -367,6 +371,7 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 										name,
 										weightUnit: "kg",
 										weightStep: 2.5,
+										detailHref: `/exercises/${id}`,
 									},
 									setPlans: [],
 								},
@@ -610,6 +615,20 @@ export const StartWorkoutLinksToNewWorkout: Story = {
 			name: "「Day 1: 上半身プッシュ」を実施する",
 		});
 		expect(link).toHaveAttribute("href", "/workouts/new?dayId=d1");
+	},
+};
+
+export const ExerciseNameLinksToDetail: Story = {
+	name: "種目名が種目詳細（V13）へのリンクになる",
+	args: {
+		name: "5/3/1 BBB",
+		meta: null,
+		days: SAMPLE_DAYS,
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const link = canvas.getByRole("link", { name: "ベンチプレス" });
+		expect(link).toHaveAttribute("href", "/exercises/ex-bench");
 	},
 };
 
