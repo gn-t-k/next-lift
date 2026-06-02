@@ -1,3 +1,6 @@
+import { cn } from "../libs/utils";
+import { skeletonClass } from "../primitives/skeleton";
+
 type Props = {
 	lines?: number;
 	widths?: string[];
@@ -19,7 +22,11 @@ export const SkeletonLoading = ({
 						// biome-ignore lint/suspicious/noArrayIndexKey: スケルトンローディングのため一意なキーが不要
 						index
 					}`}
-					className={`animate-pulse rounded bg-muted ${heights[index % heights.length]} ${widths[index % widths.length]}`}
+					className={cn(
+						skeletonClass,
+						heights[index % heights.length],
+						widths[index % widths.length],
+					)}
 				/>
 			))}
 		</div>

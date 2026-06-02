@@ -1,5 +1,7 @@
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import type { FC, ReactNode } from "react";
+import { cn } from "../../libs/utils";
+import { skeletonClass } from "../../primitives/skeleton";
 import { CreateProgramCard } from "./create-program-card";
 import { ProgramListGrid, ProgramListGridItem } from "./program-list-grid";
 import { ProgramListItem } from "./program-list-item";
@@ -54,8 +56,8 @@ export const ProgramListLoading: FC<ProgramListLoadingProps> = ({
 					key={key}
 					className="h-full min-h-20 rounded-lg bg-overlay p-4 shadow-sm"
 				>
-					<div className="h-5 w-2/3 animate-pulse rounded bg-muted" />
-					<div className="mt-2 h-3 w-1/3 animate-pulse rounded bg-muted" />
+					<div className={cn(skeletonClass, "h-5 w-2/3")} />
+					<div className={cn(skeletonClass, "mt-2 h-3 w-1/3")} />
 				</ProgramListGridItem>
 			))}
 		</ProgramListGrid>
