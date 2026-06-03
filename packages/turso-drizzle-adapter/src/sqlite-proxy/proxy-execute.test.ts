@@ -15,12 +15,12 @@ describe("proxyExecute", () => {
 		await db.exec(
 			"CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL, age INTEGER)",
 		);
-		await db
-			.prepare("INSERT INTO users (id, name, age) VALUES (?, ?, ?)")
-			.run(1, "Alice", 30);
-		await db
-			.prepare("INSERT INTO users (id, name, age) VALUES (?, ?, ?)")
-			.run(2, "Bob", 25);
+		await (
+			await db.prepare("INSERT INTO users (id, name, age) VALUES (?, ?, ?)")
+		).run(1, "Alice", 30);
+		await (
+			await db.prepare("INSERT INTO users (id, name, age) VALUES (?, ?, ?)")
+		).run(2, "Bob", 25);
 	});
 
 	afterEach(async () => {
@@ -102,9 +102,9 @@ describe("proxyExecute", () => {
 				lastInsertRowid: 3,
 			});
 
-			const inserted = await db
-				.prepare("SELECT name FROM users WHERE id = ?")
-				.get(3);
+			const inserted = await (
+				await db.prepare("SELECT name FROM users WHERE id = ?")
+			).get(3);
 			expect(inserted).toEqual({ name: "Carol" });
 		});
 
