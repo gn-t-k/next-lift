@@ -8,6 +8,27 @@
 - 単体テスト: 状態管理が複雑、または処理の分岐が多い場合のみ
 - 統合テスト: それ以外のケース（基本はこちらを優先）
 
+## テストしないもの
+
+### DB の宣言的挙動
+
+- DB スキーマで宣言した DEFAULT / CHECK / NOT NULL の挙動は、アプリ側のテストで再検証しない
+- これらは SQLite / Drizzle の機能であり、テスト対象は「自分たちのアプリロジック」ではない
+- 手動修正したマイグレーションの回帰ガードが本当に欲しければ、`apply-migrations.test.ts` のような既存の migration smoke test に1行足す形に留める。新規テストファイルを起こさない
+
+**Why:** スキーマ宣言と二重管理になり、保守コストだけが増える。
+
+## ロジックテストと UI テストの責務分担
+
+- 純粋関数の分岐網羅は単体テスト（filter / 状態判定 / リスト構築など）
+- Storybook の play 関数は **UI 経路と状態遷移パスの検証** に絞る（open → search → select、ドロワー閉じてフォーカス戻る、など）
+- 同じロジック分岐を unit と Storybook の両方で確認しない（重複検証）
+
+**例:**
+- `filterByName(items, query)` の分岐網羅 → `filter-by-name.test.ts`
+- 「open → 検索 → option 選択 → onSelect 呼ばれる」 → Storybook play
+- 「重複時に create が disabled」のような文言・属性の確認 → unit でカバー済みなら Storybook では削る
+
 ## テスト構造
 
 - describe/testの3階層構造: 機能名 → シナリオ分類 → 具体的なテスト

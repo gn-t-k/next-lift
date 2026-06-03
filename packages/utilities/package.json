@@ -14,13 +14,13 @@
 		"test": "vitest run"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.4.13",
+		"@biomejs/biome": "2.4.15",
 		"@tsconfig/strictest": "2.0.8",
-		"@types/node": "24.12.2",
+		"@types/node": "24.12.4",
 		"typescript": "6.0.3",
 		"vitest": "4.1.4"
 	},
 	"dependencies": {
-		"nanoid": "5.1.9"
+		"nanoid": "5.1.11"
 	}
 }

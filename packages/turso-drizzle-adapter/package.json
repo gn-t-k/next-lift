@@ -1,0 +1,30 @@
+{
+	"name": "@next-lift/turso-drizzle-adapter",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./src/sqlite-run-result.ts",
+		"./serverless": "./src/drivers/serverless/index.ts",
+		"./database": "./src/drivers/database/index.ts"
+	},
+	"scripts": {
+		"lint": "biome check .",
+		"lint:fix": "biome check --fix .",
+		"type-check": "tsc --noEmit",
+		"test": "vitest run",
+		"test:watch": "vitest"
+	},
+	"dependencies": {
+		"@tursodatabase/database": "0.5.3",
+		"@tursodatabase/serverless": "1.1.3",
+		"drizzle-orm": "0.45.2"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.4.15",
+		"@tsconfig/strictest": "2.0.8",
+		"@types/node": "24.12.4",
+		"typescript": "6.0.3",
+		"vitest": "4.1.4"
+	}
+}

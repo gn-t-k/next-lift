@@ -8,7 +8,13 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["**", "!**/dist", "!**/build", "!**/node_modules"]
+		"includes": [
+			"**",
+			"!**/dist",
+			"!**/build",
+			"!**/node_modules",
+			"!**/.claude/worktrees"
+		]
 	},
 	"css": {
 		"parser": {
@@ -32,7 +38,9 @@
 				"noVoid": "warn",
 				"useIndexOf": "warn",
 				"useSimplifiedLogicExpression": "warn",
-				"useWhile": "warn"
+				"useWhile": "warn",
+				// tsconfig の noPropertyAccessFromIndexSignature と衝突するため無効化
+				"useLiteralKeys": "off"
 			},
 			"correctness": {
 				"noNestedComponentDefinitions": "warn",

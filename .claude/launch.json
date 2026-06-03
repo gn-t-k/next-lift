@@ -1,0 +1,27 @@
+{
+	"version": "0.0.1",
+	"configurations": [
+		{
+			"name": "storybook",
+			"runtimeExecutable": "pnpm",
+			"runtimeArgs": [
+				"--filter",
+				"@next-lift/react-components",
+				"exec",
+				"storybook",
+				"dev",
+				"--ci",
+				"-p",
+				"6006",
+				"--exact-port"
+			],
+			"port": 6006
+		},
+		{
+			"name": "web",
+			"runtimeExecutable": "pnpm",
+			"runtimeArgs": ["--filter", "@next-lift/web", "exec", "next", "dev"],
+			"port": 3000
+		}
+	]
+}

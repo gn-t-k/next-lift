@@ -64,8 +64,6 @@ jobs:
 
   lint:
     name: Lint
-    needs: changes
-    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -77,3 +75,51 @@ jobs:
 
       - name: Lint
         run: pnpm run lint
+
+  test:
+    name: Test
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
+
+      - name: Pull Vercel Environment
+        run: |
+          npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+
+      - name: Test
+        run: |
+          set -a
+          source .vercel/.env.preview.local
+          set +a
+          export APP_ENV="development-ci"
+          pnpm exec turbo test --concurrency=1
+
+  storybook-test:
+    name: Storybook Test
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
+
+      - name: Install Playwright browsers
+        run: pnpm --filter @next-lift/react-components exec playwright install --with-deps chromium
+
+      - name: Run Storybook tests
+        run: pnpm --filter @next-lift/react-components exec vitest run --project storybook

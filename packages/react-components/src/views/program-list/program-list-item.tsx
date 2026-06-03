@@ -1,6 +1,7 @@
 import type { FC } from "react";
 import { cn } from "../../libs/utils";
 import { Link } from "../../primitives/link";
+import { surfaceCardClass } from "../../primitives/surface-card";
 
 type Props = {
 	name: string;
@@ -12,13 +13,7 @@ export const ProgramListItem: FC<Props> = ({ name, lastUsedAt, href }) => {
 	return (
 		<Link
 			href={href}
-			className={cn(
-				"block h-full min-h-20 rounded-lg p-4 no-underline outline-none",
-				"bg-overlay text-overlay-fg shadow-sm",
-				"transition-all",
-				"hover:bg-secondary hover:shadow-md",
-				"focus-visible:bg-secondary focus-visible:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
-			)}
+			className={cn(surfaceCardClass, "block h-full min-h-20 p-4")}
 		>
 			<span className="wrap-break-word line-clamp-2 font-medium text-base">
 				{name}

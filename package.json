@@ -10,18 +10,20 @@
 		"build": "turbo build",
 		"dev": "turbo dev",
 		"lint": "turbo lint",
+		"lint:root": "biome check .claude .mcp.json renovate.json biome.jsonc package.json turbo.json",
 		"type-check": "turbo type-check",
 		"test": "turbo test",
 		"clean": "turbo clean",
-		"worktree:copy-env": "bash .claude/scripts/copy-worktree-env.sh"
+		"worktree:copy-env": "bash .claude/scripts/copy-worktree-env.sh",
+		"setup:worktree": "bash .claude/scripts/setup-worktree.sh"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.4.13",
-		"@turbo/gen": "2.9.6",
-		"turbo": "2.9.6",
+		"@biomejs/biome": "2.4.15",
+		"@turbo/gen": "2.9.14",
+		"turbo": "2.9.14",
 		"vercel": "50.44.0"
 	},
-	"packageManager": "pnpm@10.33.2",
+	"packageManager": "pnpm@10.33.3",
 	"engines": {
 		"node": ">=18.0.0"
 	}

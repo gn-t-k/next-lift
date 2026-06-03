@@ -5,12 +5,14 @@ import {
 	mockMigrateDatabaseError,
 	mockMigrateDatabaseOk,
 } from "../apply-migration/migrate-database.mock";
+import { mockCreatePerUserDatabaseClientOk } from "../client/create-per-user-database-client.mock";
 import { getPerUserDatabase } from "./index";
 import { runInPerUserDatabaseScope } from "./run-in-per-user-database-scope";
 
 describe("runInPerUserDatabaseScope", () => {
 	describe("マイグレーションが成功したとき", () => {
 		beforeEach(() => {
+			mockCreatePerUserDatabaseClientOk();
 			mockMigrateDatabaseOk();
 		});
 
@@ -44,6 +46,7 @@ describe("runInPerUserDatabaseScope", () => {
 
 	describe("マイグレーションが失敗したとき", () => {
 		beforeEach(() => {
+			mockCreatePerUserDatabaseClientOk();
 			mockMigrateDatabaseError(new Error("migration failed"));
 		});
 
