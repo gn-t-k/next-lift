@@ -38,7 +38,7 @@ description: worktree並列運用時に踏みやすい罠（DB / Git / node_modu
 
 | 罠 | 詳細 | 対策 |
 | --- | --- | --- |
-| pnpm の peer 依存歪み | worktree ごとに `pnpm install` し直さないと lockfile 変更が反映されない | worktree 作成直後に `pnpm install` を実行 |
+| pnpm の peer 依存歪み | worktree ごとに `pnpm install` し直さないと lockfile 変更が反映されない | `pnpm setup:worktree`（未セットアップなら SessionStart hook が自動実行）で install まで整備 |
 | Vite 依存プリバンドル | `node_modules/.vite` のキャッシュが古い lockfile に紐づく | 依存変更後は `rm -rf node_modules/.vite` |
 | `.next/cache` `.turbo` の肥大化 | worktree ごとに別キャッシュが作られ、ディスクが N 倍消費 | 不要 worktree は `git worktree remove` で完全削除 |
 | Turborepo のパス違いキャッシュミス | `--cache-dir` がデフォルトのままだと worktree ごとにキャッシュ独立、共有できない | 共有したい場合は `TURBO_CACHE_DIR` を絶対パスで揃える（ただし並行書き込みには注意）|
@@ -57,7 +57,7 @@ description: worktree並列運用時に踏みやすい罠（DB / Git / node_modu
 | 罠 | 詳細 | 対策 |
 | --- | --- | --- |
 | 同一ファイル並行編集の後勝ち | 親と worktree が同じ論理ファイルを編集しても、worktree 間ではファイル分離。ただし同じブランチを別場所で進めていると merge 時に衝突 | worktree ごとに別ブランチを切る前提で運用 |
-| `.env.local` 未コピー | `git worktree add` は gitignored ファイルを持ち込まない | `pnpm setup:worktree` で env + `.vercel` + `next typegen` を一括整備（→ #823） |
+| `.env.local` 未コピー | `git worktree add` は gitignored ファイルを持ち込まない | `pnpm setup:worktree` で install + env + `.vercel` + `next typegen` を一括整備（→ #823） |
 | `.next/types` 未生成で type-check 失敗 | `next.config.ts` の `typedRoutes: true` が出す `LayoutProps` / `PageProps` 型は `next dev` / `build` / `typegen` を一度走らせないと存在しない。`pnpm install` 直後の worktree で `pnpm type-check` が `TS2304` で落ちる | `pnpm setup:worktree` の `next typegen` ステップで生成（→ #823） |
 | `.vercel/.env.preview.local` 未取得で test / build 失敗 | `vercel pull` の結果が無いと `BETTER_AUTH_SECRET` 等の env 検証で落ちる。`copy-worktree-env.sh` は `.vercel` を走査対象外にしているため別途コピーが必要 | 親リポで `npx vercel pull --yes --environment=preview` 済みなら `pnpm setup:worktree` が `.vercel/` 全体をコピー（→ #823） |
 | stacked PR の base rebase 連鎖崩壊 | 3〜4 段以上に積むと base rebase で全段の force-push が必要になり破綻 | 実用上限は 3〜4 段。それ以上は親 PR を先にマージしてから次段を立てる |
