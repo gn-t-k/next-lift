@@ -63,7 +63,7 @@ ADR-004 / ADR-007 / ADR-010 の決定時点で前提だった libSQL Embedded Re
 
 | 案 | 概要 | Pros | Cons |
 | --- | --- | --- | --- |
-| **3A: `@tursodatabase/database` v0.5.3 の `connect(':memory:')`** | better-sqlite3 互換 API（async） | `:memory:` 公式対応。新スイートに統一 | drizzle-orm 公式ドライバー未提供（論点5）。`pragma()` メソッド未サポート（`exec('PRAGMA foreign_keys = ON')` で代替） |
+| **3A: `@tursodatabase/database` v0.5.3 の `connect(':memory:')`**（採用時。その後 0.6.x で `prepare()` が `Promise<Statement>` を返す破壊的変更があり #869 で 0.6.1 に追従）| better-sqlite3 互換 API（async） | `:memory:` 公式対応。新スイートに統一 | drizzle-orm 公式ドライバー未提供（論点5）。`pragma()` メソッド未サポート（`exec('PRAGMA foreign_keys = ON')` で代替） |
 | 3B: `@libsql/client` の `:memory:` 維持 | 現状維持 | 移行コストゼロ、Drizzle 公式 (`drizzle-orm/libsql`) | テストだけ旧スタックを残すと、本番との乖離・将来の保守負債 |
 
 ### 論点4: Auth DB（Web 経由のみアクセス）
