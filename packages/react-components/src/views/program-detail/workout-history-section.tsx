@@ -4,6 +4,7 @@ import { cn } from "../../libs";
 import { createAffordanceClass } from "../../primitives/create-affordance";
 import { Heading, Section } from "../../primitives/heading";
 import { Link } from "../../primitives/link";
+import { surfaceCardClass } from "../../primitives/surface-card";
 
 type Props = {
 	dayLabel: string;
@@ -55,9 +56,8 @@ export const WorkoutHistorySection: FC<Props> = ({
 								href={workout.detailHref}
 								aria-label={ariaLabel}
 								className={cn(
-									"block h-full min-h-20 w-full rounded-lg bg-overlay p-4 text-left text-overlay-fg no-underline shadow-sm outline-none",
-									"transition-all hover:bg-secondary hover:shadow-md",
-									"focus-visible:bg-secondary focus-visible:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+									surfaceCardClass,
+									"block h-full min-h-20 w-full p-4 text-left",
 								)}
 							>
 								<span className="flex items-center gap-2 font-medium text-base">
