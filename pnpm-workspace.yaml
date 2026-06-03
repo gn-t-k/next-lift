@@ -4,6 +4,15 @@ packages:
 
 nodeLinker: hoisted
 
+onlyBuiltDependencies:
+  - esbuild
+  - "@sentry/cli"
+  - sharp
+  - "@op-engineering/op-sqlite"
+
+overrides:
+  esbuild: 0.28.0
+
 peerDependencyRules:
   allowedVersions:
     typescript: "6"

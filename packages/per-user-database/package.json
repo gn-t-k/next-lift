@@ -27,7 +27,7 @@
 		"@next-lift/turso": "workspace:*",
 		"@next-lift/turso-drizzle-adapter": "workspace:*",
 		"@next-lift/utilities": "workspace:*",
-		"@praha/byethrow": "0.11.1",
+		"@praha/byethrow": "0.11.2",
 		"@praha/diva": "1.0.2",
 		"@praha/drizzle-factory": "1.4.2",
 		"@praha/error-factory": "1.4.1",
@@ -36,9 +36,9 @@
 		"zod": "4.4.3"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.4.14",
+		"@biomejs/biome": "2.4.15",
 		"@tsconfig/strictest": "2.0.8",
-		"@types/node": "24.12.3",
+		"@types/node": "24.12.4",
 		"drizzle-kit": "0.31.10",
 		"typescript": "6.0.3",
 		"vitest": "4.1.4"

@@ -22,26 +22,26 @@
 		"dev:db:reset": "tsx src/development/cli/reset.ts"
 	},
 	"dependencies": {
-		"@better-auth/expo": "1.6.9",
+		"@better-auth/expo": "1.6.11",
 		"@libsql/client": "0.17.3",
 		"@next-lift/env": "workspace:*",
 		"@next-lift/turso-drizzle-adapter": "workspace:*",
 		"@next-lift/utilities": "workspace:*",
-		"@praha/byethrow": "0.11.1",
+		"@praha/byethrow": "0.11.2",
 		"@praha/diva": "1.0.2",
 		"@praha/error-factory": "1.4.1",
 		"@tursodatabase/serverless": "1.1.3",
-		"better-auth": "1.6.9",
+		"better-auth": "1.6.11",
 		"drizzle-orm": "0.45.2"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.4.14",
+		"@biomejs/biome": "2.4.15",
 		"@next-lift/turso": "workspace:*",
 		"@praha/drizzle-factory": "1.4.2",
 		"@tsconfig/strictest": "2.0.8",
-		"@types/node": "24.12.3",
+		"@types/node": "24.12.4",
 		"drizzle-kit": "0.31.10",
-		"tsx": "4.21.0",
+		"tsx": "4.22.3",
 		"typescript": "6.0.3",
 		"vitest": "4.1.4"
 	}
