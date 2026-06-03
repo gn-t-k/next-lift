@@ -64,8 +64,6 @@ jobs:
 
   lint:
     name: Lint
-    needs: changes
-    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
