@@ -4,11 +4,21 @@
 	"rebaseWhen": "never",
 	"packageRules": [
 		{
-			"description": "iOS側のReact/React Nativeはmajor/minor更新を無効化（Expo SDKアップグレード時に手動更新）",
-			"matchPackageNames": ["react", "react-native", "@types/react"],
+			"description": "iOS: react / react-native は Expo SDK が bundledNativeModules でバージョンを固定するため自動更新を無効化（SDK アップグレード時に手動でまとめて更新）",
+			"matchPackageNames": [
+				"react",
+				"react-dom",
+				"react-native",
+				"@types/react"
+			],
 			"matchFileNames": ["apps/ios/**"],
-			"matchUpdateTypes": ["major", "minor"],
 			"enabled": false
+		},
+		{
+			"description": "iOS: expo / expo-* は SDK アップグレードの単位として1つにグループ化する。Renovate は expo install を使わず react-native を連動更新しないため、このグループPRは自動マージせず手動 SDK 移行（expo install --fix 等）の起点として扱う",
+			"matchPackageNames": ["expo", "expo-*"],
+			"matchFileNames": ["apps/ios/**"],
+			"groupName": "expo SDK (ios)"
 		},
 		{
 			"description": "Web側のReact関連パッケージをグループ化",
