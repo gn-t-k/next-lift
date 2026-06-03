@@ -4,11 +4,21 @@ packages:
 
 nodeLinker: hoisted
 
-onlyBuiltDependencies:
-  - esbuild
-  - "@sentry/cli"
-  - sharp
-  - "@op-engineering/op-sqlite"
+strictPeerDependencies: true
+savePrefix: ""
+saveWorkspaceProtocol: rolling
+
+# Sentry使用時の "Package require-in-the-middle can't be external" エラー対応
+# https://docs.sentry.io/platforms/javascript/guides/nextjs/troubleshooting/
+publicHoistPattern:
+  - "*import-in-the-middle*"
+  - "*require-in-the-middle*"
+
+allowBuilds:
+  esbuild: true
+  "@sentry/cli": true
+  sharp: true
+  "@op-engineering/op-sqlite": true
 
 overrides:
   esbuild: 0.28.0

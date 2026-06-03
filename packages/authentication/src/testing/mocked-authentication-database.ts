@@ -29,11 +29,11 @@ beforeEach(async () => {
 const dropAllTables = async () => {
 	await handle.exec("PRAGMA foreign_keys = OFF");
 
-	const rows = await handle
-		.prepare(
+	const rows = await (
+		await handle.prepare(
 			"SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'",
 		)
-		.all();
+	).all();
 
 	for (const row of rows) {
 		const { name } = row as { name: string };

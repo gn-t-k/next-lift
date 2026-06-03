@@ -18,10 +18,10 @@ describe("createTursoDatabaseHandle", () => {
 		});
 
 		test("CREATE TABLE → INSERT → SELECT が一連で成功すること", async () => {
-			await db
-				.prepare("INSERT INTO users (id, name) VALUES (?, ?)")
-				.run(1, "Alice");
-			const rows = await db.prepare("SELECT id, name FROM users").all();
+			await (
+				await db.prepare("INSERT INTO users (id, name) VALUES (?, ?)")
+			).run(1, "Alice");
+			const rows = await (await db.prepare("SELECT id, name FROM users")).all();
 
 			expect(rows).toEqual([{ id: 1, name: "Alice" }]);
 		});
@@ -44,9 +44,9 @@ describe("createTursoDatabaseHandle", () => {
 
 		test("FK 制約違反で書き込みが失敗すること", async () => {
 			await expect(
-				db
-					.prepare("INSERT INTO children (id, parent_id) VALUES (?, ?)")
-					.run(1, 999),
+				(
+					await db.prepare("INSERT INTO children (id, parent_id) VALUES (?, ?)")
+				).run(1, 999),
 			).rejects.toThrow();
 		});
 	});

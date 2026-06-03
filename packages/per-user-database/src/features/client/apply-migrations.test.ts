@@ -26,10 +26,11 @@ describe("applyMigrations", () => {
 		test("主要テーブルが作成されること", async () => {
 			await applyMigrations(handle, migrationsFolder);
 
-			const rows = await handle
-				.prepare(
+			const rows = await (
+				await handle.prepare(
 					"SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' AND name != '__drizzle_migrations'",
 				)
+			)
 				.raw(true)
 				.all();
 			const tableNames = rows.flat();
@@ -49,8 +50,7 @@ describe("applyMigrations", () => {
 		test("PRAGMA foreign_keys が ON になっていること", async () => {
 			await applyMigrations(handle, migrationsFolder);
 
-			const result = await handle
-				.prepare("PRAGMA foreign_keys")
+			const result = await (await handle.prepare("PRAGMA foreign_keys"))
 				.raw(true)
 				.get();
 
@@ -61,13 +61,15 @@ describe("applyMigrations", () => {
 	describe("既にマイグレーション済みのDBに再適用したとき", () => {
 		test("副作用がない（既存データが保持される）こと", async () => {
 			await applyMigrations(handle, migrationsFolder);
-			await handle
-				.prepare("INSERT INTO programs (id, name) VALUES (?, ?)")
-				.run("p1", "Program1");
+			await (
+				await handle.prepare("INSERT INTO programs (id, name) VALUES (?, ?)")
+			).run("p1", "Program1");
 
 			await applyMigrations(handle, migrationsFolder);
 
-			const rows = await handle.prepare("SELECT id, name FROM programs").all();
+			const rows = await (
+				await handle.prepare("SELECT id, name FROM programs")
+			).all();
 			expect(rows).toEqual([{ id: "p1", name: "Program1" }]);
 		});
 	});
