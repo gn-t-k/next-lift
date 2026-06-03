@@ -18,29 +18,35 @@
 
 `pnpm setup:worktree` で上記3つを一括整備する。
 
+worktree 初回起動時は、`node_modules` または `apps/web/.next/types` が無いことを SessionStart hook が検知し、`pnpm setup:worktree` をバックグラウンドで自動実行する。ログは worktree 直下の `.setup-worktree.log` に出力され、末尾に `=== SETUP DONE ===` が出れば完了。`pnpm type-check` / `pnpm build` / `pnpm test` はそれを待ってから実行する。
+
+手動で実行する場合:
+
 ```sh
 # 親リポ側で一度だけ（VERCEL_TOKEN 不要、CLI ログイン済みなら通る）
 npx vercel pull --yes --environment=preview
 
 # worktree のルートで
-pnpm install
 pnpm setup:worktree
 ```
 
 スクリプトの動作:
 
-1. `bash .claude/scripts/copy-worktree-env.sh` で env ファイルをコピー
+1. `pnpm install` で依存をインストール
+   - hook 経由のバックグラウンド実行（TTYなし）でも `node_modules` 再作成が中断しないオプションを付ける
+2. `bash .claude/scripts/copy-worktree-env.sh` で env ファイルをコピー
    - 親リポの worktree ルート配下を再帰的に走査し `.env` / `.env.local` / `.env.*.local` を抽出
    - 同じ相対パスで現在の worktree へコピー（`apps/web/.env` → `<worktree>/apps/web/.env` など）
    - 既存ファイルと内容が一致する場合はスキップ、差分があれば上書き
    - `node_modules` `.git` `.next` `.turbo` `dist` `build` `.vercel` は走査対象外
-2. 親リポの `.vercel/` 全体を worktree にコピー
+3. 親リポの `.vercel/` 全体を worktree にコピー
    - `vercel pull` を再実行する代わりに、親リポでログイン済みの結果を再利用
    - 並行作業中に親リポで `vercel pull` を再実行した場合は再度 `pnpm setup:worktree` を走らせる
-3. `pnpm --filter @next-lift/web exec next typegen` で `.next/types/**` を生成
+   - 親リポに `.vercel/.env.preview.local` が無い場合は、このステップと次の typegen をスキップし、install と env コピーまでで終了する
+4. `pnpm --filter @next-lift/web exec next typegen` で `.next/types/**` を生成
    - `APP_ENV` 未設定時は `development-worktree` をフォールバックで設定
 
-セキュリティ上の理由で、コピーは worktree から手動実行する明示的な仕組みにしている（自動 SessionStart hook で常時上書きはしない）。
+SessionStart hook の自動実行は `node_modules` または `apps/web/.next/types` が無い未セットアップ時のみで、セットアップ済みの worktree では何もしない（既存ファイルを常時上書きはしない）。
 
 ### env だけコピーしたいとき
 

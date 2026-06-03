@@ -5,7 +5,7 @@
 				"hooks": [
 					{
 						"type": "command",
-						"command": "case \"$PWD\" in *.claude/worktrees/*) printf '\\xf0\\x9f\\x8c\\xbf worktree環境で起動しました。並列運用の罠は /worktree-tips で確認できます。\\n';; esac"
+						"command": "case \"$PWD\" in *.claude/worktrees/*) if [ ! -d node_modules ] || [ ! -d apps/web/.next/types ]; then nohup pnpm setup:worktree > .setup-worktree.log 2>&1 & printf '\\xf0\\x9f\\x8c\\xbf worktree環境: 未セットアップを検知し pnpm setup:worktree をバックグラウンド実行中（ログ: .setup-worktree.log）。type-check/build/test はログに \"=== SETUP DONE ===\" が出てから実行してください。\\n'; else printf '\\xf0\\x9f\\x8c\\xbf worktree環境で起動しました。並列運用の罠は /worktree-tips で確認できます。\\n'; fi ;; esac"
 					}
 				]
 			}

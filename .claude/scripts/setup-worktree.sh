@@ -1,26 +1,29 @@
 #!/bin/bash
 #
-# worktree 環境を pnpm install 後に検証コマンドが通る状態へ整える。
+# worktree 環境を検証コマンドが通る状態へ整える。
 #
 # 使い方:
 #   bash .claude/scripts/setup-worktree.sh
 #
 # 動作:
-#   1. 親リポの env ファイル (.env / .env.local / .env.*.local) をコピー
+#   1. pnpm install で依存をインストール
+#   2. 親リポの env ファイル (.env / .env.local / .env.*.local) をコピー
 #      → copy-worktree-env.sh を呼び出す
-#   2. 親リポの .vercel/ ディレクトリ全体を worktree にコピー
+#   3. 親リポの .vercel/ ディレクトリ全体を worktree にコピー
 #      → 親リポで vercel pull 済みの .env.preview.local / project.json をそのまま再利用
-#   3. apps/web で next typegen を実行
+#   4. apps/web で next typegen を実行
 #      → typed routes が生成する LayoutProps / PageProps の型を .next/types に出力
 #
 # 前提:
-#   - pnpm install が完了していること
 #   - 親リポで `npx vercel pull --yes --environment=preview` 済みであること
 #     (`.vercel/.env.preview.local` が親リポに存在する)
+#     無い場合は .vercel コピーと typegen をスキップし、install と env コピーまで実行する
 #
 # 安全策:
 #   - 親リポと現在のworktreeが同一ディレクトリの場合は何もしない
-#   - .vercel をコピーする前に親リポに存在するかチェック
+#
+# 完了マーカー:
+#   - 最終行に "=== SETUP DONE ===" を出力する（バックグラウンド実行時の完了判定に使う）
 
 set -euo pipefail
 
@@ -35,29 +38,31 @@ fi
 
 script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
-echo "==> 1/3 env ファイルをコピー"
+echo "==> 1/4 pnpm install"
+# hook 経由のバックグラウンド実行(TTYなし)でも node_modules 再作成が止まらないようにする
+pnpm install --prefer-offline --config.confirmModulesPurge=false
+echo
+
+echo "==> 2/4 env ファイルをコピー"
 bash "${script_dir}/copy-worktree-env.sh"
 echo
 
-echo "==> 2/3 .vercel/ をコピー"
+echo "==> 3/4 .vercel/ をコピー"
 parent_vercel="${parent_root}/.vercel"
 dest_vercel="${current_root}/.vercel"
-if [ ! -d "$parent_vercel" ]; then
-  echo "親リポに .vercel/ が無い。先に親リポで以下を実行:" >&2
-  echo "  npx vercel pull --yes --environment=preview" >&2
-  exit 1
-fi
 if [ ! -f "${parent_vercel}/.env.preview.local" ]; then
-  echo "親リポの .vercel/.env.preview.local が無い。親リポで以下を実行:" >&2
-  echo "  npx vercel pull --yes --environment=preview" >&2
-  exit 1
+  echo "親リポに .vercel/.env.preview.local が無いため .vercel コピーと typegen をスキップ。" >&2
+  echo "型生成が必要なら親リポで 'npx vercel pull --yes --environment=preview' 後に再実行する。" >&2
+  echo
+  echo "=== SETUP DONE ==="
+  exit 0
 fi
 mkdir -p "$dest_vercel"
 cp -R "${parent_vercel}/." "${dest_vercel}/"
 echo "copy: .vercel/ → ${dest_vercel}"
 echo
 
-echo "==> 3/3 next typegen で .next/types を生成"
+echo "==> 4/4 next typegen で .next/types を生成"
 set -a
 # shellcheck disable=SC1091
 source "${dest_vercel}/.env.preview.local"
@@ -67,3 +72,4 @@ pnpm --filter @next-lift/web exec next typegen
 echo
 
 echo "完了: pnpm type-check / pnpm test を実行できる状態です。"
+echo "=== SETUP DONE ==="

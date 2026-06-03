@@ -20,8 +20,7 @@ pnpm install
 # 親リポ側で一度だけ
 npx vercel pull --yes --environment=preview
 
-# worktree のルートで
-pnpm install
+# worktree のルートで（初回起動時は SessionStart hook が自動実行）
 pnpm setup:worktree
 ```
 
