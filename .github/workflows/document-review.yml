@@ -31,10 +31,10 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           allowed_bots: "next-lift-merge-master"
+          track_progress: true
           use_sticky_comment: true
           prompt: |
             このPRの変更内容を分析し、ドキュメント更新漏れがないかチェックしてください。
-            以下にレビューに必要なコンテキストをすべて提供しています。ツール呼び出しは原則不要です。
 
             ## 変更されたファイル一覧
 
@@ -44,13 +44,11 @@ jobs:
 
             ## 差分
 
-            ```diff
-            ${{ env.REVIEW_DIFF }}
-            ```
+            `Read` ツールで `${{ env.REVIEW_DIFF_PATH }}` のファイルを読み、差分を確認してください。
 
             ## 関連ドキュメント
 
-            ${{ env.REVIEW_DOCS }}
+            `Read` ツールで `${{ env.REVIEW_DOCS_PATH }}` のファイルを読み、関連ドキュメントを確認してください。
 
             ## チェック対象ドキュメント
 
@@ -76,9 +74,6 @@ jobs:
             - ⚠️ 要確認: 更新が必要かもしれない項目（理由と提案を含む）
             - ❌ 更新漏れ: 明らかに更新が必要な項目（具体的な更新内容を提案）
 
-            分析結果をそのまま最終レスポンスとして返してください。
-            外部コマンドの実行やPRへのコメント投稿は不要です。
-            利用可能なツールはRead, Glob, Grepのみです。Bashコマンドやファイル編集は行わないでください。
+            ドキュメントの読み取りとレビューのみを行い、コードの編集・コミット・プッシュは一切行わないでください。
           claude_args: |
-            --max-turns 5
-            --allowedTools "Read,Glob,Grep"
+            --max-turns 10

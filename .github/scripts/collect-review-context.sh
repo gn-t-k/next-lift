@@ -18,17 +18,22 @@ changed_files=$(git diff --name-only origin/main...HEAD)
 # --- REVIEW_DIFF ---
 diff_output=$(git diff origin/main...HEAD)
 diff_lines=$(echo "${diff_output}" | wc -l)
+diff_bytes=$(printf '%s' "${diff_output}" | wc -c)
 
 if [ "${diff_lines}" -gt 1500 ]; then
   echo "::error::差分が1500行を超えているため、document-reviewをスキップします（${diff_lines}行）"
   exit 1
 fi
 
-{
-  echo "REVIEW_DIFF<<${DELIMITER}"
-  echo "${diff_output}"
-  echo "${DELIMITER}"
-} >> "$GITHUB_ENV"
+if [ "${diff_bytes}" -gt 204800 ]; then
+  echo "::error::差分が200KBを超えているため、document-reviewをスキップします（${diff_bytes}バイト）"
+  exit 1
+fi
+
+# 単一の環境変数は128KiB上限があり巨大な差分で後続stepが起動不能になるため、ファイルに書き出してパスのみ渡す
+diff_path="${RUNNER_TEMP:-/tmp}/review-diff.diff"
+printf '%s\n' "${diff_output}" > "${diff_path}"
+echo "REVIEW_DIFF_PATH=${diff_path}" >> "$GITHUB_ENV"
 
 # --- REVIEW_DOCS ---
 # 常時含めるドキュメント
@@ -98,11 +103,10 @@ if [ -z "${docs_content}" ]; then
   docs_content="(関連ドキュメントが見つかりませんでした)"
 fi
 
-{
-  echo "REVIEW_DOCS<<${DELIMITER}"
-  echo "${docs_content}"
-  echo "${DELIMITER}"
-} >> "$GITHUB_ENV"
+# 関連ドキュメントも巨大化しうるため差分と同様にファイルへ書き出してパスのみ渡す
+docs_path="${RUNNER_TEMP:-/tmp}/review-docs.md"
+printf '%s' "${docs_content}" > "${docs_path}"
+echo "REVIEW_DOCS_PATH=${docs_path}" >> "$GITHUB_ENV"
 
 echo "コンテキスト収集完了"
 echo "  変更ファイル数: $(echo "${changed_files}" | grep -c . || true)"
