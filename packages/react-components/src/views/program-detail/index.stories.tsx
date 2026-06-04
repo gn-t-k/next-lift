@@ -10,9 +10,9 @@ type ExercisePlan = Day["exercisePlans"][number];
 type AvailableExercise = ComponentProps<
 	typeof ProgramDetail
 >["availableExercises"][number];
-type RenderExerciseProgress = NonNullable<
-	ComponentProps<typeof ProgramDetail>["renderExerciseProgress"]
->;
+type RenderExerciseProgress = ComponentProps<
+	typeof ProgramDetail
+>["renderExerciseProgress"];
 
 const renderDummyExerciseProgress: RenderExerciseProgress = (id) => (
 	<div>種目 {id} の推移（ダミー）</div>

@@ -51,7 +51,7 @@ type Props = {
 	onDeleteSetPlan: (setPlanId: string) => void;
 	lastAddedExercisePlanId?: string | undefined;
 	lastAddedDayId?: string | undefined;
-	renderExerciseProgress?: ((exerciseId: string) => ReactNode) | undefined;
+	renderExerciseProgress: (exerciseId: string) => ReactNode;
 };
 
 type Day = {

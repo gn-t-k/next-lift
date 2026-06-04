@@ -18,7 +18,7 @@ type Props<T extends ExercisePlan> = {
 	onAddExercisePlanWithNewExercise: (name: string) => void;
 	onDeleteExercisePlan: (exercisePlanId: string) => void;
 	children: (exercisePlan: T) => ReactNode;
-	renderExerciseProgress?: ((exerciseId: string) => ReactNode) | undefined;
+	renderExerciseProgress: (exerciseId: string) => ReactNode;
 };
 
 type ExercisePlan = {
@@ -65,13 +65,11 @@ export const ExercisePlanSection = <T extends ExercisePlan>({
 											{exercisePlan.exercise.name}
 										</Link>
 									</Heading>
-									{renderExerciseProgress !== undefined && (
-										<ExerciseProgressDialog
-											exercise={exercisePlan.exercise}
-											desktopViewport={desktopViewport}
-											renderExerciseProgress={renderExerciseProgress}
-										/>
-									)}
+									<ExerciseProgressDialog
+										exercise={exercisePlan.exercise}
+										desktopViewport={desktopViewport}
+										renderExerciseProgress={renderExerciseProgress}
+									/>
 								</header>
 								<Button
 									intent="plain"
