@@ -6,8 +6,8 @@ import { cn, useMediaQuery } from "../../libs";
 import { Button } from "../../primitives/button";
 import { Heading, Section } from "../../primitives/heading";
 import { Link } from "../../primitives/link";
+import { ResponsiveDialog } from "../../primitives/responsive-dialog";
 import { ExerciseSelector } from "../exercise-selector";
-import { ProgramInfoDialog } from "./program-info-dialog";
 import type { WeightUnit } from "./weight-unit";
 
 // T で caller 側の追加フィールド（setPlans 等）を保持し、children 関数に渡せるようにする
@@ -121,14 +121,15 @@ const ExerciseProgressDialog: FC<ExerciseProgressDialogProps> = ({
 	);
 
 	return (
-		<ProgramInfoDialog
+		<ResponsiveDialog
 			title={title}
 			trigger={trigger}
 			isOpen={isOpen}
 			onOpenChange={setIsOpen}
 			desktopViewport={desktopViewport}
+			popoverWidth="wide"
 		>
 			{isOpen ? renderExerciseProgress(exercise.id) : null}
-		</ProgramInfoDialog>
+		</ResponsiveDialog>
 	);
 };

@@ -3,10 +3,10 @@
 import { type FC, useState } from "react";
 import { useMediaQuery } from "../../libs";
 import { Heading } from "../../primitives/heading";
+import { ResponsiveDialog } from "../../primitives/responsive-dialog";
 import { ProgramActionsMenu } from "./program-actions-menu";
 import { ProgramActionsTrigger } from "./program-actions-trigger";
 import { ProgramDeleteDialog } from "./program-delete-dialog";
-import { ProgramInfoDialog } from "./program-info-dialog";
 import { type ProgramInfoChange, ProgramInfoForm } from "./program-info-form";
 
 type Props = {
@@ -53,12 +53,13 @@ export const ProgramInfo: FC<Props> = ({
 				{desktopViewport === "pending" ? (
 					trigger
 				) : isDialogOpen ? (
-					<ProgramInfoDialog
+					<ResponsiveDialog
 						title={title}
 						trigger={trigger}
 						isOpen={isDialogOpen}
 						onOpenChange={setIsDialogOpen}
 						desktopViewport={desktopViewport}
+						popoverWidth="default"
 					>
 						<ProgramInfoForm
 							name={name}
@@ -69,7 +70,7 @@ export const ProgramInfo: FC<Props> = ({
 								setIsDialogOpen(false);
 							}}
 						/>
-					</ProgramInfoDialog>
+					</ResponsiveDialog>
 				) : isDeleteDialogOpen ? (
 					<ProgramDeleteDialog
 						name={name}
