@@ -3,10 +3,10 @@
 import type { FC } from "react";
 import { useState } from "react";
 import type { useMediaQuery } from "../../../libs";
+import { ResponsiveDialog } from "../../../primitives/responsive-dialog";
 import { DayActionsMenu } from "./day-actions-menu";
 import { DayActionsTrigger } from "./day-actions-trigger";
 import { DayLabelForm } from "./day-label-form";
-import { DayRenameDialog } from "./day-rename-dialog";
 
 type Props = {
 	dayId: string;
@@ -47,19 +47,20 @@ export const DayTabLabel: FC<Props> = ({
 			{desktopViewport === "pending" ? (
 				trigger
 			) : isRenameOpen ? (
-				<DayRenameDialog
+				<ResponsiveDialog
 					title={`${label}の名前を変更`}
 					trigger={trigger}
 					isOpen={isRenameOpen}
 					onOpenChange={setIsRenameOpen}
 					desktopViewport={desktopViewport}
+					popoverWidth="compact"
 				>
 					<DayLabelForm
 						label={label}
 						onCancel={() => setIsRenameOpen(false)}
 						onSubmit={handleChange}
 					/>
-				</DayRenameDialog>
+				</ResponsiveDialog>
 			) : (
 				<DayActionsMenu
 					label={label}

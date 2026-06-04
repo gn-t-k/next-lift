@@ -12,6 +12,7 @@ export * from "./main";
 export * from "./menu";
 export * from "./number-field";
 export * from "./popover";
+export * from "./responsive-dialog";
 export * from "./scrollable";
 export * from "./skeleton";
 export * from "./surface-card";
