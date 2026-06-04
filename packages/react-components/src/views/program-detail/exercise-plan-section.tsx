@@ -1,12 +1,13 @@
 "use client";
 
-import { XMarkIcon } from "@heroicons/react/24/solid";
-import type { ComponentProps, ReactNode } from "react";
-import { cn } from "../../libs";
+import { ChartBarIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { type ComponentProps, type FC, type ReactNode, useState } from "react";
+import { cn, useMediaQuery } from "../../libs";
 import { Button } from "../../primitives/button";
 import { Heading, Section } from "../../primitives/heading";
 import { Link } from "../../primitives/link";
 import { ExerciseSelector } from "../exercise-selector";
+import { ProgramInfoDialog } from "./program-info-dialog";
 import type { WeightUnit } from "./weight-unit";
 
 // T で caller 側の追加フィールド（setPlans 等）を保持し、children 関数に渡せるようにする
@@ -17,6 +18,7 @@ type Props<T extends ExercisePlan> = {
 	onAddExercisePlanWithNewExercise: (name: string) => void;
 	onDeleteExercisePlan: (exercisePlanId: string) => void;
 	children: (exercisePlan: T) => ReactNode;
+	renderExerciseProgress: (exerciseId: string) => ReactNode;
 };
 
 type ExercisePlan = {
@@ -39,7 +41,10 @@ export const ExercisePlanSection = <T extends ExercisePlan>({
 	onAddExercisePlanWithNewExercise,
 	onDeleteExercisePlan,
 	children,
+	renderExerciseProgress,
 }: Props<T>): ReactNode => {
+	const desktopViewport = useMediaQuery("(min-width: 768px)");
+
 	return (
 		<div className="flex flex-col gap-3">
 			{exercisePlans.length > 0 && (
@@ -47,8 +52,8 @@ export const ExercisePlanSection = <T extends ExercisePlan>({
 					{exercisePlans.map((exercisePlan) => (
 						<li key={exercisePlan.id}>
 							<Section className="relative flex flex-col gap-2 rounded-lg bg-overlay p-3 text-overlay-fg shadow-sm">
-								<header className="pr-8 pl-1">
-									<Heading className="font-medium text-base">
+								<header className="flex items-center gap-1 pr-8 pl-1">
+									<Heading className="min-w-0 font-medium text-base">
 										<Link
 											href={exercisePlan.exercise.detailHref}
 											className={cn(
@@ -60,6 +65,11 @@ export const ExercisePlanSection = <T extends ExercisePlan>({
 											{exercisePlan.exercise.name}
 										</Link>
 									</Heading>
+									<ExerciseProgressDialog
+										exercise={exercisePlan.exercise}
+										desktopViewport={desktopViewport}
+										renderExerciseProgress={renderExerciseProgress}
+									/>
 								</header>
 								<Button
 									intent="plain"
@@ -83,5 +93,42 @@ export const ExercisePlanSection = <T extends ExercisePlan>({
 				label="種目を追加"
 			/>
 		</div>
+	);
+};
+
+type ExerciseProgressDialogProps = {
+	exercise: Exercise;
+	desktopViewport: ReturnType<typeof useMediaQuery>;
+	renderExerciseProgress: (exerciseId: string) => ReactNode;
+};
+
+const ExerciseProgressDialog: FC<ExerciseProgressDialogProps> = ({
+	exercise,
+	desktopViewport,
+	renderExerciseProgress,
+}) => {
+	const [isOpen, setIsOpen] = useState(false);
+	const title = `${exercise.name}の推移`;
+	const trigger = (
+		<Button
+			intent="plain"
+			size="sq-xs"
+			aria-label={`${exercise.name}の推移を見る`}
+			className="shrink-0"
+		>
+			<ChartBarIcon data-slot="icon" className="size-4" aria-hidden />
+		</Button>
+	);
+
+	return (
+		<ProgramInfoDialog
+			title={title}
+			trigger={trigger}
+			isOpen={isOpen}
+			onOpenChange={setIsOpen}
+			desktopViewport={desktopViewport}
+		>
+			{isOpen ? renderExerciseProgress(exercise.id) : null}
+		</ProgramInfoDialog>
 	);
 };

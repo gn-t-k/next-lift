@@ -1,6 +1,12 @@
 "use client";
 
-import { type ComponentProps, type FC, type Key, useCallback } from "react";
+import {
+	type ComponentProps,
+	type FC,
+	type Key,
+	type ReactNode,
+	useCallback,
+} from "react";
 import { Section } from "../../primitives/heading";
 import { TabPanel, Tabs } from "../../primitives/tabs";
 import { CreateDayCard } from "./create-day-card";
@@ -45,12 +51,12 @@ type Props = {
 	onDeleteSetPlan: (setPlanId: string) => void;
 	lastAddedExercisePlanId?: string | undefined;
 	lastAddedDayId?: string | undefined;
+	renderExerciseProgress: (exerciseId: string) => ReactNode;
 };
 
 type Day = {
 	id: string;
 	label: string;
-	detailHref: string;
 	startWorkoutHref: string;
 	workouts: WorkoutHistory[];
 	exercisePlans: (ExercisePlan & {
@@ -88,6 +94,7 @@ export const ProgramDetail: FC<Props> = ({
 	onDeleteSetPlan,
 	lastAddedExercisePlanId,
 	lastAddedDayId,
+	renderExerciseProgress,
 }) => {
 	const dayIds = days.map((day) => day.id);
 	const firstDayId = dayIds[0];
@@ -139,6 +146,7 @@ export const ProgramDetail: FC<Props> = ({
 										onAddExercisePlanWithNewExercise(day.id, exerciseName)
 									}
 									onDeleteExercisePlan={onDeleteExercisePlan}
+									renderExerciseProgress={renderExerciseProgress}
 								>
 									{(exercisePlan) => (
 										<SetPlanSection

@@ -10,6 +10,13 @@ type ExercisePlan = Day["exercisePlans"][number];
 type AvailableExercise = ComponentProps<
 	typeof ProgramDetail
 >["availableExercises"][number];
+type RenderExerciseProgress = ComponentProps<
+	typeof ProgramDetail
+>["renderExerciseProgress"];
+
+const renderDummyExerciseProgress: RenderExerciseProgress = (id) => (
+	<div>種目 {id} の推移（ダミー）</div>
+);
 
 const benchPress: ExercisePlan["exercise"] = {
 	id: "ex-bench",
@@ -62,7 +69,6 @@ const SAMPLE_DAYS: Day[] = [
 	{
 		id: "d1",
 		label: "Day 1: 上半身プッシュ",
-		detailHref: "/programs/p1/days/d1",
 		startWorkoutHref: "/workouts/new?dayId=d1",
 		workouts: SAMPLE_WORKOUTS,
 		exercisePlans: [
@@ -101,7 +107,6 @@ const SAMPLE_DAYS: Day[] = [
 	{
 		id: "d2",
 		label: "Day 2: 下半身",
-		detailHref: "/programs/p1/days/d2",
 		startWorkoutHref: "/workouts/new?dayId=d2",
 		workouts: [
 			{
@@ -129,7 +134,6 @@ const SAMPLE_DAYS: Day[] = [
 	{
 		id: "d3",
 		label: "Day 3: 上半身プル",
-		detailHref: "/programs/p1/days/d3",
 		startWorkoutHref: "/workouts/new?dayId=d3",
 		workouts: [],
 		exercisePlans: [],
@@ -158,6 +162,7 @@ const meta = {
 		onChangeSetPlan: fn(),
 		onAddSetPlan: fn(),
 		onDeleteSetPlan: fn(),
+		renderExerciseProgress: renderDummyExerciseProgress,
 	},
 	decorators: [
 		(Story) => (
@@ -233,7 +238,6 @@ export const NoExercisePlansInSelectedDay: Story = {
 			{
 				id: "d1",
 				label: "Day 1",
-				detailHref: "/programs/p1/days/d1",
 				startWorkoutHref: "/workouts/new?dayId=d1",
 				workouts: [],
 				exercisePlans: [],
@@ -286,7 +290,6 @@ const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
 			{
 				id,
 				label: `Day ${prev.length + 1}`,
-				detailHref: `/programs/p1/days/${id}`,
 				startWorkoutHref: `/workouts/new?dayId=${id}`,
 				workouts: [],
 				exercisePlans: [],
@@ -632,6 +635,31 @@ export const ExerciseNameLinksToDetail: Story = {
 	},
 };
 
+export const ExerciseProgressToggleOpensProgressView: Story = {
+	name: "種目推移トグルを押すと推移表示が開く",
+	globals: { viewport: { value: "desktop" } },
+	args: {
+		name: "5/3/1 BBB",
+		meta: null,
+		days: SAMPLE_DAYS,
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			canvas.getByRole("button", { name: "ベンチプレスの推移を見る" }),
+		);
+		const body = within(document.body);
+		await waitFor(() => {
+			expect(
+				body.getByRole("dialog", { name: "ベンチプレスの推移" }),
+			).toBeInTheDocument();
+		});
+		expect(
+			body.getByText("種目 ex-bench の推移（ダミー）"),
+		).toBeInTheDocument();
+	},
+};
+
 export const ExercisePlanAddDeleteFlow: Story = {
 	name: "種目計画の追加・削除を実体験できる",
 	args: {
@@ -641,7 +669,6 @@ export const ExercisePlanAddDeleteFlow: Story = {
 			{
 				id: "d1",
 				label: "Day 1",
-				detailHref: "/programs/p1/days/d1",
 				startWorkoutHref: "/workouts/new?dayId=d1",
 				workouts: [],
 				exercisePlans: [
@@ -672,7 +699,6 @@ export const DeleteExercisePlanInvokesCallback: Story = {
 			{
 				id: "d1",
 				label: "Day 1",
-				detailHref: "/programs/p1/days/d1",
 				startWorkoutHref: "/workouts/new?dayId=d1",
 				workouts: [],
 				exercisePlans: [
@@ -716,7 +742,6 @@ export const AddExercisePlanBySelectingExercise: Story = {
 			{
 				id: "d1",
 				label: "Day 1",
-				detailHref: "/programs/p1/days/d1",
 				startWorkoutHref: "/workouts/new?dayId=d1",
 				workouts: [],
 				exercisePlans: [],
