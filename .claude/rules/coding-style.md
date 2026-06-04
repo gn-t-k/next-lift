@@ -52,6 +52,27 @@ type CreateState = "empty" | "duplicate" | "creatable";
 
 不正な組み合わせを型レベルで表現不能にする。
 
+### optional/nullable は required をデフォルトにする
+
+プロパティ・引数・フィールドを optional（`?:`）や nullable にする前に、未指定 / null になるドメイン上の事情が実在するか確認する。実在しないなら required をデフォルトにする。
+
+- 理由なき optional は「無意味な未指定状態」を表現可能にし、degrade 分岐（未指定時のフォールバック）を呼び込む
+- 機能未実装などの時間的・段取りの都合を、恒久的な API の optional 性に持ち込まない。未実装の穴はプレースホルダ注入など呼び出し側で吸収する
+
+```ts
+// ❌ 機能未実装という段取りの都合で optional にする
+type Props = { renderExerciseProgress?: () => ReactNode };
+// → 未実装の都合が型に漏れ、未指定時の degrade 分岐が必要になる
+
+// ✅ ドメイン上 consumer が必ず提供するなら required
+type Props = { renderExerciseProgress: () => ReactNode };
+// 未実装期間は呼び出し側でプレースホルダを注入して吸収する
+```
+
+**Why:** 既存の「状態は論理状態数で型を作る」と同根。理由なき optional は論理的に起こり得ない「未指定」状態を型で表現可能にしてしまい、不正な状態を型レベルで排除する原則に反する。exactOptionalPropertyTypes 環境では、不要な optional をやめれば `?: T | undefined` の冗長さも消える。
+
+**How to apply:** optional / nullable を付ける前に「これが未指定 / null になるドメイン上の事情は何か」を1つ挙げられるか自問する。挙げられないなら required にする。
+
 ### 関数は処理の流れで分ける
 
 - 分岐後の処理が独立した責務（成功/失敗、create/update など）なら、振る舞いごとに別関数として呼び出し元で分岐する
