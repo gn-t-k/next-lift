@@ -10,7 +10,8 @@ GitHub Issue への対応を、実装は `codex:rescue`、レビューは claude
 
 ## 前提
 
-- issue 番号は呼び出し時の引数で受け取る（例: `/issue-tdd #123`）
+- ローカルで codex CLI（`codex:rescue` スキル）が利用可能であることを前提とする
+- issue 番号は呼び出し時の引数で受け取る（例: `/duet:implement #123`）
 - 引数がなければ、対応する issue 番号をユーザーに尋ねてから始める
 
 ## 実行手順
