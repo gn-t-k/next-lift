@@ -1,107 +1,66 @@
 "use client";
 
-import {
-	type ComponentProps,
-	type FC,
-	type Key,
-	type ReactNode,
-	useCallback,
-} from "react";
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { type FC, type Key, type ReactNode, useCallback } from "react";
+import { cn } from "../../libs/utils";
 import { Section } from "../../primitives/heading";
+import { skeletonClass } from "../../primitives/skeleton";
 import { TabPanel, Tabs } from "../../primitives/tabs";
 import { CreateDayCard } from "./create-day-card";
 import { DayTabs } from "./day-tabs";
-import { ExercisePlanSection } from "./exercise-plan-section";
 import { ProgramInfo } from "./program-info";
-import { SetPlanSection } from "./set-plan-section";
 import { useDayTabSelection } from "./use-day-tab-selection";
-import {
-	type WorkoutHistory,
-	WorkoutHistorySection,
-} from "./workout-history-section";
-
-type SetPlanChangePayload = Parameters<
-	ComponentProps<typeof SetPlanSection>["onChangeSetPlan"]
->[1];
-
-type SetPlanAddPayload = Parameters<
-	ComponentProps<typeof SetPlanSection>["onAddSetPlan"]
->[0];
 
 type Props = {
+	program: Program;
+	programActions: ProgramActions;
+	days: Day[];
+	dayActions: DayActions;
+	selection?: Selection;
+	children: (day: Day) => ReactNode;
+};
+
+type Program = {
 	name: string;
 	meta: string | null;
-	days: Day[];
-	availableExercises: AvailableExercise[];
-	defaultSelectedDayId?: string;
-	onAddDay: () => void;
-	onDeleteDay: (dayId: string) => void;
-	onChangeDayLabel: (dayId: string, label: string) => void;
-	onChangeProgramInfo: (payload: { name: string; meta: string | null }) => void;
+};
+
+type ProgramActions = {
+	onChange: (payload: Program) => void;
 	onDuplicate: () => void;
 	onDelete: () => void;
-	onAddExercisePlanWithSelectedExercise: (
-		dayId: string,
-		exerciseId: string,
-	) => void;
-	onAddExercisePlanWithNewExercise: (dayId: string, name: string) => void;
-	onDeleteExercisePlan: (exercisePlanId: string) => void;
-	onChangeSetPlan: (setPlanId: string, payload: SetPlanChangePayload) => void;
-	onAddSetPlan: (exercisePlanId: string, payload: SetPlanAddPayload) => void;
-	onDeleteSetPlan: (setPlanId: string) => void;
-	lastAddedExercisePlanId?: string | undefined;
-	lastAddedDayId?: string | undefined;
-	renderExerciseProgress: (exerciseId: string) => ReactNode;
 };
 
 type Day = {
 	id: string;
 	label: string;
-	startWorkoutHref: string;
-	workouts: WorkoutHistory[];
-	exercisePlans: (ExercisePlan & {
-		setPlans: SetPlan[];
-	})[];
 };
 
-type ExercisePlan = ComponentProps<
-	typeof ExercisePlanSection
->["exercisePlans"][number];
+type DayActions = {
+	onAdd: () => void;
+	onDelete: (dayId: string) => void;
+	onChangeLabel: (dayId: string, label: string) => void;
+};
 
-type AvailableExercise = ComponentProps<
-	typeof ExercisePlanSection
->["availableExercises"][number];
-
-type SetPlan = ComponentProps<typeof SetPlanSection>["setPlans"][number];
+type Selection = {
+	defaultSelectedDayId?: string;
+	lastAddedDayId?: string;
+};
 
 export const ProgramDetail: FC<Props> = ({
-	name,
-	meta,
+	program,
+	programActions,
 	days,
-	availableExercises,
-	defaultSelectedDayId,
-	onAddDay,
-	onDeleteDay,
-	onChangeDayLabel,
-	onChangeProgramInfo,
-	onDuplicate,
-	onDelete,
-	onAddExercisePlanWithSelectedExercise,
-	onAddExercisePlanWithNewExercise,
-	onDeleteExercisePlan,
-	onChangeSetPlan,
-	onAddSetPlan,
-	onDeleteSetPlan,
-	lastAddedExercisePlanId,
-	lastAddedDayId,
-	renderExerciseProgress,
+	dayActions,
+	selection,
+	children,
 }) => {
 	const dayIds = days.map((day) => day.id);
 	const firstDayId = dayIds[0];
 	const [selectedDayId, selectDay] = useDayTabSelection({
 		dayIds,
-		defaultSelectedDayId,
-		lastAddedDayId,
+		defaultSelectedDayId: selection?.defaultSelectedDayId,
+		lastAddedDayId: selection?.lastAddedDayId,
 	});
 	const handleChangeSelection = useCallback(
 		(key: Key) => {
@@ -109,19 +68,20 @@ export const ProgramDetail: FC<Props> = ({
 		},
 		[selectDay],
 	);
-	const selectedKey = selectedDayId ?? firstDayId ?? "";
+	const selectedDay = days.find((day) => day.id === selectedDayId);
+	const selectedKey = selectedDay?.id ?? firstDayId ?? "";
 
 	return (
 		<div className="flex flex-col gap-6">
 			<ProgramInfo
-				name={name}
-				meta={meta}
-				onChange={onChangeProgramInfo}
-				onDuplicate={onDuplicate}
-				onDelete={onDelete}
+				name={program.name}
+				meta={program.meta}
+				onChange={programActions.onChange}
+				onDuplicate={programActions.onDuplicate}
+				onDelete={programActions.onDelete}
 			/>
 			{firstDayId === undefined ? (
-				<CreateDayCard onAddDay={onAddDay} />
+				<CreateDayCard onAddDay={dayActions.onAdd} />
 			) : (
 				<Section>
 					<Tabs
@@ -130,51 +90,67 @@ export const ProgramDetail: FC<Props> = ({
 					>
 						<DayTabs
 							days={days}
-							onAddDay={onAddDay}
-							onChangeDayLabel={onChangeDayLabel}
-							onDeleteDay={onDeleteDay}
+							onAddDay={dayActions.onAdd}
+							onChangeDayLabel={dayActions.onChangeLabel}
+							onDeleteDay={dayActions.onDelete}
 						/>
-						{days.map((day) => (
-							<TabPanel key={day.id} id={day.id} className="pt-4">
-								<ExercisePlanSection
-									exercisePlans={day.exercisePlans}
-									availableExercises={availableExercises}
-									onAddExercisePlanWithSelectedExercise={(exerciseId) =>
-										onAddExercisePlanWithSelectedExercise(day.id, exerciseId)
-									}
-									onAddExercisePlanWithNewExercise={(exerciseName) =>
-										onAddExercisePlanWithNewExercise(day.id, exerciseName)
-									}
-									onDeleteExercisePlan={onDeleteExercisePlan}
-									renderExerciseProgress={renderExerciseProgress}
-								>
-									{(exercisePlan) => (
-										<SetPlanSection
-											setPlans={exercisePlan.setPlans}
-											weightUnit={exercisePlan.exercise.weightUnit}
-											weightStep={exercisePlan.exercise.weightStep}
-											exerciseName={exercisePlan.exercise.name}
-											onChangeSetPlan={onChangeSetPlan}
-											onAddSetPlan={(payload) =>
-												onAddSetPlan(exercisePlan.id, payload)
-											}
-											onDeleteSetPlan={onDeleteSetPlan}
-											autoFocusAddTrigger={
-												exercisePlan.id === lastAddedExercisePlanId
-											}
-										/>
-									)}
-								</ExercisePlanSection>
-								<WorkoutHistorySection
-									dayLabel={day.label}
-									startWorkoutHref={day.startWorkoutHref}
-									workouts={day.workouts}
-								/>
+						{selectedDay === undefined ? null : (
+							<TabPanel id={selectedDay.id} className="pt-4">
+								{children(selectedDay)}
 							</TabPanel>
-						))}
+						)}
 					</Tabs>
 				</Section>
 			)}
+		</div>
+	);
+};
+
+type ProgramDetailErrorProps = {
+	message?: ReactNode;
+};
+
+export const ProgramDetailError: FC<ProgramDetailErrorProps> = ({
+	message,
+}) => {
+	return (
+		<div role="alert" className="flex items-start gap-3 p-4">
+			<ExclamationTriangleIcon
+				aria-hidden
+				className="mt-0.5 size-5 shrink-0 text-warning"
+			/>
+			<div className="flex flex-col gap-1">
+				<p className="font-medium text-base text-fg">
+					プログラムを取得できませんでした
+				</p>
+				{message ? <p className="text-muted-fg text-sm">{message}</p> : null}
+			</div>
+		</div>
+	);
+};
+
+export const ProgramDetailLoading: FC = () => {
+	return (
+		<div aria-busy className="flex flex-col gap-6">
+			<span className="sr-only" aria-live="polite">
+				プログラムを読み込み中
+			</span>
+			<header className="flex flex-col gap-2">
+				<div className={cn(skeletonClass, "h-9 w-64 max-w-full rounded-md")} />
+				<div className={cn(skeletonClass, "h-4 w-full max-w-md rounded")} />
+			</header>
+			<Section>
+				<div className="flex gap-2 border-border border-b pb-2">
+					<div className={cn(skeletonClass, "h-7 w-28 rounded-md")} />
+					<div className={cn(skeletonClass, "h-7 w-20 rounded-md")} />
+					<div className={cn(skeletonClass, "h-7 w-20 rounded-md")} />
+				</div>
+				<div className="flex flex-col gap-3 pt-4">
+					<div className={cn(skeletonClass, "h-36 rounded-lg")} />
+					<div className={cn(skeletonClass, "h-36 rounded-lg")} />
+					<div className={cn(skeletonClass, "mt-2 h-20 rounded-lg")} />
+				</div>
+			</Section>
 		</div>
 	);
 };

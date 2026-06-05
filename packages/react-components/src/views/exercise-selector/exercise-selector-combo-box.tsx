@@ -20,7 +20,14 @@ import {
 
 export const ExerciseSelectorComboBox: FC<
 	ComponentProps<typeof ExerciseSelector>
-> = ({ exercises, selectedExerciseId, onSelect, onCreateExercise, label }) => {
+> = ({
+	exercises,
+	selectedExerciseId,
+	onSelect,
+	onCreateExercise,
+	label,
+	isDisabled,
+}) => {
 	const selectedName =
 		exercises.find((exercise) => exercise.id === selectedExerciseId)?.name ??
 		"";
@@ -64,6 +71,7 @@ export const ExerciseSelectorComboBox: FC<
 	return (
 		<ComboBox
 			aria-label={label}
+			isDisabled={isDisabled ?? false}
 			menuTrigger="focus"
 			items={items}
 			inputValue={inputValue}

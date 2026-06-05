@@ -2,9 +2,10 @@
 
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import type { FC } from "react";
-import { Button } from "../../../../primitives/button";
+import { Button } from "../../../primitives/button";
 import type { WeightUnit } from "../../weight-unit";
 import { SetPlanFormDialog } from "../set-plan-form-dialog";
+import { setPlanIndexClass, setPlanRowClass } from "../set-plan-layout";
 import type { SetPlan, SetPlanDraft } from "../set-plan-types";
 
 type Props = {
@@ -28,10 +29,8 @@ export const SetPlanRow: FC<Props> = ({
 }) => {
 	const setName = `${exerciseName} ${index + 1}セット目`;
 	return (
-		<div className="flex items-baseline gap-3 px-3 py-2 text-sm">
-			<span className="w-8 shrink-0 text-muted-fg text-xs tabular-nums">
-				{`#${index + 1}`}
-			</span>
+		<div className={setPlanRowClass}>
+			<span className={setPlanIndexClass}>{`#${index + 1}`}</span>
 			<span className="flex-1 text-fg tabular-nums">
 				{(() => {
 					switch (setPlan.pattern) {

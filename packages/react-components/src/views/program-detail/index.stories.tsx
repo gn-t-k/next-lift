@@ -1,24 +1,91 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import type { ComponentProps, FC } from "react";
-import { useState } from "react";
+import type { ComponentProps, FC, ReactNode } from "react";
+import { Suspense, use, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import { Main } from "../../primitives/main";
-import { ProgramDetail } from ".";
+import { ExercisePlanSection } from "../exercise-plan-section";
+import { SetPlanSection } from "../set-plan-section";
+import type { SetPlan, SetPlanDraft } from "../set-plan-section/set-plan-types";
+import type { WeightUnit } from "../weight-unit";
+import {
+	type WorkoutHistory,
+	WorkoutHistorySection,
+} from "../workout-history-section";
+import { ProgramDetail, ProgramDetailError, ProgramDetailLoading } from ".";
 
-type Day = ComponentProps<typeof ProgramDetail>["days"][number];
-type ExercisePlan = Day["exercisePlans"][number];
-type AvailableExercise = ComponentProps<
-	typeof ProgramDetail
->["availableExercises"][number];
-type RenderExerciseProgress = ComponentProps<
-	typeof ProgramDetail
->["renderExerciseProgress"];
+type ProgramDetailProps = ComponentProps<typeof ProgramDetail>;
+type Program = ProgramDetailProps["program"];
+type ShellDay = ProgramDetailProps["days"][number];
+type Selection = NonNullable<ProgramDetailProps["selection"]>;
+type AvailableExercise = {
+	id: string;
+	name: string;
+};
+type Exercise = {
+	id: string;
+	name: string;
+	weightUnit: WeightUnit;
+	weightStep: number;
+	detailHref: string;
+};
+type ExercisePlan = {
+	id: string;
+	exercise: Exercise;
+	setPlans: SetPlan[];
+};
+type Day = ShellDay & {
+	startWorkoutHref: string;
+	workouts: WorkoutHistory[];
+	exercisePlans: ExercisePlan[];
+};
+type ProgramDetailData = {
+	program: Program;
+	days: Day[];
+	availableExercises: AvailableExercise[];
+	selection: Selection;
+};
+type ExercisePlanActions = {
+	onAddWithSelectedExercise: (dayId: string, exerciseId: string) => void;
+	onAddWithNewExercise: (dayId: string, name: string) => void;
+	onDelete: (exercisePlanId: string) => void;
+};
+type SetPlanActions = {
+	onAdd: (exercisePlanId: string, payload: SetPlanDraft) => void;
+	onChange: (setPlanId: string, payload: SetPlanDraft) => void;
+	onDelete: (setPlanId: string) => void;
+};
+type Outcome = "success" | "error";
+type ProgramDetailStoryProps = ProgramDetailData & {
+	programActions: ProgramDetailProps["programActions"];
+	dayActions: ProgramDetailProps["dayActions"];
+	exercisePlanActions: ExercisePlanActions;
+	setPlanActions: SetPlanActions;
+	renderExerciseProgress: (exerciseId: string) => ReactNode;
+	delayMs: number;
+	outcome: Outcome;
+};
+type SuspendedProgramDetailProps = Omit<
+	ProgramDetailStoryProps,
+	keyof ProgramDetailData | "delayMs" | "outcome"
+> & {
+	promise: Promise<ProgramDetailData>;
+};
+type StatefulProgramDetailProps = Omit<
+	SuspendedProgramDetailProps,
+	"promise"
+> & {
+	program: Program;
+	days: Day[];
+	availableExercises: AvailableExercise[];
+	selection: Selection;
+};
 
-const renderDummyExerciseProgress: RenderExerciseProgress = (id) => (
+const renderDummyExerciseProgress = (id: string): ReactNode => (
 	<div>種目 {id} の推移（ダミー）</div>
 );
 
-const benchPress: ExercisePlan["exercise"] = {
+const benchPress: Exercise = {
 	id: "ex-bench",
 	name: "ベンチプレス",
 	weightUnit: "kg",
@@ -26,7 +93,7 @@ const benchPress: ExercisePlan["exercise"] = {
 	detailHref: "/exercises/ex-bench",
 };
 
-const inclineDumbbell: ExercisePlan["exercise"] = {
+const inclineDumbbell: Exercise = {
 	id: "ex-incline-db",
 	name: "インクラインダンベルプレス",
 	weightUnit: "kg",
@@ -34,12 +101,17 @@ const inclineDumbbell: ExercisePlan["exercise"] = {
 	detailHref: "/exercises/ex-incline-db",
 };
 
-const squat: ExercisePlan["exercise"] = {
+const squat: Exercise = {
 	id: "ex-squat",
 	name: "バックスクワット",
 	weightUnit: "kg",
 	weightStep: 2.5,
 	detailHref: "/exercises/ex-squat",
+};
+
+const SAMPLE_PROGRAM: Program = {
+	name: "5/3/1 BBB",
+	meta: "メインリフトは 5/3/1 で、補助は BBB（Boring But Big）。\nDeload week は 4 週ごとに挿入する。",
 };
 
 const SAMPLE_AVAILABLE_EXERCISES: AvailableExercise[] = [
@@ -50,7 +122,7 @@ const SAMPLE_AVAILABLE_EXERCISES: AvailableExercise[] = [
 	{ id: "ex-overhead-press", name: "オーバーヘッドプレス" },
 ];
 
-const SAMPLE_WORKOUTS: Day["workouts"] = [
+const SAMPLE_WORKOUTS: WorkoutHistory[] = [
 	{
 		id: "w-d1-2026-05-22",
 		startedAt: new Date("2026-05-22T19:30:00"),
@@ -140,29 +212,90 @@ const SAMPLE_DAYS: Day[] = [
 	},
 ];
 
+const DEFAULT_SELECTION: Selection = {
+	defaultSelectedDayId: "d1",
+};
+
+const ProgramDetailStory: FC<ProgramDetailStoryProps> = ({
+	program,
+	days,
+	availableExercises,
+	selection,
+	programActions,
+	dayActions,
+	exercisePlanActions,
+	setPlanActions,
+	renderExerciseProgress,
+	delayMs,
+	outcome,
+}) => {
+	const promise = createProgramDetailPromise({
+		data: {
+			program,
+			days,
+			availableExercises,
+			selection,
+		},
+		delayMs,
+		outcome,
+	});
+
+	return (
+		<ErrorBoundary
+			fallback={
+				<ProgramDetailError message="ネットワーク接続を確認して再試行してください。" />
+			}
+			resetKeys={[promise]}
+		>
+			<Suspense fallback={<ProgramDetailLoading />}>
+				<SuspendedProgramDetail
+					promise={promise}
+					programActions={programActions}
+					dayActions={dayActions}
+					exercisePlanActions={exercisePlanActions}
+					setPlanActions={setPlanActions}
+					renderExerciseProgress={renderExerciseProgress}
+				/>
+			</Suspense>
+		</ErrorBoundary>
+	);
+};
+
 const meta = {
 	title: "View/V2 プログラム詳細",
-	component: ProgramDetail,
+	component: ProgramDetailStory,
 	parameters: {
 		layout: "fullscreen",
 	},
 	tags: ["autodocs"],
 	args: {
-		defaultSelectedDayId: "d1",
+		program: SAMPLE_PROGRAM,
+		days: SAMPLE_DAYS,
 		availableExercises: SAMPLE_AVAILABLE_EXERCISES,
-		onAddDay: fn(),
-		onDeleteDay: fn(),
-		onChangeDayLabel: fn(),
-		onChangeProgramInfo: fn(),
-		onDuplicate: fn(),
-		onDelete: fn(),
-		onAddExercisePlanWithSelectedExercise: fn(),
-		onAddExercisePlanWithNewExercise: fn(),
-		onDeleteExercisePlan: fn(),
-		onChangeSetPlan: fn(),
-		onAddSetPlan: fn(),
-		onDeleteSetPlan: fn(),
+		selection: DEFAULT_SELECTION,
+		programActions: {
+			onChange: fn(),
+			onDuplicate: fn(),
+			onDelete: fn(),
+		},
+		dayActions: {
+			onAdd: fn(),
+			onDelete: fn(),
+			onChangeLabel: fn(),
+		},
+		exercisePlanActions: {
+			onAddWithSelectedExercise: fn(),
+			onAddWithNewExercise: fn(),
+			onDelete: fn(),
+		},
+		setPlanActions: {
+			onAdd: fn(),
+			onChange: fn(),
+			onDelete: fn(),
+		},
 		renderExerciseProgress: renderDummyExerciseProgress,
+		delayMs: 0,
+		outcome: "success",
 	},
 	decorators: [
 		(Story) => (
@@ -171,31 +304,16 @@ const meta = {
 			</Main>
 		),
 	],
-	render: (args) => <StatefulProgramDetail {...args} />,
-} satisfies Meta<typeof ProgramDetail>;
+	render: (args) => <ProgramDetailStory {...args} />,
+} satisfies Meta<typeof ProgramDetailStory>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const openProgramActionsMenu = async (canvasElement: HTMLElement) => {
-	const canvas = within(canvasElement);
-	await userEvent.click(canvas.getByRole("button", { name: "プログラム操作" }));
-	return within(document.body);
-};
-
-const openProgramInfoEditor = async (canvasElement: HTMLElement) => {
-	const body = await openProgramActionsMenu(canvasElement);
-	await userEvent.click(
-		await waitFor(() => body.getByRole("menuitem", { name: "情報を編集" })),
-	);
-	return body;
-};
-
 export const MultipleDays: Story = {
 	name: "複数 Day",
 	args: {
-		name: "5/3/1 BBB",
-		meta: "メインリフトは 5/3/1 で、補助は BBB（Boring But Big）。\nDeload week は 4 週ごとに挿入する。",
+		program: SAMPLE_PROGRAM,
 		days: SAMPLE_DAYS,
 	},
 };
@@ -203,8 +321,10 @@ export const MultipleDays: Story = {
 export const NoMeta: Story = {
 	name: "meta なし",
 	args: {
-		name: "PPL Hypertrophy",
-		meta: null,
+		program: {
+			name: "PPL Hypertrophy",
+			meta: null,
+		},
 		days: SAMPLE_DAYS,
 	},
 };
@@ -212,28 +332,102 @@ export const NoMeta: Story = {
 export const LongProgramName: Story = {
 	name: "長いプログラム名",
 	args: {
-		name: "Wendler 5/3/1 Boring But Big with Joker Sets and First Set Last AMRAP Conjugate Method (3-day split, 16-week mesocycle, deload weeks included) 詳細メソッド付きの上級者向け長期プログラム（完全版）",
-		meta: "メインリフトは 5/3/1 で、補助は BBB（Boring But Big）。\nDeload week は 4 週ごとに挿入する。",
+		program: {
+			name: "Wendler 5/3/1 Boring But Big with Joker Sets and First Set Last AMRAP Conjugate Method (3-day split, 16-week mesocycle, deload weeks included) 詳細メソッド付きの上級者向け長期プログラム（完全版）",
+			meta: SAMPLE_PROGRAM.meta,
+		},
 		days: SAMPLE_DAYS,
+	},
+};
+
+export const Loading: Story = {
+	name: "ローディング状態",
+	render: () => <ProgramDetailLoading />,
+};
+
+export const LoadingMobile: Story = {
+	name: "ローディング状態（モバイル）",
+	globals: {
+		viewport: { value: "mobile" },
+	},
+	render: () => <ProgramDetailLoading />,
+};
+
+export const LoadingDesktop: Story = {
+	name: "ローディング状態（デスクトップ）",
+	globals: {
+		viewport: { value: "desktop" },
+	},
+	render: () => <ProgramDetailLoading />,
+};
+
+export const ErrorDefault: Story = {
+	name: "エラー状態",
+	render: () => <ProgramDetailError />,
+};
+
+export const ErrorWithMessage: Story = {
+	name: "エラー状態（メッセージあり）",
+	render: () => (
+		<ProgramDetailError message="ネットワーク接続を確認して再試行してください。" />
+	),
+};
+
+export const ErrorMobile: Story = {
+	name: "エラー状態（モバイル）",
+	globals: {
+		viewport: { value: "mobile" },
+	},
+	render: () => (
+		<ProgramDetailError message="ネットワーク接続を確認して再試行してください。" />
+	),
+};
+
+export const ErrorDesktop: Story = {
+	name: "エラー状態（デスクトップ）",
+	globals: {
+		viewport: { value: "desktop" },
+	},
+	render: () => (
+		<ProgramDetailError message="ネットワーク接続を確認して再試行してください。" />
+	),
+};
+
+export const FlowLoadingToDetail: Story = {
+	name: "フロー: ローディング → 詳細",
+	args: {
+		delayMs: 1500,
+		outcome: "success",
+	},
+};
+
+export const FlowLoadingToError: Story = {
+	name: "フロー: ローディング → エラー",
+	args: {
+		delayMs: 1500,
+		outcome: "error",
 	},
 };
 
 export const NoDays: Story = {
 	name: "Day ゼロ件",
 	args: {
-		name: "新しいプログラム",
-		meta: null,
+		program: {
+			name: "新しいプログラム",
+			meta: null,
+		},
 		days: [],
+		selection: {},
 	},
 };
 
-// 種目計画を全削除した後のエッジケース。設計判断 #61 により通常状態では発生しないが、
-// 削除直後の transient state として ExercisePlanSection が ExercisePlanPickerCard のみ表示する空状態。
 export const NoExercisePlansInSelectedDay: Story = {
 	name: "選択中の Day に種目計画ゼロ件（削除直後の transient state）",
 	args: {
-		name: "新しいプログラム",
-		meta: null,
+		program: {
+			name: "新しいプログラム",
+			meta: null,
+		},
 		days: [
 			{
 				id: "d1",
@@ -246,244 +440,13 @@ export const NoExercisePlansInSelectedDay: Story = {
 	},
 };
 
-// 設計判断 #71 の「初期構造の生成は consumer 責務」を story 上で再現するための stateful wrapper。
-// 種目選択 / 新規登録時はその exercise を含む種目計画を新規作成する（exercise: null の transient state は持たない）。
-// 未登録種目は availableExercises にも追加する。削除時は対象 id を除外する。
-// 追加直後の種目計画は lastAddedExercisePlanId に記録し、SetPlanFormDialog を自動オープン
-// （種目選択 → 即セット定義の流れを途切れさせない）。
-const StatefulProgramDetail: FC<ComponentProps<typeof ProgramDetail>> = ({
-	name: initialName,
-	meta: initialMeta,
-	days: initialDays,
-	availableExercises: initialAvailableExercises,
-	onAddDay,
-	onDeleteDay,
-	onChangeDayLabel,
-	onChangeProgramInfo,
-	onDuplicate,
-	onDelete,
-	onAddExercisePlanWithSelectedExercise,
-	onAddExercisePlanWithNewExercise,
-	onDeleteExercisePlan,
-	onAddSetPlan,
-	onChangeSetPlan,
-	onDeleteSetPlan,
-	...rest
-}) => {
-	const [name, setName] = useState(initialName);
-	const [meta, setMeta] = useState(initialMeta);
-	const [days, setDays] = useState(initialDays);
-	const [availableExercises, setAvailableExercises] = useState(
-		initialAvailableExercises,
-	);
-	const [lastAddedExercisePlanId, setLastAddedExercisePlanId] = useState<
-		string | undefined
-	>(undefined);
-	const [lastAddedDayId, setLastAddedDayId] = useState<string | undefined>(
-		undefined,
-	);
-
-	const handleAddDay = () => {
-		const id = crypto.randomUUID();
-		setDays((prev) => [
-			...prev,
-			{
-				id,
-				label: `Day ${prev.length + 1}`,
-				startWorkoutHref: `/workouts/new?dayId=${id}`,
-				workouts: [],
-				exercisePlans: [],
-			},
-		]);
-		setLastAddedDayId(id);
-		onAddDay();
-	};
-
-	const handleDeleteDay = (dayId: string) => {
-		setDays((prev) => prev.filter((day) => day.id !== dayId));
-		onDeleteDay(dayId);
-	};
-
-	const handleChangeDayLabel = (dayId: string, label: string) => {
-		setDays((prev) =>
-			prev.map((day) => (day.id === dayId ? { ...day, label } : day)),
-		);
-		onChangeDayLabel(dayId, label);
-	};
-
-	const handleChangeProgramInfo: ComponentProps<
-		typeof ProgramDetail
-	>["onChangeProgramInfo"] = (payload) => {
-		setName(payload.name);
-		setMeta(payload.meta);
-		onChangeProgramInfo(payload);
-	};
-
-	const handleAddExercisePlanWithSelectedExercise = (
-		dayId: string,
-		exerciseId: string,
-	) => {
-		const selected = availableExercises.find((e) => e.id === exerciseId);
-		if (selected === undefined) return;
-		const newExercisePlanId = crypto.randomUUID();
-		setDays((prev) =>
-			prev.map((day) =>
-				day.id === dayId
-					? {
-							...day,
-							exercisePlans: [
-								...day.exercisePlans,
-								{
-									id: newExercisePlanId,
-									exercise: {
-										id: selected.id,
-										name: selected.name,
-										weightUnit: "kg",
-										weightStep: 2.5,
-										detailHref: `/exercises/${selected.id}`,
-									},
-									setPlans: [],
-								},
-							],
-						}
-					: day,
-			),
-		);
-		setLastAddedExercisePlanId(newExercisePlanId);
-		onAddExercisePlanWithSelectedExercise(dayId, exerciseId);
-	};
-
-	const handleAddExercisePlanWithNewExercise = (
-		dayId: string,
-		name: string,
-	) => {
-		const id = `ex-new-${Date.now()}`;
-		const newExercisePlanId = crypto.randomUUID();
-		setAvailableExercises((prev) => [...prev, { id, name }]);
-		setDays((prev) =>
-			prev.map((day) =>
-				day.id === dayId
-					? {
-							...day,
-							exercisePlans: [
-								...day.exercisePlans,
-								{
-									id: newExercisePlanId,
-									exercise: {
-										id,
-										name,
-										weightUnit: "kg",
-										weightStep: 2.5,
-										detailHref: `/exercises/${id}`,
-									},
-									setPlans: [],
-								},
-							],
-						}
-					: day,
-			),
-		);
-		setLastAddedExercisePlanId(newExercisePlanId);
-		onAddExercisePlanWithNewExercise(dayId, name);
-	};
-
-	const handleDeleteExercisePlan = (exercisePlanId: string) => {
-		setDays((prev) =>
-			prev.map((day) => ({
-				...day,
-				exercisePlans: day.exercisePlans.filter(
-					(exercisePlan) => exercisePlan.id !== exercisePlanId,
-				),
-			})),
-		);
-		onDeleteExercisePlan(exercisePlanId);
-	};
-
-	const handleAddSetPlan: ComponentProps<typeof ProgramDetail>["onAddSetPlan"] =
-		(exercisePlanId, payload) => {
-			setDays((prev) =>
-				prev.map((day) => ({
-					...day,
-					exercisePlans: day.exercisePlans.map((exercisePlan) =>
-						exercisePlan.id === exercisePlanId
-							? {
-									...exercisePlan,
-									setPlans: [
-										...exercisePlan.setPlans,
-										{ id: crypto.randomUUID(), ...payload },
-									],
-								}
-							: exercisePlan,
-					),
-				})),
-			);
-			onAddSetPlan(exercisePlanId, payload);
-		};
-
-	const handleChangeSetPlan: ComponentProps<
-		typeof ProgramDetail
-	>["onChangeSetPlan"] = (setPlanId, payload) => {
-		setDays((prev) =>
-			prev.map((day) => ({
-				...day,
-				exercisePlans: day.exercisePlans.map((exercisePlan) => ({
-					...exercisePlan,
-					setPlans: exercisePlan.setPlans.map((setPlan) =>
-						setPlan.id === setPlanId ? { id: setPlanId, ...payload } : setPlan,
-					),
-				})),
-			})),
-		);
-		onChangeSetPlan(setPlanId, payload);
-	};
-
-	const handleDeleteSetPlan = (setPlanId: string) => {
-		setDays((prev) =>
-			prev.map((day) => ({
-				...day,
-				exercisePlans: day.exercisePlans.map((exercisePlan) => ({
-					...exercisePlan,
-					setPlans: exercisePlan.setPlans.filter(
-						(setPlan) => setPlan.id !== setPlanId,
-					),
-				})),
-			})),
-		);
-		onDeleteSetPlan(setPlanId);
-	};
-
-	return (
-		<ProgramDetail
-			{...rest}
-			name={name}
-			meta={meta}
-			days={days}
-			availableExercises={availableExercises}
-			onAddDay={handleAddDay}
-			onDeleteDay={handleDeleteDay}
-			onChangeDayLabel={handleChangeDayLabel}
-			onChangeProgramInfo={handleChangeProgramInfo}
-			onDuplicate={onDuplicate}
-			onDelete={onDelete}
-			onAddExercisePlanWithSelectedExercise={
-				handleAddExercisePlanWithSelectedExercise
-			}
-			onAddExercisePlanWithNewExercise={handleAddExercisePlanWithNewExercise}
-			onDeleteExercisePlan={handleDeleteExercisePlan}
-			onAddSetPlan={handleAddSetPlan}
-			onChangeSetPlan={handleChangeSetPlan}
-			onDeleteSetPlan={handleDeleteSetPlan}
-			lastAddedExercisePlanId={lastAddedExercisePlanId}
-			lastAddedDayId={lastAddedDayId}
-		/>
-	);
-};
-
 export const EditProgramInfoSavesOnConfirm: Story = {
 	name: "プログラム名とメモを編集して確定で保存する",
 	args: {
-		name: "5/3/1 BBB",
-		meta: "メインリフトは 5/3/1 で、補助は BBB。",
+		program: {
+			name: "5/3/1 BBB",
+			meta: "メインリフトは 5/3/1 で、補助は BBB。",
+		},
 		days: SAMPLE_DAYS,
 	},
 	play: async ({ canvasElement, args }) => {
@@ -501,7 +464,7 @@ export const EditProgramInfoSavesOnConfirm: Story = {
 		await userEvent.type(metaInput, "週 3 回。フォーム優先。");
 		await userEvent.click(body.getByRole("button", { name: "確定" }));
 		await waitFor(() => {
-			expect(args.onChangeProgramInfo).toHaveBeenCalledWith({
+			expect(args.programActions.onChange).toHaveBeenCalledWith({
 				name: "Strength Base",
 				meta: "週 3 回。フォーム優先。",
 			});
@@ -517,8 +480,10 @@ export const EditProgramInfoSavesOnConfirm: Story = {
 export const EditProgramInfoCancelsOnEscape: Story = {
 	name: "プログラム情報編集を Escape で破棄する",
 	args: {
-		name: "5/3/1 BBB",
-		meta: "メインリフトは 5/3/1 で、補助は BBB。",
+		program: {
+			name: "5/3/1 BBB",
+			meta: "メインリフトは 5/3/1 で、補助は BBB。",
+		},
 		days: SAMPLE_DAYS,
 	},
 	play: async ({ canvasElement, args }) => {
@@ -530,7 +495,7 @@ export const EditProgramInfoCancelsOnEscape: Story = {
 		await userEvent.clear(nameInput);
 		await userEvent.type(nameInput, "Strength Base{Escape}");
 		await waitFor(() => {
-			expect(args.onChangeProgramInfo).not.toHaveBeenCalled();
+			expect(args.programActions.onChange).not.toHaveBeenCalled();
 		});
 		await waitFor(() => {
 			expect(
@@ -543,8 +508,10 @@ export const EditProgramInfoCancelsOnEscape: Story = {
 export const DuplicateProgramInvokesCallback: Story = {
 	name: "プログラム操作メニューでコピーして新規作成すると onDuplicate が呼ばれる",
 	args: {
-		name: "5/3/1 BBB",
-		meta: null,
+		program: {
+			name: "5/3/1 BBB",
+			meta: null,
+		},
 		days: SAMPLE_DAYS,
 	},
 	play: async ({ canvasElement, args }) => {
@@ -555,7 +522,7 @@ export const DuplicateProgramInvokesCallback: Story = {
 			),
 		);
 		await waitFor(() => {
-			expect(args.onDuplicate).toHaveBeenCalled();
+			expect(args.programActions.onDuplicate).toHaveBeenCalled();
 		});
 	},
 };
@@ -563,8 +530,10 @@ export const DuplicateProgramInvokesCallback: Story = {
 export const DeleteProgramInvokesCallbackAfterConfirm: Story = {
 	name: "プログラム操作メニューで削除確認して onDelete が呼ばれる",
 	args: {
-		name: "5/3/1 BBB",
-		meta: null,
+		program: {
+			name: "5/3/1 BBB",
+			meta: null,
+		},
 		days: SAMPLE_DAYS,
 	},
 	play: async ({ canvasElement, args }) => {
@@ -581,7 +550,7 @@ export const DeleteProgramInvokesCallbackAfterConfirm: Story = {
 		});
 		await userEvent.click(within(dialog).getByRole("button", { name: "削除" }));
 		await waitFor(() => {
-			expect(args.onDelete).toHaveBeenCalled();
+			expect(args.programActions.onDelete).toHaveBeenCalled();
 		});
 	},
 };
@@ -589,14 +558,16 @@ export const DeleteProgramInvokesCallbackAfterConfirm: Story = {
 export const WorkoutHistoryLinksToDetail: Story = {
 	name: "実施履歴がワークアウト詳細へのリンクになる",
 	args: {
-		name: "5/3/1 BBB",
-		meta: null,
+		program: {
+			name: "5/3/1 BBB",
+			meta: null,
+		},
 		days: SAMPLE_DAYS,
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		expect(
-			canvas.getByText("右肩に違和感あり。次回はアップを長めにする。"),
+			await canvas.findByText("右肩に違和感あり。次回はアップを長めにする。"),
 		).toBeInTheDocument();
 		const link = canvas.getByRole("link", {
 			name: "2026/05/22 19:30の実施履歴を確認、メモ: 右肩に違和感あり。次回はアップを長めにする。",
@@ -608,13 +579,15 @@ export const WorkoutHistoryLinksToDetail: Story = {
 export const StartWorkoutLinksToNewWorkout: Story = {
 	name: "実施する導線が新規ワークアウトへのリンクになる",
 	args: {
-		name: "5/3/1 BBB",
-		meta: null,
+		program: {
+			name: "5/3/1 BBB",
+			meta: null,
+		},
 		days: SAMPLE_DAYS,
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		const link = canvas.getByRole("link", {
+		const link = await canvas.findByRole("link", {
 			name: "「Day 1: 上半身プッシュ」を実施する",
 		});
 		expect(link).toHaveAttribute("href", "/workouts/new?dayId=d1");
@@ -624,13 +597,15 @@ export const StartWorkoutLinksToNewWorkout: Story = {
 export const ExerciseNameLinksToDetail: Story = {
 	name: "種目名が種目詳細（V13）へのリンクになる",
 	args: {
-		name: "5/3/1 BBB",
-		meta: null,
+		program: {
+			name: "5/3/1 BBB",
+			meta: null,
+		},
 		days: SAMPLE_DAYS,
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		const link = canvas.getByRole("link", { name: "ベンチプレス" });
+		const link = await canvas.findByRole("link", { name: "ベンチプレス" });
 		expect(link).toHaveAttribute("href", "/exercises/ex-bench");
 	},
 };
@@ -639,14 +614,16 @@ export const ExerciseProgressToggleOpensProgressView: Story = {
 	name: "種目推移トグルを押すと推移表示が開く",
 	globals: { viewport: { value: "desktop" } },
 	args: {
-		name: "5/3/1 BBB",
-		meta: null,
+		program: {
+			name: "5/3/1 BBB",
+			meta: null,
+		},
 		days: SAMPLE_DAYS,
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
-			canvas.getByRole("button", { name: "ベンチプレスの推移を見る" }),
+			await canvas.findByRole("button", { name: "ベンチプレスの推移を見る" }),
 		);
 		const body = within(document.body);
 		await waitFor(() => {
@@ -663,8 +640,10 @@ export const ExerciseProgressToggleOpensProgressView: Story = {
 export const ExercisePlanAddDeleteFlow: Story = {
 	name: "種目計画の追加・削除を実体験できる",
 	args: {
-		name: "新しいプログラム",
-		meta: null,
+		program: {
+			name: "新しいプログラム",
+			meta: null,
+		},
 		days: [
 			{
 				id: "d1",
@@ -693,8 +672,10 @@ export const ExercisePlanAddDeleteFlow: Story = {
 export const DeleteExercisePlanInvokesCallback: Story = {
 	name: "削除ボタンを押すと onDeleteExercisePlan が対象 id で呼ばれる",
 	args: {
-		name: "5/3/1 BBB",
-		meta: null,
+		program: {
+			name: "5/3/1 BBB",
+			meta: null,
+		},
 		days: [
 			{
 				id: "d1",
@@ -721,23 +702,24 @@ export const DeleteExercisePlanInvokesCallback: Story = {
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(
-			canvas.getByRole("button", { name: "ベンチプレスを削除" }),
+			await canvas.findByRole("button", { name: "ベンチプレスを削除" }),
 		);
 		await waitFor(() => {
-			expect(args.onDeleteExercisePlan).toHaveBeenCalledWith("ep-d1-bench");
+			expect(args.exercisePlanActions.onDelete).toHaveBeenCalledWith(
+				"ep-d1-bench",
+			);
 		});
 	},
 };
 
-// picker (広画面 = ComboBox) で既存の種目を選ぶと、その種目で種目計画が追加される。
-// ExerciseSelector 自体の振る舞いは exercise-selector.stories.tsx で網羅しているため、
-// ここでは「ExercisePlanSection の picker から選択が伝搬する」点だけ確認する。
 export const AddExercisePlanBySelectingExercise: Story = {
 	name: "picker から既存種目を選ぶと onAddExercisePlanWithSelectedExercise が呼ばれる",
 	globals: { viewport: { value: "desktop" } },
 	args: {
-		name: "新しいプログラム",
-		meta: null,
+		program: {
+			name: "新しいプログラム",
+			meta: null,
+		},
 		days: [
 			{
 				id: "d1",
@@ -763,35 +745,34 @@ export const AddExercisePlanBySelectingExercise: Story = {
 		const option = await waitFor(() => {
 			const found = Array.from(
 				document.querySelectorAll<HTMLElement>('[role="option"]'),
-			).find((o) => o.textContent === "ベンチプレス");
+			).find((node) => node.textContent === "ベンチプレス");
 			if (found === undefined) throw new Error("option not found");
 			return found;
 		});
 		await userEvent.click(option);
 
 		await waitFor(() => {
-			expect(args.onAddExercisePlanWithSelectedExercise).toHaveBeenCalledWith(
-				"d1",
-				"ex-bench",
-			);
+			expect(
+				args.exercisePlanActions.onAddWithSelectedExercise,
+			).toHaveBeenCalledWith("d1", "ex-bench");
 		});
 	},
 };
 
-// Day 1 件以上の通常状態で「+ Day」ボタンが TabList の右隣に表示され、
-// 押下すると onAddDay が呼ばれ、新規 Day タブが選択状態になる。
 export const AddDayFromExistingDays: Story = {
 	name: "通常状態から Day を追加すると新しい Day が選択される",
 	args: {
-		name: "5/3/1 BBB",
-		meta: null,
+		program: {
+			name: "5/3/1 BBB",
+			meta: null,
+		},
 		days: SAMPLE_DAYS,
 	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(canvas.getByRole("button", { name: "Day を追加" }));
 		await waitFor(() => {
-			expect(args.onAddDay).toHaveBeenCalled();
+			expect(args.dayActions.onAdd).toHaveBeenCalled();
 		});
 		await waitFor(() => {
 			const newTab = canvas.getByRole("tab", { name: "Day 4" });
@@ -806,8 +787,10 @@ export const AddDayFromExistingDays: Story = {
 export const AddDayConsecutively: Story = {
 	name: "Day を連続追加すると最後に追加した Day が選択される",
 	args: {
-		name: "5/3/1 BBB",
-		meta: null,
+		program: {
+			name: "5/3/1 BBB",
+			meta: null,
+		},
 		days: SAMPLE_DAYS,
 	},
 	play: async ({ canvasElement, args }) => {
@@ -815,9 +798,9 @@ export const AddDayConsecutively: Story = {
 		await userEvent.click(canvas.getByRole("button", { name: "Day を追加" }));
 		await userEvent.click(canvas.getByRole("button", { name: "Day を追加" }));
 		await waitFor(() => {
-			expect(args.onAddDay).toHaveBeenCalledTimes(2);
+			expect(args.dayActions.onAdd).toHaveBeenCalledTimes(2);
 		});
-		expect(args.onChangeDayLabel).not.toHaveBeenCalled();
+		expect(args.dayActions.onChangeLabel).not.toHaveBeenCalled();
 		await waitFor(() => {
 			const secondAddedTab = canvas.getByRole("tab", { name: "Day 5" });
 			expect(secondAddedTab).toHaveAttribute("aria-selected", "true");
@@ -828,8 +811,10 @@ export const AddDayConsecutively: Story = {
 export const DeleteDayInvokesCallback: Story = {
 	name: "Day 操作メニューで削除すると onDeleteDay が対象 id で呼ばれる",
 	args: {
-		name: "5/3/1 BBB",
-		meta: null,
+		program: {
+			name: "5/3/1 BBB",
+			meta: null,
+		},
 		days: SAMPLE_DAYS,
 	},
 	play: async ({ canvasElement, args }) => {
@@ -845,7 +830,7 @@ export const DeleteDayInvokesCallback: Story = {
 			),
 		);
 		await waitFor(() => {
-			expect(args.onDeleteDay).toHaveBeenCalledWith("d1");
+			expect(args.dayActions.onDelete).toHaveBeenCalledWith("d1");
 		});
 		await waitFor(() => {
 			const fallbackTab = canvas.getByRole("tab", { name: "Day 2: 下半身" });
@@ -857,8 +842,10 @@ export const DeleteDayInvokesCallback: Story = {
 export const EditDayLabelSavesOnEnter: Story = {
 	name: "Day ラベルを編集して Enter で保存する",
 	args: {
-		name: "5/3/1 BBB",
-		meta: null,
+		program: {
+			name: "5/3/1 BBB",
+			meta: null,
+		},
 		days: SAMPLE_DAYS,
 	},
 	play: async ({ canvasElement, args }) => {
@@ -877,7 +864,10 @@ export const EditDayLabelSavesOnEnter: Story = {
 		await userEvent.clear(input);
 		await userEvent.type(input, "Push Day{Enter}");
 		await waitFor(() => {
-			expect(args.onChangeDayLabel).toHaveBeenCalledWith("d1", "Push Day");
+			expect(args.dayActions.onChangeLabel).toHaveBeenCalledWith(
+				"d1",
+				"Push Day",
+			);
 		});
 		await waitFor(() => {
 			expect(canvas.getByRole("tab", { name: "Push Day" })).toHaveAttribute(
@@ -891,8 +881,10 @@ export const EditDayLabelSavesOnEnter: Story = {
 export const EditDayLabelSavesOnConfirm: Story = {
 	name: "Day ラベルを編集して確定で保存する",
 	args: {
-		name: "5/3/1 BBB",
-		meta: null,
+		program: {
+			name: "5/3/1 BBB",
+			meta: null,
+		},
 		days: SAMPLE_DAYS,
 	},
 	play: async ({ canvasElement, args }) => {
@@ -914,7 +906,10 @@ export const EditDayLabelSavesOnConfirm: Story = {
 			within(document.body).getByRole("button", { name: "確定" }),
 		);
 		await waitFor(() => {
-			expect(args.onChangeDayLabel).toHaveBeenCalledWith("d1", "Push Day");
+			expect(args.dayActions.onChangeLabel).toHaveBeenCalledWith(
+				"d1",
+				"Push Day",
+			);
 		});
 		await waitFor(() => {
 			expect(canvas.getByRole("tab", { name: "Push Day" })).toHaveAttribute(
@@ -928,8 +923,10 @@ export const EditDayLabelSavesOnConfirm: Story = {
 export const EditDayLabelCancelsOnEscape: Story = {
 	name: "Day ラベル編集を Escape で破棄する",
 	args: {
-		name: "5/3/1 BBB",
-		meta: null,
+		program: {
+			name: "5/3/1 BBB",
+			meta: null,
+		},
 		days: SAMPLE_DAYS,
 	},
 	play: async ({ canvasElement, args }) => {
@@ -948,7 +945,7 @@ export const EditDayLabelCancelsOnEscape: Story = {
 		await userEvent.clear(input);
 		await userEvent.type(input, "Push Day{Escape}");
 		await waitFor(() => {
-			expect(args.onChangeDayLabel).not.toHaveBeenCalled();
+			expect(args.dayActions.onChangeLabel).not.toHaveBeenCalled();
 		});
 		await waitFor(() => {
 			expect(
@@ -957,3 +954,450 @@ export const EditDayLabelCancelsOnEscape: Story = {
 		});
 	},
 };
+
+export const QuickAddSetPlanInvokesCallback: Story = {
+	name: "直前セットの内容でセット計画を追加する",
+	args: {
+		program: {
+			name: "5/3/1 BBB",
+			meta: null,
+		},
+		days: SAMPLE_DAYS,
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(await canvas.findByText("100kg × 5回を追加"));
+		await waitFor(() => {
+			expect(args.setPlanActions.onAdd).toHaveBeenCalledWith("ep-d1-bench", {
+				pattern: "weight-reps",
+				weight: 100,
+				reps: 5,
+			});
+		});
+	},
+};
+
+export const DeleteSetPlanInvokesCallback: Story = {
+	name: "セット計画の削除ボタンで onDeleteSetPlan が呼ばれる",
+	args: {
+		program: {
+			name: "5/3/1 BBB",
+			meta: null,
+		},
+		days: SAMPLE_DAYS,
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(
+			await canvas.findByRole("button", {
+				name: "ベンチプレス 1セット目を削除",
+			}),
+		);
+		await waitFor(() => {
+			expect(args.setPlanActions.onDelete).toHaveBeenCalledWith(
+				"sp-d1-bench-1",
+			);
+		});
+	},
+};
+
+const openProgramActionsMenu = async (canvasElement: HTMLElement) => {
+	const canvas = within(canvasElement);
+	await userEvent.click(canvas.getByRole("button", { name: "プログラム操作" }));
+	return within(document.body);
+};
+
+const openProgramInfoEditor = async (canvasElement: HTMLElement) => {
+	const body = await openProgramActionsMenu(canvasElement);
+	await userEvent.click(
+		await waitFor(() => body.getByRole("menuitem", { name: "情報を編集" })),
+	);
+	return body;
+};
+
+const SuspendedProgramDetail: FC<SuspendedProgramDetailProps> = ({
+	promise,
+	programActions,
+	dayActions,
+	exercisePlanActions,
+	setPlanActions,
+	renderExerciseProgress,
+}) => {
+	const data = use(promise);
+	return (
+		<StatefulProgramDetail
+			program={data.program}
+			days={data.days}
+			availableExercises={data.availableExercises}
+			selection={data.selection}
+			programActions={programActions}
+			dayActions={dayActions}
+			exercisePlanActions={exercisePlanActions}
+			setPlanActions={setPlanActions}
+			renderExerciseProgress={renderExerciseProgress}
+		/>
+	);
+};
+
+const StatefulProgramDetail: FC<StatefulProgramDetailProps> = (props) => (
+	<StatefulProgramDetailImpl {...props} />
+);
+
+const StatefulProgramDetailImpl: FC<StatefulProgramDetailProps> = ({
+	program: initialProgram,
+	days: initialDays,
+	availableExercises: initialAvailableExercises,
+	selection,
+	programActions,
+	dayActions,
+	exercisePlanActions,
+	setPlanActions,
+	renderExerciseProgress,
+}) => {
+	const [program, setProgram] = useState(initialProgram);
+	const [days, setDays] = useState(initialDays);
+	const [availableExercises, setAvailableExercises] = useState(
+		initialAvailableExercises,
+	);
+	const [lastAddedExercisePlanId, setLastAddedExercisePlanId] = useState<
+		string | undefined
+	>(undefined);
+	const [lastAddedDayId, setLastAddedDayId] = useState<string | undefined>(
+		undefined,
+	);
+
+	const handleChangeProgramInfo = (payload: Program) => {
+		setProgram(payload);
+		programActions.onChange(payload);
+	};
+
+	const handleAddDay = () => {
+		const id = crypto.randomUUID();
+		const nextDay: Day = {
+			id,
+			label: `Day ${days.length + 1}`,
+			startWorkoutHref: `/workouts/new?dayId=${id}`,
+			workouts: [],
+			exercisePlans: [],
+		};
+		setDays((prev) => [...prev, nextDay]);
+		setLastAddedDayId(id);
+		dayActions.onAdd();
+	};
+
+	const handleDeleteDay = (dayId: string) => {
+		setDays((prev) => prev.filter((day) => day.id !== dayId));
+		dayActions.onDelete(dayId);
+	};
+
+	const handleChangeDayLabel = (dayId: string, label: string) => {
+		setDays((prev) =>
+			prev.map((day) => (day.id === dayId ? { ...day, label } : day)),
+		);
+		dayActions.onChangeLabel(dayId, label);
+	};
+
+	const handleAddExercisePlanWithSelectedExercise = (
+		dayId: string,
+		exerciseId: string,
+	) => {
+		const selected = availableExercises.find(
+			(exercise) => exercise.id === exerciseId,
+		);
+		if (selected === undefined) return;
+		const newExercisePlanId = crypto.randomUUID();
+		const newExercisePlan = createExercisePlan({
+			id: newExercisePlanId,
+			exercise: selected,
+		});
+		setDays((prev) =>
+			prev.map((day) =>
+				day.id === dayId
+					? {
+							...day,
+							exercisePlans: [...day.exercisePlans, newExercisePlan],
+						}
+					: day,
+			),
+		);
+		setLastAddedExercisePlanId(newExercisePlanId);
+		exercisePlanActions.onAddWithSelectedExercise(dayId, exerciseId);
+	};
+
+	const handleAddExercisePlanWithNewExercise = (
+		dayId: string,
+		name: string,
+	) => {
+		const id = `ex-new-${Date.now()}`;
+		const newExercise = { id, name };
+		const newExercisePlanId = crypto.randomUUID();
+		const newExercisePlan = createExercisePlan({
+			id: newExercisePlanId,
+			exercise: newExercise,
+		});
+		setAvailableExercises((prev) => [...prev, newExercise]);
+		setDays((prev) =>
+			prev.map((day) =>
+				day.id === dayId
+					? {
+							...day,
+							exercisePlans: [...day.exercisePlans, newExercisePlan],
+						}
+					: day,
+			),
+		);
+		setLastAddedExercisePlanId(newExercisePlanId);
+		exercisePlanActions.onAddWithNewExercise(dayId, name);
+	};
+
+	const handleDeleteExercisePlan = (exercisePlanId: string) => {
+		setDays((prev) =>
+			prev.map((day) => ({
+				...day,
+				exercisePlans: day.exercisePlans.filter(
+					(exercisePlan) => exercisePlan.id !== exercisePlanId,
+				),
+			})),
+		);
+		exercisePlanActions.onDelete(exercisePlanId);
+	};
+
+	const handleAddSetPlan = (exercisePlanId: string, payload: SetPlanDraft) => {
+		setDays((prev) =>
+			prev.map((day) => ({
+				...day,
+				exercisePlans: day.exercisePlans.map((exercisePlan) =>
+					exercisePlan.id === exercisePlanId
+						? {
+								...exercisePlan,
+								setPlans: [
+									...exercisePlan.setPlans,
+									{ id: crypto.randomUUID(), ...payload },
+								],
+							}
+						: exercisePlan,
+				),
+			})),
+		);
+		setPlanActions.onAdd(exercisePlanId, payload);
+	};
+
+	const handleChangeSetPlan = (setPlanId: string, payload: SetPlanDraft) => {
+		setDays((prev) =>
+			prev.map((day) => ({
+				...day,
+				exercisePlans: day.exercisePlans.map((exercisePlan) => ({
+					...exercisePlan,
+					setPlans: exercisePlan.setPlans.map((setPlan) =>
+						setPlan.id === setPlanId ? { id: setPlanId, ...payload } : setPlan,
+					),
+				})),
+			})),
+		);
+		setPlanActions.onChange(setPlanId, payload);
+	};
+
+	const handleDeleteSetPlan = (setPlanId: string) => {
+		setDays((prev) =>
+			prev.map((day) => ({
+				...day,
+				exercisePlans: day.exercisePlans.map((exercisePlan) => ({
+					...exercisePlan,
+					setPlans: exercisePlan.setPlans.filter(
+						(setPlan) => setPlan.id !== setPlanId,
+					),
+				})),
+			})),
+		);
+		setPlanActions.onDelete(setPlanId);
+	};
+
+	const nextSelection = buildSelection({
+		defaultSelectedDayId: selection.defaultSelectedDayId,
+		lastAddedDayId,
+	});
+
+	return (
+		<ProgramDetail
+			program={program}
+			programActions={{
+				onChange: handleChangeProgramInfo,
+				onDuplicate: programActions.onDuplicate,
+				onDelete: programActions.onDelete,
+			}}
+			days={days.map(toShellDay)}
+			dayActions={{
+				onAdd: handleAddDay,
+				onDelete: handleDeleteDay,
+				onChangeLabel: handleChangeDayLabel,
+			}}
+			selection={nextSelection}
+		>
+			{(day) => {
+				const selectedDay = days.find((candidate) => candidate.id === day.id);
+				return selectedDay === undefined ? (
+					<ProgramDetailError message="選択中の Day を取得できませんでした。" />
+				) : (
+					<DayContent
+						day={selectedDay}
+						availableExercises={availableExercises}
+						onAddExercisePlanWithSelectedExercise={
+							handleAddExercisePlanWithSelectedExercise
+						}
+						onAddExercisePlanWithNewExercise={
+							handleAddExercisePlanWithNewExercise
+						}
+						onDeleteExercisePlan={handleDeleteExercisePlan}
+						onAddSetPlan={handleAddSetPlan}
+						onChangeSetPlan={handleChangeSetPlan}
+						onDeleteSetPlan={handleDeleteSetPlan}
+						lastAddedExercisePlanId={lastAddedExercisePlanId}
+						renderExerciseProgress={renderExerciseProgress}
+					/>
+				);
+			}}
+		</ProgramDetail>
+	);
+};
+
+type DayContentProps = {
+	day: Day;
+	availableExercises: AvailableExercise[];
+	onAddExercisePlanWithSelectedExercise: (
+		dayId: string,
+		exerciseId: string,
+	) => void;
+	onAddExercisePlanWithNewExercise: (dayId: string, name: string) => void;
+	onDeleteExercisePlan: (exercisePlanId: string) => void;
+	onAddSetPlan: (exercisePlanId: string, payload: SetPlanDraft) => void;
+	onChangeSetPlan: (setPlanId: string, payload: SetPlanDraft) => void;
+	onDeleteSetPlan: (setPlanId: string) => void;
+	lastAddedExercisePlanId: string | undefined;
+	renderExerciseProgress: (exerciseId: string) => ReactNode;
+};
+
+const DayContent: FC<DayContentProps> = ({
+	day,
+	availableExercises,
+	onAddExercisePlanWithSelectedExercise,
+	onAddExercisePlanWithNewExercise,
+	onDeleteExercisePlan,
+	onAddSetPlan,
+	onChangeSetPlan,
+	onDeleteSetPlan,
+	lastAddedExercisePlanId,
+	renderExerciseProgress,
+}) => {
+	return (
+		<>
+			<ExercisePlanSection
+				exercisePlans={day.exercisePlans}
+				availableExercises={availableExercises}
+				onAddExercisePlanWithSelectedExercise={(exerciseId) =>
+					onAddExercisePlanWithSelectedExercise(day.id, exerciseId)
+				}
+				onAddExercisePlanWithNewExercise={(exerciseName) =>
+					onAddExercisePlanWithNewExercise(day.id, exerciseName)
+				}
+				onDeleteExercisePlan={onDeleteExercisePlan}
+				renderExerciseProgress={renderExerciseProgress}
+			>
+				{(exercisePlan) => (
+					<SetPlanSection
+						setPlans={exercisePlan.setPlans}
+						weightUnit={exercisePlan.exercise.weightUnit}
+						weightStep={exercisePlan.exercise.weightStep}
+						exerciseName={exercisePlan.exercise.name}
+						onChangeSetPlan={onChangeSetPlan}
+						onAddSetPlan={(payload) => onAddSetPlan(exercisePlan.id, payload)}
+						onDeleteSetPlan={onDeleteSetPlan}
+						autoFocusAddTrigger={exercisePlan.id === lastAddedExercisePlanId}
+					/>
+				)}
+			</ExercisePlanSection>
+			<WorkoutHistorySection
+				dayLabel={day.label}
+				startWorkoutHref={day.startWorkoutHref}
+				workouts={day.workouts}
+			/>
+		</>
+	);
+};
+
+const createProgramDetailPromise = ({
+	data,
+	delayMs,
+	outcome,
+}: {
+	data: ProgramDetailData;
+	delayMs: number;
+	outcome: Outcome;
+}): Promise<ProgramDetailData> => {
+	if (delayMs === 0) {
+		return outcome === "success"
+			? Promise.resolve(data)
+			: Promise.reject(new Error("プログラム詳細の取得に失敗しました"));
+	}
+
+	return outcome === "success"
+		? fakeFetchProgramDetailSuccess(data, delayMs)
+		: fakeFetchProgramDetailFailure(delayMs);
+};
+
+const createExercisePlan = ({
+	id,
+	exercise,
+}: {
+	id: string;
+	exercise: AvailableExercise;
+}): ExercisePlan => ({
+	id,
+	exercise: {
+		id: exercise.id,
+		name: exercise.name,
+		weightUnit: "kg",
+		weightStep: 2.5,
+		detailHref: `/exercises/${exercise.id}`,
+	},
+	setPlans: [],
+});
+
+const fakeFetchProgramDetailSuccess = (
+	data: ProgramDetailData,
+	delayMs: number,
+): Promise<ProgramDetailData> =>
+	new Promise((resolve) => {
+		setTimeout(() => resolve(data), delayMs);
+	});
+
+const fakeFetchProgramDetailFailure = (
+	delayMs: number,
+): Promise<ProgramDetailData> =>
+	new Promise((_, reject) => {
+		setTimeout(
+			() => reject(new Error("プログラム詳細の取得に失敗しました")),
+			delayMs,
+		);
+	});
+
+const buildSelection = ({
+	defaultSelectedDayId,
+	lastAddedDayId,
+}: {
+	defaultSelectedDayId: string | undefined;
+	lastAddedDayId: string | undefined;
+}): Selection => {
+	const selection: Selection = {};
+	if (defaultSelectedDayId !== undefined) {
+		selection.defaultSelectedDayId = defaultSelectedDayId;
+	}
+	if (lastAddedDayId !== undefined) {
+		selection.lastAddedDayId = lastAddedDayId;
+	}
+	return selection;
+};
+
+const toShellDay = (day: Day): ShellDay => ({
+	id: day.id,
+	label: day.label,
+});

@@ -8,7 +8,7 @@ import { Heading, Section } from "../../primitives/heading";
 import { Link } from "../../primitives/link";
 import { ResponsiveDialog } from "../../primitives/responsive-dialog";
 import { ExerciseSelector } from "../exercise-selector";
-import type { WeightUnit } from "./weight-unit";
+import type { WeightUnit } from "../weight-unit";
 
 // T で caller 側の追加フィールド（setPlans 等）を保持し、children 関数に渡せるようにする
 type Props<T extends ExercisePlan> = {
@@ -51,8 +51,8 @@ export const ExercisePlanSection = <T extends ExercisePlan>({
 				<ol className="flex flex-col gap-3">
 					{exercisePlans.map((exercisePlan) => (
 						<li key={exercisePlan.id}>
-							<Section className="relative flex flex-col gap-2 rounded-lg bg-overlay p-3 text-overlay-fg shadow-sm">
-								<header className="flex items-center gap-1 pr-8 pl-1">
+							<Section className={exercisePlanCardClass}>
+								<header className={exercisePlanHeaderClass}>
 									<Heading className="min-w-0 font-medium text-base">
 										<Link
 											href={exercisePlan.exercise.detailHref}
@@ -133,3 +133,8 @@ const ExerciseProgressDialog: FC<ExerciseProgressDialogProps> = ({
 		</ResponsiveDialog>
 	);
 };
+
+// ExercisePlanSection 本体で共有するレイアウト枠
+const exercisePlanCardClass =
+	"relative flex flex-col gap-2 rounded-lg bg-overlay p-3 text-overlay-fg shadow-sm";
+const exercisePlanHeaderClass = "flex items-center gap-1 pr-8 pl-1";

@@ -1,11 +1,11 @@
 "use client";
 
 import type { FC } from "react";
-import { Label } from "../../../../primitives/label";
+import { Label } from "../../../primitives/label";
 import {
 	NumberField,
 	NumberFieldInput,
-} from "../../../../primitives/number-field";
+} from "../../../primitives/number-field";
 import type { WeightUnit } from "../../weight-unit";
 import { fieldLayout } from "./field-layout";
 

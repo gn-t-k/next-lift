@@ -3,9 +3,11 @@
 import { PlusIcon } from "@heroicons/react/24/outline";
 import type { FC } from "react";
 import { Button as AriaButton } from "react-aria-components";
-import { cn } from "../../../libs/utils";
-import { createAffordanceClass } from "../../../primitives/create-affordance";
 import type { WeightUnit } from "../weight-unit";
+import {
+	setPlanAddAffordanceClass,
+	setPlanIndexClass,
+} from "./set-plan-layout";
 import type { SetPlanDraft } from "./set-plan-types";
 
 type Props = {
@@ -23,15 +25,10 @@ export const SetPlanQuickAddButton: FC<Props> = ({
 }) => {
 	return (
 		<AriaButton
-			className={cn(
-				createAffordanceClass,
-				"flex items-baseline gap-3 rounded-md px-[calc(--spacing(3)-1px)] py-[calc(--spacing(2)-1px)] text-left text-sm",
-			)}
+			className={setPlanAddAffordanceClass}
 			onPress={() => onClick(lastSetPlanDraft)}
 		>
-			<span className="w-8 shrink-0 text-muted-fg text-xs tabular-nums">
-				{`#${nextIndex + 1}`}
-			</span>
+			<span className={setPlanIndexClass}>{`#${nextIndex + 1}`}</span>
 			<span className="flex-1 truncate tabular-nums">
 				{(() => {
 					switch (lastSetPlanDraft.pattern) {

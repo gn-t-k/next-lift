@@ -8,6 +8,7 @@ type Props = {
 	onSelect: (exerciseId: string) => void;
 	onCreateExercise: (name: string) => void;
 	label: string;
+	isDisabled?: boolean;
 };
 
 export const ExerciseSelector: FC<Props> = (props) => {

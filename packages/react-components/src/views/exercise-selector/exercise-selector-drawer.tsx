@@ -18,7 +18,14 @@ import { isCreatableName } from "./is-creatable-name";
 
 export const ExerciseSelectorDrawer: FC<
 	ComponentProps<typeof ExerciseSelector>
-> = ({ exercises, selectedExerciseId, onSelect, onCreateExercise, label }) => {
+> = ({
+	exercises,
+	selectedExerciseId,
+	onSelect,
+	onCreateExercise,
+	label,
+	isDisabled,
+}) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [query, setQuery] = useState("");
 
@@ -49,6 +56,7 @@ export const ExerciseSelectorDrawer: FC<
 		<Drawer isOpen={isOpen} onOpenChange={setIsOpen}>
 			<DrawerTrigger
 				intent="outline"
+				isDisabled={isDisabled ?? false}
 				className={cn(
 					"w-full justify-between font-normal",
 					selectedExercise === undefined && "text-muted-fg",
