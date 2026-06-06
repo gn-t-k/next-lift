@@ -278,6 +278,30 @@ export const NoExercisePlansInSelectedDay: Story = {
 	},
 };
 
+export const ResponsiveMobile: Story = {
+	name: "レスポンシブ確認（モバイル）",
+	globals: {
+		viewport: { value: "mobile" },
+	},
+	args: {
+		name: "5/3/1 BBB",
+		meta: "メインリフトは 5/3/1 で、補助は BBB（Boring But Big）。\nDay パネル統合後の種目計画・セット計画・実施履歴が 375px で崩れないことを確認する。",
+		days: SAMPLE_DAYS,
+	},
+};
+
+export const ResponsiveDesktop: Story = {
+	name: "レスポンシブ確認（デスクトップ）",
+	globals: {
+		viewport: { value: "desktop" },
+	},
+	args: {
+		name: "5/3/1 BBB",
+		meta: "メインリフトは 5/3/1 で、補助は BBB（Boring But Big）。\nDay パネル統合後の種目計画・セット計画・実施履歴が 1280px で崩れないことを確認する。",
+		days: SAMPLE_DAYS,
+	},
+};
+
 // 設計判断 #71 の「初期構造の生成は consumer 責務」を story 上で再現するための stateful wrapper。
 // 種目選択 / 新規登録時はその exercise を含む種目計画を新規作成する（exercise: null の transient state は持たない）。
 // 未登録種目は availableExercises にも追加する。削除時は対象 id を除外する。
