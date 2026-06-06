@@ -50,8 +50,12 @@ export const DesktopPopover: Story = {
 		const dialog = await screen.findByRole("dialog", {
 			name: "デスクトップ編集",
 		});
-		expect(within(dialog).getByText("デスクトップの内容")).toBeVisible();
-		expect(within(dialog).queryByText("デスクトップ編集")).toBeNull();
+		await waitFor(() => {
+			expect(within(dialog).getByText("デスクトップの内容")).toBeVisible();
+		});
+		expect(
+			within(dialog).queryByRole("heading", { name: "デスクトップ編集" }),
+		).toBeNull();
 	},
 };
 
@@ -68,7 +72,11 @@ export const MobileDrawer: Story = {
 		const dialog = await screen.findByRole("dialog", {
 			name: "モバイル編集",
 		});
-		expect(within(dialog).getByText("モバイル編集")).toBeVisible();
+		await waitFor(() => {
+			expect(
+				within(dialog).getByRole("heading", { name: "モバイル編集" }),
+			).toBeVisible();
+		});
 		expect(within(dialog).getByText("モバイルの内容")).toBeVisible();
 	},
 };
