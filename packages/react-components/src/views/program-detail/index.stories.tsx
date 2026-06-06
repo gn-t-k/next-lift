@@ -3,7 +3,7 @@ import type { ComponentProps, FC } from "react";
 import { useState } from "react";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import { Main } from "../../primitives/main";
-import { ProgramDetail } from ".";
+import { ProgramDetail, ProgramDetailError, ProgramDetailLoading } from ".";
 
 type Day = ComponentProps<typeof ProgramDetail>["days"][number];
 type ExercisePlan = Day["exercisePlans"][number];
@@ -225,6 +225,38 @@ export const NoDays: Story = {
 		meta: null,
 		days: [],
 	},
+};
+
+export const Loading: Story = {
+	name: "ローディング状態",
+	args: {
+		name: "",
+		meta: null,
+		days: [],
+	},
+	render: () => <ProgramDetailLoading />,
+};
+
+export const ErrorDefault: Story = {
+	name: "エラー状態",
+	args: {
+		name: "",
+		meta: null,
+		days: [],
+	},
+	render: () => <ProgramDetailError />,
+};
+
+export const ErrorWithMessage: Story = {
+	name: "エラー状態（メッセージあり）",
+	args: {
+		name: "",
+		meta: null,
+		days: [],
+	},
+	render: () => (
+		<ProgramDetailError message="ネットワーク接続を確認して再試行してください。" />
+	),
 };
 
 // 種目計画を全削除した後のエッジケース。設計判断 #61 により通常状態では発生しないが、
