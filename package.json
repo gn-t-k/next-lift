@@ -21,7 +21,7 @@
 		"@biomejs/biome": "2.4.16",
 		"@turbo/gen": "2.9.16",
 		"turbo": "2.9.16",
-		"vercel": "54.6.1"
+		"vercel": "54.9.1"
 	},
 	"packageManager": "pnpm@11.5.1",
 	"engines": {
