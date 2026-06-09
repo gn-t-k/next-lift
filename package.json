@@ -23,7 +23,7 @@
 		"turbo": "2.9.16",
 		"vercel": "54.9.1"
 	},
-	"packageManager": "pnpm@11.5.1",
+	"packageManager": "pnpm@11.5.2",
 	"engines": {
 		"node": ">=18.0.0"
 	}
