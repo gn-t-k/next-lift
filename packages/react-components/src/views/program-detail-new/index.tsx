@@ -18,14 +18,6 @@ import { ProgramPlanGrid } from "./program-plan-grid";
 import { ProgramPlanNavigation } from "./program-plan-navigation";
 import { useProgramPlanSelection } from "./use-program-plan-selection";
 
-type SetPlanDraft = Parameters<
-	ComponentProps<typeof SetPlanFormDialog>["onSubmit"]
->[0];
-
-type SetPlan = SetPlanDraft & {
-	id: string;
-};
-
 type Props = {
 	name: string;
 	meta: string | null;
@@ -83,6 +75,14 @@ type Exercise = {
 type AvailableExercise = {
 	id: string;
 	name: string;
+};
+
+type SetPlanDraft = Parameters<
+	ComponentProps<typeof SetPlanFormDialog>["onSubmit"]
+>[0];
+
+type SetPlan = SetPlanDraft & {
+	id: string;
 };
 
 export const ProgramDetailNew: FC<Props> = ({
