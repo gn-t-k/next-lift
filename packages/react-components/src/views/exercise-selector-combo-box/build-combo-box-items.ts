@@ -1,5 +1,5 @@
-import { filterByName } from "./filter-by-name";
-import { isCreatableName } from "./is-creatable-name";
+import { filterByName } from "../filter-by-name";
+import { isCreatableName } from "../is-creatable-name";
 
 export const PLACEHOLDER_ID = "__placeholder__";
 export const CREATE_ID = "__create__";

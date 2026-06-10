@@ -1,12 +1,16 @@
 "use client";
 
 import { ChevronRightIcon, ListBulletIcon } from "@heroicons/react/24/outline";
-import type { FC } from "react";
+import type { ComponentProps, FC } from "react";
 import { useState } from "react";
 import { cn } from "../../libs";
 import { Button } from "../../primitives/button";
 import { Drawer, DrawerContent, DrawerTitle } from "../../primitives/drawer";
-import type { Day, ExercisePlan, NavigationTarget } from "./types";
+import type { ProgramDetailNew } from ".";
+import type { NavigationTarget } from "./use-program-plan-selection";
+
+type Day = ComponentProps<typeof ProgramDetailNew>["days"][number];
+type ExercisePlan = Day["exercisePlans"][number];
 
 type Props = {
 	programName: string;
@@ -138,10 +142,10 @@ const JumpTree: FC<JumpTreeProps> = ({
 				/>
 			</li>
 			{days.map((day) => {
-				const dayTarget = {
+				const dayTarget: NavigationTarget = {
 					level: "day",
 					dayId: day.id,
-				} satisfies NavigationTarget;
+				};
 				return (
 					<li key={day.id}>
 						<JumpTreeButton
@@ -155,11 +159,11 @@ const JumpTree: FC<JumpTreeProps> = ({
 						{day.exercisePlans.length > 0 ? (
 							<ol>
 								{day.exercisePlans.map((exercisePlan) => {
-									const exerciseTarget = {
+									const exerciseTarget: NavigationTarget = {
 										level: "exercise",
 										dayId: day.id,
 										exercisePlanId: exercisePlan.id,
-									} satisfies NavigationTarget;
+									};
 									return (
 										<li key={exercisePlan.id}>
 											<JumpTreeButton
@@ -205,7 +209,7 @@ const JumpRootButton: FC<JumpRootButtonProps> = ({
 				? "bg-primary-subtle text-primary-subtle-fg hover:bg-primary-subtle"
 				: "text-fg hover:bg-secondary",
 		)}
-		{...(isCurrent ? { "aria-current": "location" as const } : {})}
+		{...(isCurrent ? currentLocationProps : {})}
 	>
 		<span className="min-w-0 flex-1">
 			<span className="block truncate font-medium">{programName}</span>
@@ -246,7 +250,7 @@ const JumpTreeButton: FC<JumpTreeButtonProps> = ({
 					: "text-fg hover:bg-secondary",
 			)}
 			style={{ paddingInlineStart: `${0.75 + depth * 1.25}rem` }}
-			{...(isCurrent ? { "aria-current": "location" as const } : {})}
+			{...(isCurrent ? currentLocationProps : {})}
 		>
 			<span className="min-w-0 flex-1">
 				<span className="block truncate font-medium">{label}</span>
@@ -257,6 +261,10 @@ const JumpTreeButton: FC<JumpTreeButtonProps> = ({
 		</Button>
 	);
 };
+
+const currentLocationProps = {
+	"aria-current": "location",
+} satisfies { "aria-current": "location" };
 
 const isSameTarget = (
 	left: NavigationTarget,

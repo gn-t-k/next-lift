@@ -7,15 +7,10 @@ import { Label } from "../../primitives/label";
 import { TextArea } from "../../primitives/text-area";
 import { TextField, TextFieldInput } from "../../primitives/text-field";
 
-export type ProgramInfoChange = {
-	name: string;
-	meta: string | null;
-};
-
 type Props = {
 	name: string;
 	meta: string | null;
-	onSubmit: (payload: ProgramInfoChange) => void;
+	onSubmit: (payload: { name: string; meta: string | null }) => void;
 	onCancel: () => void;
 };
 

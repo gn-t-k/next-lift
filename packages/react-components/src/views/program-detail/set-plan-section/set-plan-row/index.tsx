@@ -3,9 +3,9 @@
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import type { FC } from "react";
 import { Button } from "../../../../primitives/button";
-import type { WeightUnit } from "../../weight-unit";
-import { SetPlanFormDialog } from "../set-plan-form-dialog";
-import type { SetPlan, SetPlanDraft } from "../set-plan-types";
+import { SetPlanFormDialog } from "../../../set-plan-form-dialog";
+import type { SetPlan, SetPlanDraft } from "../../../set-plan-types";
+import type { WeightUnit } from "../../../weight-unit";
 
 type Props = {
 	setPlan: SetPlan;

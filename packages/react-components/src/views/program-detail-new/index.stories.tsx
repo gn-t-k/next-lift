@@ -283,11 +283,8 @@ const baseArgs = {
 	defaultSelectedExercisePlanId: undefined,
 	onAddDay: fn(),
 	onDeleteDay: fn(),
-	onChangeDayLabel: fn(),
 	onChangeDayInfo: fn(),
 	onChangeProgramInfo: fn(),
-	onDuplicate: fn(),
-	onDelete: fn(),
 	onAddExercisePlanWithSelectedExercise: fn(),
 	onAddExercisePlanWithNewExercise: fn(),
 	onChangeExercisePlanInfo: fn(),
@@ -357,7 +354,10 @@ export const WideFullProgram: Story = {
 		await userEvent.type(dayNameInput, "Day 1: Push");
 		await userEvent.click(screen.getByRole("button", { name: "確定" }));
 		await waitFor(() => {
-			expect(args.onChangeDayLabel).toHaveBeenCalledWith("d1", "Day 1: Push");
+			expect(args.onChangeDayInfo).toHaveBeenCalledWith("d1", {
+				label: "Day 1: Push",
+				memo: "押す種目をまとめる日。肩の違和感がある日は補助種目を控えめにする。",
+			});
 		});
 
 		await openDialogFromButton("ベンチプレスのメモを編集");
@@ -824,11 +824,8 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 	availableExercises: initialAvailableExercises,
 	onAddDay,
 	onDeleteDay,
-	onChangeDayLabel,
 	onChangeDayInfo,
 	onChangeProgramInfo,
-	onDuplicate,
-	onDelete,
 	onAddExercisePlanWithSelectedExercise,
 	onAddExercisePlanWithNewExercise,
 	onChangeExercisePlanInfo,
@@ -847,9 +844,6 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 	const [lastAddedExercisePlanId, setLastAddedExercisePlanId] = useState<
 		string | undefined
 	>(undefined);
-	const [lastAddedDayId, setLastAddedDayId] = useState<string | undefined>(
-		undefined,
-	);
 
 	const handleAddDay = () => {
 		const id = crypto.randomUUID();
@@ -862,20 +856,12 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 				exercisePlans: [],
 			},
 		]);
-		setLastAddedDayId(id);
 		onAddDay();
 	};
 
 	const handleDeleteDay = (dayId: string) => {
 		setDays((prev) => prev.filter((day) => day.id !== dayId));
 		onDeleteDay(dayId);
-	};
-
-	const handleChangeDayLabel = (dayId: string, label: string) => {
-		setDays((prev) =>
-			prev.map((day) => (day.id === dayId ? { ...day, label } : day)),
-		);
-		onChangeDayLabel(dayId, label);
 	};
 
 	const handleChangeDayInfo: ProgramDetailNewStoryProps["onChangeDayInfo"] = (
@@ -889,8 +875,7 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 					: day,
 			),
 		);
-		onChangeDayLabel(dayId, payload.label);
-		onChangeDayInfo?.(dayId, payload);
+		onChangeDayInfo(dayId, payload);
 	};
 
 	const handleChangeProgramInfo: ProgramDetailNewStoryProps["onChangeProgramInfo"] =
@@ -1047,11 +1032,8 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 			availableExercises={availableExercises}
 			onAddDay={handleAddDay}
 			onDeleteDay={handleDeleteDay}
-			onChangeDayLabel={handleChangeDayLabel}
 			onChangeDayInfo={handleChangeDayInfo}
 			onChangeProgramInfo={handleChangeProgramInfo}
-			onDuplicate={onDuplicate}
-			onDelete={onDelete}
 			onAddExercisePlanWithSelectedExercise={
 				handleAddExercisePlanWithSelectedExercise
 			}
@@ -1062,7 +1044,6 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 			onChangeSetPlan={handleChangeSetPlan}
 			onDeleteSetPlan={handleDeleteSetPlan}
 			lastAddedExercisePlanId={lastAddedExercisePlanId}
-			lastAddedDayId={lastAddedDayId}
 		/>
 	);
 };

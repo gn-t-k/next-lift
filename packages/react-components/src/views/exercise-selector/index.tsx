@@ -1,14 +1,8 @@
-import type { FC } from "react";
-import { ExerciseSelectorComboBox } from "./exercise-selector-combo-box";
+import type { ComponentProps, FC } from "react";
+import { ExerciseSelectorComboBox } from "../exercise-selector-combo-box";
 import { ExerciseSelectorDrawer } from "./exercise-selector-drawer";
 
-type Props = {
-	exercises: { id: string; name: string }[];
-	selectedExerciseId?: string;
-	onSelect: (exerciseId: string) => void;
-	onCreateExercise: (name: string) => void;
-	label: string;
-};
+type Props = ComponentProps<typeof ExerciseSelectorComboBox>;
 
 export const ExerciseSelector: FC<Props> = (props) => {
 	return (

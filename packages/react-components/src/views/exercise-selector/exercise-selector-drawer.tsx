@@ -12,12 +12,12 @@ import {
 	DrawerTrigger,
 } from "../../primitives/drawer";
 import { TextField, TextFieldInput } from "../../primitives/text-field";
-import type { ExerciseSelector } from ".";
-import { filterByName } from "./filter-by-name";
-import { isCreatableName } from "./is-creatable-name";
+import type { ExerciseSelectorComboBox } from "../exercise-selector-combo-box";
+import { filterByName } from "../filter-by-name";
+import { isCreatableName } from "../is-creatable-name";
 
 export const ExerciseSelectorDrawer: FC<
-	ComponentProps<typeof ExerciseSelector>
+	ComponentProps<typeof ExerciseSelectorComboBox>
 > = ({ exercises, selectedExerciseId, onSelect, onCreateExercise, label }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [query, setQuery] = useState("");

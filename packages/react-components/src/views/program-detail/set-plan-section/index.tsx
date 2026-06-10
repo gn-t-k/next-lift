@@ -1,10 +1,10 @@
 import type { FC } from "react";
-import type { WeightUnit } from "../weight-unit";
+import { SetPlanFormDialog } from "../../set-plan-form-dialog";
+import type { SetPlan, SetPlanDraft } from "../../set-plan-types";
+import type { WeightUnit } from "../../weight-unit";
 import { SetPlanAddTriggerButton } from "./set-plan-add-trigger-button";
-import { SetPlanFormDialog } from "./set-plan-form-dialog";
 import { SetPlanQuickAddButton } from "./set-plan-quick-add-button";
 import { SetPlanRow } from "./set-plan-row";
-import type { SetPlan, SetPlanDraft } from "./set-plan-types";
 
 type Props = {
 	setPlans: SetPlan[];

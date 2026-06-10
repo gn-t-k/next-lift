@@ -8,7 +8,7 @@ import { Heading, Section } from "../../primitives/heading";
 import { Link } from "../../primitives/link";
 import { ResponsiveDialog } from "../../primitives/responsive-dialog";
 import { ExerciseSelector } from "../exercise-selector";
-import type { WeightUnit } from "./weight-unit";
+import type { WeightUnit } from "../weight-unit";
 
 // T で caller 側の追加フィールド（setPlans 等）を保持し、children 関数に渡せるようにする
 type Props<T extends ExercisePlan> = {

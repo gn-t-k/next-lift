@@ -10,7 +10,6 @@ import {
 	ComboBoxItem,
 	ComboBoxList,
 } from "../../primitives/combo-box";
-import type { ExerciseSelector } from ".";
 import {
 	buildComboBoxItems,
 	CREATE_ID,
@@ -18,9 +17,21 @@ import {
 	PLACEHOLDER_ID,
 } from "./build-combo-box-items";
 
-export const ExerciseSelectorComboBox: FC<
-	ComponentProps<typeof ExerciseSelector>
-> = ({ exercises, selectedExerciseId, onSelect, onCreateExercise, label }) => {
+type Props = {
+	exercises: { id: string; name: string }[];
+	selectedExerciseId?: string | undefined;
+	onSelect: (exerciseId: string) => void;
+	onCreateExercise: (name: string) => void;
+	label: string;
+};
+
+export const ExerciseSelectorComboBox: FC<Props> = ({
+	exercises,
+	selectedExerciseId,
+	onSelect,
+	onCreateExercise,
+	label,
+}) => {
 	const selectedName =
 		exercises.find((exercise) => exercise.id === selectedExerciseId)?.name ??
 		"";
