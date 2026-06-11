@@ -2,19 +2,35 @@
 
 import type { FC, PropsWithChildren, ReactNode } from "react";
 import { Heading, Section } from "../../primitives/heading";
-import type { Day } from "./day-list";
+import type { OnChangeDayInfo, OnDeleteDay } from "./day-header-actions";
+import type { Day, OnAddDay } from "./day-list";
 import {
 	DrilldownPanel,
 	DrilldownPanelError,
 	DrilldownPanelLoading,
 } from "./drilldown-panel";
-import type { RegisteredExercise } from "./exercise-plan-list";
-import type { ProgramPlanViewProps } from "./miller-columns";
+import type {
+	OnChangeExercisePlanInfo,
+	OnDeleteExercisePlan,
+} from "./exercise-plan-header-actions";
+import type {
+	OnAddExercisePlanWithNewExercise,
+	OnAddExercisePlanWithSelectedExercise,
+	RegisteredExercise,
+	RenderWorkoutHistory,
+} from "./exercise-plan-list";
 import {
 	MillerColumns,
 	MillerColumnsError,
 	MillerColumnsLoading,
 } from "./miller-columns";
+import type { OnChangeProgramInfo } from "./program-info-dialog-button";
+import type {
+	OnAddSetPlan,
+	OnChangeSetPlan,
+	OnDeleteSetPlan,
+	RenderExerciseProgress,
+} from "./set-plan-list";
 import type { UseProgramPlanSelectionState } from "./use-program-plan-selection";
 import { useProgramPlanSelection } from "./use-program-plan-selection";
 
@@ -26,22 +42,21 @@ type ProgramDetailNewDataProps = {
 	initialState?: UseProgramPlanSelectionState | undefined;
 };
 
-type ProgramDetailNewCallbackProps = Pick<
-	ProgramPlanViewProps,
-	| "onAddDay"
-	| "onDeleteDay"
-	| "onChangeDayInfo"
-	| "onChangeProgramInfo"
-	| "onAddExercisePlanWithSelectedExercise"
-	| "onAddExercisePlanWithNewExercise"
-	| "onChangeExercisePlanInfo"
-	| "onDeleteExercisePlan"
-	| "onChangeSetPlan"
-	| "onAddSetPlan"
-	| "onDeleteSetPlan"
-	| "renderWorkoutHistory"
-	| "renderExerciseProgress"
->;
+type ProgramDetailNewCallbackProps = {
+	onAddDay: OnAddDay;
+	onDeleteDay: OnDeleteDay;
+	onChangeDayInfo: OnChangeDayInfo;
+	onChangeProgramInfo: OnChangeProgramInfo;
+	onAddExercisePlanWithSelectedExercise: OnAddExercisePlanWithSelectedExercise;
+	onAddExercisePlanWithNewExercise: OnAddExercisePlanWithNewExercise;
+	onChangeExercisePlanInfo: OnChangeExercisePlanInfo;
+	onDeleteExercisePlan: OnDeleteExercisePlan;
+	onChangeSetPlan: OnChangeSetPlan;
+	onAddSetPlan: OnAddSetPlan;
+	onDeleteSetPlan: OnDeleteSetPlan;
+	renderWorkoutHistory: RenderWorkoutHistory;
+	renderExerciseProgress: RenderExerciseProgress;
+};
 
 type Props = ProgramDetailNewDataProps & ProgramDetailNewCallbackProps;
 
@@ -71,7 +86,7 @@ export const ProgramDetailNew: FC<Props> = ({
 			initialState,
 		});
 
-	const planViewProps: ProgramPlanViewProps = {
+	const planProps = {
 		programName: name,
 		programMeta: meta,
 		days,
@@ -79,7 +94,6 @@ export const ProgramDetailNew: FC<Props> = ({
 		state,
 		onSelectDay: selectDay,
 		onSelectExercisePlan: selectExercisePlan,
-		onSelectRoot: selectRoot,
 		onAddDay,
 		onDeleteDay,
 		onChangeDayInfo,
@@ -101,10 +115,10 @@ export const ProgramDetailNew: FC<Props> = ({
 			<Section className="@container flex flex-col gap-3">
 				<Heading className="sr-only">プログラム内容</Heading>
 				<DesktopPlanViewport>
-					<MillerColumns {...planViewProps} />
+					<MillerColumns {...planProps} />
 				</DesktopPlanViewport>
 				<MobilePlanViewport>
-					<DrilldownPanel {...planViewProps} />
+					<DrilldownPanel {...planProps} onSelectRoot={selectRoot} />
 				</MobilePlanViewport>
 			</Section>
 		</div>

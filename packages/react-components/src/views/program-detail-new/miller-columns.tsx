@@ -7,7 +7,6 @@ import type { FC, PropsWithChildren, ReactNode } from "react";
 import { cn } from "../../libs";
 import { Button } from "../../primitives/button";
 import { skeletonClass } from "../../primitives/skeleton";
-import type { OnSelectRoot } from "./breadcrumb-jump-sheet";
 import type { OnChangeDayInfo, OnDeleteDay } from "./day-header-actions";
 import { DayHeaderActions } from "./day-header-actions";
 import type { Day, OnAddDay, OnSelectDay } from "./day-list";
@@ -39,7 +38,7 @@ import type {
 import { SetPlanList } from "./set-plan-list";
 import type { UseProgramPlanSelectionState } from "./use-program-plan-selection";
 
-export type ProgramPlanViewProps = {
+type Props = {
 	programName: string;
 	programMeta?: string | undefined;
 	days: Day[];
@@ -47,7 +46,6 @@ export type ProgramPlanViewProps = {
 	state: UseProgramPlanSelectionState;
 	onSelectDay: OnSelectDay;
 	onSelectExercisePlan: OnSelectExercisePlan;
-	onSelectRoot: OnSelectRoot;
 	onAddDay: OnAddDay;
 	onDeleteDay: OnDeleteDay;
 	onChangeDayInfo: OnChangeDayInfo;
@@ -62,8 +60,6 @@ export type ProgramPlanViewProps = {
 	renderWorkoutHistory: RenderWorkoutHistory;
 	renderExerciseProgress: RenderExerciseProgress;
 };
-
-type Props = ProgramPlanViewProps;
 
 export const MillerColumns: FC<Props> = ({
 	programName,
