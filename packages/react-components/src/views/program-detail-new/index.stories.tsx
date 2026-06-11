@@ -841,10 +841,6 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 	const [registeredExercises, setRegisteredExercises] = useState(
 		initialRegisteredExercises,
 	);
-	const [lastAddedExercisePlanId, setLastAddedExercisePlanId] = useState<
-		string | undefined
-	>(undefined);
-
 	const handleAddDay = () => {
 		const id = crypto.randomUUID();
 		setDays((prev) => [
@@ -952,7 +948,6 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 					: day,
 			),
 		);
-		setLastAddedExercisePlanId(newExercisePlanId);
 	};
 
 	const handleDeleteExercisePlan = (exercisePlanId: string) => {
@@ -1043,7 +1038,6 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 			onAddSetPlan={handleAddSetPlan}
 			onChangeSetPlan={handleChangeSetPlan}
 			onDeleteSetPlan={handleDeleteSetPlan}
-			lastAddedExercisePlanId={lastAddedExercisePlanId}
 		/>
 	);
 };

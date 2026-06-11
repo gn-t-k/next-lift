@@ -24,7 +24,6 @@ type Props = {
 	onChangeSetPlan: (setPlanId: string, payload: SetPlanDraft) => void;
 	onAddSetPlan: (exercisePlanId: string, payload: SetPlanDraft) => void;
 	onDeleteSetPlan: (setPlanId: string) => void;
-	autoFocusAddTrigger: boolean;
 	exerciseProgress: ReactNode;
 };
 
@@ -33,7 +32,6 @@ export const SetPlanList: FC<Props> = ({
 	onChangeSetPlan,
 	onAddSetPlan,
 	onDeleteSetPlan,
-	autoFocusAddTrigger,
 	exerciseProgress,
 }) => {
 	const lastSetPlan = exercisePlan.setPlans[exercisePlan.setPlans.length - 1];
@@ -62,12 +60,7 @@ export const SetPlanList: FC<Props> = ({
 			{lastSetPlanDraft === undefined ? (
 				<SetPlanFormDialog
 					title={`${exercisePlan.exercise.name} 1セット計画を追加`}
-					trigger={
-						<AddSetButton
-							label="セット計画を追加"
-							autoFocus={autoFocusAddTrigger}
-						/>
-					}
+					trigger={<AddSetButton label="セット計画を追加" />}
 					initial={undefined}
 					weightUnit={exercisePlan.exercise.weightUnit}
 					weightStep={exercisePlan.exercise.weightStep}
@@ -147,11 +140,10 @@ const SetPlanNode: FC<SetPlanNodeProps> = ({
 
 type AddSetButtonProps = {
 	label: string;
-	autoFocus?: boolean | undefined;
 	onPress?: (() => void) | undefined;
 };
 
-const AddSetButton: FC<AddSetButtonProps> = ({ label, autoFocus, onPress }) => (
+const AddSetButton: FC<AddSetButtonProps> = ({ label, onPress }) => (
 	<Button
 		intent="plain"
 		size="sm"
@@ -159,7 +151,6 @@ const AddSetButton: FC<AddSetButtonProps> = ({ label, autoFocus, onPress }) => (
 			"min-h-11 w-full justify-start border-border border-dashed px-3 py-2 text-muted-fg sm:min-h-11",
 			"hover:border-solid hover:bg-secondary hover:text-fg",
 		)}
-		{...(autoFocus !== undefined ? { autoFocus } : {})}
 		{...(onPress !== undefined ? { onPress } : {})}
 	>
 		<PlusIcon data-slot="icon" className="size-4" aria-hidden />

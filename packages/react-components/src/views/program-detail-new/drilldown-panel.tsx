@@ -32,7 +32,6 @@ export const DrilldownPanel: FC<Props> = ({
 	selectedDay,
 	selectedExercisePlan,
 	currentTarget,
-	lastAddedExercisePlanId,
 	onSelectDay,
 	onSelectExercisePlan,
 	onSelectRoot,
@@ -93,7 +92,6 @@ export const DrilldownPanel: FC<Props> = ({
 						days={days}
 						registeredExercises={registeredExercises}
 						selection={selection}
-						lastAddedExercisePlanId={lastAddedExercisePlanId}
 						onSelectDay={onSelectDay}
 						onSelectExercisePlan={onSelectExercisePlan}
 						onAddDay={onAddDay}
@@ -129,7 +127,6 @@ type DrilldownBodyProps = Pick<
 	| "days"
 	| "registeredExercises"
 	| "selection"
-	| "lastAddedExercisePlanId"
 	| "onSelectDay"
 	| "onSelectExercisePlan"
 	| "onAddDay"
@@ -149,7 +146,6 @@ const DrilldownBody: FC<DrilldownBodyProps> = ({
 	days,
 	registeredExercises,
 	selection,
-	lastAddedExercisePlanId,
 	onSelectDay,
 	onSelectExercisePlan,
 	onAddDay,
@@ -192,9 +188,6 @@ const DrilldownBody: FC<DrilldownBodyProps> = ({
 					onChangeSetPlan={onChangeSetPlan}
 					onAddSetPlan={onAddSetPlan}
 					onDeleteSetPlan={onDeleteSetPlan}
-					autoFocusAddTrigger={
-						state.exercisePlan.id === lastAddedExercisePlanId
-					}
 					exerciseProgress={renderExerciseProgress(state.exercisePlan)}
 				/>
 			);

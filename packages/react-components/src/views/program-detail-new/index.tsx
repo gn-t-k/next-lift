@@ -45,7 +45,6 @@ type Props = {
 	onChangeSetPlan: (setPlanId: string, payload: SetPlanDraft) => void;
 	onAddSetPlan: (exercisePlanId: string, payload: SetPlanDraft) => void;
 	onDeleteSetPlan: (setPlanId: string) => void;
-	lastAddedExercisePlanId?: string | undefined;
 	renderWorkoutHistory: (day: Day) => ReactNode;
 	renderExerciseProgress: (exercisePlan: ExercisePlan) => ReactNode;
 };
@@ -103,7 +102,6 @@ export const ProgramDetailNew: FC<Props> = ({
 	onChangeSetPlan,
 	onAddSetPlan,
 	onDeleteSetPlan,
-	lastAddedExercisePlanId,
 	renderWorkoutHistory,
 	renderExerciseProgress,
 }) => {
@@ -134,7 +132,6 @@ export const ProgramDetailNew: FC<Props> = ({
 				selectedDay={selectedDay}
 				selectedExercisePlan={selectedExercisePlan}
 				currentTarget={currentTarget}
-				lastAddedExercisePlanId={lastAddedExercisePlanId}
 				onSelectDay={selectDay}
 				onSelectExercisePlan={selectExercisePlan}
 				onSelectRoot={selectRoot}

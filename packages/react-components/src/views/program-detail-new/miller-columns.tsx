@@ -20,7 +20,6 @@ export const MillerColumns: FC<Props> = ({
 	selection,
 	selectedDay,
 	selectedExercisePlan,
-	lastAddedExercisePlanId,
 	onSelectDay,
 	onSelectExercisePlan,
 	onAddDay,
@@ -118,9 +117,6 @@ export const MillerColumns: FC<Props> = ({
 						onChangeSetPlan={onChangeSetPlan}
 						onAddSetPlan={onAddSetPlan}
 						onDeleteSetPlan={onDeleteSetPlan}
-						autoFocusAddTrigger={
-							selectedExercisePlan.id === lastAddedExercisePlanId
-						}
 						exerciseProgress={renderExerciseProgress(selectedExercisePlan)}
 					/>
 				)}

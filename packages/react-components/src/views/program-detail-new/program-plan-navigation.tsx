@@ -22,7 +22,6 @@ type Props = {
 	selectedDay: Day | undefined;
 	selectedExercisePlan: ExercisePlan | undefined;
 	currentTarget: NavigationTarget | undefined;
-	lastAddedExercisePlanId?: string | undefined;
 	onSelectDay: (dayId: string) => void;
 	onSelectExercisePlan: (dayId: string, exercisePlanId: string) => void;
 	onSelectRoot: () => void;
