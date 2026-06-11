@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps, FC } from "react";
 import { useState } from "react";
 import { expect, fn, screen, userEvent, waitFor, within } from "storybook/test";
-import type { SetPlan, SetPlanDraft } from "../../../set-plan-types";
+import type { SetPlan, SetPlanDraft } from "../../set-plan-types";
 import { SetPlanRow } from ".";
 
 const StatefulRow: FC<ComponentProps<typeof SetPlanRow>> = ({

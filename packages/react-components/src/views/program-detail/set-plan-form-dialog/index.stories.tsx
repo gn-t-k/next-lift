@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect, fn, screen, userEvent, waitFor, within } from "storybook/test";
-import { Button } from "../../primitives/button";
+import { Button } from "../../../primitives/button";
 import { SetPlanFormDialog } from ".";
 
 const meta = {

@@ -1,8 +1,11 @@
 "use client";
 
 import type { FC } from "react";
-import { Label } from "../../primitives/label";
-import { NumberField, NumberFieldInput } from "../../primitives/number-field";
+import { Label } from "../../../primitives/label";
+import {
+	NumberField,
+	NumberFieldInput,
+} from "../../../primitives/number-field";
 import { fieldLayout } from "./field-layout";
 
 type Props = {

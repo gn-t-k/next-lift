@@ -1,11 +1,11 @@
 "use client";
 
 import type { FC } from "react";
-import { Label } from "../../primitives/label";
+import { Label } from "../../../primitives/label";
 import {
 	SingleToggleButtonGroup,
 	ToggleButton,
-} from "../../primitives/toggle-button-group";
+} from "../../../primitives/toggle-button-group";
 import { fieldLayout } from "./field-layout";
 
 type Props = {

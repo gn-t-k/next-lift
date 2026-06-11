@@ -3,15 +3,15 @@
 import { ChevronUpDownIcon, PlusIcon } from "@heroicons/react/24/solid";
 import type { ComponentProps, FC } from "react";
 import { useState } from "react";
-import { cn } from "../../libs/utils";
-import { Button } from "../../primitives/button";
+import { cn } from "../../../libs/utils";
+import { Button } from "../../../primitives/button";
 import {
 	Drawer,
 	DrawerContent,
 	DrawerTitle,
 	DrawerTrigger,
-} from "../../primitives/drawer";
-import { TextField, TextFieldInput } from "../../primitives/text-field";
+} from "../../../primitives/drawer";
+import { TextField, TextFieldInput } from "../../../primitives/text-field";
 import type { ExerciseSelectorComboBox } from "../exercise-selector-combo-box";
 import { filterByName } from "../filter-by-name";
 import { isCreatableName } from "../is-creatable-name";

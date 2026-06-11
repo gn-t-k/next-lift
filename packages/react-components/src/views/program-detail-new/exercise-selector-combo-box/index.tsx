@@ -9,7 +9,7 @@ import {
 	ComboBoxInput,
 	ComboBoxItem,
 	ComboBoxList,
-} from "../../primitives/combo-box";
+} from "../../../primitives/combo-box";
 import {
 	buildComboBoxItems,
 	CREATE_ID,

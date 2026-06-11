@@ -8,8 +8,8 @@ import {
 import type { ComponentProps, FC, ReactNode } from "react";
 import { cn } from "../../libs";
 import { Button } from "../../primitives/button";
-import { SetPlanFormDialog } from "../set-plan-form-dialog";
 import type { ProgramDetailNew } from ".";
+import { SetPlanFormDialog } from "./set-plan-form-dialog";
 
 type ExercisePlan = ComponentProps<
 	typeof ProgramDetailNew

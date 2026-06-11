@@ -3,8 +3,8 @@
 import type { ComponentProps, FC, ReactNode } from "react";
 import { useState } from "react";
 import { cn } from "../../libs";
-import { ExerciseSelectorComboBox } from "../exercise-selector-combo-box";
 import type { ProgramDetailNew } from ".";
+import { ExerciseSelectorComboBox } from "./exercise-selector-combo-box";
 import { PlanNodeButton } from "./plan-node-button";
 
 type Day = ComponentProps<typeof ProgramDetailNew>["days"][number];

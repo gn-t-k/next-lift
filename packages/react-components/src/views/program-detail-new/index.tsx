@@ -10,13 +10,13 @@ import { cn } from "../../libs";
 import { Button } from "../../primitives/button";
 import { Heading } from "../../primitives/heading";
 import { skeletonClass } from "../../primitives/skeleton";
-import type { SetPlanFormDialog } from "../set-plan-form-dialog";
-import type { WeightUnit } from "../weight-unit";
 import { LabeledPlanColumn } from "./labeled-plan-column";
 import { PlanColumn } from "./plan-column";
 import { ProgramPlanGrid } from "./program-plan-grid";
 import { ProgramPlanNavigation } from "./program-plan-navigation";
+import type { SetPlanFormDialog } from "./set-plan-form-dialog";
 import { useProgramPlanSelection } from "./use-program-plan-selection";
+import type { WeightUnit } from "./weight-unit";
 
 type Props = {
 	name: string;

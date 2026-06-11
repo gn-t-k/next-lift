@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useMediaQuery } from "../../libs";
 import { Button } from "../../primitives/button";
 import { ResponsiveDialog } from "../../primitives/responsive-dialog";
-import { ProgramInfoForm } from "../program-info-form";
+import { ProgramInfoForm } from "./program-info-form";
 
 type Props = {
 	name: string;

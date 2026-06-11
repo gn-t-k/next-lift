@@ -5,8 +5,8 @@ import type { FC } from "react";
 import { Button as AriaButton } from "react-aria-components";
 import { cn } from "../../../libs/utils";
 import { createAffordanceClass } from "../../../primitives/create-affordance";
-import type { SetPlanDraft } from "../../set-plan-types";
-import type { WeightUnit } from "../../weight-unit";
+import type { SetPlanDraft } from "../set-plan-types";
+import type { WeightUnit } from "../weight-unit";
 
 type Props = {
 	lastSetPlanDraft: SetPlanDraft;
