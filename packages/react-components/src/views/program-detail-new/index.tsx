@@ -1,6 +1,6 @@
 "use client";
 
-import type { FC, ReactNode } from "react";
+import type { FC, PropsWithChildren, ReactNode } from "react";
 import { Heading, Section } from "../../primitives/heading";
 import type { Day } from "./day-list";
 import {
@@ -100,10 +100,12 @@ export const ProgramDetailNew: FC<Props> = ({
 			<Heading className="sr-only">{name}</Heading>
 			<Section className="@container flex flex-col gap-3">
 				<Heading className="sr-only">プログラム内容</Heading>
-				<MillerColumns {...planViewProps} />
-				<div className="@min-[56rem]:hidden">
+				<DesktopPlanViewport>
+					<MillerColumns {...planViewProps} />
+				</DesktopPlanViewport>
+				<MobilePlanViewport>
 					<DrilldownPanel {...planViewProps} />
-				</div>
+				</MobilePlanViewport>
 			</Section>
 		</div>
 	);
@@ -113,10 +115,12 @@ export const ProgramDetailNewLoading: FC = () => (
 	<div className="@container flex flex-col gap-3" aria-busy>
 		<Heading className="sr-only">プログラム詳細</Heading>
 		<span className="sr-only">プログラム詳細を読み込み中</span>
-		<MillerColumnsLoading />
-		<div className="@min-[56rem]:hidden">
+		<DesktopPlanViewport>
+			<MillerColumnsLoading />
+		</DesktopPlanViewport>
+		<MobilePlanViewport>
 			<DrilldownPanelLoading />
-		</div>
+		</MobilePlanViewport>
 	</div>
 );
 
@@ -129,9 +133,19 @@ export const ProgramDetailNewError: FC<ProgramDetailNewErrorProps> = ({
 }) => (
 	<div className="@container flex flex-col gap-3">
 		<Heading className="sr-only">プログラム詳細</Heading>
-		<MillerColumnsError message={message} />
-		<div className="@min-[56rem]:hidden">
+		<DesktopPlanViewport>
+			<MillerColumnsError message={message} />
+		</DesktopPlanViewport>
+		<MobilePlanViewport>
 			<DrilldownPanelError message={message} />
-		</div>
+		</MobilePlanViewport>
 	</div>
+);
+
+const DesktopPlanViewport: FC<PropsWithChildren> = ({ children }) => (
+	<div className="@min-[56rem]:block hidden">{children}</div>
+);
+
+const MobilePlanViewport: FC<PropsWithChildren> = ({ children }) => (
+	<div className="@min-[56rem]:hidden">{children}</div>
 );

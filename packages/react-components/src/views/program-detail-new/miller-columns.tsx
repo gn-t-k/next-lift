@@ -220,7 +220,7 @@ export const MillerColumnsError: FC<MillerColumnsErrorProps> = ({
 const SKELETON_DAY_KEYS = ["day-1", "day-2", "day-3"];
 
 const DesktopThreeColumnLayout: FC<PropsWithChildren> = ({ children }) => (
-	<div className="@min-[56rem]:grid hidden h-[32rem] grid-cols-[minmax(13rem,0.9fr)_minmax(17rem,1fr)_minmax(20rem,1.25fr)] items-stretch gap-3">
+	<div className="grid h-[32rem] grid-cols-[minmax(13rem,0.9fr)_minmax(17rem,1fr)_minmax(20rem,1.25fr)] items-stretch gap-3">
 		{children}
 	</div>
 );
