@@ -1,7 +1,7 @@
 "use client";
 
 import { CheckIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
-import type { ComponentProps, FC } from "react";
+import type { FC } from "react";
 import { useState } from "react";
 import { useMediaQuery } from "../../libs";
 import { Button } from "../../primitives/button";
@@ -9,13 +9,13 @@ import { Label } from "../../primitives/label";
 import { ResponsiveDialog } from "../../primitives/responsive-dialog";
 import { TextArea } from "../../primitives/text-area";
 import { TextField, TextFieldInput } from "../../primitives/text-field";
-import type { ProgramDetailNew } from ".";
+import type { Day } from "./day-list";
 
-type Day = ComponentProps<typeof ProgramDetailNew>["days"][number];
+export type DayInfoPayload = { label: string; memo: string };
 
 type Props = {
 	day: Day;
-	onChange: (dayId: string, payload: { label: string; memo: string }) => void;
+	onChange: (dayId: string, payload: DayInfoPayload) => void;
 };
 
 export const DayInfoDialogButton: FC<Props> = ({ day, onChange }) => {

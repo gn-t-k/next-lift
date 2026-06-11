@@ -5,9 +5,11 @@ import type { ComponentProps, FC, ReactNode } from "react";
 import { Button } from "../../primitives/button";
 import { BreadcrumbJumpSheet } from "./breadcrumb-jump-sheet";
 import { DayHeaderActions } from "./day-header-actions";
+import type { Day } from "./day-list";
 import { DayList } from "./day-list";
 import { DrilldownTransition } from "./drilldown-transition";
 import { ExercisePlanHeaderActions } from "./exercise-plan-header-actions";
+import type { ExercisePlan } from "./exercise-plan-list";
 import { ExercisePlanList } from "./exercise-plan-list";
 import { PlanColumn } from "./plan-column";
 import { ProgramInfoDialogButton } from "./program-info-dialog-button";
@@ -15,8 +17,6 @@ import type { ProgramPlanNavigation } from "./program-plan-navigation";
 import { SetPlanList } from "./set-plan-list";
 
 type Props = ComponentProps<typeof ProgramPlanNavigation>;
-type Day = NonNullable<Props["selectedDay"]>;
-type ExercisePlan = NonNullable<Props["selectedExercisePlan"]>;
 
 type DrilldownState =
 	| { level: "day" }

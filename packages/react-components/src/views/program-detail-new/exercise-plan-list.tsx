@@ -1,16 +1,35 @@
 "use client";
 
-import type { ComponentProps, FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 import { useState } from "react";
 import { cn } from "../../libs";
-import type { ProgramDetailNew } from ".";
+import type { Day } from "./day-list";
 import { ExerciseSelectorComboBox } from "./exercise-selector-combo-box";
 import { PlanNodeButton } from "./plan-node-button";
+import type { SetPlan } from "./set-plan-list";
 
-type Day = ComponentProps<typeof ProgramDetailNew>["days"][number];
-type RegisteredExercise = ComponentProps<
-	typeof ProgramDetailNew
->["registeredExercises"][number];
+// 種目計画ドメインの型正本（ExercisePlanList がリスト UI のオーナー）
+export type WeightUnit = "kg" | "lbs";
+
+export type Exercise = {
+	id: string;
+	name: string;
+	weightUnit: WeightUnit;
+	weightStep: number;
+	detailHref: string;
+};
+
+export type RegisteredExercise = {
+	id: string;
+	name: string;
+};
+
+export type ExercisePlan = {
+	id: string;
+	memo?: string | undefined;
+	exercise: Exercise;
+	setPlans: SetPlan[];
+};
 
 type Props = {
 	day: Day;

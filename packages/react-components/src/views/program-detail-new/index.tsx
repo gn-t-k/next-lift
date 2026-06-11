@@ -10,13 +10,17 @@ import { cn } from "../../libs";
 import { Button } from "../../primitives/button";
 import { Heading } from "../../primitives/heading";
 import { skeletonClass } from "../../primitives/skeleton";
+import type { DayInfoPayload } from "./day-info-dialog-button";
+import type { Day } from "./day-list";
+import type { ExercisePlan, RegisteredExercise } from "./exercise-plan-list";
+import type { ExercisePlanMemoPayload } from "./exercise-plan-memo-dialog-button";
 import { LabeledPlanColumn } from "./labeled-plan-column";
 import { PlanColumn } from "./plan-column";
+import type { ProgramInfoPayload } from "./program-info-dialog-button";
 import { ProgramPlanGrid } from "./program-plan-grid";
 import { ProgramPlanNavigation } from "./program-plan-navigation";
+import type { SetPlanDraft } from "./set-plan-list";
 import { useProgramPlanSelection } from "./use-program-plan-selection";
-
-type WeightUnit = "kg" | "lbs";
 
 type Props = {
 	name: string;
@@ -27,14 +31,8 @@ type Props = {
 	defaultSelectedExercisePlanId?: string | undefined;
 	onAddDay: () => void;
 	onDeleteDay: (dayId: string) => void;
-	onChangeDayInfo: (
-		dayId: string,
-		payload: { label: string; memo: string },
-	) => void;
-	onChangeProgramInfo: (payload: {
-		name: string;
-		meta?: string | undefined;
-	}) => void;
+	onChangeDayInfo: (dayId: string, payload: DayInfoPayload) => void;
+	onChangeProgramInfo: (payload: ProgramInfoPayload) => void;
 	onAddExercisePlanWithSelectedExercise: (
 		dayId: string,
 		exerciseId: string,
@@ -42,7 +40,7 @@ type Props = {
 	onAddExercisePlanWithNewExercise: (dayId: string, name: string) => void;
 	onChangeExercisePlanInfo: (
 		exercisePlanId: string,
-		payload: { memo: string },
+		payload: ExercisePlanMemoPayload,
 	) => void;
 	onDeleteExercisePlan: (exercisePlanId: string) => void;
 	onChangeSetPlan: (setPlanId: string, payload: SetPlanDraft) => void;
@@ -51,45 +49,6 @@ type Props = {
 	renderWorkoutHistory: (day: Day) => ReactNode;
 	renderExerciseProgress: (exercisePlan: ExercisePlan) => ReactNode;
 };
-
-type Day = {
-	id: string;
-	label: string;
-	memo?: string | undefined;
-	exercisePlans: ExercisePlan[];
-};
-
-type ExercisePlan = {
-	id: string;
-	memo?: string | undefined;
-	exercise: Exercise;
-	setPlans: SetPlan[];
-};
-
-type Exercise = {
-	id: string;
-	name: string;
-	weightUnit: WeightUnit;
-	weightStep: number;
-	detailHref: string;
-};
-
-type RegisteredExercise = {
-	id: string;
-	name: string;
-};
-
-type SetPlan =
-	| { id: string; pattern: "weight-reps"; weight: number; reps: number }
-	| { id: string; pattern: "weight-rpe"; weight: number; rpe: number }
-	| { id: string; pattern: "reps-rpe"; reps: number; rpe: number };
-
-// まだ永続化されていないため id を持たないセット計画
-type SetPlanDraft = DistributiveOmit<SetPlan, "id">;
-
-type DistributiveOmit<T, K extends keyof T> = T extends unknown
-	? Omit<T, K>
-	: never;
 
 export const ProgramDetailNew: FC<Props> = ({
 	name,

@@ -1,12 +1,10 @@
 "use client";
 
-import type { ComponentProps, FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 import { useRef } from "react";
 import { cn } from "../../libs";
-import type { ProgramDetailNew } from ".";
+import type { Day } from "./day-list";
 import type { NavigationTarget } from "./use-program-plan-selection";
-
-type Day = ComponentProps<typeof ProgramDetailNew>["days"][number];
 
 type Props = {
 	days: Day[];

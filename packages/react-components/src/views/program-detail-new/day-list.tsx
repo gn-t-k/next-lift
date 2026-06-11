@@ -1,13 +1,19 @@
 "use client";
 
 import { PlusIcon } from "@heroicons/react/24/outline";
-import type { ComponentProps, FC } from "react";
+import type { FC } from "react";
 import { cn } from "../../libs";
 import { Button } from "../../primitives/button";
-import type { ProgramDetailNew } from ".";
+import type { ExercisePlan } from "./exercise-plan-list";
 import { PlanNodeButton } from "./plan-node-button";
 
-type Day = ComponentProps<typeof ProgramDetailNew>["days"][number];
+// Day ドメインの型正本（DayList がリスト UI のオーナー）
+export type Day = {
+	id: string;
+	label: string;
+	memo?: string | undefined;
+	exercisePlans: ExercisePlan[];
+};
 
 type Props = {
 	days: Day[];

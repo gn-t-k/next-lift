@@ -8,10 +8,15 @@ import { Button } from "../../primitives/button";
 import { ResponsiveDialog } from "../../primitives/responsive-dialog";
 import { ProgramInfoForm } from "./program-info-form";
 
+export type ProgramInfoPayload = {
+	name: string;
+	meta?: string | undefined;
+};
+
 type Props = {
 	name: string;
 	meta?: string | undefined;
-	onChange: (payload: { name: string; meta?: string | undefined }) => void;
+	onChange: (payload: ProgramInfoPayload) => void;
 };
 
 export const ProgramInfoDialogButton: FC<Props> = ({

@@ -6,7 +6,7 @@ import {
 	NumberField,
 	NumberFieldInput,
 } from "../../../primitives/number-field";
-import type { WeightUnit } from "./build-set-plan-draft";
+import type { WeightUnit } from "../exercise-plan-list";
 import { fieldLayout } from "./field-layout";
 
 type Props = {

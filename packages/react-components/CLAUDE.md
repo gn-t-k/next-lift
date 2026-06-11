@@ -97,6 +97,20 @@ src/
 
 ビュー側で `nextMemo === "" ? null : nextMemo` のように永続化向けの変換をしない。
 
+#### ドメイン型のコロケーション（ビュー内部）
+
+型専用ファイル（`types.ts` 等）は置かない。ドメイン型は **オーナーコンポーネント** のファイルで `export type` し、他はそこから `import type` する。
+
+| 型 | オーナー | 選定理由 |
+| --- | --- | --- |
+| エンティティ（`Day`, `ExercisePlan`, `SetPlan` 等） | そのエンティティの **リスト UI**（`*-list.tsx`） | データ形状を最も多く扱うコンポーネント |
+| 編集 payload（`DayInfoPayload` 等） | **編集 UI**（`*-dialog-button.tsx` 等） | フォームが返す形の正本 |
+| 公開 Props（`ProgramDetailNew`） | `index.tsx` | オーナーから import して組み立てるだけ |
+
+参照元が複数あっても正本は一つ。「どちらを正にする？」は **UI の責務** で決める（リスト vs 編集ダイアログ）。`ComponentProps<typeof ProgramDetailNew>` からの再抽出は Story や navigation の callback 透過など、公開 API を直接触る箇所に限る。
+
+エンティティ間の型依存（`Day` → `ExercisePlan` → `SetPlan`）は `import type` の循環でよい。leaf（`set-plan-list`）から root（`day-list`）方向に定義する。
+
 #### 共有フォームとの接続
 
 旧ビューや共有部品（例: `ProgramInfoForm`）がまだ `string | null` を使う場合、**ビュー専用のラッパー**（例: `program-info-dialog-button.tsx`）で境界変換する。共有部品を一括変更するのは別タスク。

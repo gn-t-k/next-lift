@@ -1,19 +1,15 @@
 "use client";
 
-import type { ComponentProps, FC } from "react";
-import type { ProgramDetailNew } from ".";
+import type { FC } from "react";
+import type { DayInfoPayload } from "./day-info-dialog-button";
 import { DayInfoDialogButton } from "./day-info-dialog-button";
+import type { Day } from "./day-list";
 import { HeaderActions } from "./header-actions";
 import { HeaderDeleteButton } from "./header-delete-button";
 
-type Day = ComponentProps<typeof ProgramDetailNew>["days"][number];
-
 type Props = {
 	day: Day;
-	onChangeDayInfo: (
-		dayId: string,
-		payload: { label: string; memo: string },
-	) => void;
+	onChangeDayInfo: (dayId: string, payload: DayInfoPayload) => void;
 	onDeleteDay: (dayId: string) => void;
 };
 

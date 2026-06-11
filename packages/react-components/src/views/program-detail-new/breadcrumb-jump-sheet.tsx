@@ -1,16 +1,14 @@
 "use client";
 
 import { ChevronRightIcon, ListBulletIcon } from "@heroicons/react/24/outline";
-import type { ComponentProps, FC } from "react";
+import type { FC } from "react";
 import { useState } from "react";
 import { cn } from "../../libs";
 import { Button } from "../../primitives/button";
 import { Drawer, DrawerContent, DrawerTitle } from "../../primitives/drawer";
-import type { ProgramDetailNew } from ".";
+import type { Day } from "./day-list";
+import type { ExercisePlan } from "./exercise-plan-list";
 import type { NavigationTarget } from "./use-program-plan-selection";
-
-type Day = ComponentProps<typeof ProgramDetailNew>["days"][number];
-type ExercisePlan = Day["exercisePlans"][number];
 
 type Props = {
 	programName: string;

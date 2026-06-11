@@ -1,7 +1,7 @@
 "use client";
 
 import { CheckIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
-import type { ComponentProps, FC } from "react";
+import type { FC } from "react";
 import { useState } from "react";
 import { useMediaQuery } from "../../libs";
 import { Button } from "../../primitives/button";
@@ -9,15 +9,13 @@ import { Label } from "../../primitives/label";
 import { ResponsiveDialog } from "../../primitives/responsive-dialog";
 import { TextArea } from "../../primitives/text-area";
 import { TextField } from "../../primitives/text-field";
-import type { ProgramDetailNew } from ".";
+import type { ExercisePlan } from "./exercise-plan-list";
 
-type ExercisePlan = ComponentProps<
-	typeof ProgramDetailNew
->["days"][number]["exercisePlans"][number];
+export type ExercisePlanMemoPayload = { memo: string };
 
 type Props = {
 	exercisePlan: ExercisePlan;
-	onChange: (exercisePlanId: string, payload: { memo: string }) => void;
+	onChange: (exercisePlanId: string, payload: ExercisePlanMemoPayload) => void;
 };
 
 export const ExercisePlanMemoDialogButton: FC<Props> = ({

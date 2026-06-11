@@ -1,20 +1,17 @@
 "use client";
 
-import type { ComponentProps, FC } from "react";
-import type { ProgramDetailNew } from ".";
+import type { FC } from "react";
+import type { ExercisePlan } from "./exercise-plan-list";
+import type { ExercisePlanMemoPayload } from "./exercise-plan-memo-dialog-button";
 import { ExercisePlanMemoDialogButton } from "./exercise-plan-memo-dialog-button";
 import { HeaderActions } from "./header-actions";
 import { HeaderDeleteButton } from "./header-delete-button";
-
-type ExercisePlan = ComponentProps<
-	typeof ProgramDetailNew
->["days"][number]["exercisePlans"][number];
 
 type Props = {
 	exercisePlan: ExercisePlan;
 	onChangeExercisePlanInfo: (
 		exercisePlanId: string,
-		payload: { memo: string },
+		payload: ExercisePlanMemoPayload,
 	) => void;
 	onDeleteExercisePlan: (exercisePlanId: string) => void;
 };

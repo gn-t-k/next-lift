@@ -1,7 +1,9 @@
 import type { ComponentProps, FC } from "react";
 import { Heading, Section } from "../../primitives/heading";
 import type { ProgramDetailNew } from ".";
+import type { Day } from "./day-list";
 import { DrilldownPanel } from "./drilldown-panel";
+import type { ExercisePlan } from "./exercise-plan-list";
 import { MillerColumns } from "./miller-columns";
 import { ProgramPlanGrid } from "./program-plan-grid";
 import type {
@@ -10,8 +12,6 @@ import type {
 } from "./use-program-plan-selection";
 
 type RootProps = ComponentProps<typeof ProgramDetailNew>;
-type Day = RootProps["days"][number];
-type ExercisePlan = Day["exercisePlans"][number];
 
 type Props = {
 	programName: string;

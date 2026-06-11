@@ -5,19 +5,24 @@ import {
 	PlusIcon,
 	TrashIcon,
 } from "@heroicons/react/24/outline";
-import type { ComponentProps, FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 import { cn } from "../../libs";
 import { Button } from "../../primitives/button";
-import type { ProgramDetailNew } from ".";
+import type { ExercisePlan } from "./exercise-plan-list";
 import { SetPlanFormDialog } from "./set-plan-form-dialog";
 
-type ExercisePlan = ComponentProps<
-	typeof ProgramDetailNew
->["days"][number]["exercisePlans"][number];
-type SetPlan = ExercisePlan["setPlans"][number];
-type SetPlanDraft = Parameters<
-	ComponentProps<typeof ProgramDetailNew>["onAddSetPlan"]
->[1];
+// セット計画ドメインの型正本（SetPlanFormDialog 等はここから import）
+export type SetPlan =
+	| { id: string; pattern: "weight-reps"; weight: number; reps: number }
+	| { id: string; pattern: "weight-rpe"; weight: number; rpe: number }
+	| { id: string; pattern: "reps-rpe"; reps: number; rpe: number };
+
+// まだ永続化されていないため id を持たないセット計画
+export type SetPlanDraft = DistributiveOmit<SetPlan, "id">;
+
+type DistributiveOmit<T, K extends keyof T> = T extends unknown
+	? Omit<T, K>
+	: never;
 
 type Props = {
 	exercisePlan: ExercisePlan;
