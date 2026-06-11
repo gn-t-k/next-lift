@@ -13,6 +13,9 @@ type Props = {
 	onDeleteDay: (dayId: string) => void;
 };
 
+export type OnChangeDayInfo = Props["onChangeDayInfo"];
+export type OnDeleteDay = Props["onDeleteDay"];
+
 export const DayHeaderActions: FC<Props> = ({
 	day,
 	onChangeDayInfo,

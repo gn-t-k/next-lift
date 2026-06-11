@@ -16,6 +16,9 @@ type Props = {
 	onDeleteExercisePlan: (exercisePlanId: string) => void;
 };
 
+export type OnChangeExercisePlanInfo = Props["onChangeExercisePlanInfo"];
+export type OnDeleteExercisePlan = Props["onDeleteExercisePlan"];
+
 export const ExercisePlanHeaderActions: FC<Props> = ({
 	exercisePlan,
 	onChangeExercisePlanInfo,

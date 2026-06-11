@@ -1,18 +1,34 @@
-import type { FC, ReactNode } from "react";
+import type { FC } from "react";
+import type { OnSelectRoot, OnSelectTarget } from "./breadcrumb-jump-sheet";
+import type { OnChangeDayInfo, OnDeleteDay } from "./day-header-actions";
 import { DayHeaderActions } from "./day-header-actions";
-import type { DayInfoPayload } from "./day-info-dialog-button";
-import type { Day } from "./day-list";
+import type { Day, OnAddDay, OnSelectDay } from "./day-list";
 import { DayList } from "./day-list";
+import type {
+	OnChangeExercisePlanInfo,
+	OnDeleteExercisePlan,
+} from "./exercise-plan-header-actions";
 import { ExercisePlanHeaderActions } from "./exercise-plan-header-actions";
-import type { ExercisePlan, RegisteredExercise } from "./exercise-plan-list";
+import type {
+	ExercisePlan,
+	OnAddExercisePlanWithNewExercise,
+	OnAddExercisePlanWithSelectedExercise,
+	OnSelectExercisePlan,
+	RegisteredExercise,
+	RenderWorkoutHistory,
+} from "./exercise-plan-list";
 import { ExercisePlanList } from "./exercise-plan-list";
-import type { ExercisePlanMemoPayload } from "./exercise-plan-memo-dialog-button";
 import { LabeledPlanColumn } from "./labeled-plan-column";
 import { MissingParentState } from "./missing-parent-state";
 import { PlanColumn } from "./plan-column";
-import type { ProgramInfoPayload } from "./program-info-dialog-button";
+import type { OnChangeProgramInfo } from "./program-info-dialog-button";
 import { ProgramInfoDialogButton } from "./program-info-dialog-button";
-import type { SetPlanDraft } from "./set-plan-list";
+import type {
+	OnAddSetPlan,
+	OnChangeSetPlan,
+	OnDeleteSetPlan,
+	RenderExerciseProgress,
+} from "./set-plan-list";
 import { SetPlanList } from "./set-plan-list";
 import type {
 	NavigationTarget,
@@ -28,29 +44,23 @@ export type ProgramPlanViewProps = {
 	selectedDay: Day | undefined;
 	selectedExercisePlan: ExercisePlan | undefined;
 	currentTarget: NavigationTarget | undefined;
-	onSelectDay: (dayId: string) => void;
-	onSelectExercisePlan: (dayId: string, exercisePlanId: string) => void;
-	onSelectRoot: () => void;
-	onSelectTarget: (target: NavigationTarget) => void;
-	onAddDay: () => void;
-	onDeleteDay: (dayId: string) => void;
-	onChangeDayInfo: (dayId: string, payload: DayInfoPayload) => void;
-	onChangeProgramInfo: (payload: ProgramInfoPayload) => void;
-	onAddExercisePlanWithSelectedExercise: (
-		dayId: string,
-		exerciseId: string,
-	) => void;
-	onAddExercisePlanWithNewExercise: (dayId: string, name: string) => void;
-	onChangeExercisePlanInfo: (
-		exercisePlanId: string,
-		payload: ExercisePlanMemoPayload,
-	) => void;
-	onDeleteExercisePlan: (exercisePlanId: string) => void;
-	onChangeSetPlan: (setPlanId: string, payload: SetPlanDraft) => void;
-	onAddSetPlan: (exercisePlanId: string, payload: SetPlanDraft) => void;
-	onDeleteSetPlan: (setPlanId: string) => void;
-	renderWorkoutHistory: (day: Day) => ReactNode;
-	renderExerciseProgress: (exercisePlan: ExercisePlan) => ReactNode;
+	onSelectDay: OnSelectDay;
+	onSelectExercisePlan: OnSelectExercisePlan;
+	onSelectRoot: OnSelectRoot;
+	onSelectTarget: OnSelectTarget;
+	onAddDay: OnAddDay;
+	onDeleteDay: OnDeleteDay;
+	onChangeDayInfo: OnChangeDayInfo;
+	onChangeProgramInfo: OnChangeProgramInfo;
+	onAddExercisePlanWithSelectedExercise: OnAddExercisePlanWithSelectedExercise;
+	onAddExercisePlanWithNewExercise: OnAddExercisePlanWithNewExercise;
+	onChangeExercisePlanInfo: OnChangeExercisePlanInfo;
+	onDeleteExercisePlan: OnDeleteExercisePlan;
+	onChangeSetPlan: OnChangeSetPlan;
+	onAddSetPlan: OnAddSetPlan;
+	onDeleteSetPlan: OnDeleteSetPlan;
+	renderWorkoutHistory: RenderWorkoutHistory;
+	renderExerciseProgress: RenderExerciseProgress;
 };
 
 type Props = ProgramPlanViewProps;

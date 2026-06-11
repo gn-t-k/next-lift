@@ -20,6 +20,9 @@ type Props = {
 	onSelectTarget: (target: NavigationTarget) => void;
 };
 
+export type OnSelectRoot = Props["onSelectRoot"];
+export type OnSelectTarget = Props["onSelectTarget"];
+
 export const BreadcrumbJumpSheet: FC<Props> = ({
 	programName,
 	days,

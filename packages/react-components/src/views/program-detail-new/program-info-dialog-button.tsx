@@ -19,6 +19,8 @@ type Props = {
 	onChange: (payload: ProgramInfoPayload) => void;
 };
 
+export type OnChangeProgramInfo = Props["onChange"];
+
 export const ProgramInfoDialogButton: FC<Props> = ({
 	name,
 	meta,

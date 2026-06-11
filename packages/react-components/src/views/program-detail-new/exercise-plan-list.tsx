@@ -44,6 +44,13 @@ type Props = {
 	workoutHistory: ReactNode;
 };
 
+export type OnSelectExercisePlan = Props["onSelectExercisePlan"];
+export type OnAddExercisePlanWithSelectedExercise =
+	Props["onAddExercisePlanWithSelectedExercise"];
+export type OnAddExercisePlanWithNewExercise =
+	Props["onAddExercisePlanWithNewExercise"];
+export type RenderWorkoutHistory = (day: Day) => ReactNode;
+
 export const ExercisePlanList: FC<Props> = ({
 	day,
 	registeredExercises,

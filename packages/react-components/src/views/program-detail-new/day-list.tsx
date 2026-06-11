@@ -22,6 +22,9 @@ type Props = {
 	onAddDay: () => void;
 };
 
+export type OnSelectDay = Props["onSelectDay"];
+export type OnAddDay = Props["onAddDay"];
+
 export const DayList: FC<Props> = ({
 	days,
 	selectedDayId,

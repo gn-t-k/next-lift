@@ -105,9 +105,11 @@ src/
 | --- | --- | --- |
 | エンティティ（`Day`, `ExercisePlan`, `SetPlan` 等） | そのエンティティの **リスト UI**（`*-list.tsx`） | データ形状を最も多く扱うコンポーネント |
 | 編集 payload（`DayInfoPayload` 等） | **編集 UI**（`*-dialog-button.tsx` 等） | フォームが返す形の正本 |
-| 公開 Props（`ProgramDetailNew`） | `index.tsx` | オーナーから import して組み立てるだけ |
+| callback / render prop | **呼び出すコンポーネント**（`*-list.tsx`, `*-header-actions.tsx` 等） | invoker が contract を決める。`Props["onX"]` や render 専用 alias で `export type` |
+| ビュー内共有 props（Miller / Drilldown） | `miller-columns.tsx` の `ProgramPlanViewProps` | 子の export を組み立てる |
+| 公開 Props（`ProgramDetailNew`） | `index.tsx` | データ props + `Pick<ProgramPlanViewProps, …>` で組み立て |
 
-参照元が複数あっても正本は一つ。「どちらを正にする？」は **UI の責務** で決める（リスト vs 編集ダイアログ）。`ComponentProps<typeof ProgramDetailNew>` からの再抽出は Story や navigation の callback 透過など、公開 API を直接触る箇所に限る。
+参照元が複数あっても正本は一つ。「どちらを正にする？」は **UI の責務** で決める（リスト vs 編集ダイアログ）。`ComponentProps<typeof ProgramDetailNew>` からの再抽出は Story など公開 API を直接触る箇所に限る。
 
 エンティティ間の型依存（`Day` → `ExercisePlan` → `SetPlan`）は `import type` の循環でよい。leaf（`set-plan-list`）から root（`day-list`）方向に定義する。
 

@@ -32,6 +32,11 @@ type Props = {
 	exerciseProgress: ReactNode;
 };
 
+export type OnChangeSetPlan = Props["onChangeSetPlan"];
+export type OnAddSetPlan = Props["onAddSetPlan"];
+export type OnDeleteSetPlan = Props["onDeleteSetPlan"];
+export type RenderExerciseProgress = (exercisePlan: ExercisePlan) => ReactNode;
+
 export const SetPlanList: FC<Props> = ({
 	exercisePlan,
 	onChangeSetPlan,
