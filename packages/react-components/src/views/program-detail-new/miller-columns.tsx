@@ -99,7 +99,7 @@ export const MillerColumns: FC<Props> = ({
 			: undefined;
 
 	return (
-		<DesktopThreeColumnLayout>
+		<ThreeColumnLayout>
 			<LabeledPlanColumn
 				label="プログラム"
 				title={programName}
@@ -187,16 +187,16 @@ export const MillerColumns: FC<Props> = ({
 					)}
 				</PlanColumn>
 			</LabeledPlanColumn>
-		</DesktopThreeColumnLayout>
+		</ThreeColumnLayout>
 	);
 };
 
 export const MillerColumnsLoading: FC = () => (
-	<DesktopThreeColumnLayout>
+	<ThreeColumnLayout>
 		<LoadingLabeledColumn />
 		<IdleLabeledColumn label="Day" />
 		<IdleLabeledColumn label="種目計画" />
-	</DesktopThreeColumnLayout>
+	</ThreeColumnLayout>
 );
 
 type MillerColumnsErrorProps = {
@@ -209,17 +209,17 @@ export const MillerColumnsError: FC<MillerColumnsErrorProps> = ({
 	const description = message ?? "時間をおいて再読み込みしてください。";
 
 	return (
-		<DesktopThreeColumnLayout>
+		<ThreeColumnLayout>
 			<ErrorLabeledColumn label="プログラム" description={description} />
 			<IdleLabeledColumn label="Day" />
 			<IdleLabeledColumn label="種目計画" />
-		</DesktopThreeColumnLayout>
+		</ThreeColumnLayout>
 	);
 };
 
 const SKELETON_DAY_KEYS = ["day-1", "day-2", "day-3"];
 
-const DesktopThreeColumnLayout: FC<PropsWithChildren> = ({ children }) => (
+const ThreeColumnLayout: FC<PropsWithChildren> = ({ children }) => (
 	<div className="grid h-[32rem] grid-cols-[minmax(13rem,0.9fr)_minmax(17rem,1fr)_minmax(20rem,1.25fr)] items-stretch gap-3">
 		{children}
 	</div>
