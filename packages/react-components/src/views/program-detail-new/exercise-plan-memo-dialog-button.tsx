@@ -11,11 +11,11 @@ import { TextArea } from "../../primitives/text-area";
 import { TextField } from "../../primitives/text-field";
 import type { ExercisePlan } from "./exercise-plan-list";
 
-export type ExercisePlanMemoPayload = { memo: string };
+export type ExercisePlanMetaPayload = { meta: string };
 
 type Props = {
 	exercisePlan: ExercisePlan;
-	onChange: (exercisePlanId: string, payload: ExercisePlanMemoPayload) => void;
+	onChange: (exercisePlanId: string, payload: ExercisePlanMetaPayload) => void;
 };
 
 export const ExercisePlanMemoDialogButton: FC<Props> = ({
@@ -26,7 +26,7 @@ export const ExercisePlanMemoDialogButton: FC<Props> = ({
 	const [draftMemo, setDraftMemo] = useState<string | undefined>(undefined);
 	const desktopViewport = useMediaQuery("(min-width: 768px)");
 	const title = `${exercisePlan.exercise.name}のメモを編集`;
-	const memo = draftMemo ?? exercisePlan.memo ?? "";
+	const memo = draftMemo ?? exercisePlan.meta ?? "";
 
 	const close = () => {
 		setDraftMemo(undefined);
@@ -65,7 +65,7 @@ export const ExercisePlanMemoDialogButton: FC<Props> = ({
 					event.preventDefault();
 					const nextMemo = memo.trim();
 					onChange(exercisePlan.id, {
-						memo: nextMemo,
+						meta: nextMemo,
 					});
 					close();
 				}}

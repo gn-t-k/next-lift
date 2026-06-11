@@ -26,7 +26,7 @@ export type RegisteredExercise = {
 
 export type ExercisePlan = {
 	id: string;
-	memo?: string | undefined;
+	meta: string | undefined;
 	exercise: Exercise;
 	setPlans: SetPlan[];
 };

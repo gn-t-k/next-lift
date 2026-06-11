@@ -11,7 +11,7 @@ import { PlanNodeButton } from "./plan-node-button";
 export type Day = {
 	id: string;
 	label: string;
-	memo?: string | undefined;
+	meta: string | undefined;
 	exercisePlans: ExercisePlan[];
 };
 

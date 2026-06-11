@@ -10,12 +10,12 @@ import { ProgramInfoForm } from "./program-info-form";
 
 export type ProgramInfoPayload = {
 	name: string;
-	meta?: string | undefined;
+	meta: string | undefined;
 };
 
 type Props = {
 	name: string;
-	meta?: string | undefined;
+	meta: string | undefined;
 	onChange: (payload: ProgramInfoPayload) => void;
 };
 

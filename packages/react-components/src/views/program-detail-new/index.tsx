@@ -36,7 +36,7 @@ import { useProgramPlanSelection } from "./use-program-plan-selection";
 
 type ProgramDetailNewDataProps = {
 	name: string;
-	meta?: string | undefined;
+	meta: string | undefined;
 	days: Day[];
 	registeredExercises: RegisteredExercise[];
 	initialState?: UseProgramPlanSelectionState | undefined;

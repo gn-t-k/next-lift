@@ -135,11 +135,11 @@ const FULL_DAYS: Day[] = [
 	{
 		id: "d1",
 		label: "Day 1: 上半身プッシュ",
-		memo: "押す種目をまとめる日。肩の違和感がある日は補助種目を控えめにする。",
+		meta: "押す種目をまとめる日。肩の違和感がある日は補助種目を控えめにする。",
 		exercisePlans: [
 			{
 				id: "ep-d1-bench",
-				memo: "メインセット後もフォームを崩さない。",
+				meta: "メインセット後もフォームを崩さない。",
 				exercise: benchPress,
 				setPlans: [
 					{
@@ -164,6 +164,7 @@ const FULL_DAYS: Day[] = [
 			},
 			{
 				id: "ep-d1-incline",
+				meta: undefined,
 				exercise: inclineDumbbell,
 				setPlans: [
 					{
@@ -179,11 +180,11 @@ const FULL_DAYS: Day[] = [
 	{
 		id: "d2",
 		label: "Day 2: 下半身",
-		memo: "スクワットを優先する。",
+		meta: "スクワットを優先する。",
 		exercisePlans: [
 			{
 				id: "ep-d2-squat",
-				memo: "腰の張りがある日は重量を控えめにする。",
+				meta: "腰の張りがある日は重量を控えめにする。",
 				exercise: squat,
 				setPlans: [
 					{
@@ -199,6 +200,7 @@ const FULL_DAYS: Day[] = [
 	{
 		id: "d3",
 		label: "Day 3: 上半身プル",
+		meta: undefined,
 		exercisePlans: [],
 	},
 ];
@@ -207,7 +209,7 @@ const DAY_WITHOUT_EXERCISE_PLANS: Day[] = [
 	{
 		id: "d-empty",
 		label: "Day 1: まだ種目計画がない日",
-		memo: "この状態では種目計画の追加と、セット計画側の親未選択表示を確認する。",
+		meta: "この状態では種目計画の追加と、セット計画側の親未選択表示を確認する。",
 		exercisePlans: [],
 	},
 ];
@@ -216,11 +218,11 @@ const EXERCISE_WITHOUT_SET_PLANS: Day[] = [
 	{
 		id: "d-no-sets",
 		label: "Day 1: セット未設定",
-		memo: "種目計画はあるが、セット計画はまだない。",
+		meta: "種目計画はあるが、セット計画はまだない。",
 		exercisePlans: [
 			{
 				id: "ep-no-sets",
-				memo: "セット計画追加の初期状態を確認する。",
+				meta: "セット計画追加の初期状態を確認する。",
 				exercise: overheadPress,
 				setPlans: [],
 			},
@@ -232,7 +234,7 @@ const CREATE_EXERCISE_DAYS: Day[] = [
 	{
 		id: "d-create",
 		label: "Day 1: 種目を登録しながら作る",
-		memo: "候補がない状態から種目計画を追加する。",
+		meta: "候補がない状態から種目計画を追加する。",
 		exercisePlans: [],
 	},
 ];
@@ -242,11 +244,11 @@ const LONG_CONTENT_DAYS: Day[] = [
 		id: "d-long-1",
 		label:
 			"Day 1: とても長い名前の上半身プッシュと補助種目をまとめて確認する日",
-		memo: "このメモは長文の折り返しを確認するためのものです。画面幅が狭いときにもヘッダー、パンくず、ジャンプシート、カラムの高さが不自然に崩れないことを確認します。",
+		meta: "このメモは長文の折り返しを確認するためのものです。画面幅が狭いときにもヘッダー、パンくず、ジャンプシート、カラムの高さが不自然に崩れないことを確認します。",
 		exercisePlans: [
 			{
 				id: "ep-long",
-				memo: "テンポ、ポーズ、グリップ幅など補足が長くなるケースを想定しています。",
+				meta: "テンポ、ポーズ、グリップ幅など補足が長くなるケースを想定しています。",
 				exercise: longNameExercise,
 				setPlans: Array.from({ length: 9 }, (_, index) => ({
 					id: `sp-long-${index + 1}`,
@@ -260,10 +262,11 @@ const LONG_CONTENT_DAYS: Day[] = [
 	{
 		id: "d-long-2",
 		label: "Day 2: 長い名前の下半身トレーニング",
-		memo: "複数 Day がある状態でジャンプシートの見え方を確認する。",
+		meta: "複数 Day がある状態でジャンプシートの見え方を確認する。",
 		exercisePlans: [
 			{
 				id: "ep-long-squat",
+				meta: undefined,
 				exercise: squat,
 				setPlans: [],
 			},
@@ -355,7 +358,7 @@ export const WideFullProgram: Story = {
 		await waitFor(() => {
 			expect(args.onChangeDayInfo).toHaveBeenCalledWith("d1", {
 				label: "Day 1: Push",
-				memo: "押す種目をまとめる日。肩の違和感がある日は補助種目を控えめにする。",
+				meta: "押す種目をまとめる日。肩の違和感がある日は補助種目を控えめにする。",
 			});
 		});
 
@@ -367,7 +370,7 @@ export const WideFullProgram: Story = {
 		await waitFor(() => {
 			expect(args.onChangeExercisePlanInfo).toHaveBeenCalledWith(
 				"ep-d1-bench",
-				{ memo: "胸で止めてから押す。" },
+				{ meta: "胸で止めてから押す。" },
 			);
 		});
 
@@ -847,6 +850,7 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 			{
 				id,
 				label: `Day ${prev.length + 1}`,
+				meta: undefined,
 				exercisePlans: [],
 			},
 		]);
@@ -865,7 +869,7 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 		setDays((prev) =>
 			prev.map((day) =>
 				day.id === dayId
-					? { ...day, label: payload.label, memo: payload.memo }
+					? { ...day, label: payload.label, meta: payload.meta }
 					: day,
 			),
 		);
@@ -908,7 +912,7 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 						exercisePlan.id === exercisePlanId
 							? {
 									...exercisePlan,
-									memo: payload.memo,
+									meta: payload.meta,
 								}
 							: exercisePlan,
 					),
@@ -931,6 +935,7 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 								...day.exercisePlans,
 								{
 									id: newExercisePlanId,
+									meta: undefined,
 									exercise: {
 										id: exercise.id,
 										name: exercise.name,

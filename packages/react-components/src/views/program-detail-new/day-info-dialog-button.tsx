@@ -11,7 +11,7 @@ import { TextArea } from "../../primitives/text-area";
 import { TextField, TextFieldInput } from "../../primitives/text-field";
 import type { Day } from "./day-list";
 
-export type DayInfoPayload = { label: string; memo: string };
+export type DayInfoPayload = { label: string; meta: string };
 
 type Props = {
 	day: Day;
@@ -25,7 +25,7 @@ export const DayInfoDialogButton: FC<Props> = ({ day, onChange }) => {
 	const desktopViewport = useMediaQuery("(min-width: 768px)");
 	const title = `${day.label}を編集`;
 	const label = draftLabel ?? day.label;
-	const memo = draftMemo ?? day.memo ?? "";
+	const memo = draftMemo ?? day.meta ?? "";
 	const nextLabel = label.trim();
 	const isSubmitDisabled = nextLabel === "";
 
@@ -69,7 +69,7 @@ export const DayInfoDialogButton: FC<Props> = ({ day, onChange }) => {
 					const nextMemo = memo.trim();
 					onChange(day.id, {
 						label: nextLabel,
-						memo: nextMemo,
+						meta: nextMemo,
 					});
 					close();
 				}}

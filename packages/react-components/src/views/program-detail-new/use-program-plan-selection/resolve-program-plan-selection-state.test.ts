@@ -9,9 +9,11 @@ const days: Day[] = [
 	{
 		id: "d1",
 		label: "Day 1",
+		meta: undefined,
 		exercisePlans: [
 			{
 				id: "ep-1",
+				meta: undefined,
 				exercise: {
 					id: "ex-1",
 					name: "ベンチプレス",
@@ -26,6 +28,7 @@ const days: Day[] = [
 	{
 		id: "d2",
 		label: "Day 2",
+		meta: undefined,
 		exercisePlans: [],
 	},
 ];

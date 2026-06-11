@@ -44,7 +44,7 @@ import type { UseProgramPlanSelectionState } from "./use-program-plan-selection"
 
 type Props = {
 	programName: string;
-	programMeta?: string | undefined;
+	programMeta: string | undefined;
 	days: Day[];
 	registeredExercises: RegisteredExercise[];
 	state: UseProgramPlanSelectionState;
@@ -404,9 +404,9 @@ const formatDrilldownMeta = (
 		case "day":
 			return programMeta;
 		case "exercise":
-			return state.day.memo;
+			return state.day.meta;
 		case "set":
-			return state.exercisePlan.memo;
+			return state.exercisePlan.meta;
 	}
 };
 

@@ -2,7 +2,7 @@
 
 import type { FC } from "react";
 import type { ExercisePlan } from "./exercise-plan-list";
-import type { ExercisePlanMemoPayload } from "./exercise-plan-memo-dialog-button";
+import type { ExercisePlanMetaPayload } from "./exercise-plan-memo-dialog-button";
 import { ExercisePlanMemoDialogButton } from "./exercise-plan-memo-dialog-button";
 import { HeaderActions } from "./header-actions";
 import { HeaderDeleteButton } from "./header-delete-button";
@@ -11,7 +11,7 @@ type Props = {
 	exercisePlan: ExercisePlan;
 	onChangeExercisePlanInfo: (
 		exercisePlanId: string,
-		payload: ExercisePlanMemoPayload,
+		payload: ExercisePlanMetaPayload,
 	) => void;
 	onDeleteExercisePlan: (exercisePlanId: string) => void;
 };

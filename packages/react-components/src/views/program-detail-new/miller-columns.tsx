@@ -40,7 +40,7 @@ import type { UseProgramPlanSelectionState } from "./use-program-plan-selection"
 
 type Props = {
 	programName: string;
-	programMeta?: string | undefined;
+	programMeta: string | undefined;
 	days: Day[];
 	registeredExercises: RegisteredExercise[];
 	state: UseProgramPlanSelectionState;
@@ -120,7 +120,7 @@ export const MillerColumns: FC<Props> = ({
 			<LabeledPlanColumn
 				label="Day"
 				title={selectedDay?.label}
-				meta={selectedDay?.memo}
+				meta={selectedDay?.meta}
 				actions={
 					selectedDay === undefined ? undefined : (
 						<DayHeaderActions
@@ -156,7 +156,7 @@ export const MillerColumns: FC<Props> = ({
 			<LabeledPlanColumn
 				label="種目計画"
 				title={selectedExercisePlan?.exercise.name}
-				meta={selectedExercisePlan?.memo}
+				meta={selectedExercisePlan?.meta}
 				actions={
 					selectedExercisePlan === undefined ? undefined : (
 						<ExercisePlanHeaderActions
