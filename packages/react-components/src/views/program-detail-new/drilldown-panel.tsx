@@ -3,7 +3,6 @@
 import {
 	ChevronLeftIcon,
 	ExclamationTriangleIcon,
-	PencilSquareIcon,
 } from "@heroicons/react/24/outline";
 import type { FC, ReactNode } from "react";
 import { cn } from "../../libs";
@@ -14,7 +13,7 @@ import { BreadcrumbJumpSheet } from "./breadcrumb-jump-sheet";
 import type { OnChangeDayInfo, OnDeleteDay } from "./day-header-actions";
 import { DayHeaderActions } from "./day-header-actions";
 import type { Day, OnAddDay, OnSelectDay } from "./day-list";
-import { DayList } from "./day-list";
+import { DayList, DayListLoading } from "./day-list";
 import { DrilldownTransition } from "./drilldown-transition";
 import type {
 	OnChangeExercisePlanInfo,
@@ -32,7 +31,10 @@ import type {
 import { ExercisePlanList } from "./exercise-plan-list";
 import { PlanColumn } from "./plan-column";
 import type { OnChangeProgramInfo } from "./program-info-dialog-button";
-import { ProgramInfoDialogButton } from "./program-info-dialog-button";
+import {
+	ProgramInfoDialogButton,
+	ProgramInfoDialogButtonLoading,
+} from "./program-info-dialog-button";
 import type {
 	OnAddSetPlan,
 	OnChangeSetPlan,
@@ -164,18 +166,17 @@ export const DrilldownPanel: FC<Props> = ({
 
 export const DrilldownPanelLoading: FC = () => (
 	<PlanColumn
-		title={<SkeletonText className="h-7 w-2/3" />}
-		meta={<SkeletonText className="h-3 w-full" />}
-		actions={<DisabledEditButton />}
+		title={
+			<span aria-hidden className={cn(skeletonClass, "block h-7 w-2/3")} />
+		}
+		meta={
+			<span aria-hidden className={cn(skeletonClass, "block h-3 w-full")} />
+		}
+		actions={<ProgramInfoDialogButtonLoading />}
 		className="min-h-[30rem]"
 		variant="plain"
 	>
-		<div className="flex min-h-0 flex-1 flex-col gap-2">
-			{SKELETON_DAY_KEYS.map((item) => (
-				<SkeletonRow key={item} />
-			))}
-			<div className={cn(skeletonClass, "h-12 w-full rounded-lg")} />
-		</div>
+		<DayListLoading />
 	</PlanColumn>
 );
 
@@ -412,33 +413,6 @@ const formatDrilldownMeta = (
 
 const formatCompactDayLabel = (label: string): string =>
 	label.replace(/^Day\s*\d+\s*:\s*/u, "");
-
-const SKELETON_DAY_KEYS = ["day-1", "day-2", "day-3"];
-
-const SkeletonRow: FC = () => (
-	<div className="flex h-12 items-center gap-2 rounded-lg border border-transparent px-3 py-2">
-		<div className="min-w-0 flex-1">
-			<div className={cn(skeletonClass, "h-5 w-3/4")} />
-			<div className={cn(skeletonClass, "mt-2 h-3 w-16")} />
-		</div>
-	</div>
-);
-
-const SkeletonText: FC<{ className: string }> = ({ className }) => (
-	<span aria-hidden className={cn(skeletonClass, "block", className)} />
-);
-
-const DisabledEditButton: FC = () => (
-	<Button
-		intent="plain"
-		size="sq-xs"
-		aria-label="プログラム情報を編集"
-		isDisabled
-		className="shrink-0"
-	>
-		<PencilSquareIcon data-slot="icon" className="size-4" aria-hidden />
-	</Button>
-);
 
 const ErrorTitle: FC = () => (
 	<span role="alert" className="block truncate font-medium text-fg text-xl">

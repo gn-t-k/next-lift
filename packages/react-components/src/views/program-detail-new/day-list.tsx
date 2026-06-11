@@ -4,8 +4,9 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import type { FC } from "react";
 import { cn } from "../../libs";
 import { Button } from "../../primitives/button";
+import { skeletonClass } from "../../primitives/skeleton";
 import type { ExercisePlan } from "./exercise-plan-list";
-import { PlanNodeButton } from "./plan-node-button";
+import { PlanNodeButton, PlanNodeButtonSkeleton } from "./plan-node-button";
 
 // Day ドメインの型正本（DayList がリスト UI のオーナー）
 export type Day = {
@@ -47,6 +48,21 @@ export const DayList: FC<Props> = ({ days, state, onSelectDay, onAddDay }) => (
 	</div>
 );
 
+const SKELETON_DAY_KEYS = ["day-1", "day-2", "day-3"] as const;
+
+export const DayListLoading: FC = () => (
+	<div className="flex min-h-0 flex-1 flex-col gap-2">
+		<ol className="flex flex-col gap-1">
+			{SKELETON_DAY_KEYS.map((key) => (
+				<li key={key}>
+					<PlanNodeButtonSkeleton />
+				</li>
+			))}
+		</ol>
+		<AddDayButtonSkeleton />
+	</div>
+);
+
 type AddDayButtonProps = {
 	onAddDay: () => void;
 };
@@ -64,4 +80,8 @@ const AddDayButton: FC<AddDayButtonProps> = ({ onAddDay }) => (
 		<PlusIcon data-slot="icon" className="size-4" aria-hidden />
 		Day を追加
 	</Button>
+);
+
+const AddDayButtonSkeleton: FC = () => (
+	<div aria-hidden className={cn(skeletonClass, "h-12 w-full rounded-lg")} />
 );

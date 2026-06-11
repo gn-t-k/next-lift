@@ -21,6 +21,20 @@ type Props = {
 
 export type OnChangeProgramInfo = Props["onChange"];
 
+const editTitle = "プログラム情報を編集";
+
+export const ProgramInfoDialogButtonLoading: FC = () => (
+	<Button
+		intent="plain"
+		size="sq-xs"
+		aria-label={editTitle}
+		isDisabled
+		className="shrink-0"
+	>
+		<PencilSquareIcon data-slot="icon" className="size-4" aria-hidden />
+	</Button>
+);
+
 export const ProgramInfoDialogButton: FC<Props> = ({
 	name,
 	meta,
@@ -28,16 +42,15 @@ export const ProgramInfoDialogButton: FC<Props> = ({
 }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const desktopViewport = useMediaQuery("(min-width: 768px)");
-	const title = "プログラム情報を編集";
 
 	return (
 		<ResponsiveDialog
-			title={title}
+			title={editTitle}
 			trigger={
 				<Button
 					intent="plain"
 					size="sq-xs"
-					aria-label={title}
+					aria-label={editTitle}
 					className="shrink-0"
 				>
 					<PencilSquareIcon data-slot="icon" className="size-4" aria-hidden />

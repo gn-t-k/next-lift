@@ -1,16 +1,11 @@
-import {
-	ChevronRightIcon,
-	ExclamationTriangleIcon,
-	PencilSquareIcon,
-} from "@heroicons/react/24/outline";
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import type { FC, PropsWithChildren, ReactNode } from "react";
 import { cn } from "../../libs";
-import { Button } from "../../primitives/button";
 import { skeletonClass } from "../../primitives/skeleton";
 import type { OnChangeDayInfo, OnDeleteDay } from "./day-header-actions";
 import { DayHeaderActions } from "./day-header-actions";
 import type { Day, OnAddDay, OnSelectDay } from "./day-list";
-import { DayList } from "./day-list";
+import { DayList, DayListLoading } from "./day-list";
 import type {
 	OnChangeExercisePlanInfo,
 	OnDeleteExercisePlan,
@@ -28,7 +23,10 @@ import { LabeledPlanColumn } from "./labeled-plan-column";
 import { MissingParentState } from "./missing-parent-state";
 import { PlanColumn } from "./plan-column";
 import type { OnChangeProgramInfo } from "./program-info-dialog-button";
-import { ProgramInfoDialogButton } from "./program-info-dialog-button";
+import {
+	ProgramInfoDialogButton,
+	ProgramInfoDialogButtonLoading,
+} from "./program-info-dialog-button";
 import type {
 	OnAddSetPlan,
 	OnChangeSetPlan,
@@ -197,38 +195,10 @@ export const MillerColumnsLoading: FC = () => (
 			meta={
 				<span aria-hidden className={cn(skeletonClass, "block h-3 w-56")} />
 			}
-			actions={
-				<Button
-					intent="plain"
-					size="sq-xs"
-					aria-label="プログラム情報を編集"
-					isDisabled
-					className="shrink-0"
-				>
-					<PencilSquareIcon data-slot="icon" className="size-4" aria-hidden />
-				</Button>
-			}
+			actions={<ProgramInfoDialogButtonLoading />}
 		>
 			<PlanColumn>
-				<div className="flex min-h-0 flex-1 flex-col gap-2">
-					{SKELETON_DAY_KEYS.map((item) => (
-						<div
-							key={item}
-							className="flex h-12 items-center gap-2 rounded-lg border border-transparent px-3 py-2"
-						>
-							<div className="min-w-0 flex-1">
-								<div className={cn(skeletonClass, "h-5 w-3/4")} />
-								<div className={cn(skeletonClass, "mt-2 h-3 w-16")} />
-							</div>
-							<ChevronRightIcon
-								data-slot="icon"
-								className="size-4 shrink-0 text-muted-fg/45"
-								aria-hidden
-							/>
-						</div>
-					))}
-					<div className={cn(skeletonClass, "mt-1 h-9 w-32 rounded-lg")} />
-				</div>
+				<DayListLoading />
 			</PlanColumn>
 		</LabeledPlanColumn>
 		<LabeledPlanColumn label="Day">
@@ -290,8 +260,6 @@ export const MillerColumnsError: FC<MillerColumnsErrorProps> = ({
 		</ThreeColumnLayout>
 	);
 };
-
-const SKELETON_DAY_KEYS = ["day-1", "day-2", "day-3"];
 
 const ThreeColumnLayout: FC<PropsWithChildren> = ({ children }) => (
 	<div className="grid h-[32rem] grid-cols-[minmax(13rem,0.9fr)_minmax(17rem,1fr)_minmax(20rem,1.25fr)] items-stretch gap-3">
