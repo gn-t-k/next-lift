@@ -1,8 +1,14 @@
 "use client";
 
-import { ChevronLeftIcon } from "@heroicons/react/24/outline";
+import {
+	ChevronLeftIcon,
+	ExclamationTriangleIcon,
+	PencilSquareIcon,
+} from "@heroicons/react/24/outline";
 import type { FC, ReactNode } from "react";
+import { cn } from "../../libs";
 import { Button } from "../../primitives/button";
+import { skeletonClass } from "../../primitives/skeleton";
 import { BreadcrumbJumpSheet } from "./breadcrumb-jump-sheet";
 import { DayHeaderActions } from "./day-header-actions";
 import type { Day } from "./day-list";
@@ -112,6 +118,45 @@ export const DrilldownPanel: FC<Props> = ({
 				/>
 			</div>
 		</div>
+	);
+};
+
+export const DrilldownPanelLoading: FC = () => (
+	<PlanColumn
+		title={<SkeletonText className="h-7 w-2/3" />}
+		meta={<SkeletonText className="h-3 w-full" />}
+		actions={<DisabledEditButton />}
+		className="min-h-[30rem]"
+		variant="plain"
+	>
+		<div className="flex min-h-0 flex-1 flex-col gap-2">
+			{SKELETON_DAY_KEYS.map((item) => (
+				<SkeletonRow key={item} />
+			))}
+			<div className={cn(skeletonClass, "h-12 w-full rounded-lg")} />
+		</div>
+	</PlanColumn>
+);
+
+type DrilldownPanelErrorProps = {
+	message?: ReactNode;
+};
+
+export const DrilldownPanelError: FC<DrilldownPanelErrorProps> = ({
+	message,
+}) => {
+	const description = message ?? "時間をおいて再読み込みしてください。";
+
+	return (
+		<PlanColumn
+			title={<ErrorTitle />}
+			meta={description}
+			actions={<WarningIcon />}
+			className="min-h-[30rem]"
+			variant="plain"
+		>
+			<IdleBody />
+		</PlanColumn>
 	);
 };
 
@@ -326,3 +371,45 @@ const formatDrilldownMeta = (
 
 const formatCompactDayLabel = (label: string): string =>
 	label.replace(/^Day\s*\d+\s*:\s*/u, "");
+
+const SKELETON_DAY_KEYS = ["day-1", "day-2", "day-3"];
+
+const SkeletonRow: FC = () => (
+	<div className="flex h-12 items-center gap-2 rounded-lg border border-transparent px-3 py-2">
+		<div className="min-w-0 flex-1">
+			<div className={cn(skeletonClass, "h-5 w-3/4")} />
+			<div className={cn(skeletonClass, "mt-2 h-3 w-16")} />
+		</div>
+	</div>
+);
+
+const SkeletonText: FC<{ className: string }> = ({ className }) => (
+	<span aria-hidden className={cn(skeletonClass, "block", className)} />
+);
+
+const DisabledEditButton: FC = () => (
+	<Button
+		intent="plain"
+		size="sq-xs"
+		aria-label="プログラム情報を編集"
+		isDisabled
+		className="shrink-0"
+	>
+		<PencilSquareIcon data-slot="icon" className="size-4" aria-hidden />
+	</Button>
+);
+
+const ErrorTitle: FC = () => (
+	<span role="alert" className="block truncate font-medium text-fg text-xl">
+		プログラムを取得できませんでした
+	</span>
+);
+
+const IdleBody: FC = () => <div aria-hidden className="min-h-24 flex-1" />;
+
+const WarningIcon: FC = () => (
+	<ExclamationTriangleIcon
+		aria-hidden
+		className="mt-0.5 size-5 shrink-0 text-warning"
+	/>
+);
