@@ -86,39 +86,63 @@ export const ProgramDetailNew: FC<Props> = ({
 			initialState,
 		});
 
-	const planProps = {
-		programName: name,
-		programMeta: meta,
-		days,
-		registeredExercises,
-		state,
-		onSelectDay: selectDay,
-		onSelectExercisePlan: selectExercisePlan,
-		onAddDay,
-		onDeleteDay,
-		onChangeDayInfo,
-		onChangeProgramInfo,
-		onAddExercisePlanWithSelectedExercise,
-		onAddExercisePlanWithNewExercise,
-		onChangeExercisePlanInfo,
-		onDeleteExercisePlan,
-		onChangeSetPlan,
-		onAddSetPlan,
-		onDeleteSetPlan,
-		renderWorkoutHistory,
-		renderExerciseProgress,
-	};
-
 	return (
 		<div className="@container flex flex-col gap-6">
 			<Heading className="sr-only">{name}</Heading>
 			<Section className="@container flex flex-col gap-3">
 				<Heading className="sr-only">プログラム内容</Heading>
 				<DesktopPlanViewport>
-					<MillerColumns {...planProps} />
+					<MillerColumns
+						programName={name}
+						programMeta={meta}
+						days={days}
+						registeredExercises={registeredExercises}
+						state={state}
+						onSelectDay={selectDay}
+						onSelectExercisePlan={selectExercisePlan}
+						onAddDay={onAddDay}
+						onDeleteDay={onDeleteDay}
+						onChangeDayInfo={onChangeDayInfo}
+						onChangeProgramInfo={onChangeProgramInfo}
+						onAddExercisePlanWithSelectedExercise={
+							onAddExercisePlanWithSelectedExercise
+						}
+						onAddExercisePlanWithNewExercise={onAddExercisePlanWithNewExercise}
+						onChangeExercisePlanInfo={onChangeExercisePlanInfo}
+						onDeleteExercisePlan={onDeleteExercisePlan}
+						onChangeSetPlan={onChangeSetPlan}
+						onAddSetPlan={onAddSetPlan}
+						onDeleteSetPlan={onDeleteSetPlan}
+						renderWorkoutHistory={renderWorkoutHistory}
+						renderExerciseProgress={renderExerciseProgress}
+					/>
 				</DesktopPlanViewport>
 				<MobilePlanViewport>
-					<DrilldownPanel {...planProps} onSelectRoot={selectRoot} />
+					<DrilldownPanel
+						programName={name}
+						programMeta={meta}
+						days={days}
+						registeredExercises={registeredExercises}
+						state={state}
+						onSelectDay={selectDay}
+						onSelectExercisePlan={selectExercisePlan}
+						onSelectRoot={selectRoot}
+						onAddDay={onAddDay}
+						onDeleteDay={onDeleteDay}
+						onChangeDayInfo={onChangeDayInfo}
+						onChangeProgramInfo={onChangeProgramInfo}
+						onAddExercisePlanWithSelectedExercise={
+							onAddExercisePlanWithSelectedExercise
+						}
+						onAddExercisePlanWithNewExercise={onAddExercisePlanWithNewExercise}
+						onChangeExercisePlanInfo={onChangeExercisePlanInfo}
+						onDeleteExercisePlan={onDeleteExercisePlan}
+						onChangeSetPlan={onChangeSetPlan}
+						onAddSetPlan={onAddSetPlan}
+						onDeleteSetPlan={onDeleteSetPlan}
+						renderWorkoutHistory={renderWorkoutHistory}
+						renderExerciseProgress={renderExerciseProgress}
+					/>
 				</MobilePlanViewport>
 			</Section>
 		</div>
