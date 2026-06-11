@@ -27,7 +27,7 @@ export const DrilldownPanel: FC<Props> = ({
 	programName,
 	programMeta,
 	days,
-	availableExercises,
+	registeredExercises,
 	selection,
 	selectedDay,
 	selectedExercisePlan,
@@ -91,7 +91,7 @@ export const DrilldownPanel: FC<Props> = ({
 					<DrilldownBody
 						state={drilldownState}
 						days={days}
-						availableExercises={availableExercises}
+						registeredExercises={registeredExercises}
 						selection={selection}
 						lastAddedExercisePlanId={lastAddedExercisePlanId}
 						onSelectDay={onSelectDay}
@@ -127,7 +127,7 @@ export const DrilldownPanel: FC<Props> = ({
 type DrilldownBodyProps = Pick<
 	Props,
 	| "days"
-	| "availableExercises"
+	| "registeredExercises"
 	| "selection"
 	| "lastAddedExercisePlanId"
 	| "onSelectDay"
@@ -147,7 +147,7 @@ type DrilldownBodyProps = Pick<
 const DrilldownBody: FC<DrilldownBodyProps> = ({
 	state,
 	days,
-	availableExercises,
+	registeredExercises,
 	selection,
 	lastAddedExercisePlanId,
 	onSelectDay,
@@ -175,7 +175,7 @@ const DrilldownBody: FC<DrilldownBodyProps> = ({
 			return (
 				<ExercisePlanList
 					day={state.day}
-					availableExercises={availableExercises}
+					registeredExercises={registeredExercises}
 					selectedExercisePlanId={selection.exercisePlanId}
 					onSelectExercisePlan={onSelectExercisePlan}
 					onAddExercisePlanWithSelectedExercise={

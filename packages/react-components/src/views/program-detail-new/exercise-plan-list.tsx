@@ -8,13 +8,13 @@ import type { ProgramDetailNew } from ".";
 import { PlanNodeButton } from "./plan-node-button";
 
 type Day = ComponentProps<typeof ProgramDetailNew>["days"][number];
-type AvailableExercise = ComponentProps<
+type RegisteredExercise = ComponentProps<
 	typeof ProgramDetailNew
->["availableExercises"][number];
+>["registeredExercises"][number];
 
 type Props = {
 	day: Day;
-	availableExercises: AvailableExercise[];
+	registeredExercises: RegisteredExercise[];
 	selectedExercisePlanId: string | undefined;
 	onSelectExercisePlan: (dayId: string, exercisePlanId: string) => void;
 	onAddExercisePlanWithSelectedExercise: (
@@ -27,7 +27,7 @@ type Props = {
 
 export const ExercisePlanList: FC<Props> = ({
 	day,
-	availableExercises,
+	registeredExercises,
 	selectedExercisePlanId,
 	onSelectExercisePlan,
 	onAddExercisePlanWithSelectedExercise,
@@ -63,7 +63,7 @@ export const ExercisePlanList: FC<Props> = ({
 			>
 				<ExerciseSelectorComboBox
 					key={selectorResetKey}
-					exercises={availableExercises}
+					exercises={registeredExercises}
 					label="種目計画を追加"
 					onSelect={(exerciseId) => {
 						onAddExercisePlanWithSelectedExercise(day.id, exerciseId);

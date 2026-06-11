@@ -22,8 +22,8 @@ type ProgramDetailNewStoryProps = ComponentProps<typeof ProgramDetailNew>;
 type Day = ProgramDetailNewStoryProps["days"][number];
 type ExercisePlan = Day["exercisePlans"][number];
 type Exercise = ExercisePlan["exercise"];
-type AvailableExercise =
-	ProgramDetailNewStoryProps["availableExercises"][number];
+type RegisteredExercise =
+	ProgramDetailNewStoryProps["registeredExercises"][number];
 type RenderExerciseProgress =
 	ProgramDetailNewStoryProps["renderExerciseProgress"];
 type RenderWorkoutHistory = ProgramDetailNewStoryProps["renderWorkoutHistory"];
@@ -124,7 +124,7 @@ const longNameExercise: Exercise = {
 	detailHref: "/exercises/ex-long-name",
 };
 
-const AVAILABLE_EXERCISES: AvailableExercise[] = [
+const REGISTERED_EXERCISES: RegisteredExercise[] = [
 	{ id: benchPress.id, name: benchPress.name },
 	{ id: inclineDumbbell.id, name: inclineDumbbell.name },
 	{ id: squat.id, name: squat.name },
@@ -278,7 +278,7 @@ const baseArgs = {
 	name: "5/3/1 BBB",
 	meta: "メインリフトは 5/3/1 で、補助は BBB（Boring But Big）。\nDeload week は 4 週ごとに挿入する。",
 	days: FULL_DAYS,
-	availableExercises: AVAILABLE_EXERCISES,
+	registeredExercises: REGISTERED_EXERCISES,
 	defaultSelectedDayId: "d1",
 	defaultSelectedExercisePlanId: undefined,
 	onAddDay: fn(),
@@ -581,7 +581,7 @@ export const WideCreateExerciseFromComboBox: Story = {
 	name: "広い画面: ComboBox から新規種目作成（追加操作）",
 	args: {
 		days: CREATE_EXERCISE_DAYS,
-		availableExercises: [],
+		registeredExercises: [],
 		defaultSelectedDayId: "d-create",
 		defaultSelectedExercisePlanId: undefined,
 	},
@@ -608,7 +608,7 @@ export const NarrowCreateExerciseFromComboBox: Story = {
 	decorators: narrowDecorator,
 	args: {
 		days: CREATE_EXERCISE_DAYS,
-		availableExercises: [],
+		registeredExercises: [],
 		defaultSelectedDayId: "d-create",
 		defaultSelectedExercisePlanId: undefined,
 	},
@@ -620,8 +620,8 @@ export const WideLongContent: Story = {
 		name: "5/3/1 BBB と補助種目を長期的に管理するためのとても長いプログラム名",
 		meta: "長い説明文の折り返し、複数行メモ、長い種目名、多数セット、外部スロットの表示をまとめて確認するための Story です。",
 		days: LONG_CONTENT_DAYS,
-		availableExercises: [
-			...AVAILABLE_EXERCISES,
+		registeredExercises: [
+			...REGISTERED_EXERCISES,
 			{ id: longNameExercise.id, name: longNameExercise.name },
 		],
 		defaultSelectedDayId: "d-long-1",
@@ -636,8 +636,8 @@ export const NarrowLongContent: Story = {
 		name: "5/3/1 BBB と補助種目を長期的に管理するためのとても長いプログラム名",
 		meta: "長い説明文の折り返し、複数行メモ、長い種目名、多数セット、外部スロットの表示をまとめて確認するための Story です。",
 		days: LONG_CONTENT_DAYS,
-		availableExercises: [
-			...AVAILABLE_EXERCISES,
+		registeredExercises: [
+			...REGISTERED_EXERCISES,
 			{ id: longNameExercise.id, name: longNameExercise.name },
 		],
 		defaultSelectedDayId: "d-long-1",
@@ -751,7 +751,7 @@ type FlowProgramDetailData = Pick<
 	| "name"
 	| "meta"
 	| "days"
-	| "availableExercises"
+	| "registeredExercises"
 	| "defaultSelectedDayId"
 	| "defaultSelectedExercisePlanId"
 >;
@@ -799,7 +799,7 @@ const fakeFetchProgramDetailSuccess = (
 					name: baseArgs.name,
 					meta: baseArgs.meta,
 					days: FULL_DAYS,
-					availableExercises: AVAILABLE_EXERCISES,
+					registeredExercises: REGISTERED_EXERCISES,
 					defaultSelectedDayId: "d1",
 					defaultSelectedExercisePlanId: "ep-d1-bench",
 				}),
@@ -821,7 +821,7 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 	name: initialName,
 	meta: initialMeta,
 	days: initialDays,
-	availableExercises: initialAvailableExercises,
+	registeredExercises: initialRegisteredExercises,
 	onAddDay,
 	onDeleteDay,
 	onChangeDayInfo,
@@ -838,8 +838,8 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 	const [name, setName] = useState(initialName);
 	const [meta, setMeta] = useState(initialMeta);
 	const [days, setDays] = useState(initialDays);
-	const [availableExercises, setAvailableExercises] = useState(
-		initialAvailableExercises,
+	const [registeredExercises, setRegisteredExercises] = useState(
+		initialRegisteredExercises,
 	);
 	const [lastAddedExercisePlanId, setLastAddedExercisePlanId] = useState<
 		string | undefined
@@ -889,7 +889,7 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 		dayId: string,
 		exerciseId: string,
 	) => {
-		const selected = availableExercises.find((item) => item.id === exerciseId);
+		const selected = registeredExercises.find((item) => item.id === exerciseId);
 		if (selected === undefined) return;
 		addExercisePlan(dayId, selected);
 		onAddExercisePlanWithSelectedExercise(dayId, exerciseId);
@@ -900,7 +900,7 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 		name: string,
 	) => {
 		const exercise = { id: `ex-new-${Date.now()}`, name };
-		setAvailableExercises((prev) => [...prev, exercise]);
+		setRegisteredExercises((prev) => [...prev, exercise]);
 		addExercisePlan(dayId, exercise);
 		onAddExercisePlanWithNewExercise(dayId, name);
 	};
@@ -1029,7 +1029,7 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 			name={name}
 			meta={meta}
 			days={days}
-			availableExercises={availableExercises}
+			registeredExercises={registeredExercises}
 			onAddDay={handleAddDay}
 			onDeleteDay={handleDeleteDay}
 			onChangeDayInfo={handleChangeDayInfo}

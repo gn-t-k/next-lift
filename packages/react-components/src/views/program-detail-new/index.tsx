@@ -22,7 +22,7 @@ type Props = {
 	name: string;
 	meta: string | null;
 	days: Day[];
-	availableExercises: AvailableExercise[];
+	registeredExercises: RegisteredExercise[];
 	defaultSelectedDayId?: string | undefined;
 	defaultSelectedExercisePlanId?: string | undefined;
 	onAddDay: () => void;
@@ -72,7 +72,7 @@ type Exercise = {
 	detailHref: string;
 };
 
-type AvailableExercise = {
+type RegisteredExercise = {
 	id: string;
 	name: string;
 };
@@ -89,7 +89,7 @@ export const ProgramDetailNew: FC<Props> = ({
 	name,
 	meta,
 	days,
-	availableExercises,
+	registeredExercises,
 	defaultSelectedDayId,
 	defaultSelectedExercisePlanId,
 	onAddDay,
@@ -129,7 +129,7 @@ export const ProgramDetailNew: FC<Props> = ({
 				programName={name}
 				programMeta={meta}
 				days={days}
-				availableExercises={availableExercises}
+				registeredExercises={registeredExercises}
 				selection={selection}
 				selectedDay={selectedDay}
 				selectedExercisePlan={selectedExercisePlan}

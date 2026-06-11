@@ -16,7 +16,7 @@ export const MillerColumns: FC<Props> = ({
 	programName,
 	programMeta,
 	days,
-	availableExercises,
+	registeredExercises,
 	selection,
 	selectedDay,
 	selectedExercisePlan,
@@ -81,7 +81,7 @@ export const MillerColumns: FC<Props> = ({
 				) : (
 					<ExercisePlanList
 						day={selectedDay}
-						availableExercises={availableExercises}
+						registeredExercises={registeredExercises}
 						selectedExercisePlanId={selection.exercisePlanId}
 						onSelectExercisePlan={onSelectExercisePlan}
 						onAddExercisePlanWithSelectedExercise={
