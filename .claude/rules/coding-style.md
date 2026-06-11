@@ -25,6 +25,8 @@
 - ファイル名と export する関数/コンポーネント名を揃える
   - 例: `router-adapter.tsx` → `export const RouterAdapter`
   - 例: `get-user-data.ts` → `export const getUserData`
+  - 例: `use-foo.ts` → `export const useFoo`
+- カスタム hook は単体なら 1 ファイル（`use-foo.ts`）。純関数・test など sibling が必要なときだけ `use-foo/index.ts` にディレクトリ化する
 
 ## ファイル内の構造（トップダウン）
 

@@ -7,30 +7,26 @@ import { cn } from "../../libs";
 import { Button } from "../../primitives/button";
 import { Drawer, DrawerContent, DrawerTitle } from "../../primitives/drawer";
 import type { Day } from "./day-list";
-import type { ExercisePlan } from "./exercise-plan-list";
-import type { NavigationTarget } from "./use-program-plan-selection";
+import type { UseProgramPlanSelectionState } from "./use-program-plan-selection";
 
 type Props = {
 	programName: string;
 	days: Day[];
-	selectedDay: Day | undefined;
-	selectedExercisePlan: ExercisePlan | undefined;
-	currentTarget: NavigationTarget | undefined;
+	state: UseProgramPlanSelectionState;
 	onSelectRoot: () => void;
-	onSelectTarget: (target: NavigationTarget) => void;
+	onSelectDay: (dayId: string) => void;
+	onSelectExercisePlan: (dayId: string, exercisePlanId: string) => void;
 };
 
 export type OnSelectRoot = Props["onSelectRoot"];
-export type OnSelectTarget = Props["onSelectTarget"];
 
 export const BreadcrumbJumpSheet: FC<Props> = ({
 	programName,
 	days,
-	selectedDay,
-	selectedExercisePlan,
-	currentTarget,
+	state,
 	onSelectRoot,
-	onSelectTarget,
+	onSelectDay,
+	onSelectExercisePlan,
 }) => {
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -45,8 +41,8 @@ export const BreadcrumbJumpSheet: FC<Props> = ({
 					<ListBulletIcon data-slot="icon" className="size-4" aria-hidden />
 					<BreadcrumbLabel
 						programName={programName}
-						selectedDay={selectedDay}
-						selectedExercisePlan={selectedExercisePlan}
+						days={days}
+						state={state}
 					/>
 				</Button>
 				<DrawerContent
@@ -59,13 +55,17 @@ export const BreadcrumbJumpSheet: FC<Props> = ({
 						<JumpTree
 							programName={programName}
 							days={days}
-							currentTarget={currentTarget}
+							state={state}
 							onSelectRoot={() => {
 								onSelectRoot();
 								setIsOpen(false);
 							}}
-							onSelectTarget={(target) => {
-								onSelectTarget(target);
+							onSelectDay={(dayId) => {
+								onSelectDay(dayId);
+								setIsOpen(false);
+							}}
+							onSelectExercisePlan={(dayId, exercisePlanId) => {
+								onSelectExercisePlan(dayId, exercisePlanId);
 								setIsOpen(false);
 							}}
 						/>
@@ -78,15 +78,26 @@ export const BreadcrumbJumpSheet: FC<Props> = ({
 
 type BreadcrumbLabelProps = {
 	programName: string;
-	selectedDay: Day | undefined;
-	selectedExercisePlan: ExercisePlan | undefined;
+	days: Day[];
+	state: UseProgramPlanSelectionState;
 };
 
 const BreadcrumbLabel: FC<BreadcrumbLabelProps> = ({
 	programName,
-	selectedDay,
-	selectedExercisePlan,
+	days,
+	state,
 }) => {
+	const selectedDay =
+		state.level === "root"
+			? undefined
+			: days.find((day) => day.id === state.dayId);
+	const selectedExercisePlan =
+		state.level === "exercisePlan" && selectedDay !== undefined
+			? selectedDay.exercisePlans.find(
+					(exercisePlan) => exercisePlan.id === state.exercisePlanId,
+				)
+			: undefined;
+
 	const segments = [
 		{ id: "root", label: programName },
 		selectedDay === undefined
@@ -120,17 +131,19 @@ const BreadcrumbLabel: FC<BreadcrumbLabelProps> = ({
 type JumpTreeProps = {
 	programName: string;
 	days: Day[];
-	currentTarget: NavigationTarget | undefined;
+	state: UseProgramPlanSelectionState;
 	onSelectRoot: () => void;
-	onSelectTarget: (target: NavigationTarget) => void;
+	onSelectDay: (dayId: string) => void;
+	onSelectExercisePlan: (dayId: string, exercisePlanId: string) => void;
 };
 
 const JumpTree: FC<JumpTreeProps> = ({
 	programName,
 	days,
-	currentTarget,
+	state,
 	onSelectRoot,
-	onSelectTarget,
+	onSelectDay,
+	onSelectExercisePlan,
 }) => {
 	return (
 		<ol className="min-h-0 overflow-y-auto">
@@ -138,51 +151,42 @@ const JumpTree: FC<JumpTreeProps> = ({
 				<JumpRootButton
 					programName={programName}
 					days={days}
-					isCurrent={currentTarget?.level === "root"}
+					isCurrent={state.level === "root"}
 					onSelectRoot={onSelectRoot}
 				/>
 			</li>
-			{days.map((day) => {
-				const dayTarget: NavigationTarget = {
-					level: "day",
-					dayId: day.id,
-				};
-				return (
-					<li key={day.id}>
-						<JumpTreeButton
-							label={day.label}
-							meta={`${day.exercisePlans.length} 種目計画`}
-							depth={1}
-							target={dayTarget}
-							currentTarget={currentTarget}
-							onSelectTarget={onSelectTarget}
-						/>
-						{day.exercisePlans.length > 0 ? (
-							<ol>
-								{day.exercisePlans.map((exercisePlan) => {
-									const exerciseTarget: NavigationTarget = {
-										level: "exercise",
-										dayId: day.id,
-										exercisePlanId: exercisePlan.id,
-									};
-									return (
-										<li key={exercisePlan.id}>
-											<JumpTreeButton
-												depth={2}
-												label={exercisePlan.exercise.name}
-												meta={`${exercisePlan.setPlans.length} セット計画`}
-												target={exerciseTarget}
-												currentTarget={currentTarget}
-												onSelectTarget={onSelectTarget}
-											/>
-										</li>
-									);
-								})}
-							</ol>
-						) : null}
-					</li>
-				);
-			})}
+			{days.map((day) => (
+				<li key={day.id}>
+					<JumpTreeButton
+						label={day.label}
+						meta={`${day.exercisePlans.length} 種目計画`}
+						depth={1}
+						isCurrent={state.level === "day" && state.dayId === day.id}
+						onPress={() => onSelectDay(day.id)}
+					/>
+					{day.exercisePlans.length > 0 ? (
+						<ol>
+							{day.exercisePlans.map((exercisePlan) => (
+								<li key={exercisePlan.id}>
+									<JumpTreeButton
+										depth={2}
+										label={exercisePlan.exercise.name}
+										meta={`${exercisePlan.setPlans.length} セット計画`}
+										isCurrent={
+											state.level === "exercisePlan" &&
+											state.dayId === day.id &&
+											state.exercisePlanId === exercisePlan.id
+										}
+										onPress={() =>
+											onSelectExercisePlan(day.id, exercisePlan.id)
+										}
+									/>
+								</li>
+							))}
+						</ol>
+					) : null}
+				</li>
+			))}
 		</ol>
 	);
 };
@@ -225,65 +229,39 @@ type JumpTreeButtonProps = {
 	depth: number;
 	label: string;
 	meta: string;
-	target: NavigationTarget;
-	currentTarget: NavigationTarget | undefined;
-	onSelectTarget: (target: NavigationTarget) => void;
+	isCurrent: boolean;
+	onPress: () => void;
 };
 
 const JumpTreeButton: FC<JumpTreeButtonProps> = ({
 	depth,
 	label,
 	meta,
-	target,
-	currentTarget,
-	onSelectTarget,
-}) => {
-	const isCurrent = isSameTarget(target, currentTarget);
-	return (
-		<Button
-			intent="plain"
-			size="sm"
-			onPress={() => onSelectTarget(target)}
-			className={cn(
-				"min-h-11 w-full justify-start border border-transparent py-2 text-left transition-colors duration-200",
-				isCurrent
-					? "bg-primary-subtle text-primary-subtle-fg hover:bg-primary-subtle"
-					: "text-fg hover:bg-secondary",
-			)}
-			style={{ paddingInlineStart: `${0.75 + depth * 1.25}rem` }}
-			{...(isCurrent ? currentLocationProps : {})}
-		>
-			<span className="min-w-0 flex-1">
-				<span className="block truncate font-medium">{label}</span>
-				<span className="mt-0.5 block truncate text-muted-fg text-xs">
-					{meta}
-				</span>
+	isCurrent,
+	onPress,
+}) => (
+	<Button
+		intent="plain"
+		size="sm"
+		onPress={onPress}
+		className={cn(
+			"min-h-11 w-full justify-start border border-transparent py-2 text-left transition-colors duration-200",
+			isCurrent
+				? "bg-primary-subtle text-primary-subtle-fg hover:bg-primary-subtle"
+				: "text-fg hover:bg-secondary",
+		)}
+		style={{ paddingInlineStart: `${0.75 + depth * 1.25}rem` }}
+		{...(isCurrent ? currentLocationProps : {})}
+	>
+		<span className="min-w-0 flex-1">
+			<span className="block truncate font-medium">{label}</span>
+			<span className="mt-0.5 block truncate text-muted-fg text-xs">
+				{meta}
 			</span>
-		</Button>
-	);
-};
+		</span>
+	</Button>
+);
 
 const currentLocationProps = {
 	"aria-current": "location",
 } satisfies { "aria-current": "location" };
-
-const isSameTarget = (
-	left: NavigationTarget,
-	right: NavigationTarget | undefined,
-): boolean => {
-	if (right === undefined || left.level !== right.level) {
-		return false;
-	}
-	switch (left.level) {
-		case "day":
-			return right.level === "day" && left.dayId === right.dayId;
-		case "exercise":
-			return (
-				right.level === "exercise" &&
-				left.dayId === right.dayId &&
-				left.exercisePlanId === right.exercisePlanId
-			);
-		case "root":
-			return right.level === "root";
-	}
-};

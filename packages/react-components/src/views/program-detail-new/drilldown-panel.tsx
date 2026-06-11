@@ -15,6 +15,7 @@ import type { ProgramPlanViewProps } from "./miller-columns";
 import { PlanColumn } from "./plan-column";
 import { ProgramInfoDialogButton } from "./program-info-dialog-button";
 import { SetPlanList } from "./set-plan-list";
+import type { UseProgramPlanSelectionState } from "./use-program-plan-selection";
 
 type Props = ProgramPlanViewProps;
 
@@ -28,14 +29,10 @@ export const DrilldownPanel: FC<Props> = ({
 	programMeta,
 	days,
 	registeredExercises,
-	selection,
-	selectedDay,
-	selectedExercisePlan,
-	currentTarget,
+	state,
 	onSelectDay,
 	onSelectExercisePlan,
 	onSelectRoot,
-	onSelectTarget,
 	onAddDay,
 	onDeleteDay,
 	onChangeDayInfo,
@@ -50,10 +47,7 @@ export const DrilldownPanel: FC<Props> = ({
 	renderWorkoutHistory,
 	renderExerciseProgress,
 }) => {
-	const drilldownState = resolveDrilldownState({
-		selectedDay,
-		selectedExercisePlan,
-	});
+	const drilldownState = resolveDrilldownState(days, state);
 	const title = formatDrilldownTitle(drilldownState, programName);
 	const meta = formatDrilldownMeta(drilldownState, programMeta);
 	const leading =
@@ -86,12 +80,12 @@ export const DrilldownPanel: FC<Props> = ({
 				className="min-h-[30rem]"
 				variant="plain"
 			>
-				<DrilldownTransition days={days} target={currentTarget}>
+				<DrilldownTransition days={days} state={state}>
 					<DrilldownBody
-						state={drilldownState}
+						drilldownState={drilldownState}
+						selectionState={state}
 						days={days}
 						registeredExercises={registeredExercises}
-						selection={selection}
 						onSelectDay={onSelectDay}
 						onSelectExercisePlan={onSelectExercisePlan}
 						onAddDay={onAddDay}
@@ -111,11 +105,10 @@ export const DrilldownPanel: FC<Props> = ({
 				<BreadcrumbJumpSheet
 					programName={programName}
 					days={days}
-					selectedDay={selectedDay}
-					selectedExercisePlan={selectedExercisePlan}
-					currentTarget={currentTarget}
+					state={state}
 					onSelectRoot={onSelectRoot}
-					onSelectTarget={onSelectTarget}
+					onSelectDay={onSelectDay}
+					onSelectExercisePlan={onSelectExercisePlan}
 				/>
 			</div>
 		</div>
@@ -126,7 +119,6 @@ type DrilldownBodyProps = Pick<
 	Props,
 	| "days"
 	| "registeredExercises"
-	| "selection"
 	| "onSelectDay"
 	| "onSelectExercisePlan"
 	| "onAddDay"
@@ -138,14 +130,15 @@ type DrilldownBodyProps = Pick<
 	| "renderWorkoutHistory"
 	| "renderExerciseProgress"
 > & {
-	state: DrilldownState;
+	drilldownState: DrilldownState;
+	selectionState: UseProgramPlanSelectionState;
 };
 
 const DrilldownBody: FC<DrilldownBodyProps> = ({
-	state,
+	drilldownState,
+	selectionState,
 	days,
 	registeredExercises,
-	selection,
 	onSelectDay,
 	onSelectExercisePlan,
 	onAddDay,
@@ -157,12 +150,12 @@ const DrilldownBody: FC<DrilldownBodyProps> = ({
 	renderWorkoutHistory,
 	renderExerciseProgress,
 }) => {
-	switch (state.level) {
+	switch (drilldownState.level) {
 		case "day":
 			return (
 				<DayList
 					days={days}
-					selectedDayId={selection.dayId}
+					state={selectionState}
 					onSelectDay={onSelectDay}
 					onAddDay={onAddDay}
 				/>
@@ -170,25 +163,25 @@ const DrilldownBody: FC<DrilldownBodyProps> = ({
 		case "exercise":
 			return (
 				<ExercisePlanList
-					day={state.day}
+					day={drilldownState.day}
 					registeredExercises={registeredExercises}
-					selectedExercisePlanId={selection.exercisePlanId}
+					state={selectionState}
 					onSelectExercisePlan={onSelectExercisePlan}
 					onAddExercisePlanWithSelectedExercise={
 						onAddExercisePlanWithSelectedExercise
 					}
 					onAddExercisePlanWithNewExercise={onAddExercisePlanWithNewExercise}
-					workoutHistory={renderWorkoutHistory(state.day)}
+					workoutHistory={renderWorkoutHistory(drilldownState.day)}
 				/>
 			);
 		case "set":
 			return (
 				<SetPlanList
-					exercisePlan={state.exercisePlan}
+					exercisePlan={drilldownState.exercisePlan}
 					onChangeSetPlan={onChangeSetPlan}
 					onAddSetPlan={onAddSetPlan}
 					onDeleteSetPlan={onDeleteSetPlan}
-					exerciseProgress={renderExerciseProgress(state.exercisePlan)}
+					exerciseProgress={renderExerciseProgress(drilldownState.exercisePlan)}
 				/>
 			);
 	}
@@ -270,21 +263,37 @@ const DrilldownBackButton: FC<DrilldownBackButtonProps> = ({
 	);
 };
 
-const resolveDrilldownState = ({
-	selectedDay,
-	selectedExercisePlan,
-}: Pick<Props, "selectedDay" | "selectedExercisePlan">): DrilldownState => {
-	if (selectedDay === undefined) {
-		return { level: "day" };
+const resolveDrilldownState = (
+	days: Day[],
+	selectionState: UseProgramPlanSelectionState,
+): DrilldownState => {
+	switch (selectionState.level) {
+		case "root":
+			return { level: "day" };
+		case "day": {
+			const day = days.find(
+				(candidate) => candidate.id === selectionState.dayId,
+			);
+			if (day === undefined) {
+				return { level: "day" };
+			}
+			return { level: "exercise", day };
+		}
+		case "exercisePlan": {
+			const day = days.find(
+				(candidate) => candidate.id === selectionState.dayId,
+			);
+			const exercisePlan = day?.exercisePlans.find(
+				(candidate) => candidate.id === selectionState.exercisePlanId,
+			);
+			if (day === undefined || exercisePlan === undefined) {
+				return day === undefined
+					? { level: "day" }
+					: { level: "exercise", day };
+			}
+			return { level: "set", day, exercisePlan };
+		}
 	}
-	if (selectedExercisePlan === undefined) {
-		return { level: "exercise", day: selectedDay };
-	}
-	return {
-		level: "set",
-		day: selectedDay,
-		exercisePlan: selectedExercisePlan,
-	};
 };
 
 const formatDrilldownTitle = (

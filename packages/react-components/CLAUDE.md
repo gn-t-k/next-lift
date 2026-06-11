@@ -113,6 +113,12 @@ src/
 
 エンティティ間の型依存（`Day` → `ExercisePlan` → `SetPlan`）は `import type` の循環でよい。leaf（`set-plan-list`）から root（`day-list`）方向に定義する。
 
+#### ビュー内カスタム hook
+
+単体なら `use-{名前}.ts`。純関数・test など sibling が必要なときだけ `use-{名前}/index.ts` にまとめる（ファイル命名は `.claude/rules/coding-style.md`）。ディレクトリ化した sibling は hook からのみ import する。
+
+UI には状態の正本だけ渡す。表示用の派生値は hook から広げず、各コンポーネントで render 時に計算する（`.claude/rules/react.md` の「派生値は計算で求める」）。
+
 #### 共有フォームとの接続
 
 旧ビューや共有部品（例: `ProgramInfoForm`）がまだ `string | null` を使う場合、**ビュー専用のラッパー**（例: `program-info-dialog-button.tsx`）で境界変換する。共有部品を一括変更するのは別タスク。

@@ -18,6 +18,7 @@ import type { ProgramPlanViewProps } from "./miller-columns";
 import { MillerColumns } from "./miller-columns";
 import { PlanColumn } from "./plan-column";
 import { ProgramPlanGrid } from "./program-plan-grid";
+import type { UseProgramPlanSelectionState } from "./use-program-plan-selection";
 import { useProgramPlanSelection } from "./use-program-plan-selection";
 
 type ProgramDetailNewDataProps = {
@@ -25,8 +26,7 @@ type ProgramDetailNewDataProps = {
 	meta?: string | undefined;
 	days: Day[];
 	registeredExercises: RegisteredExercise[];
-	defaultSelectedDayId?: string | undefined;
-	defaultSelectedExercisePlanId?: string | undefined;
+	initialState?: UseProgramPlanSelectionState | undefined;
 };
 
 type ProgramDetailNewCallbackProps = Pick<
@@ -53,8 +53,7 @@ export const ProgramDetailNew: FC<Props> = ({
 	meta,
 	days,
 	registeredExercises,
-	defaultSelectedDayId,
-	defaultSelectedExercisePlanId,
+	initialState,
 	onAddDay,
 	onDeleteDay,
 	onChangeDayInfo,
@@ -69,34 +68,21 @@ export const ProgramDetailNew: FC<Props> = ({
 	renderWorkoutHistory,
 	renderExerciseProgress,
 }) => {
-	const {
-		selection,
-		selectedDay,
-		selectedExercisePlan,
-		currentTarget,
-		selectDay,
-		selectExercisePlan,
-		selectRoot,
-		selectTarget,
-	} = useProgramPlanSelection({
-		days,
-		defaultSelectedDayId,
-		defaultSelectedExercisePlanId,
-	});
+	const [state, { selectDay, selectExercisePlan, selectRoot }] =
+		useProgramPlanSelection({
+			days,
+			initialState,
+		});
 
 	const planViewProps: ProgramPlanViewProps = {
 		programName: name,
 		programMeta: meta,
 		days,
 		registeredExercises,
-		selection,
-		selectedDay,
-		selectedExercisePlan,
-		currentTarget,
+		state,
 		onSelectDay: selectDay,
 		onSelectExercisePlan: selectExercisePlan,
 		onSelectRoot: selectRoot,
-		onSelectTarget: selectTarget,
 		onAddDay,
 		onDeleteDay,
 		onChangeDayInfo,

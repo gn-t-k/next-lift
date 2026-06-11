@@ -15,9 +15,11 @@ export type Day = {
 	exercisePlans: ExercisePlan[];
 };
 
+import type { UseProgramPlanSelectionState } from "./use-program-plan-selection";
+
 type Props = {
 	days: Day[];
-	selectedDayId: string | undefined;
+	state: UseProgramPlanSelectionState;
 	onSelectDay: (dayId: string) => void;
 	onAddDay: () => void;
 };
@@ -25,12 +27,7 @@ type Props = {
 export type OnSelectDay = Props["onSelectDay"];
 export type OnAddDay = Props["onAddDay"];
 
-export const DayList: FC<Props> = ({
-	days,
-	selectedDayId,
-	onSelectDay,
-	onAddDay,
-}) => (
+export const DayList: FC<Props> = ({ days, state, onSelectDay, onAddDay }) => (
 	<div className="flex min-h-0 flex-1 flex-col gap-2">
 		{days.length > 0 ? (
 			<ol className="flex flex-col gap-1">
@@ -39,7 +36,7 @@ export const DayList: FC<Props> = ({
 						<PlanNodeButton
 							label={day.label}
 							meta={`${day.exercisePlans.length} 種目計画`}
-							isSelected={selectedDayId === day.id}
+							isSelected={state.level !== "root" && state.dayId === day.id}
 							onSelect={() => onSelectDay(day.id)}
 						/>
 					</li>

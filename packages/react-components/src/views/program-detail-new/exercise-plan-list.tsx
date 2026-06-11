@@ -31,10 +31,12 @@ export type ExercisePlan = {
 	setPlans: SetPlan[];
 };
 
+import type { UseProgramPlanSelectionState } from "./use-program-plan-selection";
+
 type Props = {
 	day: Day;
 	registeredExercises: RegisteredExercise[];
-	selectedExercisePlanId: string | undefined;
+	state: UseProgramPlanSelectionState;
 	onSelectExercisePlan: (dayId: string, exercisePlanId: string) => void;
 	onAddExercisePlanWithSelectedExercise: (
 		dayId: string,
@@ -54,7 +56,7 @@ export type RenderWorkoutHistory = (day: Day) => ReactNode;
 export const ExercisePlanList: FC<Props> = ({
 	day,
 	registeredExercises,
-	selectedExercisePlanId,
+	state,
 	onSelectExercisePlan,
 	onAddExercisePlanWithSelectedExercise,
 	onAddExercisePlanWithNewExercise,
@@ -71,7 +73,10 @@ export const ExercisePlanList: FC<Props> = ({
 							<PlanNodeButton
 								label={exercisePlan.exercise.name}
 								meta={`${exercisePlan.setPlans.length} セット計画`}
-								isSelected={selectedExercisePlanId === exercisePlan.id}
+								isSelected={
+									state.level === "exercisePlan" &&
+									state.exercisePlanId === exercisePlan.id
+								}
 								onSelect={() => onSelectExercisePlan(day.id, exercisePlan.id)}
 							/>
 						</li>

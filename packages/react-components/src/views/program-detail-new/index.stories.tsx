@@ -276,8 +276,7 @@ const baseArgs = {
 	meta: "メインリフトは 5/3/1 で、補助は BBB（Boring But Big）。\nDeload week は 4 週ごとに挿入する。",
 	days: FULL_DAYS,
 	registeredExercises: REGISTERED_EXERCISES,
-	defaultSelectedDayId: "d1",
-	defaultSelectedExercisePlanId: undefined,
+	initialState: { level: "day", dayId: "d1" },
 	onAddDay: fn(),
 	onDeleteDay: fn(),
 	onChangeDayInfo: fn(),
@@ -325,8 +324,11 @@ type Story = StoryObj<typeof meta>;
 export const WideFullProgram: Story = {
 	name: "広い画面: すべて揃った状態（編集操作）",
 	args: {
-		defaultSelectedDayId: "d1",
-		defaultSelectedExercisePlanId: "ep-d1-bench",
+		initialState: {
+			level: "exercisePlan",
+			dayId: "d1",
+			exercisePlanId: "ep-d1-bench",
+		},
 	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -384,8 +386,11 @@ export const WideFullProgram: Story = {
 export const WideDeleteActions: Story = {
 	name: "広い画面: 削除操作",
 	args: {
-		defaultSelectedDayId: "d1",
-		defaultSelectedExercisePlanId: "ep-d1-bench",
+		initialState: {
+			level: "exercisePlan",
+			dayId: "d1",
+			exercisePlanId: "ep-d1-bench",
+		},
 	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -422,8 +427,11 @@ export const NarrowFullDrilldown: Story = {
 	name: "狭い画面: セット計画までドリルダウン（移動操作）",
 	decorators: narrowDecorator,
 	args: {
-		defaultSelectedDayId: "d1",
-		defaultSelectedExercisePlanId: "ep-d1-bench",
+		initialState: {
+			level: "exercisePlan",
+			dayId: "d1",
+			exercisePlanId: "ep-d1-bench",
+		},
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -442,19 +450,13 @@ export const NarrowFullDrilldown: Story = {
 
 export const WideRootWithoutSelection: Story = {
 	name: "広い画面: 未選択",
-	args: {
-		defaultSelectedDayId: undefined,
-		defaultSelectedExercisePlanId: undefined,
-	},
+	args: {},
 };
 
 export const NarrowRoot: Story = {
 	name: "狭い画面: ルート",
 	decorators: narrowDecorator,
-	args: {
-		defaultSelectedDayId: undefined,
-		defaultSelectedExercisePlanId: undefined,
-	},
+	args: {},
 };
 
 export const WideEmptyProgram: Story = {
@@ -462,8 +464,6 @@ export const WideEmptyProgram: Story = {
 	args: {
 		name: "新しいプログラム",
 		days: [],
-		defaultSelectedDayId: undefined,
-		defaultSelectedExercisePlanId: undefined,
 	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -481,8 +481,6 @@ export const NarrowEmptyProgram: Story = {
 	args: {
 		name: "新しいプログラム",
 		days: [],
-		defaultSelectedDayId: undefined,
-		defaultSelectedExercisePlanId: undefined,
 	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -498,8 +496,7 @@ export const WideSelectedDayWithoutExercisePlans: Story = {
 	name: "広い画面: 種目計画なしの Day（既存種目追加操作）",
 	args: {
 		days: DAY_WITHOUT_EXERCISE_PLANS,
-		defaultSelectedDayId: "d-empty",
-		defaultSelectedExercisePlanId: undefined,
+		initialState: { level: "day", dayId: "d-empty" },
 	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -523,8 +520,7 @@ export const NarrowSelectedDayWithoutExercisePlans: Story = {
 	decorators: narrowDecorator,
 	args: {
 		days: DAY_WITHOUT_EXERCISE_PLANS,
-		defaultSelectedDayId: "d-empty",
-		defaultSelectedExercisePlanId: undefined,
+		initialState: { level: "day", dayId: "d-empty" },
 	},
 };
 
@@ -532,8 +528,11 @@ export const WideSelectedExerciseWithoutSetPlans: Story = {
 	name: "広い画面: セット計画なしの種目計画（セット追加操作）",
 	args: {
 		days: EXERCISE_WITHOUT_SET_PLANS,
-		defaultSelectedDayId: "d-no-sets",
-		defaultSelectedExercisePlanId: "ep-no-sets",
+		initialState: {
+			level: "exercisePlan",
+			dayId: "d-no-sets",
+			exercisePlanId: "ep-no-sets",
+		},
 	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -567,8 +566,11 @@ export const NarrowSelectedExerciseWithoutSetPlans: Story = {
 	decorators: narrowDecorator,
 	args: {
 		days: EXERCISE_WITHOUT_SET_PLANS,
-		defaultSelectedDayId: "d-no-sets",
-		defaultSelectedExercisePlanId: "ep-no-sets",
+		initialState: {
+			level: "exercisePlan",
+			dayId: "d-no-sets",
+			exercisePlanId: "ep-no-sets",
+		},
 	},
 };
 
@@ -577,8 +579,7 @@ export const WideCreateExerciseFromComboBox: Story = {
 	args: {
 		days: CREATE_EXERCISE_DAYS,
 		registeredExercises: [],
-		defaultSelectedDayId: "d-create",
-		defaultSelectedExercisePlanId: undefined,
+		initialState: { level: "day", dayId: "d-create" },
 	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -604,8 +605,7 @@ export const NarrowCreateExerciseFromComboBox: Story = {
 	args: {
 		days: CREATE_EXERCISE_DAYS,
 		registeredExercises: [],
-		defaultSelectedDayId: "d-create",
-		defaultSelectedExercisePlanId: undefined,
+		initialState: { level: "day", dayId: "d-create" },
 	},
 };
 
@@ -619,8 +619,11 @@ export const WideLongContent: Story = {
 			...REGISTERED_EXERCISES,
 			{ id: longNameExercise.id, name: longNameExercise.name },
 		],
-		defaultSelectedDayId: "d-long-1",
-		defaultSelectedExercisePlanId: "ep-long",
+		initialState: {
+			level: "exercisePlan",
+			dayId: "d-long-1",
+			exercisePlanId: "ep-long",
+		},
 	},
 };
 
@@ -635,8 +638,11 @@ export const NarrowLongContent: Story = {
 			...REGISTERED_EXERCISES,
 			{ id: longNameExercise.id, name: longNameExercise.name },
 		],
-		defaultSelectedDayId: "d-long-1",
-		defaultSelectedExercisePlanId: "ep-long",
+		initialState: {
+			level: "exercisePlan",
+			dayId: "d-long-1",
+			exercisePlanId: "ep-long",
+		},
 	},
 };
 
@@ -743,12 +749,7 @@ type FlowOutcome = "success" | "error";
 
 type FlowProgramDetailData = Pick<
 	ProgramDetailNewStoryProps,
-	| "name"
-	| "meta"
-	| "days"
-	| "registeredExercises"
-	| "defaultSelectedDayId"
-	| "defaultSelectedExercisePlanId"
+	"name" | "meta" | "days" | "registeredExercises" | "initialState"
 >;
 
 const FlowProgramDetailDemo: FC<{
@@ -795,8 +796,11 @@ const fakeFetchProgramDetailSuccess = (
 					meta: baseArgs.meta,
 					days: FULL_DAYS,
 					registeredExercises: REGISTERED_EXERCISES,
-					defaultSelectedDayId: "d1",
-					defaultSelectedExercisePlanId: "ep-d1-bench",
+					initialState: {
+						level: "exercisePlan",
+						dayId: "d1",
+						exercisePlanId: "ep-d1-bench",
+					},
 				}),
 			delayMs,
 		);

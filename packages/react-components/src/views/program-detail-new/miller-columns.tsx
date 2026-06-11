@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { OnSelectRoot, OnSelectTarget } from "./breadcrumb-jump-sheet";
+import type { OnSelectRoot } from "./breadcrumb-jump-sheet";
 import type { OnChangeDayInfo, OnDeleteDay } from "./day-header-actions";
 import { DayHeaderActions } from "./day-header-actions";
 import type { Day, OnAddDay, OnSelectDay } from "./day-list";
@@ -10,7 +10,6 @@ import type {
 } from "./exercise-plan-header-actions";
 import { ExercisePlanHeaderActions } from "./exercise-plan-header-actions";
 import type {
-	ExercisePlan,
 	OnAddExercisePlanWithNewExercise,
 	OnAddExercisePlanWithSelectedExercise,
 	OnSelectExercisePlan,
@@ -30,24 +29,17 @@ import type {
 	RenderExerciseProgress,
 } from "./set-plan-list";
 import { SetPlanList } from "./set-plan-list";
-import type {
-	NavigationTarget,
-	ProgramPlanSelection,
-} from "./use-program-plan-selection";
+import type { UseProgramPlanSelectionState } from "./use-program-plan-selection";
 
 export type ProgramPlanViewProps = {
 	programName: string;
 	programMeta?: string | undefined;
 	days: Day[];
 	registeredExercises: RegisteredExercise[];
-	selection: ProgramPlanSelection;
-	selectedDay: Day | undefined;
-	selectedExercisePlan: ExercisePlan | undefined;
-	currentTarget: NavigationTarget | undefined;
+	state: UseProgramPlanSelectionState;
 	onSelectDay: OnSelectDay;
 	onSelectExercisePlan: OnSelectExercisePlan;
 	onSelectRoot: OnSelectRoot;
-	onSelectTarget: OnSelectTarget;
 	onAddDay: OnAddDay;
 	onDeleteDay: OnDeleteDay;
 	onChangeDayInfo: OnChangeDayInfo;
@@ -70,9 +62,7 @@ export const MillerColumns: FC<Props> = ({
 	programMeta,
 	days,
 	registeredExercises,
-	selection,
-	selectedDay,
-	selectedExercisePlan,
+	state,
 	onSelectDay,
 	onSelectExercisePlan,
 	onAddDay,
@@ -88,92 +78,107 @@ export const MillerColumns: FC<Props> = ({
 	onDeleteSetPlan,
 	renderWorkoutHistory,
 	renderExerciseProgress,
-}) => (
-	<>
-		<LabeledPlanColumn
-			label="プログラム"
-			title={programName}
-			meta={programMeta}
-			actions={
-				<ProgramInfoDialogButton
-					name={programName}
-					meta={programMeta}
-					onChange={onChangeProgramInfo}
-				/>
-			}
-		>
-			<PlanColumn>
-				<DayList
-					days={days}
-					selectedDayId={selection.dayId}
-					onSelectDay={onSelectDay}
-					onAddDay={onAddDay}
-				/>
-			</PlanColumn>
-		</LabeledPlanColumn>
-		<LabeledPlanColumn
-			label="Day"
-			title={selectedDay?.label}
-			meta={selectedDay?.memo}
-			actions={
-				selectedDay === undefined ? undefined : (
-					<DayHeaderActions
-						day={selectedDay}
-						onChangeDayInfo={onChangeDayInfo}
-						onDeleteDay={onDeleteDay}
-					/>
+}) => {
+	const selectedDay =
+		state.level === "root"
+			? undefined
+			: days.find((day) => day.id === state.dayId);
+	const selectedExercisePlan =
+		state.level === "exercisePlan" && selectedDay !== undefined
+			? selectedDay.exercisePlans.find(
+					(exercisePlan) => exercisePlan.id === state.exercisePlanId,
 				)
-			}
-		>
-			<PlanColumn>
-				{selectedDay === undefined ? (
-					<MissingParentState>
-						Day を選ぶと、種目計画を追加・確認できます。
-					</MissingParentState>
-				) : (
-					<ExercisePlanList
-						day={selectedDay}
-						registeredExercises={registeredExercises}
-						selectedExercisePlanId={selection.exercisePlanId}
-						onSelectExercisePlan={onSelectExercisePlan}
-						onAddExercisePlanWithSelectedExercise={
-							onAddExercisePlanWithSelectedExercise
-						}
-						onAddExercisePlanWithNewExercise={onAddExercisePlanWithNewExercise}
-						workoutHistory={renderWorkoutHistory(selectedDay)}
+			: undefined;
+
+	return (
+		<>
+			<LabeledPlanColumn
+				label="プログラム"
+				title={programName}
+				meta={programMeta}
+				actions={
+					<ProgramInfoDialogButton
+						name={programName}
+						meta={programMeta}
+						onChange={onChangeProgramInfo}
 					/>
-				)}
-			</PlanColumn>
-		</LabeledPlanColumn>
-		<LabeledPlanColumn
-			label="種目計画"
-			title={selectedExercisePlan?.exercise.name}
-			meta={selectedExercisePlan?.memo}
-			actions={
-				selectedExercisePlan === undefined ? undefined : (
-					<ExercisePlanHeaderActions
-						exercisePlan={selectedExercisePlan}
-						onChangeExercisePlanInfo={onChangeExercisePlanInfo}
-						onDeleteExercisePlan={onDeleteExercisePlan}
+				}
+			>
+				<PlanColumn>
+					<DayList
+						days={days}
+						state={state}
+						onSelectDay={onSelectDay}
+						onAddDay={onAddDay}
 					/>
-				)
-			}
-		>
-			<PlanColumn>
-				{selectedExercisePlan === undefined ? (
-					<MissingParentState>
-						種目計画を選ぶと、セット計画を追加・確認できます。
-					</MissingParentState>
-				) : (
-					<SetPlanList
-						exercisePlan={selectedExercisePlan}
-						onChangeSetPlan={onChangeSetPlan}
-						onAddSetPlan={onAddSetPlan}
-						onDeleteSetPlan={onDeleteSetPlan}
-						exerciseProgress={renderExerciseProgress(selectedExercisePlan)}
-					/>
-				)}
-			</PlanColumn>
-		</LabeledPlanColumn>
-	</>
-);
+				</PlanColumn>
+			</LabeledPlanColumn>
+			<LabeledPlanColumn
+				label="Day"
+				title={selectedDay?.label}
+				meta={selectedDay?.memo}
+				actions={
+					selectedDay === undefined ? undefined : (
+						<DayHeaderActions
+							day={selectedDay}
+							onChangeDayInfo={onChangeDayInfo}
+							onDeleteDay={onDeleteDay}
+						/>
+					)
+				}
+			>
+				<PlanColumn>
+					{selectedDay === undefined ? (
+						<MissingParentState>
+							Day を選ぶと、種目計画を追加・確認できます。
+						</MissingParentState>
+					) : (
+						<ExercisePlanList
+							day={selectedDay}
+							registeredExercises={registeredExercises}
+							state={state}
+							onSelectExercisePlan={onSelectExercisePlan}
+							onAddExercisePlanWithSelectedExercise={
+								onAddExercisePlanWithSelectedExercise
+							}
+							onAddExercisePlanWithNewExercise={
+								onAddExercisePlanWithNewExercise
+							}
+							workoutHistory={renderWorkoutHistory(selectedDay)}
+						/>
+					)}
+				</PlanColumn>
+			</LabeledPlanColumn>
+			<LabeledPlanColumn
+				label="種目計画"
+				title={selectedExercisePlan?.exercise.name}
+				meta={selectedExercisePlan?.memo}
+				actions={
+					selectedExercisePlan === undefined ? undefined : (
+						<ExercisePlanHeaderActions
+							exercisePlan={selectedExercisePlan}
+							onChangeExercisePlanInfo={onChangeExercisePlanInfo}
+							onDeleteExercisePlan={onDeleteExercisePlan}
+						/>
+					)
+				}
+			>
+				<PlanColumn>
+					{selectedExercisePlan === undefined ? (
+						<MissingParentState>
+							種目計画を選ぶと、セット計画を追加・確認できます。
+						</MissingParentState>
+					) : (
+						<SetPlanList
+							exercisePlan={selectedExercisePlan}
+							onChangeSetPlan={onChangeSetPlan}
+							onAddSetPlan={onAddSetPlan}
+							onDeleteSetPlan={onDeleteSetPlan}
+							exerciseProgress={renderExerciseProgress(selectedExercisePlan)}
+						/>
+					)}
+				</PlanColumn>
+			</LabeledPlanColumn>
+		</>
+	);
+};

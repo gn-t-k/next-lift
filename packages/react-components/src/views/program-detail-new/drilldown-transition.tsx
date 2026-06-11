@@ -4,23 +4,25 @@ import type { FC, ReactNode } from "react";
 import { useRef } from "react";
 import { cn } from "../../libs";
 import type { Day } from "./day-list";
-import type { NavigationTarget } from "./use-program-plan-selection";
+import type { UseProgramPlanSelectionState } from "./use-program-plan-selection";
 
 type Props = {
 	days: Day[];
-	target: NavigationTarget | undefined;
+	state: UseProgramPlanSelectionState;
 	children: ReactNode;
 };
 
-export const DrilldownTransition: FC<Props> = ({ days, target, children }) => {
-	const previousTargetRef = useRef<NavigationTarget | undefined>(target);
-	const previousTarget = previousTargetRef.current;
-	const animationClass = getTransitionClass(days, previousTarget, target);
-	previousTargetRef.current = target;
+export const DrilldownTransition: FC<Props> = ({ days, state, children }) => {
+	const previousStateRef = useRef<UseProgramPlanSelectionState | undefined>(
+		state,
+	);
+	const previousState = previousStateRef.current;
+	const animationClass = getTransitionClass(days, previousState, state);
+	previousStateRef.current = state;
 
 	return (
 		<div
-			key={formatTargetKey(target)}
+			key={formatStateKey(state)}
 			className={cn("duration-200 motion-safe:animate-in", animationClass)}
 		>
 			{children}
@@ -30,15 +32,15 @@ export const DrilldownTransition: FC<Props> = ({ days, target, children }) => {
 
 const getTransitionClass = (
 	days: Day[],
-	previousTarget: NavigationTarget | undefined,
-	nextTarget: NavigationTarget | undefined,
+	previousState: UseProgramPlanSelectionState | undefined,
+	nextState: UseProgramPlanSelectionState,
 ): string => {
-	if (previousTarget === undefined || nextTarget === undefined) {
+	if (previousState === undefined) {
 		return "fade-in";
 	}
 
-	const previousDepth = getTargetDepth(previousTarget);
-	const nextDepth = getTargetDepth(nextTarget);
+	const previousDepth = getStateDepth(previousState);
+	const nextDepth = getStateDepth(nextState);
 	if (nextDepth > previousDepth) {
 		return "fade-in slide-in-from-right-4";
 	}
@@ -47,7 +49,7 @@ const getTransitionClass = (
 	}
 
 	const siblingDelta =
-		getSiblingIndex(days, nextTarget) - getSiblingIndex(days, previousTarget);
+		getSiblingIndex(days, nextState) - getSiblingIndex(days, previousState);
 	if (siblingDelta > 0) {
 		return "fade-in slide-in-from-top-4";
 	}
@@ -57,44 +59,44 @@ const getTransitionClass = (
 	return "fade-in";
 };
 
-const getTargetDepth = (target: NavigationTarget): number => {
-	switch (target.level) {
+const getStateDepth = (state: UseProgramPlanSelectionState): number => {
+	switch (state.level) {
 		case "root":
 			return 0;
 		case "day":
 			return 1;
-		case "exercise":
+		case "exercisePlan":
 			return 2;
 	}
 };
 
-const getSiblingIndex = (days: Day[], target: NavigationTarget): number => {
-	switch (target.level) {
+const getSiblingIndex = (
+	days: Day[],
+	state: UseProgramPlanSelectionState,
+): number => {
+	switch (state.level) {
 		case "root":
 			return 0;
 		case "day":
-			return days.findIndex((day) => day.id === target.dayId);
-		case "exercise": {
-			const day = days.find((day) => day.id === target.dayId);
+			return days.findIndex((day) => day.id === state.dayId);
+		case "exercisePlan": {
+			const day = days.find((candidate) => candidate.id === state.dayId);
 			return (
 				day?.exercisePlans.findIndex(
-					(exercisePlan) => exercisePlan.id === target.exercisePlanId,
+					(exercisePlan) => exercisePlan.id === state.exercisePlanId,
 				) ?? -1
 			);
 		}
 	}
 };
 
-const formatTargetKey = (target: NavigationTarget | undefined): string => {
-	if (target === undefined) {
-		return "root";
-	}
-	switch (target.level) {
+const formatStateKey = (state: UseProgramPlanSelectionState): string => {
+	switch (state.level) {
 		case "root":
 			return "root";
 		case "day":
-			return `day:${target.dayId}`;
-		case "exercise":
-			return `exercise:${target.dayId}:${target.exercisePlanId}`;
+			return `day:${state.dayId}`;
+		case "exercisePlan":
+			return `exercisePlan:${state.dayId}:${state.exercisePlanId}`;
 	}
 };
