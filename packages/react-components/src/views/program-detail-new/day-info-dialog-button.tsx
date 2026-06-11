@@ -15,16 +15,13 @@ type Day = ComponentProps<typeof ProgramDetailNew>["days"][number];
 
 type Props = {
 	day: Day;
-	onChange: (
-		dayId: string,
-		payload: { label: string; memo: string | null },
-	) => void;
+	onChange: (dayId: string, payload: { label: string; memo: string }) => void;
 };
 
 export const DayInfoDialogButton: FC<Props> = ({ day, onChange }) => {
 	const [isOpen, setIsOpen] = useState(false);
-	const [draftLabel, setDraftLabel] = useState<string | null>(null);
-	const [draftMemo, setDraftMemo] = useState<string | null>(null);
+	const [draftLabel, setDraftLabel] = useState<string | undefined>(undefined);
+	const [draftMemo, setDraftMemo] = useState<string | undefined>(undefined);
 	const desktopViewport = useMediaQuery("(min-width: 768px)");
 	const title = `${day.label}を編集`;
 	const label = draftLabel ?? day.label;
@@ -33,8 +30,8 @@ export const DayInfoDialogButton: FC<Props> = ({ day, onChange }) => {
 	const isSubmitDisabled = nextLabel === "";
 
 	const close = () => {
-		setDraftLabel(null);
-		setDraftMemo(null);
+		setDraftLabel(undefined);
+		setDraftMemo(undefined);
 		setIsOpen(false);
 	};
 
@@ -72,7 +69,7 @@ export const DayInfoDialogButton: FC<Props> = ({ day, onChange }) => {
 					const nextMemo = memo.trim();
 					onChange(day.id, {
 						label: nextLabel,
-						memo: nextMemo === "" ? null : nextMemo,
+						memo: nextMemo,
 					});
 					close();
 				}}

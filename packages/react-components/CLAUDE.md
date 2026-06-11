@@ -76,6 +76,31 @@ src/
 
 `Main` / `Section` / `Heading` プリミティブは `primitives/` に配置し、すべてのビューが共通で使える。3つは HTML 要素（`<main>` / `<section>` / `<hN>`）と1対1対応するメンタルモデルで使う。
 
+### ビューと consumer の境界
+
+ビュー（`src/views/`）の props / コールバックは **永続化層（Drizzle の `null` 等）を知らない**。DB や ORM との型変換は consumer（`apps/web` 等）が担う。
+
+#### 欠如の表現は `undefined` に統一する
+
+| 状況 | ビュー層での表現 |
+| --- | --- |
+| テキストフィールドに値がない（メモ未入力・クリア後） | `undefined`、またはコールバックで `""` をそのまま渡す |
+| optional な props を省略 | `undefined`（`prop?: T`） |
+| 派生 state でまだ解決されていない（未選択の Day 等） | `undefined`（`.find` の戻り値など） |
+
+`null` はビュー層では使わない。`string | null` と `string | undefined` を併用すると解釈が分岐するだけなので、ビュー内は `undefined` に揃える。
+
+#### consumer の責務
+
+- **渡すとき**: Drizzle row の `metaInfo: string | null` などを、ビュー用の ViewModel（`meta?: string`）に変換する（例: `meta: row.metaInfo ?? undefined`）
+- **受け取るとき**: コールバックの `memo: ""` や `meta` 省略を、DB の `NULL` / 空文字など好みの保存形式に変換する
+
+ビュー側で `nextMemo === "" ? null : nextMemo` のように永続化向けの変換をしない。
+
+#### 共有フォームとの接続
+
+旧ビューや共有部品（例: `ProgramInfoForm`）がまだ `string | null` を使う場合、**ビュー専用のラッパー**（例: `program-info-dialog-button.tsx`）で境界変換する。共有部品を一括変更するのは別タスク。
+
 ### 配置基準
 
 コンポーネントは primitives と views のいずれかに置く。

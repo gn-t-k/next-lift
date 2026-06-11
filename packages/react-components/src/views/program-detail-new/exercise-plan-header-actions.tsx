@@ -14,7 +14,7 @@ type Props = {
 	exercisePlan: ExercisePlan;
 	onChangeExercisePlanInfo: (
 		exercisePlanId: string,
-		payload: { memo: string | null },
+		payload: { memo: string },
 	) => void;
 	onDeleteExercisePlan: (exercisePlanId: string) => void;
 };

@@ -164,7 +164,6 @@ const FULL_DAYS: Day[] = [
 			},
 			{
 				id: "ep-d1-incline",
-				memo: null,
 				exercise: inclineDumbbell,
 				setPlans: [
 					{
@@ -200,7 +199,6 @@ const FULL_DAYS: Day[] = [
 	{
 		id: "d3",
 		label: "Day 3: 上半身プル",
-		memo: null,
 		exercisePlans: [],
 	},
 ];
@@ -266,7 +264,6 @@ const LONG_CONTENT_DAYS: Day[] = [
 		exercisePlans: [
 			{
 				id: "ep-long-squat",
-				memo: null,
 				exercise: squat,
 				setPlans: [],
 			},
@@ -464,7 +461,6 @@ export const WideEmptyProgram: Story = {
 	name: "広い画面: Day なし（Day 追加操作）",
 	args: {
 		name: "新しいプログラム",
-		meta: null,
 		days: [],
 		defaultSelectedDayId: undefined,
 		defaultSelectedExercisePlanId: undefined,
@@ -484,7 +480,6 @@ export const NarrowEmptyProgram: Story = {
 	decorators: narrowDecorator,
 	args: {
 		name: "新しいプログラム",
-		meta: null,
 		days: [],
 		defaultSelectedDayId: undefined,
 		defaultSelectedExercisePlanId: undefined,
@@ -848,7 +843,6 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 			{
 				id,
 				label: `Day ${prev.length + 1}`,
-				memo: null,
 				exercisePlans: [],
 			},
 		]);
@@ -940,7 +934,6 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 										weightStep: 2.5,
 										detailHref: `/exercises/${exercise.id}`,
 									},
-									memo: null,
 									setPlans: [],
 								},
 							],

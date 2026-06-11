@@ -1,21 +1,17 @@
 "use client";
 
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
-import type { ComponentProps, FC } from "react";
+import type { FC } from "react";
 import { useState } from "react";
 import { useMediaQuery } from "../../libs";
 import { Button } from "../../primitives/button";
 import { ResponsiveDialog } from "../../primitives/responsive-dialog";
 import { ProgramInfoForm } from "../program-info-form";
 
-type ProgramInfoChange = Parameters<
-	ComponentProps<typeof ProgramInfoForm>["onSubmit"]
->[0];
-
 type Props = {
 	name: string;
-	meta: string | null;
-	onChange: (payload: ProgramInfoChange) => void;
+	meta?: string | undefined;
+	onChange: (payload: { name: string; meta?: string | undefined }) => void;
 };
 
 export const ProgramInfoDialogButton: FC<Props> = ({
@@ -47,10 +43,13 @@ export const ProgramInfoDialogButton: FC<Props> = ({
 		>
 			<ProgramInfoForm
 				name={name}
-				meta={meta}
+				meta={meta ?? null}
 				onCancel={() => setIsOpen(false)}
 				onSubmit={(payload) => {
-					onChange(payload);
+					onChange({
+						name: payload.name,
+						meta: payload.meta ?? undefined,
+					});
 					setIsOpen(false);
 				}}
 			/>

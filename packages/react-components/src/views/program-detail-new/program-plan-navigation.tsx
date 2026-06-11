@@ -15,7 +15,7 @@ type ExercisePlan = Day["exercisePlans"][number];
 
 type Props = {
 	programName: string;
-	programMeta: string | null;
+	programMeta?: string | undefined;
 	days: RootProps["days"];
 	registeredExercises: RootProps["registeredExercises"];
 	selection: ProgramPlanSelection;

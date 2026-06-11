@@ -17,7 +17,7 @@ type ExercisePlan = ComponentProps<
 
 type Props = {
 	exercisePlan: ExercisePlan;
-	onChange: (exercisePlanId: string, payload: { memo: string | null }) => void;
+	onChange: (exercisePlanId: string, payload: { memo: string }) => void;
 };
 
 export const ExercisePlanMemoDialogButton: FC<Props> = ({
@@ -25,13 +25,13 @@ export const ExercisePlanMemoDialogButton: FC<Props> = ({
 	onChange,
 }) => {
 	const [isOpen, setIsOpen] = useState(false);
-	const [draftMemo, setDraftMemo] = useState<string | null>(null);
+	const [draftMemo, setDraftMemo] = useState<string | undefined>(undefined);
 	const desktopViewport = useMediaQuery("(min-width: 768px)");
 	const title = `${exercisePlan.exercise.name}のメモを編集`;
 	const memo = draftMemo ?? exercisePlan.memo ?? "";
 
 	const close = () => {
-		setDraftMemo(null);
+		setDraftMemo(undefined);
 		setIsOpen(false);
 	};
 
@@ -67,7 +67,7 @@ export const ExercisePlanMemoDialogButton: FC<Props> = ({
 					event.preventDefault();
 					const nextMemo = memo.trim();
 					onChange(exercisePlan.id, {
-						memo: nextMemo === "" ? null : nextMemo,
+						memo: nextMemo,
 					});
 					close();
 				}}

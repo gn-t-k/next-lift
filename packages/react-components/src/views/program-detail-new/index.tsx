@@ -20,7 +20,7 @@ import { useProgramPlanSelection } from "./use-program-plan-selection";
 
 type Props = {
 	name: string;
-	meta: string | null;
+	meta?: string | undefined;
 	days: Day[];
 	registeredExercises: RegisteredExercise[];
 	defaultSelectedDayId?: string | undefined;
@@ -29,9 +29,12 @@ type Props = {
 	onDeleteDay: (dayId: string) => void;
 	onChangeDayInfo: (
 		dayId: string,
-		payload: { label: string; memo: string | null },
+		payload: { label: string; memo: string },
 	) => void;
-	onChangeProgramInfo: (payload: { name: string; meta: string | null }) => void;
+	onChangeProgramInfo: (payload: {
+		name: string;
+		meta?: string | undefined;
+	}) => void;
 	onAddExercisePlanWithSelectedExercise: (
 		dayId: string,
 		exerciseId: string,
@@ -39,7 +42,7 @@ type Props = {
 	onAddExercisePlanWithNewExercise: (dayId: string, name: string) => void;
 	onChangeExercisePlanInfo: (
 		exercisePlanId: string,
-		payload: { memo: string | null },
+		payload: { memo: string },
 	) => void;
 	onDeleteExercisePlan: (exercisePlanId: string) => void;
 	onChangeSetPlan: (setPlanId: string, payload: SetPlanDraft) => void;
@@ -52,13 +55,13 @@ type Props = {
 type Day = {
 	id: string;
 	label: string;
-	memo: string | null;
+	memo?: string | undefined;
 	exercisePlans: ExercisePlan[];
 };
 
 type ExercisePlan = {
 	id: string;
-	memo: string | null;
+	memo?: string | undefined;
 	exercise: Exercise;
 	setPlans: SetPlan[];
 };

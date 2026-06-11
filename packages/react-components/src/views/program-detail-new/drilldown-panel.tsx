@@ -303,7 +303,7 @@ const formatDrilldownTitle = (
 
 const formatDrilldownMeta = (
 	state: DrilldownState,
-	programMeta: string | null,
+	programMeta: string | undefined,
 ): ReactNode => {
 	switch (state.level) {
 		case "day":

@@ -12,7 +12,7 @@ type Props = {
 	day: Day;
 	onChangeDayInfo: (
 		dayId: string,
-		payload: { label: string; memo: string | null },
+		payload: { label: string; memo: string },
 	) => void;
 	onDeleteDay: (dayId: string) => void;
 };

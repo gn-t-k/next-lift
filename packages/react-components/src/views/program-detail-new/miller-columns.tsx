@@ -61,7 +61,7 @@ export const MillerColumns: FC<Props> = ({
 		<LabeledPlanColumn
 			label="Day"
 			title={selectedDay?.label}
-			meta={selectedDay?.memo ?? undefined}
+			meta={selectedDay?.memo}
 			actions={
 				selectedDay === undefined ? undefined : (
 					<DayHeaderActions
@@ -95,7 +95,7 @@ export const MillerColumns: FC<Props> = ({
 		<LabeledPlanColumn
 			label="種目計画"
 			title={selectedExercisePlan?.exercise.name}
-			meta={selectedExercisePlan?.memo ?? undefined}
+			meta={selectedExercisePlan?.memo}
 			actions={
 				selectedExercisePlan === undefined ? undefined : (
 					<ExercisePlanHeaderActions

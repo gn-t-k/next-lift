@@ -8,6 +8,10 @@ paths:
 
 `.tsx` ファイルを編集する際に適用するルール。
 
+## ビュー層の props は `undefined` で欠如を表す
+
+`packages/react-components/src/views/` の公開 props / コールバックでは `null` を使わない。永続化層（Drizzle の `null` 等）との変換は consumer の責務。詳細は `packages/react-components/CLAUDE.md` の「ビューと consumer の境界」を参照。
+
 ## 派生値は計算で求める
 
 - props 由来の値を `useState` + `useEffect` で同期するパターンは避ける
