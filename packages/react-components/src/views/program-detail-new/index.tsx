@@ -5,7 +5,7 @@ import {
 	ExclamationTriangleIcon,
 	PencilSquareIcon,
 } from "@heroicons/react/24/outline";
-import type { ComponentProps, FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 import { cn } from "../../libs";
 import { Button } from "../../primitives/button";
 import { Heading } from "../../primitives/heading";
@@ -14,9 +14,9 @@ import { LabeledPlanColumn } from "./labeled-plan-column";
 import { PlanColumn } from "./plan-column";
 import { ProgramPlanGrid } from "./program-plan-grid";
 import { ProgramPlanNavigation } from "./program-plan-navigation";
-import type { SetPlanFormDialog } from "./set-plan-form-dialog";
 import { useProgramPlanSelection } from "./use-program-plan-selection";
-import type { WeightUnit } from "./weight-unit";
+
+type WeightUnit = "kg" | "lbs";
 
 type Props = {
 	name: string;
@@ -79,13 +79,17 @@ type RegisteredExercise = {
 	name: string;
 };
 
-type SetPlanDraft = Parameters<
-	ComponentProps<typeof SetPlanFormDialog>["onSubmit"]
->[0];
+type SetPlan =
+	| { id: string; pattern: "weight-reps"; weight: number; reps: number }
+	| { id: string; pattern: "weight-rpe"; weight: number; rpe: number }
+	| { id: string; pattern: "reps-rpe"; reps: number; rpe: number };
 
-type SetPlan = SetPlanDraft & {
-	id: string;
-};
+// まだ永続化されていないため id を持たないセット計画
+type SetPlanDraft = DistributiveOmit<SetPlan, "id">;
+
+type DistributiveOmit<T, K extends keyof T> = T extends unknown
+	? Omit<T, K>
+	: never;
 
 export const ProgramDetailNew: FC<Props> = ({
 	name,

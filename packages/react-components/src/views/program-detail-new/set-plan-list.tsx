@@ -16,8 +16,8 @@ type ExercisePlan = ComponentProps<
 >["days"][number]["exercisePlans"][number];
 type SetPlan = ExercisePlan["setPlans"][number];
 type SetPlanDraft = Parameters<
-	ComponentProps<typeof SetPlanFormDialog>["onSubmit"]
->[0];
+	ComponentProps<typeof ProgramDetailNew>["onAddSetPlan"]
+>[1];
 
 type Props = {
 	exercisePlan: ExercisePlan;

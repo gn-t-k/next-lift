@@ -1,4 +1,17 @@
-import type { SetPlan, SetPlanDraft } from "../set-plan-types";
+import type { ComponentProps } from "react";
+import type { ProgramDetailNew } from "..";
+
+type ExercisePlan = ComponentProps<
+	typeof ProgramDetailNew
+>["days"][number]["exercisePlans"][number];
+
+export type SetPlan = ExercisePlan["setPlans"][number];
+
+export type SetPlanDraft = Parameters<
+	ComponentProps<typeof ProgramDetailNew>["onAddSetPlan"]
+>[1];
+
+export type WeightUnit = ExercisePlan["exercise"]["weightUnit"];
 
 // Tab間で値を共有するための型
 export type FormState = {
