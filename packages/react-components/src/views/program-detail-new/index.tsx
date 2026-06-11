@@ -8,17 +8,19 @@ import {
 import type { FC, ReactNode } from "react";
 import { cn } from "../../libs";
 import { Button } from "../../primitives/button";
-import { Heading } from "../../primitives/heading";
+import { Heading, Section } from "../../primitives/heading";
 import { skeletonClass } from "../../primitives/skeleton";
 import type { DayInfoPayload } from "./day-info-dialog-button";
 import type { Day } from "./day-list";
+import { DrilldownPanel } from "./drilldown-panel";
 import type { ExercisePlan, RegisteredExercise } from "./exercise-plan-list";
 import type { ExercisePlanMemoPayload } from "./exercise-plan-memo-dialog-button";
 import { LabeledPlanColumn } from "./labeled-plan-column";
+import type { ProgramPlanViewProps } from "./miller-columns";
+import { MillerColumns } from "./miller-columns";
 import { PlanColumn } from "./plan-column";
 import type { ProgramInfoPayload } from "./program-info-dialog-button";
 import { ProgramPlanGrid } from "./program-plan-grid";
-import { ProgramPlanNavigation } from "./program-plan-navigation";
 import type { SetPlanDraft } from "./set-plan-list";
 import { useProgramPlanSelection } from "./use-program-plan-selection";
 
@@ -86,38 +88,46 @@ export const ProgramDetailNew: FC<Props> = ({
 		defaultSelectedExercisePlanId,
 	});
 
+	const planViewProps: ProgramPlanViewProps = {
+		programName: name,
+		programMeta: meta,
+		days,
+		registeredExercises,
+		selection,
+		selectedDay,
+		selectedExercisePlan,
+		currentTarget,
+		onSelectDay: selectDay,
+		onSelectExercisePlan: selectExercisePlan,
+		onSelectRoot: selectRoot,
+		onSelectTarget: selectTarget,
+		onAddDay,
+		onDeleteDay,
+		onChangeDayInfo,
+		onChangeProgramInfo,
+		onAddExercisePlanWithSelectedExercise,
+		onAddExercisePlanWithNewExercise,
+		onChangeExercisePlanInfo,
+		onDeleteExercisePlan,
+		onChangeSetPlan,
+		onAddSetPlan,
+		onDeleteSetPlan,
+		renderWorkoutHistory,
+		renderExerciseProgress,
+	};
+
 	return (
 		<div className="@container flex flex-col gap-6">
 			<Heading className="sr-only">{name}</Heading>
-			<ProgramPlanNavigation
-				programName={name}
-				programMeta={meta}
-				days={days}
-				registeredExercises={registeredExercises}
-				selection={selection}
-				selectedDay={selectedDay}
-				selectedExercisePlan={selectedExercisePlan}
-				currentTarget={currentTarget}
-				onSelectDay={selectDay}
-				onSelectExercisePlan={selectExercisePlan}
-				onSelectRoot={selectRoot}
-				onSelectTarget={selectTarget}
-				onAddDay={onAddDay}
-				onDeleteDay={onDeleteDay}
-				onChangeDayInfo={onChangeDayInfo}
-				onChangeProgramInfo={onChangeProgramInfo}
-				onAddExercisePlanWithSelectedExercise={
-					onAddExercisePlanWithSelectedExercise
-				}
-				onAddExercisePlanWithNewExercise={onAddExercisePlanWithNewExercise}
-				onChangeExercisePlanInfo={onChangeExercisePlanInfo}
-				onDeleteExercisePlan={onDeleteExercisePlan}
-				onChangeSetPlan={onChangeSetPlan}
-				onAddSetPlan={onAddSetPlan}
-				onDeleteSetPlan={onDeleteSetPlan}
-				renderWorkoutHistory={renderWorkoutHistory}
-				renderExerciseProgress={renderExerciseProgress}
-			/>
+			<Section className="@container flex flex-col gap-3">
+				<Heading className="sr-only">プログラム内容</Heading>
+				<ProgramPlanGrid>
+					<MillerColumns {...planViewProps} />
+				</ProgramPlanGrid>
+				<div className="@min-[56rem]:hidden">
+					<DrilldownPanel {...planViewProps} />
+				</div>
+			</Section>
 		</div>
 	);
 };

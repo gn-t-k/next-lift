@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
-import type { ComponentProps, FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 import { Button } from "../../primitives/button";
 import { BreadcrumbJumpSheet } from "./breadcrumb-jump-sheet";
 import { DayHeaderActions } from "./day-header-actions";
@@ -11,12 +11,12 @@ import { DrilldownTransition } from "./drilldown-transition";
 import { ExercisePlanHeaderActions } from "./exercise-plan-header-actions";
 import type { ExercisePlan } from "./exercise-plan-list";
 import { ExercisePlanList } from "./exercise-plan-list";
+import type { ProgramPlanViewProps } from "./miller-columns";
 import { PlanColumn } from "./plan-column";
 import { ProgramInfoDialogButton } from "./program-info-dialog-button";
-import type { ProgramPlanNavigation } from "./program-plan-navigation";
 import { SetPlanList } from "./set-plan-list";
 
-type Props = ComponentProps<typeof ProgramPlanNavigation>;
+type Props = ProgramPlanViewProps;
 
 type DrilldownState =
 	| { level: "day" }

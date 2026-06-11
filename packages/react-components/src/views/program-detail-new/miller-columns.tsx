@@ -1,16 +1,59 @@
-import type { ComponentProps, FC } from "react";
+import type { FC, ReactNode } from "react";
 import { DayHeaderActions } from "./day-header-actions";
+import type { DayInfoPayload } from "./day-info-dialog-button";
+import type { Day } from "./day-list";
 import { DayList } from "./day-list";
 import { ExercisePlanHeaderActions } from "./exercise-plan-header-actions";
+import type { ExercisePlan, RegisteredExercise } from "./exercise-plan-list";
 import { ExercisePlanList } from "./exercise-plan-list";
+import type { ExercisePlanMemoPayload } from "./exercise-plan-memo-dialog-button";
 import { LabeledPlanColumn } from "./labeled-plan-column";
 import { MissingParentState } from "./missing-parent-state";
 import { PlanColumn } from "./plan-column";
+import type { ProgramInfoPayload } from "./program-info-dialog-button";
 import { ProgramInfoDialogButton } from "./program-info-dialog-button";
-import type { ProgramPlanNavigation } from "./program-plan-navigation";
+import type { SetPlanDraft } from "./set-plan-list";
 import { SetPlanList } from "./set-plan-list";
+import type {
+	NavigationTarget,
+	ProgramPlanSelection,
+} from "./use-program-plan-selection";
 
-type Props = ComponentProps<typeof ProgramPlanNavigation>;
+export type ProgramPlanViewProps = {
+	programName: string;
+	programMeta?: string | undefined;
+	days: Day[];
+	registeredExercises: RegisteredExercise[];
+	selection: ProgramPlanSelection;
+	selectedDay: Day | undefined;
+	selectedExercisePlan: ExercisePlan | undefined;
+	currentTarget: NavigationTarget | undefined;
+	onSelectDay: (dayId: string) => void;
+	onSelectExercisePlan: (dayId: string, exercisePlanId: string) => void;
+	onSelectRoot: () => void;
+	onSelectTarget: (target: NavigationTarget) => void;
+	onAddDay: () => void;
+	onDeleteDay: (dayId: string) => void;
+	onChangeDayInfo: (dayId: string, payload: DayInfoPayload) => void;
+	onChangeProgramInfo: (payload: ProgramInfoPayload) => void;
+	onAddExercisePlanWithSelectedExercise: (
+		dayId: string,
+		exerciseId: string,
+	) => void;
+	onAddExercisePlanWithNewExercise: (dayId: string, name: string) => void;
+	onChangeExercisePlanInfo: (
+		exercisePlanId: string,
+		payload: ExercisePlanMemoPayload,
+	) => void;
+	onDeleteExercisePlan: (exercisePlanId: string) => void;
+	onChangeSetPlan: (setPlanId: string, payload: SetPlanDraft) => void;
+	onAddSetPlan: (exercisePlanId: string, payload: SetPlanDraft) => void;
+	onDeleteSetPlan: (setPlanId: string) => void;
+	renderWorkoutHistory: (day: Day) => ReactNode;
+	renderExerciseProgress: (exercisePlan: ExercisePlan) => ReactNode;
+};
+
+type Props = ProgramPlanViewProps;
 
 export const MillerColumns: FC<Props> = ({
 	programName,
