@@ -14,7 +14,10 @@ import type { OnChangeDayInfo, OnDeleteDay } from "./day-header-actions";
 import { DayHeaderActions } from "./day-header-actions";
 import type { Day, OnAddDay, OnSelectDay } from "./day-list";
 import { DayList, DayListLoading } from "./day-list";
-import { DrilldownPlanPanel } from "./drilldown-plan-panel";
+import {
+	DrilldownPlanPanel,
+	DrilldownPlanPanelAlertTitle,
+} from "./drilldown-plan-panel";
 import { DrilldownTransition } from "./drilldown-transition";
 import type {
 	OnChangeExercisePlanInfo,
@@ -411,9 +414,9 @@ const formatCompactDayLabel = (label: string): string =>
 	label.replace(/^Day\s*\d+\s*:\s*/u, "");
 
 const ErrorTitle: FC = () => (
-	<span role="alert" className="block truncate font-medium text-fg text-xl">
+	<DrilldownPlanPanelAlertTitle>
 		プログラムを取得できませんでした
-	</span>
+	</DrilldownPlanPanelAlertTitle>
 );
 
 const IdleBody: FC = () => <div aria-hidden className="min-h-24 flex-1" />;

@@ -17,20 +17,10 @@ export const MillerPlanColumn: FC<Props> = ({
 }) => (
 	<div className="flex h-full min-h-0 flex-col gap-2">
 		<div className="flex h-20 items-start justify-between gap-3 px-1">
-			<div className="min-w-0">
-				<p className="font-medium text-muted-fg text-xs">{label}</p>
-				{typeof title === "string" ? (
-					<Heading className="mt-0.5 truncate font-medium text-base text-fg">
-						{title}
-					</Heading>
-				) : (
-					title
-				)}
-				{meta !== undefined ? (
-					<p className="mt-1 line-clamp-2 shrink-0 whitespace-pre-wrap text-muted-fg text-xs">
-						{meta}
-					</p>
-				) : null}
+			<div className="flex min-w-0 flex-col gap-1">
+				<ColumnLabel>{label}</ColumnLabel>
+				{typeof title === "string" ? <ColumnTitle>{title}</ColumnTitle> : title}
+				{meta !== undefined ? <ColumnMeta>{meta}</ColumnMeta> : null}
 			</div>
 			{actions !== undefined ? <div className="shrink-0">{actions}</div> : null}
 		</div>
@@ -40,4 +30,31 @@ export const MillerPlanColumn: FC<Props> = ({
 			</div>
 		</section>
 	</div>
+);
+
+/** Error 等、Heading 以外で title スロットに渡す pass-through 用 */
+export const MillerPlanColumnAlertTitle: FC<PropsWithChildren> = ({
+	children,
+}) => <ColumnAlertTitle>{children}</ColumnAlertTitle>;
+
+const ColumnLabel: FC<PropsWithChildren> = ({ children }) => (
+	<p className="font-medium text-muted-fg text-xs">{children}</p>
+);
+
+const ColumnTitle: FC<PropsWithChildren> = ({ children }) => (
+	<Heading className="truncate font-medium text-base text-fg">
+		{children}
+	</Heading>
+);
+
+const ColumnAlertTitle: FC<PropsWithChildren> = ({ children }) => (
+	<span role="alert" className="block truncate font-medium text-base text-fg">
+		{children}
+	</span>
+);
+
+const ColumnMeta: FC<PropsWithChildren> = ({ children }) => (
+	<p className="line-clamp-2 shrink-0 whitespace-pre-wrap text-muted-fg text-xs">
+		{children}
+	</p>
 );

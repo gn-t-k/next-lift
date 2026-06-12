@@ -21,17 +21,9 @@ export const DrilldownPlanPanel: FC<Props> = ({
 				{leading !== undefined ? (
 					<div className="shrink-0">{leading}</div>
 				) : null}
-				<div className="min-w-0 flex-1">
-					{typeof title === "string" ? (
-						<Heading className="font-medium @min-[56rem]:text-base text-fg text-xl">
-							{title}
-						</Heading>
-					) : (
-						title
-					)}
-					{meta !== undefined ? (
-						<p className="mt-1 truncate text-muted-fg text-xs">{meta}</p>
-					) : null}
+				<div className="flex min-w-0 flex-1 flex-col gap-1">
+					{typeof title === "string" ? <PanelTitle>{title}</PanelTitle> : title}
+					{meta !== undefined ? <PanelMeta>{meta}</PanelMeta> : null}
 				</div>
 			</div>
 			{actions !== undefined ? <div className="shrink-0">{actions}</div> : null}
@@ -40,4 +32,25 @@ export const DrilldownPlanPanel: FC<Props> = ({
 			{children}
 		</div>
 	</section>
+);
+
+/** Error 等、Heading 以外で title スロットに渡す pass-through 用 */
+export const DrilldownPlanPanelAlertTitle: FC<PropsWithChildren> = ({
+	children,
+}) => <PanelAlertTitle>{children}</PanelAlertTitle>;
+
+const PanelTitle: FC<PropsWithChildren> = ({ children }) => (
+	<Heading className="font-medium @min-[56rem]:text-base text-fg text-xl">
+		{children}
+	</Heading>
+);
+
+const PanelAlertTitle: FC<PropsWithChildren> = ({ children }) => (
+	<span role="alert" className="block truncate font-medium text-fg text-xl">
+		{children}
+	</span>
+);
+
+const PanelMeta: FC<PropsWithChildren> = ({ children }) => (
+	<p className="truncate text-muted-fg text-xs">{children}</p>
 );

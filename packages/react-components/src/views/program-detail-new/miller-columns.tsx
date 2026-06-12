@@ -19,7 +19,10 @@ import type {
 	RenderWorkoutHistory,
 } from "./exercise-plan-list";
 import { ExercisePlanList } from "./exercise-plan-list";
-import { MillerPlanColumn } from "./miller-plan-column";
+import {
+	MillerPlanColumn,
+	MillerPlanColumnAlertTitle,
+} from "./miller-plan-column";
 import { MissingParentState } from "./missing-parent-state";
 import type { OnChangeProgramInfo } from "./program-info-dialog-button";
 import {
@@ -223,12 +226,9 @@ export const MillerColumnsError: FC<MillerColumnsErrorProps> = ({
 			<MillerPlanColumn
 				label="プログラム"
 				title={
-					<span
-						role="alert"
-						className="mt-0.5 block truncate font-medium text-base text-fg"
-					>
+					<MillerPlanColumnAlertTitle>
 						プログラムを取得できませんでした
-					</span>
+					</MillerPlanColumnAlertTitle>
 				}
 				meta={description}
 				actions={
