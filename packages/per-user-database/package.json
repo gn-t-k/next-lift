@@ -27,7 +27,7 @@
 		"@next-lift/turso": "workspace:*",
 		"@next-lift/turso-drizzle-adapter": "workspace:*",
 		"@next-lift/utilities": "workspace:*",
-		"@praha/byethrow": "0.11.2",
+		"@praha/byethrow": "0.12.0",
 		"@praha/diva": "1.0.2",
 		"@praha/drizzle-factory": "1.4.2",
 		"@praha/error-factory": "1.4.1",

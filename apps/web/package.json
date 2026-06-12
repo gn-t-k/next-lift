@@ -20,7 +20,7 @@
 		"@next-lift/react-components": "workspace:*",
 		"@next-lift/tailwind-config": "workspace:*",
 		"@next-lift/utilities": "workspace:*",
-		"@praha/byethrow": "0.11.2",
+		"@praha/byethrow": "0.12.0",
 		"@praha/error-factory": "1.4.1",
 		"@sentry/nextjs": "10.56.0",
 		"next": "16.2.7",
