@@ -1,15 +1,14 @@
-import type { FC, ReactNode } from "react";
+import type { FC, PropsWithChildren, ReactNode } from "react";
 import { Heading } from "../../primitives/heading";
 
-type Props = {
+type Props = PropsWithChildren<{
 	label: string;
-	title?: ReactNode | undefined;
-	meta?: ReactNode | undefined;
-	actions?: ReactNode | undefined;
-	children: ReactNode;
-};
+	title: ReactNode;
+	meta: ReactNode;
+	actions: ReactNode;
+}>;
 
-export const LabeledPlanColumn: FC<Props> = ({
+export const MillerPlanColumn: FC<Props> = ({
 	label,
 	title,
 	meta,
@@ -29,11 +28,15 @@ export const LabeledPlanColumn: FC<Props> = ({
 			</div>
 			{actions !== undefined ? <div className="shrink-0">{actions}</div> : null}
 		</div>
-		<div className="min-h-0 flex-1">{children}</div>
+		<section className="flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-border bg-bg">
+			<div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-2">
+				{children}
+			</div>
+		</section>
 	</div>
 );
 
-const renderTitle = (title: ReactNode | undefined): ReactNode | undefined => {
+const renderTitle = (title: ReactNode): ReactNode => {
 	if (title === undefined) {
 		return undefined;
 	}

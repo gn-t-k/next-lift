@@ -19,9 +19,8 @@ import type {
 	RenderWorkoutHistory,
 } from "./exercise-plan-list";
 import { ExercisePlanList } from "./exercise-plan-list";
-import { LabeledPlanColumn } from "./labeled-plan-column";
+import { MillerPlanColumn } from "./miller-plan-column";
 import { MissingParentState } from "./missing-parent-state";
-import { PlanColumn } from "./plan-column";
 import type { OnChangeProgramInfo } from "./program-info-dialog-button";
 import {
 	ProgramInfoDialogButton,
@@ -94,7 +93,7 @@ export const MillerColumns: FC<Props> = ({
 
 	return (
 		<ThreeColumnLayout>
-			<LabeledPlanColumn
+			<MillerPlanColumn
 				label="プログラム"
 				title={programName}
 				meta={programMeta}
@@ -106,16 +105,14 @@ export const MillerColumns: FC<Props> = ({
 					/>
 				}
 			>
-				<PlanColumn>
-					<DayList
-						days={days}
-						state={state}
-						onSelectDay={onSelectDay}
-						onAddDay={onAddDay}
-					/>
-				</PlanColumn>
-			</LabeledPlanColumn>
-			<LabeledPlanColumn
+				<DayList
+					days={days}
+					state={state}
+					onSelectDay={onSelectDay}
+					onAddDay={onAddDay}
+				/>
+			</MillerPlanColumn>
+			<MillerPlanColumn
 				label="Day"
 				title={selectedDay?.label}
 				meta={selectedDay?.meta}
@@ -129,29 +126,25 @@ export const MillerColumns: FC<Props> = ({
 					)
 				}
 			>
-				<PlanColumn>
-					{selectedDay === undefined ? (
-						<MissingParentState>
-							Day を選ぶと、種目計画を追加・確認できます。
-						</MissingParentState>
-					) : (
-						<ExercisePlanList
-							day={selectedDay}
-							registeredExercises={registeredExercises}
-							state={state}
-							onSelectExercisePlan={onSelectExercisePlan}
-							onAddExercisePlanWithSelectedExercise={
-								onAddExercisePlanWithSelectedExercise
-							}
-							onAddExercisePlanWithNewExercise={
-								onAddExercisePlanWithNewExercise
-							}
-							workoutHistory={renderWorkoutHistory(selectedDay)}
-						/>
-					)}
-				</PlanColumn>
-			</LabeledPlanColumn>
-			<LabeledPlanColumn
+				{selectedDay === undefined ? (
+					<MissingParentState>
+						Day を選ぶと、種目計画を追加・確認できます。
+					</MissingParentState>
+				) : (
+					<ExercisePlanList
+						day={selectedDay}
+						registeredExercises={registeredExercises}
+						state={state}
+						onSelectExercisePlan={onSelectExercisePlan}
+						onAddExercisePlanWithSelectedExercise={
+							onAddExercisePlanWithSelectedExercise
+						}
+						onAddExercisePlanWithNewExercise={onAddExercisePlanWithNewExercise}
+						workoutHistory={renderWorkoutHistory(selectedDay)}
+					/>
+				)}
+			</MillerPlanColumn>
+			<MillerPlanColumn
 				label="種目計画"
 				title={selectedExercisePlan?.exercise.name}
 				meta={selectedExercisePlan?.meta}
@@ -165,29 +158,27 @@ export const MillerColumns: FC<Props> = ({
 					)
 				}
 			>
-				<PlanColumn>
-					{selectedExercisePlan === undefined ? (
-						<MissingParentState>
-							種目計画を選ぶと、セット計画を追加・確認できます。
-						</MissingParentState>
-					) : (
-						<SetPlanList
-							exercisePlan={selectedExercisePlan}
-							onChangeSetPlan={onChangeSetPlan}
-							onAddSetPlan={onAddSetPlan}
-							onDeleteSetPlan={onDeleteSetPlan}
-							exerciseProgress={renderExerciseProgress(selectedExercisePlan)}
-						/>
-					)}
-				</PlanColumn>
-			</LabeledPlanColumn>
+				{selectedExercisePlan === undefined ? (
+					<MissingParentState>
+						種目計画を選ぶと、セット計画を追加・確認できます。
+					</MissingParentState>
+				) : (
+					<SetPlanList
+						exercisePlan={selectedExercisePlan}
+						onChangeSetPlan={onChangeSetPlan}
+						onAddSetPlan={onAddSetPlan}
+						onDeleteSetPlan={onDeleteSetPlan}
+						exerciseProgress={renderExerciseProgress(selectedExercisePlan)}
+					/>
+				)}
+			</MillerPlanColumn>
 		</ThreeColumnLayout>
 	);
 };
 
 export const MillerColumnsLoading: FC = () => (
 	<ThreeColumnLayout>
-		<LabeledPlanColumn
+		<MillerPlanColumn
 			label="プログラム"
 			title={
 				<span aria-hidden className={cn(skeletonClass, "block h-5 w-28")} />
@@ -197,20 +188,24 @@ export const MillerColumnsLoading: FC = () => (
 			}
 			actions={<ProgramInfoDialogButtonLoading />}
 		>
-			<PlanColumn>
-				<DayListLoading />
-			</PlanColumn>
-		</LabeledPlanColumn>
-		<LabeledPlanColumn label="Day">
-			<PlanColumn>
-				<div aria-hidden className="min-h-24 flex-1" />
-			</PlanColumn>
-		</LabeledPlanColumn>
-		<LabeledPlanColumn label="種目計画">
-			<PlanColumn>
-				<div aria-hidden className="min-h-24 flex-1" />
-			</PlanColumn>
-		</LabeledPlanColumn>
+			<DayListLoading />
+		</MillerPlanColumn>
+		<MillerPlanColumn
+			label="Day"
+			title={undefined}
+			meta={undefined}
+			actions={undefined}
+		>
+			<div aria-hidden className="min-h-24 flex-1" />
+		</MillerPlanColumn>
+		<MillerPlanColumn
+			label="種目計画"
+			title={undefined}
+			meta={undefined}
+			actions={undefined}
+		>
+			<div aria-hidden className="min-h-24 flex-1" />
+		</MillerPlanColumn>
 	</ThreeColumnLayout>
 );
 
@@ -225,7 +220,7 @@ export const MillerColumnsError: FC<MillerColumnsErrorProps> = ({
 
 	return (
 		<ThreeColumnLayout>
-			<LabeledPlanColumn
+			<MillerPlanColumn
 				label="プログラム"
 				title={
 					<span
@@ -243,20 +238,24 @@ export const MillerColumnsError: FC<MillerColumnsErrorProps> = ({
 					/>
 				}
 			>
-				<PlanColumn>
-					<div aria-hidden className="min-h-24 flex-1" />
-				</PlanColumn>
-			</LabeledPlanColumn>
-			<LabeledPlanColumn label="Day">
-				<PlanColumn>
-					<div aria-hidden className="min-h-24 flex-1" />
-				</PlanColumn>
-			</LabeledPlanColumn>
-			<LabeledPlanColumn label="種目計画">
-				<PlanColumn>
-					<div aria-hidden className="min-h-24 flex-1" />
-				</PlanColumn>
-			</LabeledPlanColumn>
+				<div aria-hidden className="min-h-24 flex-1" />
+			</MillerPlanColumn>
+			<MillerPlanColumn
+				label="Day"
+				title={undefined}
+				meta={undefined}
+				actions={undefined}
+			>
+				<div aria-hidden className="min-h-24 flex-1" />
+			</MillerPlanColumn>
+			<MillerPlanColumn
+				label="種目計画"
+				title={undefined}
+				meta={undefined}
+				actions={undefined}
+			>
+				<div aria-hidden className="min-h-24 flex-1" />
+			</MillerPlanColumn>
 		</ThreeColumnLayout>
 	);
 };

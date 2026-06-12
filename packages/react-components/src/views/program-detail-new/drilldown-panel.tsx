@@ -14,6 +14,7 @@ import type { OnChangeDayInfo, OnDeleteDay } from "./day-header-actions";
 import { DayHeaderActions } from "./day-header-actions";
 import type { Day, OnAddDay, OnSelectDay } from "./day-list";
 import { DayList, DayListLoading } from "./day-list";
+import { DrilldownPlanPanel } from "./drilldown-plan-panel";
 import { DrilldownTransition } from "./drilldown-transition";
 import type {
 	OnChangeExercisePlanInfo,
@@ -29,7 +30,6 @@ import type {
 	RenderWorkoutHistory,
 } from "./exercise-plan-list";
 import { ExercisePlanList } from "./exercise-plan-list";
-import { PlanColumn } from "./plan-column";
 import type { OnChangeProgramInfo } from "./program-info-dialog-button";
 import {
 	ProgramInfoDialogButton,
@@ -110,7 +110,7 @@ export const DrilldownPanel: FC<Props> = ({
 
 	return (
 		<div className="relative flex flex-col gap-3 pb-16">
-			<PlanColumn
+			<DrilldownPlanPanel
 				title={title}
 				meta={meta}
 				leading={leading}
@@ -126,8 +126,6 @@ export const DrilldownPanel: FC<Props> = ({
 						onDeleteExercisePlan={onDeleteExercisePlan}
 					/>
 				}
-				className="min-h-[30rem]"
-				variant="plain"
 			>
 				<DrilldownTransition days={days} state={state}>
 					<DrilldownBody
@@ -149,7 +147,7 @@ export const DrilldownPanel: FC<Props> = ({
 						renderExerciseProgress={renderExerciseProgress}
 					/>
 				</DrilldownTransition>
-			</PlanColumn>
+			</DrilldownPlanPanel>
 			<div className="fixed inset-x-3 bottom-3 z-30">
 				<BreadcrumbJumpSheet
 					programName={programName}
@@ -165,19 +163,18 @@ export const DrilldownPanel: FC<Props> = ({
 };
 
 export const DrilldownPanelLoading: FC = () => (
-	<PlanColumn
+	<DrilldownPlanPanel
 		title={
 			<span aria-hidden className={cn(skeletonClass, "block h-7 w-2/3")} />
 		}
 		meta={
 			<span aria-hidden className={cn(skeletonClass, "block h-3 w-full")} />
 		}
+		leading={undefined}
 		actions={<ProgramInfoDialogButtonLoading />}
-		className="min-h-[30rem]"
-		variant="plain"
 	>
 		<DayListLoading />
-	</PlanColumn>
+	</DrilldownPlanPanel>
 );
 
 type DrilldownPanelErrorProps = {
@@ -190,15 +187,14 @@ export const DrilldownPanelError: FC<DrilldownPanelErrorProps> = ({
 	const description = message ?? "時間をおいて再読み込みしてください。";
 
 	return (
-		<PlanColumn
+		<DrilldownPlanPanel
 			title={<ErrorTitle />}
 			meta={description}
+			leading={undefined}
 			actions={<WarningIcon />}
-			className="min-h-[30rem]"
-			variant="plain"
 		>
 			<IdleBody />
-		</PlanColumn>
+		</DrilldownPlanPanel>
 	);
 };
 

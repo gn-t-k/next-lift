@@ -69,6 +69,12 @@ type Props = { renderExerciseProgress?: () => ReactNode };
 // ✅ ドメイン上 consumer が必ず提供するなら required
 type Props = { renderExerciseProgress: () => ReactNode };
 // 未実装期間は呼び出し側でプレースホルダを注入して吸収する
+
+// ❌ 常に存在する UI スロットなのに optional（キー省略が型上合法になる）
+type PanelProps = { caption?: string | undefined };
+
+// ✅ スロットは常にある。空なら undefined を渡す
+type PanelProps = { caption: string | undefined };
 ```
 
 **Why:** 既存の「状態は論理状態数で型を作る」と同根。理由なき optional は論理的に起こり得ない「未指定」状態を型で表現可能にしてしまい、不正な状態を型レベルで排除する原則に反する。exactOptionalPropertyTypes 環境では、不要な optional をやめれば `?: T | undefined` の冗長さも消える。
