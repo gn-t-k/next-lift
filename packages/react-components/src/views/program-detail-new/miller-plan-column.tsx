@@ -19,7 +19,13 @@ export const MillerPlanColumn: FC<Props> = ({
 		<div className="flex h-20 items-start justify-between gap-3 px-1">
 			<div className="min-w-0">
 				<p className="font-medium text-muted-fg text-xs">{label}</p>
-				{renderTitle(title)}
+				{typeof title === "string" ? (
+					<Heading className="mt-0.5 truncate font-medium text-base text-fg">
+						{title}
+					</Heading>
+				) : (
+					title
+				)}
 				{meta !== undefined ? (
 					<p className="mt-1 line-clamp-2 shrink-0 whitespace-pre-wrap text-muted-fg text-xs">
 						{meta}
@@ -35,17 +41,3 @@ export const MillerPlanColumn: FC<Props> = ({
 		</section>
 	</div>
 );
-
-const renderTitle = (title: ReactNode): ReactNode => {
-	if (title === undefined) {
-		return undefined;
-	}
-	if (typeof title !== "string") {
-		return title;
-	}
-	return (
-		<Heading className="mt-0.5 truncate font-medium text-base text-fg">
-			{title}
-		</Heading>
-	);
-};
