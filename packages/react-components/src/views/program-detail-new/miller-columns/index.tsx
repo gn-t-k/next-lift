@@ -1,21 +1,31 @@
-import type { FC, PropsWithChildren, ReactNode } from "react";
-import type { OnChangeDayInfo, OnDeleteDay } from "./day-header-actions";
-import { DayHeaderActions } from "./day-header-actions";
-import type { Day, OnAddDay, OnSelectDay } from "./day-list";
-import { DayList } from "./day-list";
+import type { FC, ReactNode } from "react";
+import type { OnChangeDayInfo, OnDeleteDay } from "../day-header-actions";
+import { DayHeaderActions } from "../day-header-actions";
+import type { Day, OnAddDay, OnSelectDay } from "../day-list";
+import { DayList } from "../day-list";
 import type {
 	OnChangeExercisePlanInfo,
 	OnDeleteExercisePlan,
-} from "./exercise-plan-header-actions";
-import { ExercisePlanHeaderActions } from "./exercise-plan-header-actions";
+} from "../exercise-plan-header-actions";
+import { ExercisePlanHeaderActions } from "../exercise-plan-header-actions";
 import type {
 	OnAddExercisePlanWithNewExercise,
 	OnAddExercisePlanWithSelectedExercise,
 	OnSelectExercisePlan,
 	RegisteredExercise,
 	RenderWorkoutHistory,
-} from "./exercise-plan-list";
-import { ExercisePlanList } from "./exercise-plan-list";
+} from "../exercise-plan-list";
+import { ExercisePlanList } from "../exercise-plan-list";
+import type { OnChangeProgramInfo } from "../program-info-dialog-button";
+import { ProgramInfoDialogButton } from "../program-info-dialog-button";
+import type {
+	OnAddSetPlan,
+	OnChangeSetPlan,
+	OnDeleteSetPlan,
+	RenderExerciseProgress,
+} from "../set-plan-list";
+import { SetPlanList } from "../set-plan-list";
+import type { UseProgramPlanSelectionState } from "../use-program-plan-selection";
 import {
 	MillerPlanColumn,
 	MillerPlanColumnEmpty,
@@ -23,16 +33,7 @@ import {
 	MillerPlanColumnLoading,
 } from "./miller-plan-column";
 import { MissingParentState } from "./missing-parent-state";
-import type { OnChangeProgramInfo } from "./program-info-dialog-button";
-import { ProgramInfoDialogButton } from "./program-info-dialog-button";
-import type {
-	OnAddSetPlan,
-	OnChangeSetPlan,
-	OnDeleteSetPlan,
-	RenderExerciseProgress,
-} from "./set-plan-list";
-import { SetPlanList } from "./set-plan-list";
-import type { UseProgramPlanSelectionState } from "./use-program-plan-selection";
+import { ThreeColumnLayout } from "./three-column-layout";
 
 type Props = {
 	programName: string;
@@ -195,10 +196,4 @@ export const MillerColumnsError: FC<MillerColumnsErrorProps> = ({
 		<MillerPlanColumnEmpty label="Day" />
 		<MillerPlanColumnEmpty label="種目計画" />
 	</ThreeColumnLayout>
-);
-
-const ThreeColumnLayout: FC<PropsWithChildren> = ({ children }) => (
-	<div className="grid h-[32rem] grid-cols-[minmax(13rem,0.9fr)_minmax(17rem,1fr)_minmax(20rem,1.25fr)] items-stretch gap-3">
-		{children}
-	</div>
 );

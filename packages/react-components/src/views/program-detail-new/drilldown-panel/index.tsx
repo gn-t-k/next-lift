@@ -2,24 +2,18 @@
 
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import type { FC, ReactNode } from "react";
-import { Button } from "../../primitives/button";
-import type { OnSelectRoot } from "./breadcrumb-jump-sheet";
-import { BreadcrumbJumpSheet } from "./breadcrumb-jump-sheet";
-import type { OnChangeDayInfo, OnDeleteDay } from "./day-header-actions";
-import { DayHeaderActions } from "./day-header-actions";
-import type { Day, OnAddDay, OnSelectDay } from "./day-list";
-import { DayList } from "./day-list";
-import {
-	DrilldownPlanPanel,
-	DrilldownPlanPanelError,
-	DrilldownPlanPanelLoading,
-} from "./drilldown-plan-panel";
-import { DrilldownTransition } from "./drilldown-transition";
+import { Button } from "../../../primitives/button";
+import type { OnSelectRoot } from "../breadcrumb-jump-sheet";
+import { BreadcrumbJumpSheet } from "../breadcrumb-jump-sheet";
+import type { OnChangeDayInfo, OnDeleteDay } from "../day-header-actions";
+import { DayHeaderActions } from "../day-header-actions";
+import type { Day, OnAddDay, OnSelectDay } from "../day-list";
+import { DayList } from "../day-list";
 import type {
 	OnChangeExercisePlanInfo,
 	OnDeleteExercisePlan,
-} from "./exercise-plan-header-actions";
-import { ExercisePlanHeaderActions } from "./exercise-plan-header-actions";
+} from "../exercise-plan-header-actions";
+import { ExercisePlanHeaderActions } from "../exercise-plan-header-actions";
 import type {
 	ExercisePlan,
 	OnAddExercisePlanWithNewExercise,
@@ -27,18 +21,24 @@ import type {
 	OnSelectExercisePlan,
 	RegisteredExercise,
 	RenderWorkoutHistory,
-} from "./exercise-plan-list";
-import { ExercisePlanList } from "./exercise-plan-list";
-import type { OnChangeProgramInfo } from "./program-info-dialog-button";
-import { ProgramInfoDialogButton } from "./program-info-dialog-button";
+} from "../exercise-plan-list";
+import { ExercisePlanList } from "../exercise-plan-list";
+import type { OnChangeProgramInfo } from "../program-info-dialog-button";
+import { ProgramInfoDialogButton } from "../program-info-dialog-button";
 import type {
 	OnAddSetPlan,
 	OnChangeSetPlan,
 	OnDeleteSetPlan,
 	RenderExerciseProgress,
-} from "./set-plan-list";
-import { SetPlanList } from "./set-plan-list";
-import type { UseProgramPlanSelectionState } from "./use-program-plan-selection";
+} from "../set-plan-list";
+import { SetPlanList } from "../set-plan-list";
+import type { UseProgramPlanSelectionState } from "../use-program-plan-selection";
+import {
+	DrilldownPlanPanel,
+	DrilldownPlanPanelError,
+	DrilldownPlanPanelLoading,
+} from "./drilldown-plan-panel";
+import { DrilldownTransition } from "./drilldown-transition";
 
 type Props = {
 	programName: string;

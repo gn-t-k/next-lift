@@ -2,9 +2,9 @@
 
 import type { FC, ReactNode } from "react";
 import { useRef } from "react";
-import { cn } from "../../libs";
-import type { Day } from "./day-list";
-import type { UseProgramPlanSelectionState } from "./use-program-plan-selection";
+import { cn } from "../../../libs";
+import type { Day } from "../day-list";
+import type { UseProgramPlanSelectionState } from "../use-program-plan-selection";
 
 type Props = {
 	days: Day[];

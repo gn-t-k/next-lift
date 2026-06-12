@@ -1,10 +1,10 @@
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import type { FC, PropsWithChildren, ReactNode } from "react";
-import { cn } from "../../libs";
-import { Heading } from "../../primitives/heading";
-import { skeletonClass } from "../../primitives/skeleton";
-import { DayListLoading } from "./day-list";
-import { ProgramInfoDialogButtonLoading } from "./program-info-dialog-button";
+import { cn } from "../../../libs";
+import { Heading } from "../../../primitives/heading";
+import { skeletonClass } from "../../../primitives/skeleton";
+import { DayListLoading } from "../day-list";
+import { ProgramInfoDialogButtonLoading } from "../program-info-dialog-button";
 
 type Props = PropsWithChildren<{
 	title: string | undefined;
