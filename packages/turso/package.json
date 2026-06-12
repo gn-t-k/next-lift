@@ -23,7 +23,7 @@
 	},
 	"dependencies": {
 		"@next-lift/env": "workspace:*",
-		"@praha/byethrow": "0.11.2",
+		"@praha/byethrow": "0.12.0",
 		"@praha/diva": "1.0.2",
 		"@praha/error-factory": "1.4.1",
 		"zod": "4.4.3"
