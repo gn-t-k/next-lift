@@ -1,22 +1,18 @@
 "use client";
 
-import {
-	ChevronLeftIcon,
-	ExclamationTriangleIcon,
-} from "@heroicons/react/24/outline";
+import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import type { FC, ReactNode } from "react";
-import { cn } from "../../libs";
 import { Button } from "../../primitives/button";
-import { skeletonClass } from "../../primitives/skeleton";
 import type { OnSelectRoot } from "./breadcrumb-jump-sheet";
 import { BreadcrumbJumpSheet } from "./breadcrumb-jump-sheet";
 import type { OnChangeDayInfo, OnDeleteDay } from "./day-header-actions";
 import { DayHeaderActions } from "./day-header-actions";
 import type { Day, OnAddDay, OnSelectDay } from "./day-list";
-import { DayList, DayListLoading } from "./day-list";
+import { DayList } from "./day-list";
 import {
 	DrilldownPlanPanel,
-	DrilldownPlanPanelAlertTitle,
+	DrilldownPlanPanelError,
+	DrilldownPlanPanelLoading,
 } from "./drilldown-plan-panel";
 import { DrilldownTransition } from "./drilldown-transition";
 import type {
@@ -34,10 +30,7 @@ import type {
 } from "./exercise-plan-list";
 import { ExercisePlanList } from "./exercise-plan-list";
 import type { OnChangeProgramInfo } from "./program-info-dialog-button";
-import {
-	ProgramInfoDialogButton,
-	ProgramInfoDialogButtonLoading,
-} from "./program-info-dialog-button";
+import { ProgramInfoDialogButton } from "./program-info-dialog-button";
 import type {
 	OnAddSetPlan,
 	OnChangeSetPlan,
@@ -165,20 +158,7 @@ export const DrilldownPanel: FC<Props> = ({
 	);
 };
 
-export const DrilldownPanelLoading: FC = () => (
-	<DrilldownPlanPanel
-		title={
-			<span aria-hidden className={cn(skeletonClass, "block h-7 w-2/3")} />
-		}
-		meta={
-			<span aria-hidden className={cn(skeletonClass, "block h-3 w-full")} />
-		}
-		leading={undefined}
-		actions={<ProgramInfoDialogButtonLoading />}
-	>
-		<DayListLoading />
-	</DrilldownPlanPanel>
-);
+export const DrilldownPanelLoading: FC = () => <DrilldownPlanPanelLoading />;
 
 type DrilldownPanelErrorProps = {
 	message?: ReactNode;
@@ -186,20 +166,7 @@ type DrilldownPanelErrorProps = {
 
 export const DrilldownPanelError: FC<DrilldownPanelErrorProps> = ({
 	message,
-}) => {
-	const description = message ?? "時間をおいて再読み込みしてください。";
-
-	return (
-		<DrilldownPlanPanel
-			title={<ErrorTitle />}
-			meta={description}
-			leading={undefined}
-			actions={<WarningIcon />}
-		>
-			<IdleBody />
-		</DrilldownPlanPanel>
-	);
-};
+}) => <DrilldownPlanPanelError message={message} />;
 
 type DrilldownBodyProps = Pick<
 	Props,
@@ -385,7 +352,7 @@ const resolveDrilldownState = (
 const formatDrilldownTitle = (
 	state: DrilldownState,
 	programName: string,
-): ReactNode => {
+): string => {
 	switch (state.level) {
 		case "day":
 			return programName;
@@ -412,18 +379,3 @@ const formatDrilldownMeta = (
 
 const formatCompactDayLabel = (label: string): string =>
 	label.replace(/^Day\s*\d+\s*:\s*/u, "");
-
-const ErrorTitle: FC = () => (
-	<DrilldownPlanPanelAlertTitle>
-		プログラムを取得できませんでした
-	</DrilldownPlanPanelAlertTitle>
-);
-
-const IdleBody: FC = () => <div aria-hidden className="min-h-24 flex-1" />;
-
-const WarningIcon: FC = () => (
-	<ExclamationTriangleIcon
-		aria-hidden
-		className="mt-0.5 size-5 shrink-0 text-warning"
-	/>
-);

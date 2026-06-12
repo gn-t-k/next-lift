@@ -1,11 +1,8 @@
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import type { FC, PropsWithChildren, ReactNode } from "react";
-import { cn } from "../../libs";
-import { skeletonClass } from "../../primitives/skeleton";
 import type { OnChangeDayInfo, OnDeleteDay } from "./day-header-actions";
 import { DayHeaderActions } from "./day-header-actions";
 import type { Day, OnAddDay, OnSelectDay } from "./day-list";
-import { DayList, DayListLoading } from "./day-list";
+import { DayList } from "./day-list";
 import type {
 	OnChangeExercisePlanInfo,
 	OnDeleteExercisePlan,
@@ -21,14 +18,13 @@ import type {
 import { ExercisePlanList } from "./exercise-plan-list";
 import {
 	MillerPlanColumn,
-	MillerPlanColumnAlertTitle,
+	MillerPlanColumnEmpty,
+	MillerPlanColumnError,
+	MillerPlanColumnLoading,
 } from "./miller-plan-column";
 import { MissingParentState } from "./missing-parent-state";
 import type { OnChangeProgramInfo } from "./program-info-dialog-button";
-import {
-	ProgramInfoDialogButton,
-	ProgramInfoDialogButtonLoading,
-} from "./program-info-dialog-button";
+import { ProgramInfoDialogButton } from "./program-info-dialog-button";
 import type {
 	OnAddSetPlan,
 	OnChangeSetPlan,
@@ -181,34 +177,9 @@ export const MillerColumns: FC<Props> = ({
 
 export const MillerColumnsLoading: FC = () => (
 	<ThreeColumnLayout>
-		<MillerPlanColumn
-			label="プログラム"
-			title={
-				<span aria-hidden className={cn(skeletonClass, "block h-5 w-28")} />
-			}
-			meta={
-				<span aria-hidden className={cn(skeletonClass, "block h-3 w-56")} />
-			}
-			actions={<ProgramInfoDialogButtonLoading />}
-		>
-			<DayListLoading />
-		</MillerPlanColumn>
-		<MillerPlanColumn
-			label="Day"
-			title={undefined}
-			meta={undefined}
-			actions={undefined}
-		>
-			<div aria-hidden className="min-h-24 flex-1" />
-		</MillerPlanColumn>
-		<MillerPlanColumn
-			label="種目計画"
-			title={undefined}
-			meta={undefined}
-			actions={undefined}
-		>
-			<div aria-hidden className="min-h-24 flex-1" />
-		</MillerPlanColumn>
+		<MillerPlanColumnLoading />
+		<MillerPlanColumnEmpty label="Day" />
+		<MillerPlanColumnEmpty label="種目計画" />
 	</ThreeColumnLayout>
 );
 
@@ -218,47 +189,13 @@ type MillerColumnsErrorProps = {
 
 export const MillerColumnsError: FC<MillerColumnsErrorProps> = ({
 	message,
-}) => {
-	const description = message ?? "時間をおいて再読み込みしてください。";
-
-	return (
-		<ThreeColumnLayout>
-			<MillerPlanColumn
-				label="プログラム"
-				title={
-					<MillerPlanColumnAlertTitle>
-						プログラムを取得できませんでした
-					</MillerPlanColumnAlertTitle>
-				}
-				meta={description}
-				actions={
-					<ExclamationTriangleIcon
-						aria-hidden
-						className="mt-0.5 size-5 shrink-0 text-warning"
-					/>
-				}
-			>
-				<div aria-hidden className="min-h-24 flex-1" />
-			</MillerPlanColumn>
-			<MillerPlanColumn
-				label="Day"
-				title={undefined}
-				meta={undefined}
-				actions={undefined}
-			>
-				<div aria-hidden className="min-h-24 flex-1" />
-			</MillerPlanColumn>
-			<MillerPlanColumn
-				label="種目計画"
-				title={undefined}
-				meta={undefined}
-				actions={undefined}
-			>
-				<div aria-hidden className="min-h-24 flex-1" />
-			</MillerPlanColumn>
-		</ThreeColumnLayout>
-	);
-};
+}) => (
+	<ThreeColumnLayout>
+		<MillerPlanColumnError message={message} />
+		<MillerPlanColumnEmpty label="Day" />
+		<MillerPlanColumnEmpty label="種目計画" />
+	</ThreeColumnLayout>
+);
 
 const ThreeColumnLayout: FC<PropsWithChildren> = ({ children }) => (
 	<div className="grid h-[32rem] grid-cols-[minmax(13rem,0.9fr)_minmax(17rem,1fr)_minmax(20rem,1.25fr)] items-stretch gap-3">
