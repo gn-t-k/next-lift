@@ -87,7 +87,7 @@ const PanelShell: FC<PanelShellProps> = ({
 	actions,
 	children,
 }) => (
-	<section className="flex min-h-[30rem] flex-col overflow-hidden bg-bg">
+	<section className="flex min-h-120 flex-col overflow-hidden bg-bg">
 		<header className="flex min-h-10 items-start justify-between gap-3 px-0 py-1">
 			<div className="flex min-w-0 flex-1 items-start gap-2">
 				{leading !== undefined ? (
