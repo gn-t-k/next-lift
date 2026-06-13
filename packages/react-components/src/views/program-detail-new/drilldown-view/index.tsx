@@ -95,14 +95,11 @@ export const DrilldownView: FC<Props> = ({
 	const drilldownState = resolveDrilldownState(days, state);
 	const title = formatDrilldownTitle(drilldownState, programName);
 	const meta = formatDrilldownMeta(drilldownState, programMeta);
-	const leading =
-		drilldownState.level === "day" ? undefined : (
-			<DrilldownBackButton
-				state={drilldownState}
-				onSelectRoot={onSelectRoot}
-				onSelectDay={onSelectDay}
-			/>
-		);
+	const leading = renderDrilldownLeading(
+		drilldownState,
+		onSelectRoot,
+		onSelectDay,
+	);
 
 	return (
 		<div className="relative flex flex-col gap-3 pb-16">
@@ -302,8 +299,14 @@ const DrilldownBackButton: FC<DrilldownBackButtonProps> = ({
 	onSelectRoot,
 	onSelectDay,
 }) => {
-	const onPress =
-		state.level === "exercise" ? onSelectRoot : () => onSelectDay(state.day.id);
+	const onPress = (() => {
+		switch (state.level) {
+			case "exercise":
+				return onSelectRoot;
+			case "set":
+				return () => onSelectDay(state.day.id);
+		}
+	})();
 	return (
 		<Button
 			intent="plain"
@@ -339,13 +342,34 @@ const resolveDrilldownState = (
 			const exercisePlan = day?.exercisePlans.find(
 				(candidate) => candidate.id === selectionState.exercisePlanId,
 			);
-			if (day === undefined || exercisePlan === undefined) {
-				return day === undefined
-					? { level: "day" }
-					: { level: "exercise", day };
+			if (day === undefined) {
+				return { level: "day" };
+			}
+			if (exercisePlan === undefined) {
+				return { level: "exercise", day };
 			}
 			return { level: "set", day, exercisePlan };
 		}
+	}
+};
+
+const renderDrilldownLeading = (
+	state: DrilldownState,
+	onSelectRoot: OnSelectRoot,
+	onSelectDay: OnSelectDay,
+): ReactNode => {
+	switch (state.level) {
+		case "day":
+			return undefined;
+		case "exercise":
+		case "set":
+			return (
+				<DrilldownBackButton
+					state={state}
+					onSelectRoot={onSelectRoot}
+					onSelectDay={onSelectDay}
+				/>
+			);
 	}
 };
 
