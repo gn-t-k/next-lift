@@ -1,4 +1,4 @@
-import type { FC, ReactNode } from "react";
+import type { FC, PropsWithChildren, ReactNode } from "react";
 import type { OnChangeDayInfo, OnDeleteDay } from "../day-header-actions";
 import { DayHeaderActions } from "../day-header-actions";
 import type { Day, OnAddDay, OnSelectDay } from "../day-list";
@@ -32,8 +32,6 @@ import {
 	MillerColumnError,
 	MillerColumnLoading,
 } from "./miller-column";
-import { MissingParentState } from "./missing-parent-state";
-import { ThreeColumnLayout } from "./three-column-layout";
 
 type Props = {
 	programName: string;
@@ -196,4 +194,20 @@ export const MillerColumnsViewError: FC<MillerColumnsViewErrorProps> = ({
 		<MillerColumnEmpty label="Day" />
 		<MillerColumnEmpty label="種目計画" />
 	</ThreeColumnLayout>
+);
+
+const ThreeColumnLayout: FC<PropsWithChildren> = ({ children }) => (
+	<div className="grid h-128 grid-cols-[minmax(13rem,0.9fr)_minmax(17rem,1fr)_minmax(20rem,1.25fr)] items-stretch gap-3">
+		{children}
+	</div>
+);
+
+type MissingParentStateProps = {
+	children: ReactNode;
+};
+
+const MissingParentState: FC<MissingParentStateProps> = ({ children }) => (
+	<div className="flex min-h-full flex-1 items-center justify-center px-3 py-4 text-center text-muted-fg text-sm">
+		{children}
+	</div>
 );
