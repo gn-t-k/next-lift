@@ -32,10 +32,10 @@ import { SetPlanList } from "../set-plan-list";
 import type { UseProgramPlanSelectionState } from "../use-program-plan-selection";
 import { DrilldownTransition } from "./drilldown-transition";
 import {
-	DrilldownPanel,
-	DrilldownPanelError,
-	DrilldownPanelLoading,
-} from "./panel";
+	DrilldownPanelShell,
+	DrilldownPanelShellError,
+	DrilldownPanelShellLoading,
+} from "./panel-shell";
 import {
 	type DrilldownState,
 	resolveDrilldownState,
@@ -124,7 +124,7 @@ export const DrilldownView: FC<Props> = ({
 
 	return (
 		<div className="relative flex flex-col gap-3 pb-16">
-			<DrilldownPanel
+			<DrilldownPanelShell
 				title={panel.title}
 				meta={panel.meta}
 				leading={panel.leading}
@@ -133,7 +133,7 @@ export const DrilldownView: FC<Props> = ({
 				<DrilldownTransition days={days} state={state}>
 					{panel.body}
 				</DrilldownTransition>
-			</DrilldownPanel>
+			</DrilldownPanelShell>
 			<div className="fixed inset-x-3 bottom-3 z-30">
 				<BreadcrumbJumpSheet
 					programName={programName}
@@ -148,7 +148,7 @@ export const DrilldownView: FC<Props> = ({
 	);
 };
 
-export const DrilldownViewLoading: FC = () => <DrilldownPanelLoading />;
+export const DrilldownViewLoading: FC = () => <DrilldownPanelShellLoading />;
 
 type DrilldownViewErrorProps = {
 	message?: ReactNode;
@@ -156,7 +156,7 @@ type DrilldownViewErrorProps = {
 
 export const DrilldownViewError: FC<DrilldownViewErrorProps> = ({
 	message,
-}) => <DrilldownPanelError message={message} />;
+}) => <DrilldownPanelShellError message={message} />;
 
 type ResolveDrilldownPanelContentProps = Pick<
 	Props,

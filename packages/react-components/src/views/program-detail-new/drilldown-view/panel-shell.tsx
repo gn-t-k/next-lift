@@ -13,7 +13,7 @@ type Props = PropsWithChildren<{
 	actions: ReactNode;
 }>;
 
-export const DrilldownPanel: FC<Props> = ({
+export const DrilldownPanelShell: FC<Props> = ({
 	title,
 	meta,
 	leading,
@@ -30,7 +30,7 @@ export const DrilldownPanel: FC<Props> = ({
 	</PanelShell>
 );
 
-export const DrilldownPanelLoading: FC = () => (
+export const DrilldownPanelShellLoading: FC = () => (
 	<PanelShell
 		title={
 			<span aria-hidden className={cn(skeletonClass, "block h-7 w-2/3")} />
@@ -45,11 +45,11 @@ export const DrilldownPanelLoading: FC = () => (
 	</PanelShell>
 );
 
-type DrilldownPanelErrorProps = {
+type DrilldownPanelShellErrorProps = {
 	message?: ReactNode;
 };
 
-export const DrilldownPanelError: FC<DrilldownPanelErrorProps> = ({
+export const DrilldownPanelShellError: FC<DrilldownPanelShellErrorProps> = ({
 	message,
 }) => {
 	const description = message ?? "時間をおいて再読み込みしてください。";
