@@ -33,12 +33,12 @@ import type {
 } from "../set-plan-list";
 import { SetPlanList } from "../set-plan-list";
 import type { UseProgramPlanSelectionState } from "../use-program-plan-selection";
-import {
-	DrilldownPlanPanel,
-	DrilldownPlanPanelError,
-	DrilldownPlanPanelLoading,
-} from "./drilldown-plan-panel";
 import { DrilldownTransition } from "./drilldown-transition";
+import {
+	DrilldownPanel,
+	DrilldownPanelError,
+	DrilldownPanelLoading,
+} from "./panel";
 
 type Props = {
 	programName: string;
@@ -69,7 +69,7 @@ type DrilldownState =
 	| { level: "exercise"; day: Day }
 	| { level: "set"; day: Day; exercisePlan: ExercisePlan };
 
-export const DrilldownPanel: FC<Props> = ({
+export const DrilldownView: FC<Props> = ({
 	programName,
 	programMeta,
 	days,
@@ -106,7 +106,7 @@ export const DrilldownPanel: FC<Props> = ({
 
 	return (
 		<div className="relative flex flex-col gap-3 pb-16">
-			<DrilldownPlanPanel
+			<DrilldownPanel
 				title={title}
 				meta={meta}
 				leading={leading}
@@ -143,7 +143,7 @@ export const DrilldownPanel: FC<Props> = ({
 						renderExerciseProgress={renderExerciseProgress}
 					/>
 				</DrilldownTransition>
-			</DrilldownPlanPanel>
+			</DrilldownPanel>
 			<div className="fixed inset-x-3 bottom-3 z-30">
 				<BreadcrumbJumpSheet
 					programName={programName}
@@ -158,15 +158,15 @@ export const DrilldownPanel: FC<Props> = ({
 	);
 };
 
-export const DrilldownPanelLoading: FC = () => <DrilldownPlanPanelLoading />;
+export const DrilldownViewLoading: FC = () => <DrilldownPanelLoading />;
 
-type DrilldownPanelErrorProps = {
+type DrilldownViewErrorProps = {
 	message?: ReactNode;
 };
 
-export const DrilldownPanelError: FC<DrilldownPanelErrorProps> = ({
+export const DrilldownViewError: FC<DrilldownViewErrorProps> = ({
 	message,
-}) => <DrilldownPlanPanelError message={message} />;
+}) => <DrilldownPanelError message={message} />;
 
 type DrilldownBodyProps = Pick<
 	Props,

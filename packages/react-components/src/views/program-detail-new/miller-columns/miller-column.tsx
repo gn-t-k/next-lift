@@ -13,7 +13,7 @@ type Props = PropsWithChildren<{
 	actions: ReactNode;
 }>;
 
-export const MillerPlanColumn: FC<Props> = ({
+export const MillerColumn: FC<Props> = ({
 	label,
 	title,
 	meta,
@@ -30,7 +30,7 @@ export const MillerPlanColumn: FC<Props> = ({
 	</ColumnShell>
 );
 
-export const MillerPlanColumnLoading: FC = () => (
+export const MillerColumnLoading: FC = () => (
 	<ColumnShell
 		label="プログラム"
 		title={<span aria-hidden className={cn(skeletonClass, "block h-5 w-28")} />}
@@ -41,11 +41,11 @@ export const MillerPlanColumnLoading: FC = () => (
 	</ColumnShell>
 );
 
-type MillerPlanColumnErrorProps = {
+type MillerColumnErrorProps = {
 	message?: ReactNode;
 };
 
-export const MillerPlanColumnError: FC<MillerPlanColumnErrorProps> = ({
+export const MillerColumnError: FC<MillerColumnErrorProps> = ({
 	message,
 }) => {
 	const description = message ?? "時間をおいて再読み込みしてください。";
@@ -69,11 +69,11 @@ export const MillerPlanColumnError: FC<MillerPlanColumnErrorProps> = ({
 	);
 };
 
-type MillerPlanColumnEmptyProps = {
+type MillerColumnEmptyProps = {
 	label: string;
 };
 
-export const MillerPlanColumnEmpty: FC<MillerPlanColumnEmptyProps> = ({
+export const MillerColumnEmpty: FC<MillerColumnEmptyProps> = ({
 	label,
 }) => (
 	<ColumnShell label={label} title={null} meta={null} actions={undefined}>

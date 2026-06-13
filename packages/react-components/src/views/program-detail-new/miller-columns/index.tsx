@@ -27,11 +27,11 @@ import type {
 import { SetPlanList } from "../set-plan-list";
 import type { UseProgramPlanSelectionState } from "../use-program-plan-selection";
 import {
-	MillerPlanColumn,
-	MillerPlanColumnEmpty,
-	MillerPlanColumnError,
-	MillerPlanColumnLoading,
-} from "./miller-plan-column";
+	MillerColumn,
+	MillerColumnEmpty,
+	MillerColumnError,
+	MillerColumnLoading,
+} from "./miller-column";
 import { MissingParentState } from "./missing-parent-state";
 import { ThreeColumnLayout } from "./three-column-layout";
 
@@ -58,7 +58,7 @@ type Props = {
 	renderExerciseProgress: RenderExerciseProgress;
 };
 
-export const MillerColumns: FC<Props> = ({
+export const MillerColumnsView: FC<Props> = ({
 	programName,
 	programMeta,
 	days,
@@ -93,7 +93,7 @@ export const MillerColumns: FC<Props> = ({
 
 	return (
 		<ThreeColumnLayout>
-			<MillerPlanColumn
+			<MillerColumn
 				label="プログラム"
 				title={programName}
 				meta={programMeta}
@@ -111,8 +111,8 @@ export const MillerColumns: FC<Props> = ({
 					onSelectDay={onSelectDay}
 					onAddDay={onAddDay}
 				/>
-			</MillerPlanColumn>
-			<MillerPlanColumn
+			</MillerColumn>
+			<MillerColumn
 				label="Day"
 				title={selectedDay?.label}
 				meta={selectedDay?.meta}
@@ -143,8 +143,8 @@ export const MillerColumns: FC<Props> = ({
 						workoutHistory={renderWorkoutHistory(selectedDay)}
 					/>
 				)}
-			</MillerPlanColumn>
-			<MillerPlanColumn
+			</MillerColumn>
+			<MillerColumn
 				label="種目計画"
 				title={selectedExercisePlan?.exercise.name}
 				meta={selectedExercisePlan?.meta}
@@ -171,29 +171,29 @@ export const MillerColumns: FC<Props> = ({
 						exerciseProgress={renderExerciseProgress(selectedExercisePlan)}
 					/>
 				)}
-			</MillerPlanColumn>
+			</MillerColumn>
 		</ThreeColumnLayout>
 	);
 };
 
-export const MillerColumnsLoading: FC = () => (
+export const MillerColumnsViewLoading: FC = () => (
 	<ThreeColumnLayout>
-		<MillerPlanColumnLoading />
-		<MillerPlanColumnEmpty label="Day" />
-		<MillerPlanColumnEmpty label="種目計画" />
+		<MillerColumnLoading />
+		<MillerColumnEmpty label="Day" />
+		<MillerColumnEmpty label="種目計画" />
 	</ThreeColumnLayout>
 );
 
-type MillerColumnsErrorProps = {
+type MillerColumnsViewErrorProps = {
 	message?: ReactNode;
 };
 
-export const MillerColumnsError: FC<MillerColumnsErrorProps> = ({
+export const MillerColumnsViewError: FC<MillerColumnsViewErrorProps> = ({
 	message,
 }) => (
 	<ThreeColumnLayout>
-		<MillerPlanColumnError message={message} />
-		<MillerPlanColumnEmpty label="Day" />
-		<MillerPlanColumnEmpty label="種目計画" />
+		<MillerColumnError message={message} />
+		<MillerColumnEmpty label="Day" />
+		<MillerColumnEmpty label="種目計画" />
 	</ThreeColumnLayout>
 );
