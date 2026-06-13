@@ -45,9 +45,7 @@ type MillerColumnErrorProps = {
 	message?: ReactNode;
 };
 
-export const MillerColumnError: FC<MillerColumnErrorProps> = ({
-	message,
-}) => {
+export const MillerColumnError: FC<MillerColumnErrorProps> = ({ message }) => {
 	const description = message ?? "時間をおいて再読み込みしてください。";
 
 	return (
@@ -73,9 +71,7 @@ type MillerColumnEmptyProps = {
 	label: string;
 };
 
-export const MillerColumnEmpty: FC<MillerColumnEmptyProps> = ({
-	label,
-}) => (
+export const MillerColumnEmpty: FC<MillerColumnEmptyProps> = ({ label }) => (
 	<ColumnShell label={label} title={null} meta={null} actions={undefined}>
 		<ColumnIdleBody />
 	</ColumnShell>
@@ -102,12 +98,10 @@ const ColumnShell: FC<ColumnShellProps> = ({
 				{title}
 				{meta}
 			</div>
-			{actions !== undefined ? <div className="shrink-0">{actions}</div> : null}
+			{actions && <div className="shrink-0">{actions}</div>}
 		</div>
-		<section className="flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-border bg-bg">
-			<div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-2">
-				{children}
-			</div>
+		<section className="flex min-h-0 flex-1 flex-col overflow-y-auto rounded-lg border border-border bg-bg p-2">
+			{children}
 		</section>
 	</div>
 );
