@@ -69,6 +69,14 @@ type DrilldownState =
 	| { level: "exercise"; day: Day }
 	| { level: "set"; day: Day; exercisePlan: ExercisePlan };
 
+type DrilldownPanelContent = {
+	title: string | undefined;
+	meta: ReactNode;
+	leading: ReactNode;
+	actions: ReactNode;
+	body: ReactNode;
+};
+
 export const DrilldownView: FC<Props> = ({
 	programName,
 	programMeta,
@@ -93,52 +101,41 @@ export const DrilldownView: FC<Props> = ({
 	renderExerciseProgress,
 }) => {
 	const drilldownState = resolveDrilldownState(days, state);
-	const title = formatDrilldownTitle(drilldownState, programName);
-	const meta = formatDrilldownMeta(drilldownState, programMeta);
-	const leading = renderDrilldownLeading(
+	const panel = resolveDrilldownPanelContent({
 		drilldownState,
+		programName,
+		programMeta,
+		days,
+		registeredExercises,
+		selectionState: state,
 		onSelectRoot,
 		onSelectDay,
-	);
+		onAddDay,
+		onDeleteDay,
+		onChangeDayInfo,
+		onChangeProgramInfo,
+		onSelectExercisePlan,
+		onAddExercisePlanWithSelectedExercise,
+		onAddExercisePlanWithNewExercise,
+		onChangeExercisePlanInfo,
+		onDeleteExercisePlan,
+		onChangeSetPlan,
+		onAddSetPlan,
+		onDeleteSetPlan,
+		renderWorkoutHistory,
+		renderExerciseProgress,
+	});
 
 	return (
 		<div className="relative flex flex-col gap-3 pb-16">
 			<DrilldownPanel
-				title={title}
-				meta={meta}
-				leading={leading}
-				actions={
-					<DrilldownActions
-						state={drilldownState}
-						programName={programName}
-						programMeta={programMeta}
-						onChangeProgramInfo={onChangeProgramInfo}
-						onChangeDayInfo={onChangeDayInfo}
-						onDeleteDay={onDeleteDay}
-						onChangeExercisePlanInfo={onChangeExercisePlanInfo}
-						onDeleteExercisePlan={onDeleteExercisePlan}
-					/>
-				}
+				title={panel.title}
+				meta={panel.meta}
+				leading={panel.leading}
+				actions={panel.actions}
 			>
 				<DrilldownTransition days={days} state={state}>
-					<DrilldownBody
-						drilldownState={drilldownState}
-						selectionState={state}
-						days={days}
-						registeredExercises={registeredExercises}
-						onSelectDay={onSelectDay}
-						onSelectExercisePlan={onSelectExercisePlan}
-						onAddDay={onAddDay}
-						onChangeSetPlan={onChangeSetPlan}
-						onAddSetPlan={onAddSetPlan}
-						onDeleteSetPlan={onDeleteSetPlan}
-						onAddExercisePlanWithSelectedExercise={
-							onAddExercisePlanWithSelectedExercise
-						}
-						onAddExercisePlanWithNewExercise={onAddExercisePlanWithNewExercise}
-						renderWorkoutHistory={renderWorkoutHistory}
-						renderExerciseProgress={renderExerciseProgress}
-					/>
+					{panel.body}
 				</DrilldownTransition>
 			</DrilldownPanel>
 			<div className="fixed inset-x-3 bottom-3 z-30">
@@ -165,18 +162,26 @@ export const DrilldownViewError: FC<DrilldownViewErrorProps> = ({
 	message,
 }) => <DrilldownPanelError message={message} />;
 
-type DrilldownBodyProps = Pick<
+type ResolveDrilldownPanelContentProps = Pick<
 	Props,
+	| "programName"
+	| "programMeta"
 	| "days"
 	| "registeredExercises"
+	| "onSelectRoot"
 	| "onSelectDay"
-	| "onSelectExercisePlan"
 	| "onAddDay"
+	| "onDeleteDay"
+	| "onChangeDayInfo"
+	| "onChangeProgramInfo"
+	| "onSelectExercisePlan"
+	| "onAddExercisePlanWithSelectedExercise"
+	| "onAddExercisePlanWithNewExercise"
+	| "onChangeExercisePlanInfo"
+	| "onDeleteExercisePlan"
 	| "onChangeSetPlan"
 	| "onAddSetPlan"
 	| "onDeleteSetPlan"
-	| "onAddExercisePlanWithSelectedExercise"
-	| "onAddExercisePlanWithNewExercise"
 	| "renderWorkoutHistory"
 	| "renderExerciseProgress"
 > & {
@@ -184,140 +189,123 @@ type DrilldownBodyProps = Pick<
 	selectionState: UseProgramPlanSelectionState;
 };
 
-const DrilldownBody: FC<DrilldownBodyProps> = ({
+const resolveDrilldownPanelContent = ({
 	drilldownState,
-	selectionState,
+	programName,
+	programMeta,
 	days,
 	registeredExercises,
+	selectionState,
+	onSelectRoot,
 	onSelectDay,
-	onSelectExercisePlan,
 	onAddDay,
+	onDeleteDay,
+	onChangeDayInfo,
+	onChangeProgramInfo,
+	onSelectExercisePlan,
+	onAddExercisePlanWithSelectedExercise,
+	onAddExercisePlanWithNewExercise,
+	onChangeExercisePlanInfo,
+	onDeleteExercisePlan,
 	onChangeSetPlan,
 	onAddSetPlan,
 	onDeleteSetPlan,
-	onAddExercisePlanWithSelectedExercise,
-	onAddExercisePlanWithNewExercise,
 	renderWorkoutHistory,
 	renderExerciseProgress,
-}) => {
+}: ResolveDrilldownPanelContentProps): DrilldownPanelContent => {
 	switch (drilldownState.level) {
 		case "day":
-			return (
-				<DayList
-					days={days}
-					state={selectionState}
-					onSelectDay={onSelectDay}
-					onAddDay={onAddDay}
-				/>
-			);
+			return {
+				title: programName,
+				meta: programMeta,
+				leading: undefined,
+				actions: (
+					<ProgramInfoDialogButton
+						name={programName}
+						meta={programMeta}
+						onChange={onChangeProgramInfo}
+					/>
+				),
+				body: (
+					<DayList
+						days={days}
+						state={selectionState}
+						onSelectDay={onSelectDay}
+						onAddDay={onAddDay}
+					/>
+				),
+			};
 		case "exercise":
-			return (
-				<ExercisePlanList
-					day={drilldownState.day}
-					registeredExercises={registeredExercises}
-					state={selectionState}
-					onSelectExercisePlan={onSelectExercisePlan}
-					onAddExercisePlanWithSelectedExercise={
-						onAddExercisePlanWithSelectedExercise
-					}
-					onAddExercisePlanWithNewExercise={onAddExercisePlanWithNewExercise}
-					workoutHistory={renderWorkoutHistory(drilldownState.day)}
-				/>
-			);
+			return {
+				title: formatCompactDayLabel(drilldownState.day.label),
+				meta: drilldownState.day.meta,
+				leading: <DrilldownBackButton onPress={onSelectRoot} />,
+				actions: (
+					<DayHeaderActions
+						day={drilldownState.day}
+						onChangeDayInfo={onChangeDayInfo}
+						onDeleteDay={onDeleteDay}
+					/>
+				),
+				body: (
+					<ExercisePlanList
+						day={drilldownState.day}
+						registeredExercises={registeredExercises}
+						state={selectionState}
+						onSelectExercisePlan={onSelectExercisePlan}
+						onAddExercisePlanWithSelectedExercise={
+							onAddExercisePlanWithSelectedExercise
+						}
+						onAddExercisePlanWithNewExercise={onAddExercisePlanWithNewExercise}
+						workoutHistory={renderWorkoutHistory(drilldownState.day)}
+					/>
+				),
+			};
 		case "set":
-			return (
-				<SetPlanList
-					exercisePlan={drilldownState.exercisePlan}
-					onChangeSetPlan={onChangeSetPlan}
-					onAddSetPlan={onAddSetPlan}
-					onDeleteSetPlan={onDeleteSetPlan}
-					exerciseProgress={renderExerciseProgress(drilldownState.exercisePlan)}
-				/>
-			);
-	}
-};
-
-type DrilldownActionsProps = Pick<
-	Props,
-	| "programName"
-	| "programMeta"
-	| "onChangeProgramInfo"
-	| "onChangeDayInfo"
-	| "onDeleteDay"
-	| "onChangeExercisePlanInfo"
-	| "onDeleteExercisePlan"
-> & {
-	state: DrilldownState;
-};
-
-const DrilldownActions: FC<DrilldownActionsProps> = ({
-	state,
-	programName,
-	programMeta,
-	onChangeProgramInfo,
-	onChangeDayInfo,
-	onDeleteDay,
-	onChangeExercisePlanInfo,
-	onDeleteExercisePlan,
-}) => {
-	switch (state.level) {
-		case "day":
-			return (
-				<ProgramInfoDialogButton
-					name={programName}
-					meta={programMeta}
-					onChange={onChangeProgramInfo}
-				/>
-			);
-		case "exercise":
-			return (
-				<DayHeaderActions
-					day={state.day}
-					onChangeDayInfo={onChangeDayInfo}
-					onDeleteDay={onDeleteDay}
-				/>
-			);
-		case "set":
-			return (
-				<ExercisePlanHeaderActions
-					exercisePlan={state.exercisePlan}
-					onChangeExercisePlanInfo={onChangeExercisePlanInfo}
-					onDeleteExercisePlan={onDeleteExercisePlan}
-				/>
-			);
+			return {
+				title: drilldownState.exercisePlan.exercise.name,
+				meta: drilldownState.exercisePlan.meta,
+				leading: (
+					<DrilldownBackButton
+						onPress={() => onSelectDay(drilldownState.day.id)}
+					/>
+				),
+				actions: (
+					<ExercisePlanHeaderActions
+						exercisePlan={drilldownState.exercisePlan}
+						onChangeExercisePlanInfo={onChangeExercisePlanInfo}
+						onDeleteExercisePlan={onDeleteExercisePlan}
+					/>
+				),
+				body: (
+					<SetPlanList
+						exercisePlan={drilldownState.exercisePlan}
+						onChangeSetPlan={onChangeSetPlan}
+						onAddSetPlan={onAddSetPlan}
+						onDeleteSetPlan={onDeleteSetPlan}
+						exerciseProgress={renderExerciseProgress(
+							drilldownState.exercisePlan,
+						)}
+					/>
+				),
+			};
 	}
 };
 
 type DrilldownBackButtonProps = {
-	state: Exclude<DrilldownState, { level: "day" }>;
-	onSelectRoot: () => void;
-	onSelectDay: (dayId: string) => void;
+	onPress: () => void;
 };
 
-const DrilldownBackButton: FC<DrilldownBackButtonProps> = ({
-	state,
-	onSelectRoot,
-	onSelectDay,
-}) => {
-	const onPress = (() => {
-		switch (state.level) {
-			case "exercise":
-				return onSelectRoot;
-			case "set":
-				return () => onSelectDay(state.day.id);
-		}
-	})();
-	return (
-		<Button
-			intent="plain"
-			size="sq-xs"
-			aria-label="上の階層へ戻る"
-			onPress={onPress}
-		>
-			<ChevronLeftIcon data-slot="icon" className="size-4" aria-hidden />
-		</Button>
-	);
-};
+const DrilldownBackButton: FC<DrilldownBackButtonProps> = ({ onPress }) => (
+	<Button
+		intent="plain"
+		size="sq-xs"
+		aria-label="上の階層へ戻る"
+		onPress={onPress}
+	>
+		<ChevronLeftIcon data-slot="icon" className="size-4" aria-hidden />
+	</Button>
+);
 
 const resolveDrilldownState = (
 	days: Day[],
@@ -350,54 +338,6 @@ const resolveDrilldownState = (
 			}
 			return { level: "set", day, exercisePlan };
 		}
-	}
-};
-
-const renderDrilldownLeading = (
-	state: DrilldownState,
-	onSelectRoot: OnSelectRoot,
-	onSelectDay: OnSelectDay,
-): ReactNode => {
-	switch (state.level) {
-		case "day":
-			return undefined;
-		case "exercise":
-		case "set":
-			return (
-				<DrilldownBackButton
-					state={state}
-					onSelectRoot={onSelectRoot}
-					onSelectDay={onSelectDay}
-				/>
-			);
-	}
-};
-
-const formatDrilldownTitle = (
-	state: DrilldownState,
-	programName: string,
-): string => {
-	switch (state.level) {
-		case "day":
-			return programName;
-		case "exercise":
-			return formatCompactDayLabel(state.day.label);
-		case "set":
-			return state.exercisePlan.exercise.name;
-	}
-};
-
-const formatDrilldownMeta = (
-	state: DrilldownState,
-	programMeta: string | undefined,
-): ReactNode => {
-	switch (state.level) {
-		case "day":
-			return programMeta;
-		case "exercise":
-			return state.day.meta;
-		case "set":
-			return state.exercisePlan.meta;
 	}
 };
 
