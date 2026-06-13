@@ -15,7 +15,6 @@ import type {
 } from "../exercise-plan-header-actions";
 import { ExercisePlanHeaderActions } from "../exercise-plan-header-actions";
 import type {
-	ExercisePlan,
 	OnAddExercisePlanWithNewExercise,
 	OnAddExercisePlanWithSelectedExercise,
 	OnSelectExercisePlan,
@@ -39,6 +38,10 @@ import {
 	DrilldownPanelError,
 	DrilldownPanelLoading,
 } from "./panel";
+import {
+	type DrilldownState,
+	resolveDrilldownState,
+} from "./resolve-drilldown-state";
 
 type Props = {
 	programName: string;
@@ -63,11 +66,6 @@ type Props = {
 	renderWorkoutHistory: RenderWorkoutHistory;
 	renderExerciseProgress: RenderExerciseProgress;
 };
-
-type DrilldownState =
-	| { level: "day" }
-	| { level: "exercise"; day: Day }
-	| { level: "set"; day: Day; exercisePlan: ExercisePlan };
 
 type DrilldownPanelContent = {
 	title: string | undefined;
@@ -306,40 +304,6 @@ const DrilldownBackButton: FC<DrilldownBackButtonProps> = ({ onPress }) => (
 		<ChevronLeftIcon data-slot="icon" className="size-4" aria-hidden />
 	</Button>
 );
-
-const resolveDrilldownState = (
-	days: Day[],
-	selectionState: UseProgramPlanSelectionState,
-): DrilldownState => {
-	switch (selectionState.level) {
-		case "root":
-			return { level: "day" };
-		case "day": {
-			const day = days.find(
-				(candidate) => candidate.id === selectionState.dayId,
-			);
-			if (day === undefined) {
-				return { level: "day" };
-			}
-			return { level: "exercise", day };
-		}
-		case "exercisePlan": {
-			const day = days.find(
-				(candidate) => candidate.id === selectionState.dayId,
-			);
-			const exercisePlan = day?.exercisePlans.find(
-				(candidate) => candidate.id === selectionState.exercisePlanId,
-			);
-			if (day === undefined) {
-				return { level: "day" };
-			}
-			if (exercisePlan === undefined) {
-				return { level: "exercise", day };
-			}
-			return { level: "set", day, exercisePlan };
-		}
-	}
-};
 
 const formatCompactDayLabel = (label: string): string =>
 	label.replace(/^Day\s*\d+\s*:\s*/u, "");
