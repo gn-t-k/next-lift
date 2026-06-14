@@ -3,9 +3,9 @@
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import type { FC } from "react";
 import { useState } from "react";
-import { useMediaQuery } from "../../libs";
-import { Button } from "../../primitives/button";
-import { ResponsiveDialog } from "../../primitives/responsive-dialog";
+import { useMediaQuery } from "../../../libs";
+import { Button } from "../../../primitives/button";
+import { ResponsiveDialog } from "../../../primitives/responsive-dialog";
 import { ProgramInfoForm } from "./program-info-form";
 
 export type ProgramInfoPayload = {
