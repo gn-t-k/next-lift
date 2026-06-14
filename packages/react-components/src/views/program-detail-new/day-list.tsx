@@ -1,27 +1,34 @@
 "use client";
 
 import { PlusIcon } from "@heroicons/react/24/outline";
-import type { ComponentProps, FC } from "react";
+import type { FC } from "react";
 import { cn } from "../../libs";
 import { Button } from "../../primitives/button";
-import type { ProgramDetailNew } from ".";
-import { PlanNodeButton } from "./plan-node-button";
+import { skeletonClass } from "../../primitives/skeleton";
+import type { ExercisePlan } from "./exercise-plan-list";
+import { PlanNodeButton, PlanNodeButtonSkeleton } from "./plan-node-button";
 
-type Day = ComponentProps<typeof ProgramDetailNew>["days"][number];
+// Day ドメインの型正本（DayList がリスト UI のオーナー）
+export type Day = {
+	id: string;
+	label: string;
+	meta: string | undefined;
+	exercisePlans: ExercisePlan[];
+};
+
+import type { UseProgramPlanSelectionState } from "./use-program-plan-selection";
 
 type Props = {
 	days: Day[];
-	selectedDayId: string | undefined;
+	state: UseProgramPlanSelectionState;
 	onSelectDay: (dayId: string) => void;
 	onAddDay: () => void;
 };
 
-export const DayList: FC<Props> = ({
-	days,
-	selectedDayId,
-	onSelectDay,
-	onAddDay,
-}) => (
+export type OnSelectDay = Props["onSelectDay"];
+export type OnAddDay = Props["onAddDay"];
+
+export const DayList: FC<Props> = ({ days, state, onSelectDay, onAddDay }) => (
 	<div className="flex min-h-0 flex-1 flex-col gap-2">
 		{days.length > 0 ? (
 			<ol className="flex flex-col gap-1">
@@ -30,7 +37,7 @@ export const DayList: FC<Props> = ({
 						<PlanNodeButton
 							label={day.label}
 							meta={`${day.exercisePlans.length} 種目計画`}
-							isSelected={selectedDayId === day.id}
+							isSelected={state.level !== "root" && state.dayId === day.id}
 							onSelect={() => onSelectDay(day.id)}
 						/>
 					</li>
@@ -38,6 +45,21 @@ export const DayList: FC<Props> = ({
 			</ol>
 		) : null}
 		<AddDayButton onAddDay={onAddDay} />
+	</div>
+);
+
+const SKELETON_DAY_KEYS = ["day-1", "day-2", "day-3"] as const;
+
+export const DayListLoading: FC = () => (
+	<div className="flex min-h-0 flex-1 flex-col gap-2">
+		<ol className="flex flex-col gap-1">
+			{SKELETON_DAY_KEYS.map((key) => (
+				<li key={key}>
+					<PlanNodeButtonSkeleton />
+				</li>
+			))}
+		</ol>
+		<AddDayButtonSkeleton />
 	</div>
 );
 
@@ -58,4 +80,8 @@ const AddDayButton: FC<AddDayButtonProps> = ({ onAddDay }) => (
 		<PlusIcon data-slot="icon" className="size-4" aria-hidden />
 		Day を追加
 	</Button>
+);
+
+const AddDayButtonSkeleton: FC = () => (
+	<div aria-hidden className={cn(skeletonClass, "h-12 w-full rounded-lg")} />
 );

@@ -3,6 +3,8 @@
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import type { FC } from "react";
 import { tv } from "tailwind-variants";
+import { cn } from "../../libs";
+import { skeletonClass } from "../../primitives/skeleton";
 
 type Props = {
 	label: string;
@@ -63,3 +65,21 @@ const planNodeButtonStyles = tv({
 const selectedAriaCurrentProps = {
 	"aria-current": "true",
 } satisfies { "aria-current": "true" };
+
+export const PlanNodeButtonSkeleton: FC = () => {
+	const styles = planNodeButtonStyles({ selected: false });
+
+	return (
+		<div aria-hidden className={cn(styles.button(), "pointer-events-none")}>
+			<span className="min-w-0 flex-1">
+				<span className={cn(skeletonClass, "block h-5 w-3/4")} />
+				<span className={cn(skeletonClass, "mt-2 block h-3 w-16")} />
+			</span>
+			<ChevronRightIcon
+				data-slot="icon"
+				className="size-4 shrink-0 text-muted-fg/45"
+				aria-hidden
+			/>
+		</div>
+	);
+};

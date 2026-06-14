@@ -22,8 +22,8 @@ type ProgramDetailNewStoryProps = ComponentProps<typeof ProgramDetailNew>;
 type Day = ProgramDetailNewStoryProps["days"][number];
 type ExercisePlan = Day["exercisePlans"][number];
 type Exercise = ExercisePlan["exercise"];
-type AvailableExercise =
-	ProgramDetailNewStoryProps["availableExercises"][number];
+type RegisteredExercise =
+	ProgramDetailNewStoryProps["registeredExercises"][number];
 type RenderExerciseProgress =
 	ProgramDetailNewStoryProps["renderExerciseProgress"];
 type RenderWorkoutHistory = ProgramDetailNewStoryProps["renderWorkoutHistory"];
@@ -124,7 +124,7 @@ const longNameExercise: Exercise = {
 	detailHref: "/exercises/ex-long-name",
 };
 
-const AVAILABLE_EXERCISES: AvailableExercise[] = [
+const REGISTERED_EXERCISES: RegisteredExercise[] = [
 	{ id: benchPress.id, name: benchPress.name },
 	{ id: inclineDumbbell.id, name: inclineDumbbell.name },
 	{ id: squat.id, name: squat.name },
@@ -135,11 +135,11 @@ const FULL_DAYS: Day[] = [
 	{
 		id: "d1",
 		label: "Day 1: 上半身プッシュ",
-		memo: "押す種目をまとめる日。肩の違和感がある日は補助種目を控えめにする。",
+		meta: "押す種目をまとめる日。肩の違和感がある日は補助種目を控えめにする。",
 		exercisePlans: [
 			{
 				id: "ep-d1-bench",
-				memo: "メインセット後もフォームを崩さない。",
+				meta: "メインセット後もフォームを崩さない。",
 				exercise: benchPress,
 				setPlans: [
 					{
@@ -164,7 +164,7 @@ const FULL_DAYS: Day[] = [
 			},
 			{
 				id: "ep-d1-incline",
-				memo: null,
+				meta: undefined,
 				exercise: inclineDumbbell,
 				setPlans: [
 					{
@@ -180,11 +180,11 @@ const FULL_DAYS: Day[] = [
 	{
 		id: "d2",
 		label: "Day 2: 下半身",
-		memo: "スクワットを優先する。",
+		meta: "スクワットを優先する。",
 		exercisePlans: [
 			{
 				id: "ep-d2-squat",
-				memo: "腰の張りがある日は重量を控えめにする。",
+				meta: "腰の張りがある日は重量を控えめにする。",
 				exercise: squat,
 				setPlans: [
 					{
@@ -200,7 +200,7 @@ const FULL_DAYS: Day[] = [
 	{
 		id: "d3",
 		label: "Day 3: 上半身プル",
-		memo: null,
+		meta: undefined,
 		exercisePlans: [],
 	},
 ];
@@ -209,7 +209,7 @@ const DAY_WITHOUT_EXERCISE_PLANS: Day[] = [
 	{
 		id: "d-empty",
 		label: "Day 1: まだ種目計画がない日",
-		memo: "この状態では種目計画の追加と、セット計画側の親未選択表示を確認する。",
+		meta: "この状態では種目計画の追加と、セット計画側の親未選択表示を確認する。",
 		exercisePlans: [],
 	},
 ];
@@ -218,11 +218,11 @@ const EXERCISE_WITHOUT_SET_PLANS: Day[] = [
 	{
 		id: "d-no-sets",
 		label: "Day 1: セット未設定",
-		memo: "種目計画はあるが、セット計画はまだない。",
+		meta: "種目計画はあるが、セット計画はまだない。",
 		exercisePlans: [
 			{
 				id: "ep-no-sets",
-				memo: "セット計画追加の初期状態を確認する。",
+				meta: "セット計画追加の初期状態を確認する。",
 				exercise: overheadPress,
 				setPlans: [],
 			},
@@ -234,7 +234,7 @@ const CREATE_EXERCISE_DAYS: Day[] = [
 	{
 		id: "d-create",
 		label: "Day 1: 種目を登録しながら作る",
-		memo: "候補がない状態から種目計画を追加する。",
+		meta: "候補がない状態から種目計画を追加する。",
 		exercisePlans: [],
 	},
 ];
@@ -244,11 +244,11 @@ const LONG_CONTENT_DAYS: Day[] = [
 		id: "d-long-1",
 		label:
 			"Day 1: とても長い名前の上半身プッシュと補助種目をまとめて確認する日",
-		memo: "このメモは長文の折り返しを確認するためのものです。画面幅が狭いときにもヘッダー、パンくず、ジャンプシート、カラムの高さが不自然に崩れないことを確認します。",
+		meta: "このメモは長文の折り返しを確認するためのものです。画面幅が狭いときにもヘッダー、パンくず、ジャンプシート、カラムの高さが不自然に崩れないことを確認します。",
 		exercisePlans: [
 			{
 				id: "ep-long",
-				memo: "テンポ、ポーズ、グリップ幅など補足が長くなるケースを想定しています。",
+				meta: "テンポ、ポーズ、グリップ幅など補足が長くなるケースを想定しています。",
 				exercise: longNameExercise,
 				setPlans: Array.from({ length: 9 }, (_, index) => ({
 					id: `sp-long-${index + 1}`,
@@ -262,11 +262,11 @@ const LONG_CONTENT_DAYS: Day[] = [
 	{
 		id: "d-long-2",
 		label: "Day 2: 長い名前の下半身トレーニング",
-		memo: "複数 Day がある状態でジャンプシートの見え方を確認する。",
+		meta: "複数 Day がある状態でジャンプシートの見え方を確認する。",
 		exercisePlans: [
 			{
 				id: "ep-long-squat",
-				memo: null,
+				meta: undefined,
 				exercise: squat,
 				setPlans: [],
 			},
@@ -278,9 +278,8 @@ const baseArgs = {
 	name: "5/3/1 BBB",
 	meta: "メインリフトは 5/3/1 で、補助は BBB（Boring But Big）。\nDeload week は 4 週ごとに挿入する。",
 	days: FULL_DAYS,
-	availableExercises: AVAILABLE_EXERCISES,
-	defaultSelectedDayId: "d1",
-	defaultSelectedExercisePlanId: undefined,
+	registeredExercises: REGISTERED_EXERCISES,
+	initialState: { level: "day", dayId: "d1" },
 	onAddDay: fn(),
 	onDeleteDay: fn(),
 	onChangeDayInfo: fn(),
@@ -328,8 +327,11 @@ type Story = StoryObj<typeof meta>;
 export const WideFullProgram: Story = {
 	name: "広い画面: すべて揃った状態（編集操作）",
 	args: {
-		defaultSelectedDayId: "d1",
-		defaultSelectedExercisePlanId: "ep-d1-bench",
+		initialState: {
+			level: "exercisePlan",
+			dayId: "d1",
+			exercisePlanId: "ep-d1-bench",
+		},
 	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -356,7 +358,7 @@ export const WideFullProgram: Story = {
 		await waitFor(() => {
 			expect(args.onChangeDayInfo).toHaveBeenCalledWith("d1", {
 				label: "Day 1: Push",
-				memo: "押す種目をまとめる日。肩の違和感がある日は補助種目を控えめにする。",
+				meta: "押す種目をまとめる日。肩の違和感がある日は補助種目を控えめにする。",
 			});
 		});
 
@@ -368,7 +370,7 @@ export const WideFullProgram: Story = {
 		await waitFor(() => {
 			expect(args.onChangeExercisePlanInfo).toHaveBeenCalledWith(
 				"ep-d1-bench",
-				{ memo: "胸で止めてから押す。" },
+				{ meta: "胸で止めてから押す。" },
 			);
 		});
 
@@ -387,8 +389,11 @@ export const WideFullProgram: Story = {
 export const WideDeleteActions: Story = {
 	name: "広い画面: 削除操作",
 	args: {
-		defaultSelectedDayId: "d1",
-		defaultSelectedExercisePlanId: "ep-d1-bench",
+		initialState: {
+			level: "exercisePlan",
+			dayId: "d1",
+			exercisePlanId: "ep-d1-bench",
+		},
 	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -425,8 +430,11 @@ export const NarrowFullDrilldown: Story = {
 	name: "狭い画面: セット計画までドリルダウン（移動操作）",
 	decorators: narrowDecorator,
 	args: {
-		defaultSelectedDayId: "d1",
-		defaultSelectedExercisePlanId: "ep-d1-bench",
+		initialState: {
+			level: "exercisePlan",
+			dayId: "d1",
+			exercisePlanId: "ep-d1-bench",
+		},
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -445,29 +453,20 @@ export const NarrowFullDrilldown: Story = {
 
 export const WideRootWithoutSelection: Story = {
 	name: "広い画面: 未選択",
-	args: {
-		defaultSelectedDayId: undefined,
-		defaultSelectedExercisePlanId: undefined,
-	},
+	args: {},
 };
 
 export const NarrowRoot: Story = {
 	name: "狭い画面: ルート",
 	decorators: narrowDecorator,
-	args: {
-		defaultSelectedDayId: undefined,
-		defaultSelectedExercisePlanId: undefined,
-	},
+	args: {},
 };
 
 export const WideEmptyProgram: Story = {
 	name: "広い画面: Day なし（Day 追加操作）",
 	args: {
 		name: "新しいプログラム",
-		meta: null,
 		days: [],
-		defaultSelectedDayId: undefined,
-		defaultSelectedExercisePlanId: undefined,
 	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -484,10 +483,7 @@ export const NarrowEmptyProgram: Story = {
 	decorators: narrowDecorator,
 	args: {
 		name: "新しいプログラム",
-		meta: null,
 		days: [],
-		defaultSelectedDayId: undefined,
-		defaultSelectedExercisePlanId: undefined,
 	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -503,8 +499,7 @@ export const WideSelectedDayWithoutExercisePlans: Story = {
 	name: "広い画面: 種目計画なしの Day（既存種目追加操作）",
 	args: {
 		days: DAY_WITHOUT_EXERCISE_PLANS,
-		defaultSelectedDayId: "d-empty",
-		defaultSelectedExercisePlanId: undefined,
+		initialState: { level: "day", dayId: "d-empty" },
 	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -528,8 +523,7 @@ export const NarrowSelectedDayWithoutExercisePlans: Story = {
 	decorators: narrowDecorator,
 	args: {
 		days: DAY_WITHOUT_EXERCISE_PLANS,
-		defaultSelectedDayId: "d-empty",
-		defaultSelectedExercisePlanId: undefined,
+		initialState: { level: "day", dayId: "d-empty" },
 	},
 };
 
@@ -537,8 +531,11 @@ export const WideSelectedExerciseWithoutSetPlans: Story = {
 	name: "広い画面: セット計画なしの種目計画（セット追加操作）",
 	args: {
 		days: EXERCISE_WITHOUT_SET_PLANS,
-		defaultSelectedDayId: "d-no-sets",
-		defaultSelectedExercisePlanId: "ep-no-sets",
+		initialState: {
+			level: "exercisePlan",
+			dayId: "d-no-sets",
+			exercisePlanId: "ep-no-sets",
+		},
 	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -572,8 +569,11 @@ export const NarrowSelectedExerciseWithoutSetPlans: Story = {
 	decorators: narrowDecorator,
 	args: {
 		days: EXERCISE_WITHOUT_SET_PLANS,
-		defaultSelectedDayId: "d-no-sets",
-		defaultSelectedExercisePlanId: "ep-no-sets",
+		initialState: {
+			level: "exercisePlan",
+			dayId: "d-no-sets",
+			exercisePlanId: "ep-no-sets",
+		},
 	},
 };
 
@@ -581,9 +581,8 @@ export const WideCreateExerciseFromComboBox: Story = {
 	name: "広い画面: ComboBox から新規種目作成（追加操作）",
 	args: {
 		days: CREATE_EXERCISE_DAYS,
-		availableExercises: [],
-		defaultSelectedDayId: "d-create",
-		defaultSelectedExercisePlanId: undefined,
+		registeredExercises: [],
+		initialState: { level: "day", dayId: "d-create" },
 	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -608,9 +607,8 @@ export const NarrowCreateExerciseFromComboBox: Story = {
 	decorators: narrowDecorator,
 	args: {
 		days: CREATE_EXERCISE_DAYS,
-		availableExercises: [],
-		defaultSelectedDayId: "d-create",
-		defaultSelectedExercisePlanId: undefined,
+		registeredExercises: [],
+		initialState: { level: "day", dayId: "d-create" },
 	},
 };
 
@@ -620,12 +618,15 @@ export const WideLongContent: Story = {
 		name: "5/3/1 BBB と補助種目を長期的に管理するためのとても長いプログラム名",
 		meta: "長い説明文の折り返し、複数行メモ、長い種目名、多数セット、外部スロットの表示をまとめて確認するための Story です。",
 		days: LONG_CONTENT_DAYS,
-		availableExercises: [
-			...AVAILABLE_EXERCISES,
+		registeredExercises: [
+			...REGISTERED_EXERCISES,
 			{ id: longNameExercise.id, name: longNameExercise.name },
 		],
-		defaultSelectedDayId: "d-long-1",
-		defaultSelectedExercisePlanId: "ep-long",
+		initialState: {
+			level: "exercisePlan",
+			dayId: "d-long-1",
+			exercisePlanId: "ep-long",
+		},
 	},
 };
 
@@ -636,12 +637,15 @@ export const NarrowLongContent: Story = {
 		name: "5/3/1 BBB と補助種目を長期的に管理するためのとても長いプログラム名",
 		meta: "長い説明文の折り返し、複数行メモ、長い種目名、多数セット、外部スロットの表示をまとめて確認するための Story です。",
 		days: LONG_CONTENT_DAYS,
-		availableExercises: [
-			...AVAILABLE_EXERCISES,
+		registeredExercises: [
+			...REGISTERED_EXERCISES,
 			{ id: longNameExercise.id, name: longNameExercise.name },
 		],
-		defaultSelectedDayId: "d-long-1",
-		defaultSelectedExercisePlanId: "ep-long",
+		initialState: {
+			level: "exercisePlan",
+			dayId: "d-long-1",
+			exercisePlanId: "ep-long",
+		},
 	},
 };
 
@@ -748,12 +752,7 @@ type FlowOutcome = "success" | "error";
 
 type FlowProgramDetailData = Pick<
 	ProgramDetailNewStoryProps,
-	| "name"
-	| "meta"
-	| "days"
-	| "availableExercises"
-	| "defaultSelectedDayId"
-	| "defaultSelectedExercisePlanId"
+	"name" | "meta" | "days" | "registeredExercises" | "initialState"
 >;
 
 const FlowProgramDetailDemo: FC<{
@@ -799,9 +798,12 @@ const fakeFetchProgramDetailSuccess = (
 					name: baseArgs.name,
 					meta: baseArgs.meta,
 					days: FULL_DAYS,
-					availableExercises: AVAILABLE_EXERCISES,
-					defaultSelectedDayId: "d1",
-					defaultSelectedExercisePlanId: "ep-d1-bench",
+					registeredExercises: REGISTERED_EXERCISES,
+					initialState: {
+						level: "exercisePlan",
+						dayId: "d1",
+						exercisePlanId: "ep-d1-bench",
+					},
 				}),
 			delayMs,
 		);
@@ -821,7 +823,7 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 	name: initialName,
 	meta: initialMeta,
 	days: initialDays,
-	availableExercises: initialAvailableExercises,
+	registeredExercises: initialRegisteredExercises,
 	onAddDay,
 	onDeleteDay,
 	onChangeDayInfo,
@@ -838,13 +840,9 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 	const [name, setName] = useState(initialName);
 	const [meta, setMeta] = useState(initialMeta);
 	const [days, setDays] = useState(initialDays);
-	const [availableExercises, setAvailableExercises] = useState(
-		initialAvailableExercises,
+	const [registeredExercises, setRegisteredExercises] = useState(
+		initialRegisteredExercises,
 	);
-	const [lastAddedExercisePlanId, setLastAddedExercisePlanId] = useState<
-		string | undefined
-	>(undefined);
-
 	const handleAddDay = () => {
 		const id = crypto.randomUUID();
 		setDays((prev) => [
@@ -852,7 +850,7 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 			{
 				id,
 				label: `Day ${prev.length + 1}`,
-				memo: null,
+				meta: undefined,
 				exercisePlans: [],
 			},
 		]);
@@ -871,7 +869,7 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 		setDays((prev) =>
 			prev.map((day) =>
 				day.id === dayId
-					? { ...day, label: payload.label, memo: payload.memo }
+					? { ...day, label: payload.label, meta: payload.meta }
 					: day,
 			),
 		);
@@ -889,7 +887,7 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 		dayId: string,
 		exerciseId: string,
 	) => {
-		const selected = availableExercises.find((item) => item.id === exerciseId);
+		const selected = registeredExercises.find((item) => item.id === exerciseId);
 		if (selected === undefined) return;
 		addExercisePlan(dayId, selected);
 		onAddExercisePlanWithSelectedExercise(dayId, exerciseId);
@@ -900,7 +898,7 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 		name: string,
 	) => {
 		const exercise = { id: `ex-new-${Date.now()}`, name };
-		setAvailableExercises((prev) => [...prev, exercise]);
+		setRegisteredExercises((prev) => [...prev, exercise]);
 		addExercisePlan(dayId, exercise);
 		onAddExercisePlanWithNewExercise(dayId, name);
 	};
@@ -914,7 +912,7 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 						exercisePlan.id === exercisePlanId
 							? {
 									...exercisePlan,
-									memo: payload.memo,
+									meta: payload.meta,
 								}
 							: exercisePlan,
 					),
@@ -937,6 +935,7 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 								...day.exercisePlans,
 								{
 									id: newExercisePlanId,
+									meta: undefined,
 									exercise: {
 										id: exercise.id,
 										name: exercise.name,
@@ -944,7 +943,6 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 										weightStep: 2.5,
 										detailHref: `/exercises/${exercise.id}`,
 									},
-									memo: null,
 									setPlans: [],
 								},
 							],
@@ -952,7 +950,6 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 					: day,
 			),
 		);
-		setLastAddedExercisePlanId(newExercisePlanId);
 	};
 
 	const handleDeleteExercisePlan = (exercisePlanId: string) => {
@@ -1029,7 +1026,7 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 			name={name}
 			meta={meta}
 			days={days}
-			availableExercises={availableExercises}
+			registeredExercises={registeredExercises}
 			onAddDay={handleAddDay}
 			onDeleteDay={handleDeleteDay}
 			onChangeDayInfo={handleChangeDayInfo}
@@ -1043,7 +1040,6 @@ const StatefulProgramDetailNew: FC<ProgramDetailNewStoryProps> = ({
 			onAddSetPlan={handleAddSetPlan}
 			onChangeSetPlan={handleChangeSetPlan}
 			onDeleteSetPlan={handleDeleteSetPlan}
-			lastAddedExercisePlanId={lastAddedExercisePlanId}
 		/>
 	);
 };

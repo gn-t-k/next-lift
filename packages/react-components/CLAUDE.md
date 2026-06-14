@@ -76,6 +76,53 @@ src/
 
 `Main` / `Section` / `Heading` プリミティブは `primitives/` に配置し、すべてのビューが共通で使える。3つは HTML 要素（`<main>` / `<section>` / `<hN>`）と1対1対応するメンタルモデルで使う。
 
+### ビューと consumer の境界
+
+ビュー（`src/views/`）の props / コールバックは **永続化層（Drizzle の `null` 等）を知らない**。DB や ORM との型変換は consumer（`apps/web` 等）が担う。
+
+#### 欠如の表現は `undefined` に統一する
+
+| 状況 | ビュー層での表現 |
+| --- | --- |
+| テキストフィールドに値がない（メモ未入力・クリア後） | `undefined`、またはコールバックで `""` をそのまま渡す |
+| optional な props を省略 | `undefined`（`prop?: T`） |
+| 派生 state でまだ解決されていない（未選択の Day 等） | `undefined`（`.find` の戻り値など） |
+
+`null` はビュー層では使わない。`string | null` と `string | undefined` を併用すると解釈が分岐するだけなので、ビュー内は `undefined` に揃える。
+
+#### consumer の責務
+
+- **渡すとき**: Drizzle row の `metaInfo: string | null` などを、ビュー用の ViewModel（`meta?: string`）に変換する（例: `meta: row.metaInfo ?? undefined`）
+- **受け取るとき**: コールバックの `memo: ""` や `meta` 省略を、DB の `NULL` / 空文字など好みの保存形式に変換する
+
+ビュー側で `nextMemo === "" ? null : nextMemo` のように永続化向けの変換をしない。
+
+#### ドメイン型のコロケーション（ビュー内部）
+
+型専用ファイル（`types.ts` 等）は置かない。ドメイン型は **オーナーコンポーネント** のファイルで `export type` し、他はそこから `import type` する。
+
+| 型 | オーナー | 選定理由 |
+| --- | --- | --- |
+| エンティティ（`Day`, `ExercisePlan`, `SetPlan` 等） | そのエンティティの **リスト UI**（`*-list.tsx`） | データ形状を最も多く扱うコンポーネント |
+| 編集 payload（`DayInfoPayload` 等） | **編集 UI**（`*-dialog-button.tsx` 等） | フォームが返す形の正本 |
+| callback / render prop | **呼び出すコンポーネント**（`*-list.tsx`, `*-header-actions.tsx` 等） | invoker が contract を決める。`Props["onX"]` や render 専用 alias で `export type` |
+| レイアウト sibling の Props | 各 sibling（`miller-columns-view/`, `drilldown-view/`） | leaf の export を各コンポーネントが必要分だけ組み立てる |
+| 公開 Props（`ProgramDetailNew`） | `index.tsx` | データ props + leaf callback 型で組み立て |
+
+参照元が複数あっても正本は一つ。「どちらを正にする？」は **UI の責務** で決める（リスト vs 編集ダイアログ）。`ComponentProps<typeof ProgramDetailNew>` からの再抽出は Story など公開 API を直接触る箇所に限る。
+
+エンティティ間の型依存（`Day` → `ExercisePlan` → `SetPlan`）は `import type` の循環でよい。leaf（`set-plan-list`）から root（`day-list`）方向に定義する。
+
+#### ビュー内カスタム hook
+
+単体なら `use-{名前}.ts`。純関数・test など sibling が必要なときだけ `use-{名前}/index.ts` にまとめる（ファイル命名は `.claude/rules/coding-style.md`）。ディレクトリ化した sibling は hook からのみ import する。
+
+UI には状態の正本だけ渡す。表示用の派生値は hook から広げず、各コンポーネントで render 時に計算する（`.claude/rules/react.md` の「派生値は計算で求める」）。
+
+#### 共有フォームとの接続
+
+旧ビューや共有部品（例: `ProgramInfoForm`）がまだ `string | null` を使う場合、**ビュー専用のラッパー**（例: `program-info-dialog-button.tsx`）で境界変換する。共有部品を一括変更するのは別タスク。
+
 ### 配置基準
 
 コンポーネントは primitives と views のいずれかに置く。

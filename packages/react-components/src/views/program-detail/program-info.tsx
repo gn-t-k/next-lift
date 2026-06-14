@@ -4,10 +4,10 @@ import { type ComponentProps, type FC, useState } from "react";
 import { useMediaQuery } from "../../libs";
 import { Heading } from "../../primitives/heading";
 import { ResponsiveDialog } from "../../primitives/responsive-dialog";
-import { ProgramInfoForm } from "../program-info-form";
 import { ProgramActionsMenu } from "./program-actions-menu";
 import { ProgramActionsTrigger } from "./program-actions-trigger";
 import { ProgramDeleteDialog } from "./program-delete-dialog";
+import { ProgramInfoForm } from "./program-info-form";
 
 type ProgramInfoChange = Parameters<
 	ComponentProps<typeof ProgramInfoForm>["onSubmit"]
