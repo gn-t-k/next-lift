@@ -2,11 +2,11 @@
 
 import type { FC, ReactNode } from "react";
 import { useState } from "react";
-import { cn } from "../../libs";
-import type { Day } from "./day-list";
+import { cn } from "../../../libs";
+import type { Day } from "../day-list";
 import { ExerciseSelectorComboBox } from "./exercise-selector-combo-box";
-import { PlanNodeButton } from "./plan-node-button";
-import type { SetPlan } from "./set-plan-list";
+import { PlanNodeButton } from "../plan-node-button";
+import type { SetPlan } from "../set-plan-list";
 
 // 種目計画ドメインの型正本（ExercisePlanList がリスト UI のオーナー）
 export type WeightUnit = "kg" | "lbs";
