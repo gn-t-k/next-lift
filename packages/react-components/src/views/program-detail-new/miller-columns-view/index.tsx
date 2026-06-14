@@ -1,0 +1,213 @@
+import type { FC, PropsWithChildren, ReactNode } from "react";
+import type { OnChangeDayInfo, OnDeleteDay } from "../day-header-actions";
+import { DayHeaderActions } from "../day-header-actions";
+import type { Day, OnAddDay, OnSelectDay } from "../day-list";
+import { DayList } from "../day-list";
+import type {
+	OnChangeExercisePlanInfo,
+	OnDeleteExercisePlan,
+} from "../exercise-plan-header-actions";
+import { ExercisePlanHeaderActions } from "../exercise-plan-header-actions";
+import type {
+	OnAddExercisePlanWithNewExercise,
+	OnAddExercisePlanWithSelectedExercise,
+	OnSelectExercisePlan,
+	RegisteredExercise,
+	RenderWorkoutHistory,
+} from "../exercise-plan-list";
+import { ExercisePlanList } from "../exercise-plan-list";
+import type { OnChangeProgramInfo } from "../program-info-dialog-button";
+import { ProgramInfoDialogButton } from "../program-info-dialog-button";
+import type {
+	OnAddSetPlan,
+	OnChangeSetPlan,
+	OnDeleteSetPlan,
+	RenderExerciseProgress,
+} from "../set-plan-list";
+import { SetPlanList } from "../set-plan-list";
+import type { UseProgramPlanSelectionState } from "../use-program-plan-selection";
+import {
+	MillerColumn,
+	MillerColumnEmpty,
+	MillerColumnError,
+	MillerColumnLoading,
+} from "./column-shell";
+
+type Props = {
+	programName: string;
+	programMeta: string | undefined;
+	days: Day[];
+	registeredExercises: RegisteredExercise[];
+	state: UseProgramPlanSelectionState;
+	onSelectDay: OnSelectDay;
+	onSelectExercisePlan: OnSelectExercisePlan;
+	onAddDay: OnAddDay;
+	onDeleteDay: OnDeleteDay;
+	onChangeDayInfo: OnChangeDayInfo;
+	onChangeProgramInfo: OnChangeProgramInfo;
+	onAddExercisePlanWithSelectedExercise: OnAddExercisePlanWithSelectedExercise;
+	onAddExercisePlanWithNewExercise: OnAddExercisePlanWithNewExercise;
+	onChangeExercisePlanInfo: OnChangeExercisePlanInfo;
+	onDeleteExercisePlan: OnDeleteExercisePlan;
+	onChangeSetPlan: OnChangeSetPlan;
+	onAddSetPlan: OnAddSetPlan;
+	onDeleteSetPlan: OnDeleteSetPlan;
+	renderWorkoutHistory: RenderWorkoutHistory;
+	renderExerciseProgress: RenderExerciseProgress;
+};
+
+export const MillerColumnsView: FC<Props> = ({
+	programName,
+	programMeta,
+	days,
+	registeredExercises,
+	state,
+	onSelectDay,
+	onSelectExercisePlan,
+	onAddDay,
+	onDeleteDay,
+	onChangeDayInfo,
+	onChangeProgramInfo,
+	onAddExercisePlanWithSelectedExercise,
+	onAddExercisePlanWithNewExercise,
+	onChangeExercisePlanInfo,
+	onDeleteExercisePlan,
+	onChangeSetPlan,
+	onAddSetPlan,
+	onDeleteSetPlan,
+	renderWorkoutHistory,
+	renderExerciseProgress,
+}) => {
+	const selectedDay =
+		state.level === "root"
+			? undefined
+			: days.find((day) => day.id === state.dayId);
+	const selectedExercisePlan =
+		state.level === "exercisePlan" && selectedDay !== undefined
+			? selectedDay.exercisePlans.find(
+					(exercisePlan) => exercisePlan.id === state.exercisePlanId,
+				)
+			: undefined;
+
+	return (
+		<ThreeColumnLayout>
+			<MillerColumn
+				label="プログラム"
+				title={programName}
+				meta={programMeta}
+				actions={
+					<ProgramInfoDialogButton
+						name={programName}
+						meta={programMeta}
+						onChange={onChangeProgramInfo}
+					/>
+				}
+			>
+				<DayList
+					days={days}
+					state={state}
+					onSelectDay={onSelectDay}
+					onAddDay={onAddDay}
+				/>
+			</MillerColumn>
+			<MillerColumn
+				label="Day"
+				title={selectedDay?.label}
+				meta={selectedDay?.meta}
+				actions={
+					selectedDay === undefined ? undefined : (
+						<DayHeaderActions
+							day={selectedDay}
+							onChangeDayInfo={onChangeDayInfo}
+							onDeleteDay={onDeleteDay}
+						/>
+					)
+				}
+			>
+				{selectedDay === undefined ? (
+					<MissingParentState>
+						Day を選ぶと、種目計画を追加・確認できます。
+					</MissingParentState>
+				) : (
+					<ExercisePlanList
+						day={selectedDay}
+						registeredExercises={registeredExercises}
+						state={state}
+						onSelectExercisePlan={onSelectExercisePlan}
+						onAddExercisePlanWithSelectedExercise={
+							onAddExercisePlanWithSelectedExercise
+						}
+						onAddExercisePlanWithNewExercise={onAddExercisePlanWithNewExercise}
+						workoutHistory={renderWorkoutHistory(selectedDay)}
+					/>
+				)}
+			</MillerColumn>
+			<MillerColumn
+				label="種目計画"
+				title={selectedExercisePlan?.exercise.name}
+				meta={selectedExercisePlan?.meta}
+				actions={
+					selectedExercisePlan === undefined ? undefined : (
+						<ExercisePlanHeaderActions
+							exercisePlan={selectedExercisePlan}
+							onChangeExercisePlanInfo={onChangeExercisePlanInfo}
+							onDeleteExercisePlan={onDeleteExercisePlan}
+						/>
+					)
+				}
+			>
+				{selectedExercisePlan === undefined ? (
+					<MissingParentState>
+						種目計画を選ぶと、セット計画を追加・確認できます。
+					</MissingParentState>
+				) : (
+					<SetPlanList
+						exercisePlan={selectedExercisePlan}
+						onChangeSetPlan={onChangeSetPlan}
+						onAddSetPlan={onAddSetPlan}
+						onDeleteSetPlan={onDeleteSetPlan}
+						exerciseProgress={renderExerciseProgress(selectedExercisePlan)}
+					/>
+				)}
+			</MillerColumn>
+		</ThreeColumnLayout>
+	);
+};
+
+export const MillerColumnsViewLoading: FC = () => (
+	<ThreeColumnLayout>
+		<MillerColumnLoading />
+		<MillerColumnEmpty label="Day" />
+		<MillerColumnEmpty label="種目計画" />
+	</ThreeColumnLayout>
+);
+
+type MillerColumnsViewErrorProps = {
+	message?: ReactNode;
+};
+
+export const MillerColumnsViewError: FC<MillerColumnsViewErrorProps> = ({
+	message,
+}) => (
+	<ThreeColumnLayout>
+		<MillerColumnError message={message} />
+		<MillerColumnEmpty label="Day" />
+		<MillerColumnEmpty label="種目計画" />
+	</ThreeColumnLayout>
+);
+
+const ThreeColumnLayout: FC<PropsWithChildren> = ({ children }) => (
+	<div className="grid h-128 grid-cols-[minmax(13rem,0.9fr)_minmax(17rem,1fr)_minmax(20rem,1.25fr)] items-stretch gap-3">
+		{children}
+	</div>
+);
+
+type MissingParentStateProps = {
+	children: ReactNode;
+};
+
+const MissingParentState: FC<MissingParentStateProps> = ({ children }) => (
+	<div className="flex min-h-full flex-1 items-center justify-center px-3 py-4 text-center text-muted-fg text-sm">
+		{children}
+	</div>
+);

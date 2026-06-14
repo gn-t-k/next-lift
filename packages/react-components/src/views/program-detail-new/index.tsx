@@ -5,10 +5,10 @@ import { Heading, Section } from "../../primitives/heading";
 import type { OnChangeDayInfo, OnDeleteDay } from "./day-header-actions";
 import type { Day, OnAddDay } from "./day-list";
 import {
-	DrilldownPanel,
-	DrilldownPanelError,
-	DrilldownPanelLoading,
-} from "./drilldown-panel";
+	DrilldownView,
+	DrilldownViewError,
+	DrilldownViewLoading,
+} from "./drilldown-view";
 import type {
 	OnChangeExercisePlanInfo,
 	OnDeleteExercisePlan,
@@ -20,10 +20,10 @@ import type {
 	RenderWorkoutHistory,
 } from "./exercise-plan-list";
 import {
-	MillerColumns,
-	MillerColumnsError,
-	MillerColumnsLoading,
-} from "./miller-columns";
+	MillerColumnsView,
+	MillerColumnsViewError,
+	MillerColumnsViewLoading,
+} from "./miller-columns-view";
 import type { OnChangeProgramInfo } from "./program-info-dialog-button";
 import type {
 	OnAddSetPlan,
@@ -92,7 +92,7 @@ export const ProgramDetailNew: FC<Props> = ({
 			<Section className="@container flex flex-col gap-3">
 				<Heading className="sr-only">プログラム内容</Heading>
 				<DesktopPlanViewport>
-					<MillerColumns
+					<MillerColumnsView
 						programName={name}
 						programMeta={meta}
 						days={days}
@@ -118,7 +118,7 @@ export const ProgramDetailNew: FC<Props> = ({
 					/>
 				</DesktopPlanViewport>
 				<MobilePlanViewport>
-					<DrilldownPanel
+					<DrilldownView
 						programName={name}
 						programMeta={meta}
 						days={days}
@@ -154,10 +154,10 @@ export const ProgramDetailNewLoading: FC = () => (
 		<Heading className="sr-only">プログラム詳細</Heading>
 		<span className="sr-only">プログラム詳細を読み込み中</span>
 		<DesktopPlanViewport>
-			<MillerColumnsLoading />
+			<MillerColumnsViewLoading />
 		</DesktopPlanViewport>
 		<MobilePlanViewport>
-			<DrilldownPanelLoading />
+			<DrilldownViewLoading />
 		</MobilePlanViewport>
 	</div>
 );
@@ -172,10 +172,10 @@ export const ProgramDetailNewError: FC<ProgramDetailNewErrorProps> = ({
 	<div className="@container flex flex-col gap-3">
 		<Heading className="sr-only">プログラム詳細</Heading>
 		<DesktopPlanViewport>
-			<MillerColumnsError message={message} />
+			<MillerColumnsViewError message={message} />
 		</DesktopPlanViewport>
 		<MobilePlanViewport>
-			<DrilldownPanelError message={message} />
+			<DrilldownViewError message={message} />
 		</MobilePlanViewport>
 	</div>
 );
