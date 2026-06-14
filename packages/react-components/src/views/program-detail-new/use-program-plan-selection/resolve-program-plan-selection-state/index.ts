@@ -1,4 +1,4 @@
-import type { Day } from "../day-list";
+import type { Day } from "../../day-list";
 
 export type UseProgramPlanSelectionState =
 	| { level: "root" }

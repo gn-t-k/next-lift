@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vitest";
-import type { Day } from "../day-list";
+import type { Day } from "../../day-list";
 import {
 	resolveProgramPlanSelectionState,
 	type UseProgramPlanSelectionState,
-} from "./resolve-program-plan-selection-state";
+} from "./index";
 
 const days: Day[] = [
 	{
