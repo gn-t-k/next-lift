@@ -31,7 +31,7 @@ import {
 	MillerColumnEmpty,
 	MillerColumnError,
 	MillerColumnLoading,
-} from "./miller-column";
+} from "./column-shell";
 
 type Props = {
 	programName: string;
