@@ -4,9 +4,9 @@ import type { FC, ReactNode } from "react";
 import { useState } from "react";
 import { cn } from "../../../libs";
 import type { Day } from "../day-list";
-import { ExerciseSelectorComboBox } from "./exercise-selector-combo-box";
 import { PlanNodeButton } from "../plan-node-button";
 import type { SetPlan } from "../set-plan-list";
+import { ExerciseSelectorComboBox } from "./exercise-selector-combo-box";
 
 // 種目計画ドメインの型正本（ExercisePlanList がリスト UI のオーナー）
 export type WeightUnit = "kg" | "lbs";
@@ -31,7 +31,7 @@ export type ExercisePlan = {
 	setPlans: SetPlan[];
 };
 
-import type { UseProgramPlanSelectionState } from "./use-program-plan-selection";
+import type { UseProgramPlanSelectionState } from "../use-program-plan-selection";
 
 type Props = {
 	day: Day;

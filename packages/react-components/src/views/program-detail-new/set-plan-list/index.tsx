@@ -6,9 +6,9 @@ import {
 	TrashIcon,
 } from "@heroicons/react/24/outline";
 import type { FC, ReactNode } from "react";
-import { cn } from "../../libs";
-import { Button } from "../../primitives/button";
-import type { ExercisePlan } from "./exercise-plan-list";
+import { cn } from "../../../libs";
+import { Button } from "../../../primitives/button";
+import type { ExercisePlan } from "../exercise-plan-list";
 import { SetPlanFormDialog } from "./set-plan-form-dialog";
 
 // セット計画ドメインの型正本（SetPlanFormDialog 等はここから import）

@@ -1,5 +1,5 @@
-import type { WeightUnit } from "../../exercise-plan-list";
-import type { SetPlan, SetPlanDraft } from "../../set-plan-list";
+import type { WeightUnit } from "../../../exercise-plan-list";
+import type { SetPlan, SetPlanDraft } from "../..";
 
 // Tab間で値を共有するための型
 export type FormState = {
