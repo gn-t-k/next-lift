@@ -3,11 +3,11 @@
 import { ChevronRightIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 import type { FC } from "react";
 import { useState } from "react";
-import { cn } from "../../libs";
-import { Button } from "../../primitives/button";
-import { Drawer, DrawerContent, DrawerTitle } from "../../primitives/drawer";
-import type { Day } from "./day-list";
-import type { UseProgramPlanSelectionState } from "./use-program-plan-selection";
+import { cn } from "../../../libs";
+import { Button } from "../../../primitives/button";
+import { Drawer, DrawerContent, DrawerTitle } from "../../../primitives/drawer";
+import type { Day } from "../day-list";
+import type { UseProgramPlanSelectionState } from "../use-program-plan-selection";
 
 type Props = {
 	programName: string;
