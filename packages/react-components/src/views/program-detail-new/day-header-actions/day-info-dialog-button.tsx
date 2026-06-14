@@ -3,13 +3,13 @@
 import { CheckIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import type { FC } from "react";
 import { useState } from "react";
-import { useMediaQuery } from "../../libs";
-import { Button } from "../../primitives/button";
-import { Label } from "../../primitives/label";
-import { ResponsiveDialog } from "../../primitives/responsive-dialog";
-import { TextArea } from "../../primitives/text-area";
-import { TextField, TextFieldInput } from "../../primitives/text-field";
-import type { Day } from "./day-list";
+import { useMediaQuery } from "../../../libs";
+import { Button } from "../../../primitives/button";
+import { Label } from "../../../primitives/label";
+import { ResponsiveDialog } from "../../../primitives/responsive-dialog";
+import { TextArea } from "../../../primitives/text-area";
+import { TextField, TextFieldInput } from "../../../primitives/text-field";
+import type { Day } from "../day-list";
 
 export type DayInfoPayload = { label: string; meta: string };
 

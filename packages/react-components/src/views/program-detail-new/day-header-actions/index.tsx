@@ -3,9 +3,9 @@
 import type { FC } from "react";
 import type { DayInfoPayload } from "./day-info-dialog-button";
 import { DayInfoDialogButton } from "./day-info-dialog-button";
-import type { Day } from "./day-list";
-import { HeaderActions } from "./header-actions";
-import { HeaderDeleteButton } from "./header-delete-button";
+import type { Day } from "../day-list";
+import { HeaderActions } from "../header-actions";
+import { HeaderDeleteButton } from "../header-delete-button";
 
 type Props = {
 	day: Day;
