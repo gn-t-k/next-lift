@@ -1,9 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import {
-	buildComboBoxItems,
-	CREATE_ID,
-	PLACEHOLDER_ID,
-} from "./build-combo-box-items";
+import { buildComboBoxItems, CREATE_ID, PLACEHOLDER_ID } from "./index";
 
 describe("buildComboBoxItems", () => {
 	let options: { id: string; name: string }[];
