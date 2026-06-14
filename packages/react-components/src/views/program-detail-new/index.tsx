@@ -1,30 +1,73 @@
 "use client";
 
-import { PencilSquareIcon } from "@heroicons/react/24/outline";
-import type { FC } from "react";
-import { useState } from "react";
-import { useMediaQuery } from "../../libs";
-import { Button } from "../../primitives/button";
-import { ResponsiveDialog } from "../../primitives/responsive-dialog";
-import { ProgramInfoForm } from "../program-detail/program-info-form";
-import { ProgramPlanNavigation } from "./program-plan-navigation";
-import { ProgramDetailNewError, ProgramDetailNewLoading } from "./status";
-import type { ProgramDetailNewProps } from "./types";
+import type { FC, PropsWithChildren, ReactNode } from "react";
+import { Heading, Section } from "../../primitives/heading";
+import type { OnChangeDayInfo, OnDeleteDay } from "./day-header-actions";
+import type { Day, OnAddDay } from "./day-list";
+import {
+	DrilldownView,
+	DrilldownViewError,
+	DrilldownViewLoading,
+} from "./drilldown-view";
+import type {
+	OnChangeExercisePlanInfo,
+	OnDeleteExercisePlan,
+} from "./exercise-plan-header-actions";
+import type {
+	OnAddExercisePlanWithNewExercise,
+	OnAddExercisePlanWithSelectedExercise,
+	RegisteredExercise,
+	RenderWorkoutHistory,
+} from "./exercise-plan-list";
+import {
+	MillerColumnsView,
+	MillerColumnsViewError,
+	MillerColumnsViewLoading,
+} from "./miller-columns-view";
+import type { OnChangeProgramInfo } from "./program-info-dialog-button";
+import type {
+	OnAddSetPlan,
+	OnChangeSetPlan,
+	OnDeleteSetPlan,
+	RenderExerciseProgress,
+} from "./set-plan-list";
+import type { UseProgramPlanSelectionState } from "./use-program-plan-selection";
 import { useProgramPlanSelection } from "./use-program-plan-selection";
 
-export type { ProgramDetailNewProps };
-export { ProgramDetailNewError, ProgramDetailNewLoading };
+type ProgramDetailNewDataProps = {
+	name: string;
+	meta: string | undefined;
+	days: Day[];
+	registeredExercises: RegisteredExercise[];
+	initialState?: UseProgramPlanSelectionState | undefined;
+};
 
-export const ProgramDetailNew: FC<ProgramDetailNewProps> = ({
+type ProgramDetailNewCallbackProps = {
+	onAddDay: OnAddDay;
+	onDeleteDay: OnDeleteDay;
+	onChangeDayInfo: OnChangeDayInfo;
+	onChangeProgramInfo: OnChangeProgramInfo;
+	onAddExercisePlanWithSelectedExercise: OnAddExercisePlanWithSelectedExercise;
+	onAddExercisePlanWithNewExercise: OnAddExercisePlanWithNewExercise;
+	onChangeExercisePlanInfo: OnChangeExercisePlanInfo;
+	onDeleteExercisePlan: OnDeleteExercisePlan;
+	onChangeSetPlan: OnChangeSetPlan;
+	onAddSetPlan: OnAddSetPlan;
+	onDeleteSetPlan: OnDeleteSetPlan;
+	renderWorkoutHistory: RenderWorkoutHistory;
+	renderExerciseProgress: RenderExerciseProgress;
+};
+
+type Props = ProgramDetailNewDataProps & ProgramDetailNewCallbackProps;
+
+export const ProgramDetailNew: FC<Props> = ({
 	name,
 	meta,
 	days,
-	availableExercises,
-	defaultSelectedDayId,
-	defaultSelectedExercisePlanId,
+	registeredExercises,
+	initialState,
 	onAddDay,
 	onDeleteDay,
-	onChangeDayLabel,
 	onChangeDayInfo,
 	onChangeProgramInfo,
 	onAddExercisePlanWithSelectedExercise,
@@ -34,120 +77,113 @@ export const ProgramDetailNew: FC<ProgramDetailNewProps> = ({
 	onChangeSetPlan,
 	onAddSetPlan,
 	onDeleteSetPlan,
-	lastAddedExercisePlanId,
 	renderWorkoutHistory,
 	renderExerciseProgress,
 }) => {
-	const {
-		selection,
-		selectedDay,
-		selectedExercisePlan,
-		currentTarget,
-		selectDay,
-		selectExercisePlan,
-		selectRoot,
-		selectTarget,
-	} = useProgramPlanSelection({
-		days,
-		defaultSelectedDayId,
-		defaultSelectedExercisePlanId,
-	});
+	const [state, { selectDay, selectExercisePlan, selectRoot }] =
+		useProgramPlanSelection({
+			days,
+			initialState,
+		});
 
 	return (
 		<div className="@container flex flex-col gap-6">
-			<h1 className="sr-only">{name}</h1>
-			<ProgramPlanNavigation
-				programName={name}
-				programMeta={meta}
-				programActions={
-					<ProgramInfoDialogButton
-						name={name}
-						meta={meta}
-						onChange={onChangeProgramInfo}
+			<Heading className="sr-only">{name}</Heading>
+			<Section className="@container flex flex-col gap-3">
+				<Heading className="sr-only">プログラム内容</Heading>
+				<DesktopPlanViewport>
+					<MillerColumnsView
+						programName={name}
+						programMeta={meta}
+						days={days}
+						registeredExercises={registeredExercises}
+						state={state}
+						onSelectDay={selectDay}
+						onSelectExercisePlan={selectExercisePlan}
+						onAddDay={onAddDay}
+						onDeleteDay={onDeleteDay}
+						onChangeDayInfo={onChangeDayInfo}
+						onChangeProgramInfo={onChangeProgramInfo}
+						onAddExercisePlanWithSelectedExercise={
+							onAddExercisePlanWithSelectedExercise
+						}
+						onAddExercisePlanWithNewExercise={onAddExercisePlanWithNewExercise}
+						onChangeExercisePlanInfo={onChangeExercisePlanInfo}
+						onDeleteExercisePlan={onDeleteExercisePlan}
+						onChangeSetPlan={onChangeSetPlan}
+						onAddSetPlan={onAddSetPlan}
+						onDeleteSetPlan={onDeleteSetPlan}
+						renderWorkoutHistory={renderWorkoutHistory}
+						renderExerciseProgress={renderExerciseProgress}
 					/>
-				}
-				days={days}
-				availableExercises={availableExercises}
-				selection={selection}
-				selectedDay={selectedDay}
-				selectedExercisePlan={selectedExercisePlan}
-				currentTarget={currentTarget}
-				lastAddedExercisePlanId={lastAddedExercisePlanId}
-				onSelectDay={selectDay}
-				onSelectExercisePlan={selectExercisePlan}
-				onSelectRoot={selectRoot}
-				onSelectTarget={selectTarget}
-				onAddDay={onAddDay}
-				onDeleteDay={onDeleteDay}
-				onChangeDayInfo={(dayId, payload) => {
-					if (onChangeDayInfo !== undefined) {
-						onChangeDayInfo(dayId, payload);
-						return;
-					}
-					onChangeDayLabel(dayId, payload.label);
-				}}
-				onAddExercisePlanWithSelectedExercise={
-					onAddExercisePlanWithSelectedExercise
-				}
-				onAddExercisePlanWithNewExercise={onAddExercisePlanWithNewExercise}
-				onChangeExercisePlanInfo={onChangeExercisePlanInfo}
-				onDeleteExercisePlan={onDeleteExercisePlan}
-				onChangeSetPlan={onChangeSetPlan}
-				onAddSetPlan={onAddSetPlan}
-				onDeleteSetPlan={onDeleteSetPlan}
-				renderWorkoutHistory={renderWorkoutHistory}
-				renderExerciseProgress={renderExerciseProgress}
-			/>
+				</DesktopPlanViewport>
+				<MobilePlanViewport>
+					<DrilldownView
+						programName={name}
+						programMeta={meta}
+						days={days}
+						registeredExercises={registeredExercises}
+						state={state}
+						onSelectDay={selectDay}
+						onSelectExercisePlan={selectExercisePlan}
+						onSelectRoot={selectRoot}
+						onAddDay={onAddDay}
+						onDeleteDay={onDeleteDay}
+						onChangeDayInfo={onChangeDayInfo}
+						onChangeProgramInfo={onChangeProgramInfo}
+						onAddExercisePlanWithSelectedExercise={
+							onAddExercisePlanWithSelectedExercise
+						}
+						onAddExercisePlanWithNewExercise={onAddExercisePlanWithNewExercise}
+						onChangeExercisePlanInfo={onChangeExercisePlanInfo}
+						onDeleteExercisePlan={onDeleteExercisePlan}
+						onChangeSetPlan={onChangeSetPlan}
+						onAddSetPlan={onAddSetPlan}
+						onDeleteSetPlan={onDeleteSetPlan}
+						renderWorkoutHistory={renderWorkoutHistory}
+						renderExerciseProgress={renderExerciseProgress}
+					/>
+				</MobilePlanViewport>
+			</Section>
 		</div>
 	);
 };
 
-type ProgramInfoDialogButtonProps = {
-	name: string;
-	meta: string | null;
-	onChange: (payload: { name: string; meta: string | null }) => void;
-	showLabel?: boolean | undefined;
+export const ProgramDetailNewLoading: FC = () => (
+	<div className="@container flex flex-col gap-3" aria-busy>
+		<Heading className="sr-only">プログラム詳細</Heading>
+		<span className="sr-only">プログラム詳細を読み込み中</span>
+		<DesktopPlanViewport>
+			<MillerColumnsViewLoading />
+		</DesktopPlanViewport>
+		<MobilePlanViewport>
+			<DrilldownViewLoading />
+		</MobilePlanViewport>
+	</div>
+);
+
+type ProgramDetailNewErrorProps = {
+	message?: ReactNode;
 };
 
-const ProgramInfoDialogButton: FC<ProgramInfoDialogButtonProps> = ({
-	name,
-	meta,
-	onChange,
-	showLabel = false,
-}) => {
-	const [isOpen, setIsOpen] = useState(false);
-	const desktopViewport = useMediaQuery("(min-width: 768px)");
-	const title = "プログラム情報を編集";
-	const trigger = (
-		<Button
-			intent="plain"
-			size={showLabel ? "sm" : "sq-xs"}
-			aria-label={title}
-			className="shrink-0"
-		>
-			<PencilSquareIcon data-slot="icon" className="size-4" aria-hidden />
-			{showLabel ? "編集" : null}
-		</Button>
-	);
+export const ProgramDetailNewError: FC<ProgramDetailNewErrorProps> = ({
+	message,
+}) => (
+	<div className="@container flex flex-col gap-3">
+		<Heading className="sr-only">プログラム詳細</Heading>
+		<DesktopPlanViewport>
+			<MillerColumnsViewError message={message} />
+		</DesktopPlanViewport>
+		<MobilePlanViewport>
+			<DrilldownViewError message={message} />
+		</MobilePlanViewport>
+	</div>
+);
 
-	return (
-		<ResponsiveDialog
-			title={title}
-			trigger={trigger}
-			isOpen={isOpen}
-			onOpenChange={setIsOpen}
-			desktopViewport={desktopViewport}
-			popoverWidth="default"
-		>
-			<ProgramInfoForm
-				name={name}
-				meta={meta}
-				onCancel={() => setIsOpen(false)}
-				onSubmit={(payload) => {
-					onChange(payload);
-					setIsOpen(false);
-				}}
-			/>
-		</ResponsiveDialog>
-	);
-};
+const DesktopPlanViewport: FC<PropsWithChildren> = ({ children }) => (
+	<div className="@min-[56rem]:block hidden">{children}</div>
+);
+
+const MobilePlanViewport: FC<PropsWithChildren> = ({ children }) => (
+	<div className="@min-[56rem]:hidden">{children}</div>
+);

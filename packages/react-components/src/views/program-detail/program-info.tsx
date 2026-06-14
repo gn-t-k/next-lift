@@ -1,13 +1,17 @@
 "use client";
 
-import { type FC, useState } from "react";
+import { type ComponentProps, type FC, useState } from "react";
 import { useMediaQuery } from "../../libs";
 import { Heading } from "../../primitives/heading";
 import { ResponsiveDialog } from "../../primitives/responsive-dialog";
 import { ProgramActionsMenu } from "./program-actions-menu";
 import { ProgramActionsTrigger } from "./program-actions-trigger";
 import { ProgramDeleteDialog } from "./program-delete-dialog";
-import { type ProgramInfoChange, ProgramInfoForm } from "./program-info-form";
+import { ProgramInfoForm } from "./program-info-form";
+
+type ProgramInfoChange = Parameters<
+	ComponentProps<typeof ProgramInfoForm>["onSubmit"]
+>[0];
 
 type Props = {
 	name: string;
