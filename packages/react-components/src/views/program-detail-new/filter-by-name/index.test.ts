@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { filterByName } from "./filter-by-name";
+import { filterByName } from "./index";
 
 describe("filterByName", () => {
 	let items: { id: string; name: string }[];

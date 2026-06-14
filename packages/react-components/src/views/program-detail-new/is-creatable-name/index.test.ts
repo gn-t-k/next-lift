@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { isCreatableName } from "./is-creatable-name";
+import { isCreatableName } from "./index";
 
 describe("isCreatableName", () => {
 	let existingNames: string[];
