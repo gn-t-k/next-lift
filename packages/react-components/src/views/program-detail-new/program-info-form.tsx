@@ -2,10 +2,10 @@
 
 import { CheckIcon } from "@heroicons/react/24/solid";
 import { type FC, type KeyboardEvent, type SubmitEvent, useState } from "react";
-import { Button } from "../../../primitives/button";
-import { Label } from "../../../primitives/label";
-import { TextArea } from "../../../primitives/text-area";
-import { TextField, TextFieldInput } from "../../../primitives/text-field";
+import { Button } from "../../primitives/button";
+import { Label } from "../../primitives/label";
+import { TextArea } from "../../primitives/text-area";
+import { TextField, TextFieldInput } from "../../primitives/text-field";
 
 type Props = {
 	name: string;
