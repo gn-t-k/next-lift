@@ -3,7 +3,7 @@ import {
 	buildSetPlanDraft,
 	type FormState,
 	makeInitialFormState,
-} from "./build-set-plan-draft";
+} from "./index";
 
 describe("makeInitialFormState", () => {
 	describe("initial が undefined のとき", () => {
