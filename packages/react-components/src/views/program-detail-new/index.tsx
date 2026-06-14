@@ -23,7 +23,7 @@ import {
 	MillerColumnsView,
 	MillerColumnsViewError,
 	MillerColumnsViewLoading,
-} from "./miller-columns";
+} from "./miller-columns-view";
 import type { OnChangeProgramInfo } from "./program-info-dialog-button";
 import type {
 	OnAddSetPlan,
